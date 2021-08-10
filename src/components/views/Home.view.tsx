@@ -81,6 +81,46 @@ const Container = styled.div`
   margin: 0 140px;
 `;
 
+const ParticipateCard = styled.div`
+  flex: 1;
+  padding-right: 76px;
+`;
+
+const Button = styled.button`
+  padding: 25px 32px;
+  background: #5326EC;
+  height: 64px;
+  border: 0;
+  border-radius: 88px;
+  color: #FFFFFF;
+  width: 100%;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 18px;
+  text-align: center;
+`;
+
+const ParticipateButton = styled(Button)`
+  width: 280px;
+`;
+
+const ParticipateDesc = styled(P)`
+  height: 198px;
+  width: 322px;
+`;
+
+const ParticipateSubDesc = styled.p`
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #C4B2FF;
+  width: 280px;
+`;
+
 function HomeView() {
   return (
     <Container>
@@ -112,9 +152,36 @@ function HomeView() {
             </P>
           </GivCard>
         </Row>
-
       </Section>
-
+      <Section>
+        <H2>How to participate</H2>
+        <Row>
+        <ParticipateCard>
+          <H3>Earn</H3>
+          <ParticipateDesc>Participate in GIVmining by adding liquidity and generating even more GIV in rewards.</ParticipateDesc>
+          <ParticipateButton>Add Liquidty and Earn</ParticipateButton>
+          <ParticipateSubDesc>Earn GIV by providing liquidity. Up to 140% APR waits for you.</ParticipateSubDesc>
+        </ParticipateCard>
+        <ParticipateCard>
+          <H3>Govern</H3>
+          <ParticipateDesc>Stake GIV in the GIVgarden to participate in governance of the
+            &nbsp;
+            <strong>
+              Giving Economy
+            </strong>
+            . Propose and vote to help shape the Future of Giving.</ParticipateDesc>
+          <ParticipateButton>See proposals</ParticipateButton>
+          <ParticipateSubDesc>Earn GIV by voting on proposals and participating in Giveth governance.</ParticipateSubDesc>
+        </ParticipateCard>
+        <ParticipateCard>
+          <H3>Give</H3>
+          <ParticipateDesc>Get GIVbacks by donating to verified projects on Giveth.
+             Empower change-makers that are working hard to make a difference. </ParticipateDesc>
+          <ParticipateButton>Donate to projects</ParticipateButton>
+          <ParticipateSubDesc>Earn GIV by donating to verified projects on Giveth. </ParticipateSubDesc>
+        </ParticipateCard>
+        </Row>
+      </Section>
     </Container>
   )
 }
