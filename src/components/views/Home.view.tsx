@@ -30,6 +30,9 @@ const H3 = styled.h3`
 const Section = styled.section`
   padding: 102px 0;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 `;
 
 
@@ -121,6 +124,12 @@ const ParticipateSubDesc = styled.p`
   width: 280px;
 `;
 
+
+const ClaimCard = styled.div`
+  background-color: #3C14C5;
+  padding: 105px 146px;
+`;
+
 function HomeView() {
   return (
     <Container>
@@ -181,6 +190,13 @@ function HomeView() {
           <ParticipateSubDesc>Earn GIV by donating to verified projects on Giveth. </ParticipateSubDesc>
         </ParticipateCard>
         </Row>
+      </Section>
+      <Section>
+        <ClaimCard>
+          <H2>Claim your GIV tokens</H2>
+          <P>Connect your wallet or check an ethereum address to see your rewards.</P>
+          <Button>CLAIM YOUR GIV</Button>
+        </ClaimCard>
       </Section>
     </Container>
   )
