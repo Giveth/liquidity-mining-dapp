@@ -73,6 +73,7 @@ const P = styled.p<TypographyProps>`
 
 const Row = styled.div`
   display:flex;
+  flex-wrap: wrap;
 `;
 
 const GivCard = styled.div`
@@ -89,9 +90,13 @@ const ParticipateCard = styled.div`
   padding-right: 76px;
 `;
 
-const Button = styled.button`
+interface IButtonProps {
+  secondary?: boolean;
+}
+
+const Button = styled.button<IButtonProps>`
   padding: 25px 32px;
-  background: #5326EC;
+  background: ${ props => props.secondary ? "#E1458D" : "#5326EC"};
   height: 64px;
   border: 0;
   border-radius: 88px;
@@ -102,6 +107,7 @@ const Button = styled.button`
   font-size: 16px;
   line-height: 18px;
   text-align: center;
+  cursor: pointer;
 `;
 
 const ParticipateButton = styled(Button)`
@@ -128,6 +134,10 @@ const ParticipateSubDesc = styled.p`
 const ClaimCard = styled.div`
   background-color: #3C14C5;
   padding: 105px 146px;
+`;
+
+const ClaimCardButton = styled(Button)`
+  width: 300px;
 `;
 
 function HomeView() {
@@ -195,7 +205,7 @@ function HomeView() {
         <ClaimCard>
           <H2>Claim your GIV tokens</H2>
           <P>Connect your wallet or check an ethereum address to see your rewards.</P>
-          <Button>CLAIM YOUR GIV</Button>
+          <ClaimCardButton secondary >CLAIM YOUR GIV</ClaimCardButton>
         </ClaimCard>
       </Section>
     </Container>
