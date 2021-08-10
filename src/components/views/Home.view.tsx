@@ -25,12 +25,13 @@ const Section = styled.section`
 `;
 
 
-interface PProps {
+interface TypographyProps {
   size?: "big"|"medium"|"small";
+  wight?: "bold"|"normal";
+  color?: string;
 }
 
-const P = styled.p<PProps>`
-  font-style: normal;
+const P = styled.p<TypographyProps>`
   font-weight: normal;
   font-size: ${ props => {
     switch (props.size) {
@@ -44,8 +45,19 @@ const P = styled.p<PProps>`
         return '24px';
     }
   }};
-  line-height: 42px;
-  color: #FFFFFF;
+  line-height: ${ props => {
+    switch (props.size) {
+      case "big":
+        return '42px';
+      case "medium":
+        return '38px';
+      case "small":
+        return '32px';
+      default:
+        return '32px';
+    }
+  }};
+  color: ${ props => props.color || "#FFFFFF" };
 `;
 
 function HomeView() {
