@@ -1,5 +1,7 @@
 import styled from "styled-components";
-import { H1, H2, H3 } from "../styled-components/Headers";
+import { H1, H2, H3, P } from "../styled-components/Typography";
+import { Row } from "../styled-components/Grid";
+import { Button } from "../styled-components/Button";
 
 const Section = styled.section`
   padding: 102px 0;
@@ -7,47 +9,6 @@ const Section = styled.section`
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-`;
-
-
-interface TypographyProps {
-  size?: "big"|"medium"|"small";
-  wight?: "bold"|"normal";
-  color?: string;
-}
-
-const P = styled.p<TypographyProps>`
-  font-weight: normal;
-  font-size: ${ props => {
-    switch (props.size) {
-      case "big":
-        return '32px';
-      case "medium":
-        return '28px';
-      case "small":
-        return '24px';
-      default:
-        return '24px';
-    }
-  }};
-  line-height: ${ props => {
-    switch (props.size) {
-      case "big":
-        return '42px';
-      case "medium":
-        return '38px';
-      case "small":
-        return '32px';
-      default:
-        return '32px';
-    }
-  }};
-  color: ${ props => props.color || "#FFFFFF" };
-`;
-
-const Row = styled.div`
-  display:flex;
-  flex-wrap: wrap;
 `;
 
 const GivCard = styled.div`
@@ -62,26 +23,6 @@ const Container = styled.div`
 const ParticipateCard = styled.div`
   flex: 1;
   padding-right: 76px;
-`;
-
-interface IButtonProps {
-  secondary?: boolean;
-}
-
-const Button = styled.button<IButtonProps>`
-  padding: 25px 32px;
-  background: ${ props => props.secondary ? "#E1458D" : "#5326EC"};
-  height: 64px;
-  border: 0;
-  border-radius: 88px;
-  color: #FFFFFF;
-  width: 100%;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 16px;
-  line-height: 18px;
-  text-align: center;
-  cursor: pointer;
 `;
 
 const ParticipateButton = styled(Button)`
@@ -126,7 +67,7 @@ function HomeView() {
         Giveth is building a future in which giving is effortless and people
          all around the world are rewarded for creating positive change.
         </P>
-        <Row>
+        <Row wrap={1}>
           <GivCard>
             <H3>GIV Token</H3>
             <P>DONATE, EARN, GOVERN</P>
@@ -148,7 +89,7 @@ function HomeView() {
       </Section>
       <Section>
         <H2>How to participate</H2>
-        <Row>
+        <Row wrap={1}>
         <ParticipateCard>
           <H3>Earn</H3>
           <ParticipateDesc>Participate in GIVmining by adding liquidity and generating even more GIV in rewards.</ParticipateDesc>
