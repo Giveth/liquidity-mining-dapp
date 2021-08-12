@@ -16,6 +16,7 @@ export const H1 = styled.h1`
   text-align: left;
   color: #FFFFFF;
   margin: 0;
+  color: inherit
 `;
 
 export const H2 = styled.h2`
@@ -25,6 +26,7 @@ export const H2 = styled.h2`
   line-height: 120%;
   color: #FFFFFF;
   margin: 0;
+  color: inherit
 `;
 
 export const H3 = styled.h3`
@@ -34,6 +36,7 @@ export const H3 = styled.h3`
   line-height: 120%;
   color: #FFFFFF;
   margin: 0;
+  color: inherit
 `;
 
 export const H4 = styled.h3`
@@ -43,6 +46,7 @@ export const H4 = styled.h3`
   line-height: 120%;
   color: #FFFFFF;
   margin: 0;
+  color: inherit
 `;
 
 export const P = styled.p<ITypographyProps>`
@@ -56,7 +60,7 @@ export const P = styled.p<ITypographyProps>`
       case "small":
         return '24px';
       default:
-        return '24px';
+        return 'inherit';
     }
   }};
   line-height: ${ props => {
@@ -68,9 +72,9 @@ export const P = styled.p<ITypographyProps>`
       case "small":
         return '32px';
       default:
-        return '32px';
+        return 'inherit';
     }
   }};
   margin: 0;
-  color: ${ props => props.color || "#FFFFFF" };
+  color: ${ props => props.color || "#inherit" };
 `;
