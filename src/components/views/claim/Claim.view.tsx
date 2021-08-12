@@ -1,5 +1,6 @@
 import { FC, useState } from "react";
 import styled from "styled-components";
+import ClaimCarousel from "./steps-carousel";
 
 const stepsTitle =["Connect", "Invest", "Govern", "Donate", "Claim"]
 
@@ -56,6 +57,7 @@ const ClaimView = () => {
                     <Step title={title} isActive={step === idx} key={idx} />
                 )}
             </Steps>
+            <ClaimCarousel />
         </div>
     );
 }
