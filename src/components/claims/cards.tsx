@@ -76,6 +76,41 @@ const DepositInput = styled.div`
     width: 392px;
 `;
 
+const ImpactCard = styled.div`
+    /* width: 399px; */
+    padding: 20px 30px; 
+    height: 208px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+`;
+
+const PoolCard = styled.div`
+    width: 399px;
+    height: 208px;
+    padding: 20px 30px;
+
+    background: #FFFFFF;
+    border-radius: 16px;
+    color:#1B1657;
+`;
+
+const PoolItems = styled.div`
+    padding: 12px 0;
+`;
+
+const PoolItem = styled.div`
+    font-size: 16px;
+    height: 40px;
+    line-height: 40px;
+`;
+
+const PoolItemBold = styled.div`
+    font-size: 32px;
+    font-weight: bold;
+    line-height: 40px;
+`;
+
 export const EarnCard = () => {
     return (
         <EarnCardContainer>
@@ -83,9 +118,9 @@ export const EarnCard = () => {
                 <H2 as="h1">Earn with GIVmining</H2>
                 <P color={"#CABAFF"}>Provide liquidity or stake your GIV tokens to earn up to 140% APY</P>
             </Header>
-            <Row alignItems={"center"} justifyContent={"space-between"} >
-                <div>
-                    <H4>See your impact</H4>
+            <Row alignItems={"flex-start"} justifyContent={"space-between"} >
+                <ImpactCard>
+                    <H4 as="h2">See your impact</H4>
                     <div>
                         <Row alignItems={"center"} justifyContent={"space-between"}>
                             <DepositeLable>Your deposit</DepositeLable>
@@ -95,7 +130,25 @@ export const EarnCard = () => {
                             <InputWithUnit defaultValue={0} unit={'GIV'} />
                         </DepositInput>
                     </div>
-                </div>
+                </ImpactCard>
+                <PoolCard>
+                    <H4 as="h2">Your Pool</H4>
+                    <PoolItems>
+                        <Row justifyContent="space-between">
+                            <PoolItem>Your deposit</PoolItem>
+                            <PoolItem>{12}</PoolItem>
+                        </Row>
+                        <Row justifyContent="space-between">
+                            <PoolItem>Farm fee</PoolItem>
+                            <PoolItem>{12}</PoolItem>
+                        </Row>
+                        <Row justifyContent="space-between">
+                            <PoolItem>Annual GIV earned</PoolItem>
+                            <PoolItemBold>{12}</PoolItemBold>
+                        </Row>
+                    </PoolItems>
+                    
+                </PoolCard>
             </Row>
         </EarnCardContainer>
     );
