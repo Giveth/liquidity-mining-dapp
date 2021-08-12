@@ -16,3 +16,7 @@ a {
 * {
   box-sizing: border-box;
 }
+
+*:focus {
+  outline: none;
+}
