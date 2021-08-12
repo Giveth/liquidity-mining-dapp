@@ -65,14 +65,14 @@ const Unit = styled.span`
 interface IInputWithUnitProps{
     placeholder?: string;
     unit: string;
-    defaultValue: string | number;
-    onChange?: ()=>{}
+    value: string | number;
+    onChange?: any;
 }
 
-export const InputWithUnit:FC<IInputWithUnitProps> = ({placeholder, unit, defaultValue})=>{
+export const InputWithUnit:FC<IInputWithUnitProps> = ({placeholder, unit, value, onChange})=>{
     return (
         <InputContainer>
-            <Input placeholder={placeholder} defaultValue={defaultValue} />
+            <Input placeholder={placeholder} value={value} onChange={onChange} />
             <Unit>{unit}</Unit>
         </InputContainer>
     );

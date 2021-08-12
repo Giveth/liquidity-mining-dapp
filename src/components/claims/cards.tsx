@@ -1,3 +1,4 @@
+import { useState, ChangeEvent } from "react";
 import styled from "styled-components";
 import { InputWithButton, InputWithUnit } from "../input";
 import { Button } from "../styled-components/Button";
@@ -112,6 +113,18 @@ const PoolItemBold = styled.div`
 `;
 
 export const EarnCard = () => {
+    const [deposite, setDopsite] = useState(0);
+
+    const depositeChangeHandler = (e:ChangeEvent<HTMLInputElement>) => {
+        if (e.target.value.length === 0) {
+            setDopsite(0);
+        } else if (isNaN(+e.target.value)) {
+            setDopsite(deposite);
+        } else {
+            setDopsite(+e.target.value);
+        }
+    }
+
     return (
         <EarnCardContainer>
             <Header>
@@ -127,7 +140,7 @@ export const EarnCard = () => {
                             <MaxGIV>{`Max ${333} GIV`}</MaxGIV>
                         </Row>
                         <DepositInput>
-                            <InputWithUnit defaultValue={0} unit={'GIV'} />
+                            <InputWithUnit value={deposite} unit={'GIV'} onChange={depositeChangeHandler} />
                         </DepositInput>
                     </div>
                 </ImpactCard>
@@ -136,15 +149,15 @@ export const EarnCard = () => {
                     <PoolItems>
                         <Row justifyContent="space-between">
                             <PoolItem>Your deposit</PoolItem>
-                            <PoolItem>{12}</PoolItem>
+                            <PoolItem>{deposite}</PoolItem>
                         </Row>
                         <Row justifyContent="space-between">
                             <PoolItem>Farm fee</PoolItem>
-                            <PoolItem>{12}</PoolItem>
+                            <PoolItem>Free</PoolItem>
                         </Row>
                         <Row justifyContent="space-between">
                             <PoolItem>Annual GIV earned</PoolItem>
-                            <PoolItemBold>{12}</PoolItemBold>
+                            <PoolItemBold>{0}</PoolItemBold>
                         </Row>
                     </PoolItems>
                     
