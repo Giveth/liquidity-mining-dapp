@@ -33,6 +33,16 @@ export const H3 = styled.h3`
   font-size: 44px;
   line-height: 120%;
   color: #FFFFFF;
+  margin: 0;
+`;
+
+export const H4 = styled.h3`
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 120%;
+  color: #FFFFFF;
+  margin: 0;
 `;
 
 export const P = styled.p<ITypographyProps>`
