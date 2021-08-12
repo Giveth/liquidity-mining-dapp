@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import { InputWithButton } from "../input";
+import { InputWithButton, InputWithUnit } from "../input";
 import { Button } from "../styled-components/Button";
 import { Row } from "../styled-components/Grid";
-import { H2, P } from "../styled-components/Typography";
+import { H2, H4,P } from "../styled-components/Typography";
 
 const Card = styled.div`
     position: relative;
@@ -49,9 +49,54 @@ export const ConnectCard = () => {
                 <ConenctButton secondary>CONNECT WALLET</ConenctButton>
                 <Span>or</Span>
                 <InputWithButtonContainer>
-                    <InputWithButton />
+                    <InputWithButton btnLable="Check" placeholder="Enter an address to check your GIVdrop" />
                 </InputWithButtonContainer>
             </Row>
         </ConnectCardContainer>
+    );
+}
+
+const EarnCardContainer = styled(Card)`
+    ::before {
+        content: "";
+        position: absolute;
+    }
+`;
+
+const MaxGIV = styled.span`
+    color: #FED670;
+`;
+
+
+const DepositeLable = styled.span`
+    color: #CABAFF;
+`;
+
+const DepositInput = styled.div`
+    width: 392px;
+`;
+
+export const EarnCard = () => {
+    return (
+        <EarnCardContainer>
+            <Header>
+                <H2 as="h1">Earn with GIVmining</H2>
+                <P color={"#CABAFF"}>Provide liquidity or stake your GIV tokens to earn up to 140% APY</P>
+            </Header>
+            <Row alignItems={"center"} justifyContent={"space-between"} >
+                <div>
+                    <H4>See your impact</H4>
+                    <div>
+                        <Row alignItems={"center"} justifyContent={"space-between"}>
+                            <DepositeLable>Your deposit</DepositeLable>
+                            <MaxGIV>{`Max ${333} GIV`}</MaxGIV>
+                        </Row>
+                        <DepositInput>
+                            <InputWithUnit defaultValue={0} unit={'GIV'} />
+                        </DepositInput>
+                    </div>
+                </div>
+            </Row>
+        </EarnCardContainer>
     );
 }
