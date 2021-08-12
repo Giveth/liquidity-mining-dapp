@@ -15,6 +15,7 @@ export const H1 = styled.h1`
   letter-spacing: -0.02em;
   text-align: left;
   color: #FFFFFF;
+  margin: 0;
 `;
 
 export const H2 = styled.h2`
@@ -23,6 +24,7 @@ export const H2 = styled.h2`
   font-size: 64px;
   line-height: 120%;
   color: #FFFFFF;
+  margin: 0;
 `;
 
 export const H3 = styled.h3`
@@ -59,5 +61,6 @@ export const P = styled.p<ITypographyProps>`
         return '32px';
     }
   }};
+  margin: 0;
   color: ${ props => props.color || "#FFFFFF" };
 `;
