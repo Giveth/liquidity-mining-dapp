@@ -1,3 +1,4 @@
+import { FC } from "react";
 import styled from "styled-components";
 
 interface IHasBG{
@@ -11,12 +12,9 @@ const InputContainer = styled.div<IHasBG>`
     height: 68px;
     display: flex;
     width: 100%;
+    align-items: center;
+    margin: 8px 0;
 `;
-
-// interface IInputProps {
-//     placeHolder: string;
-    
-// }
 
 const Input = styled.input<IHasBG>`
     border: 0;
@@ -43,11 +41,39 @@ const Button = styled.button<IHasBG>`
     line-height: 13px;
 `;
 
-export const InputWithButton = ()=>{
+interface IInputWithButtonProps{
+    placeholder?: string;
+    btnLable?: string;
+    onClick?: (e: any)=>{};
+}
+
+export const InputWithButton:FC<IInputWithButtonProps> = ({placeholder, btnLable, onClick})=>{
     return (
         <InputContainer>
-            <Input placeholder="Enter an address to check your GIVdrop" onClick={()=>{console.log("Salam")}} />
-            <Button>Check</Button>
+            <Input placeholder={placeholder} />
+            <Button onClick={onClick}>{btnLable}</Button>
+        </InputContainer>
+    );
+}
+
+
+const Unit = styled.span`
+    padding-right: 10px;
+    color: #CABAFF;
+`;
+
+interface IInputWithUnitProps{
+    placeholder?: string;
+    unit: string;
+    defaultValue: string | number;
+    onChange?: ()=>{}
+}
+
+export const InputWithUnit:FC<IInputWithUnitProps> = ({placeholder, unit, defaultValue})=>{
+    return (
+        <InputContainer>
+            <Input placeholder={placeholder} defaultValue={defaultValue} />
+            <Unit>{unit}</Unit>
         </InputContainer>
     );
 }
