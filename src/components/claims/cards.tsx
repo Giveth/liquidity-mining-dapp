@@ -170,3 +170,30 @@ export const EarnCard = () => {
         </EarnCardContainer>
     );
 }
+
+
+const VoteCardContainer = styled(Card)`
+    ::before {
+        content: "";
+        position: absolute;
+    }
+`;
+
+
+export const VoteCard = () => {
+    return (
+        <VoteCardContainer>
+            <Header>
+                <H2 as="h1">Vote in the GIVgarden</H2>
+                <P color={"#CABAFF"}>Participate in Giveth governance using the GIVgarden. Vote on proposals with GIV and earn rewards.</P>
+            </Header>
+            <Row alignItems={"center"} justifyContent={"space-between"} >
+                <ConenctButton secondary>CONNECT WALLET</ConenctButton>
+                <Span>or</Span>
+                <InputWithButtonContainer>
+                    <InputWithButton btnLable="Check" placeholder="Enter an address to check your GIVdrop" />
+                </InputWithButtonContainer>
+            </Row>
+        </VoteCardContainer>
+    );
+}
