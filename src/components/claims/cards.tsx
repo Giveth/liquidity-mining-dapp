@@ -20,7 +20,12 @@ const Card = styled.div`
 const ConnectCardContainer = styled(Card)`
     ::before {
         content: "";
+        background-image: url("/images/connect.png");
         position: absolute;
+        width: 473px;
+        height: 210px;
+        top: 0;
+        right: 0;
     }
 `;
 
