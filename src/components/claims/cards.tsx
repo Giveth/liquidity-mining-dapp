@@ -69,7 +69,13 @@ export const ConnectCard = () => {
 const EarnCardContainer = styled(Card)`
     ::before {
         content: "";
+        background-image: url("/images/earn.png");
         position: absolute;
+        width: 368px;
+        height: 361px;
+        bottom: 0;
+        right: 0;
+        z-index: 0;
     }
 `;
 
@@ -103,6 +109,7 @@ const PoolCard = styled.div`
     background: #FFFFFF;
     border-radius: 16px;
     color:#1B1657;
+    z-index: 1;
 `;
 
 const PoolItems = styled.div`
