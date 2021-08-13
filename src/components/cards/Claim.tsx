@@ -6,7 +6,7 @@ import { H2, P } from "../styled-components/Typography";
 import { Card, Header } from "./common";
 
 const ClaimCardContainer = styled(Card)`
-    ::after {
+    ::before {
         content: "";
         background-image: url("/images/wave.png");
         position: absolute;
@@ -19,34 +19,24 @@ const ClaimCardContainer = styled(Card)`
     }
 `;
 
+const ClaimHeader = styled(Header)`
+    margin: 116px auto 48px auto;
+    text-align: center;
+`;
+
 const ClaimButton = styled(Button)`
     width: 356px;
-`;
-
-const Span = styled.div`
-    display: inline-block;
-    font-size: 20px;
-    line-height: 26px;
-    text-transform: uppercase;
-`;
-
-const InputWithButtonContainer = styled.div`
-    width: 588px;
 `;
 
 const ClaimCard = () => {
     return (
         <ClaimCardContainer>
-            <Header>
+            <ClaimHeader>
                 <H2 as="h1">Claim your GIVdrop</H2>
-                <P size="small" color={"#CABAFF"}>Claim your wallet or check an ethereum address to see your rewards.</P>
-            </Header>
-            <Row alignItems={"center"} justifyContent={"space-between"} >
+                <P size="small" color={"#CABAFF"}>Claim your tokens and put them to good use.</P>
+            </ClaimHeader>
+            <Row alignItems={"center"} justifyContent={"center"} >
                 <ClaimButton secondary>CONNECT WALLET</ClaimButton>
-                <Span>or</Span>
-                <InputWithButtonContainer>
-                    <InputWithButton btnLable="Check" placeholder="Enter an address to check your GIVdrop" />
-                </InputWithButtonContainer>
             </Row>
         </ClaimCardContainer>
     );
