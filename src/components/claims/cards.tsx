@@ -11,6 +11,10 @@ const Card = styled.div`
     height: 582px;
     background: #3C14C5;
     padding: 96px 80px;
+    background-image: url("/images/GIVGIVGIV.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 10px auto;
 `;
 
 const ConnectCardContainer = styled(Card)`
