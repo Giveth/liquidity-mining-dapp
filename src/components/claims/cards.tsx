@@ -93,7 +93,6 @@ const DepositInput = styled.div`
 `;
 
 const ImpactCard = styled.div`
-    /* width: 399px; */
     padding: 20px 30px; 
     height: 208px;
     display: flex;
@@ -187,24 +186,86 @@ export const EarnCard = () => {
 const VoteCardContainer = styled(Card)`
     ::before {
         content: "";
+        background-image: url("/images/vote.png");
         position: absolute;
+        width: 274px;
+        height: 313px;
+        bottom: 0;
+        left: 0;
+        z-index: 0;
     }
 `;
 
 
+const VoteGIVToken = styled.div`
+    padding: 20px 38px; 
+    height: 208px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+`;
+
+const VoteLabel = styled.span`
+    color: #CABAFF;
+`;
+
+const VoteInput = styled.div`
+    width: 392px;
+`;
+
+
+const YouCanEarn = styled(VoteGIVToken)``;
+
+const VoteGIVEarn = styled.div`
+    font-family: Red Hat Text;
+    font-size: 48px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 80px;
+    letter-spacing: 0em;
+    text-align: left;
+`;
+
+
 export const VoteCard = () => {
+    const [stacked, setStacked] = useState(0);
+
+    const stackedChangeHandler = (e:ChangeEvent<HTMLInputElement>) => {
+        if (e.target.value.length === 0) {
+            setStacked(0);
+        } else if (isNaN(+e.target.value)) {
+            setStacked(stacked);
+        } else {
+            setStacked(+e.target.value);
+        }
+    }
+
     return (
         <VoteCardContainer>
             <Header>
                 <H2 as="h1">Vote in the GIVgarden</H2>
                 <P color={"#CABAFF"}>Participate in Giveth governance using the GIVgarden. Vote on proposals with GIV and earn rewards.</P>
             </Header>
-            <Row alignItems={"center"} justifyContent={"space-between"} >
-                <ConenctButton secondary>CONNECT WALLET</ConenctButton>
-                <Span>or</Span>
-                <InputWithButtonContainer>
-                    <InputWithButton btnLable="Check" placeholder="Enter an address to check your GIVdrop" />
-                </InputWithButtonContainer>
+            <Row alignItems={"center"} justifyContent={"flex-end"} >
+                <VoteGIVToken>
+                    <H4 as="h2">If you vote with GIV tokens</H4>
+                    <div>
+                        <Row alignItems={"center"} justifyContent={"space-between"}>
+                            <VoteLabel>Amount staked on proposals</VoteLabel>
+                            <MaxGIV>{`Max ${333} GIV`}</MaxGIV>
+                        </Row>
+                        <VoteInput>
+                            <InputWithUnit value={stacked} unit={'GIV'} onChange={stackedChangeHandler} />
+                        </VoteInput>
+                    </div>
+                </VoteGIVToken>
+                <YouCanEarn>
+                    <H4 as="h2">You can earn</H4>
+                    <div>
+                        <VoteLabel>GIV Token</VoteLabel>
+                        <VoteGIVEarn>{stacked}</VoteGIVEarn>
+                    </div>
+                </YouCanEarn>
             </Row>
         </VoteCardContainer>
     );
