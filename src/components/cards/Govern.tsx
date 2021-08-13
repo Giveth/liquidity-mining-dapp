@@ -64,7 +64,7 @@ const GovernCard = () => {
         <GovernCardContainer>
             <Header>
                 <H2 as="h1">Govern in the GIVgarden</H2>
-                <P color={"#CABAFF"}>Participate in Giveth governance using the GIVgarden. Govern on proposals with GIV and earn rewards.</P>
+                <P size="small" color={"#CABAFF"}>Participate in Giveth governance using the GIVgarden. Govern on proposals with GIV and earn rewards.</P>
             </Header>
             <Row alignItems={"center"} justifyContent={"flex-end"} >
                 <GovernGIVToken>

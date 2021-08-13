@@ -78,7 +78,7 @@ const InvestCard = () => {
         <InvestCardContainer>
             <Header>
                 <H2 as="h1">Invest with GIVmining</H2>
-                <P color={"#CABAFF"}>Provide liquidity or stake your GIV tokens to earn up to 140% APY</P>
+                <P size="small" color={"#CABAFF"}>Provide liquidity or stake your GIV tokens to earn up to 140% APY</P>
             </Header>
             <Row alignItems={"flex-start"} justifyContent={"space-between"} >
                 <ImpactCard>

@@ -37,7 +37,7 @@ export const ConnectCard = () => {
         <ConnectCardContainer>
             <Header>
                 <H2 as="h1">Claim your GIVdrop</H2>
-                <P color={"#CABAFF"}>Connect your wallet or check an ethereum address to see your rewards.</P>
+                <P size="small" color={"#CABAFF"}>Connect your wallet or check an ethereum address to see your rewards.</P>
             </Header>
             <Row alignItems={"center"} justifyContent={"space-between"} >
                 <ConenctButton secondary>CONNECT WALLET</ConenctButton>

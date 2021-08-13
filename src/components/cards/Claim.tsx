@@ -39,7 +39,7 @@ const ClaimCard = () => {
         <ClaimCardContainer>
             <Header>
                 <H2 as="h1">Claim your GIVdrop</H2>
-                <P color={"#CABAFF"}>Claim your wallet or check an ethereum address to see your rewards.</P>
+                <P size="small" color={"#CABAFF"}>Claim your wallet or check an ethereum address to see your rewards.</P>
             </Header>
             <Row alignItems={"center"} justifyContent={"space-between"} >
                 <ClaimButton secondary>CONNECT WALLET</ClaimButton>
