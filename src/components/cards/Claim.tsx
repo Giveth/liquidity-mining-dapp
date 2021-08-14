@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { InputWithButton } from "../input";
 import { Button } from "../styled-components/Button";
 import { Row } from "../styled-components/Grid";
 import { H2, P } from "../styled-components/Typography";
@@ -36,7 +35,7 @@ const ClaimCard = () => {
                 <P size="small" color={"#CABAFF"}>Claim your tokens and put them to good use.</P>
             </ClaimHeader>
             <Row alignItems={"center"} justifyContent={"center"} >
-                <ClaimButton secondary>CONNECT WALLET</ClaimButton>
+                <ClaimButton secondary>CLAIM {3333} GIV Tokens</ClaimButton>
             </Row>
         </ClaimCardContainer>
     );
