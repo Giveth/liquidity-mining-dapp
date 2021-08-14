@@ -1,5 +1,6 @@
 import React from "react";
 import ClaimCard from "../../cards/Claim";
+import CongratulationsCard from "../../cards/Congratulations";
 import { ConnectCard } from "../../cards/Connect";
 import { DonateCard } from "../../cards/Donate";
 import GovernCard from "../../cards/Govern"; "../../cards/Govern";
@@ -12,6 +13,7 @@ const ClaimCarousel = () => {
         <GovernCard />
         <DonateCard />
         <ClaimCard />
+        <CongratulationsCard />
     </div>
 };
 
