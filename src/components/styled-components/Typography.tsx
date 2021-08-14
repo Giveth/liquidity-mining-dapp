@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 interface ITypographyProps {
-  size?: "big"|"medium"|"small";
+  size?: "xlarge"|"large"|"medium"|"small";
   wight?: "bold"|"normal";
   color?: string;
 }
@@ -16,7 +16,7 @@ export const H1 = styled.h1`
   text-align: left;
   color: #FFFFFF;
   margin: 0;
-  color: inherit
+  color: inherit;
 `;
 
 export const H2 = styled.h2`
@@ -26,7 +26,7 @@ export const H2 = styled.h2`
   line-height: 120%;
   color: #FFFFFF;
   margin: 0;
-  color: inherit
+  color: inherit;
 `;
 
 export const H3 = styled.h3`
@@ -36,7 +36,7 @@ export const H3 = styled.h3`
   line-height: 120%;
   color: #FFFFFF;
   margin: 0;
-  color: inherit
+  color: inherit;
 `;
 
 export const H4 = styled.h3`
@@ -46,14 +46,16 @@ export const H4 = styled.h3`
   line-height: 120%;
   color: #FFFFFF;
   margin: 0;
-  color: inherit
+  color: inherit;
 `;
 
 export const P = styled.p<ITypographyProps>`
   font-weight: normal;
   font-size: ${ props => {
     switch (props.size) {
-      case "big":
+      case "xlarge":
+        return '42px';
+      case "large":
         return '32px';
       case "medium":
         return '28px';
@@ -65,7 +67,9 @@ export const P = styled.p<ITypographyProps>`
   }};
   line-height: ${ props => {
     switch (props.size) {
-      case "big":
+      case "xlarge":
+        return '60px';
+      case "large":
         return '42px';
       case "medium":
         return '38px';
