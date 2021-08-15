@@ -1,9 +1,9 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, FC } from "react";
 import styled from "styled-components";
 import { InputWithUnit } from "../input";
 import { Row } from "../styled-components/Grid";
 import { H2, H4,P } from "../styled-components/Typography";
-import { Card, Header, MaxGIV } from "./common";
+import { Card, Header, ICardProps, MaxGIV } from "./common";
 
 const InvestCardContainer = styled(Card)`
     ::before {
@@ -61,7 +61,7 @@ const PoolItemBold = styled.div`
     line-height: 40px;
 `;
 
-const InvestCard = () => {
+const InvestCard:FC<ICardProps> = ({activeIndex, index}) => {
     const [deposite, setDopsite] = useState(0);
 
     const depositeChangeHandler = (e:ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +75,7 @@ const InvestCard = () => {
     }
 
     return (
-        <InvestCardContainer>
+        <InvestCardContainer activeIndex={activeIndex} index={index}>
             <Header>
                 <H2 as="h1">Invest with GIVmining</H2>
                 <P size="small" color={"#CABAFF"}>Provide liquidity or stake your GIV tokens to earn up to 140% APY</P>

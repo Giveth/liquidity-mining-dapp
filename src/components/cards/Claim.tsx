@@ -1,8 +1,9 @@
+import { FC } from "react";
 import styled from "styled-components";
 import { Button } from "../styled-components/Button";
 import { Row } from "../styled-components/Grid";
 import { H2, P } from "../styled-components/Typography";
-import { Card, Header } from "./common";
+import { Card, Header, ICardProps } from "./common";
 
 const ClaimCardContainer = styled(Card)`
     ::before {
@@ -27,9 +28,9 @@ const ClaimButton = styled(Button)`
     width: 356px;
 `;
 
-const ClaimCard = () => {
+const ClaimCard:FC<ICardProps> = ({activeIndex, index}) => {
     return (
-        <ClaimCardContainer>
+        <ClaimCardContainer activeIndex={activeIndex} index={index}>
             <ClaimHeader>
                 <H2 as="h1">Claim your GIVdrop</H2>
                 <P size="small" color={"#CABAFF"}>Claim your tokens and put them to good use.</P>

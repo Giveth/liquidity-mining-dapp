@@ -1,13 +1,19 @@
-import { FC, useState } from "react";
+import React, { FC, useState } from "react";
 import styled from "styled-components";
-import ClaimCarousel from "./steps-carousel";
+import CongratulationsCard from "../../cards/Congratulations";
+// import ClaimCarousel from "./steps-carousel";
+import ClaimCard from "../../cards/Claim";
+import { ConnectCard } from "../../cards/Connect";
+import { DonateCard } from "../../cards/Donate";
+import GovernCard from "../../cards/Govern"; "../../cards/Govern";
+import InvestCard from "../../cards/Invest";
+import { Row } from "../../styled-components/Grid";
+import { ICardProps } from "../../cards/common";
 
 const stepsTitle =["Connect", "Invest", "Govern", "Donate", "Claim"]
 
-const Steps = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+const Steps = styled(Row)`
+    height: 80px;
 `;
 
 interface IStepTitleProps {
@@ -40,24 +46,39 @@ const StepTitle = styled.div<IStepTitleProps>`
 interface IStepProps {
     title: string;
     isActive: boolean;
+    onClick: any;
 }
 
-const Step: FC<IStepProps> = ({title, isActive}) => {
+const Step: FC<IStepProps> = ({title, isActive,onClick}) => {
     return (
-        <StepTitle isActive={isActive}>{title}</StepTitle>
+        <StepTitle isActive={isActive} onClick={onClick}>{title}</StepTitle>
     );
 }
 
-const ClaimView = () => {
+const ClaimCarouselContainer = styled.div`
+    overflow-x: hidden;
+    position: relative;
+    height: calc(100vh - 80px);
+`;
+
+const ClaimView:FC<ICardProps> = ({activeIndex, index}) => {
     const [step,setStep] = useState(0);
     return (
         <div>
-            <Steps>
+            <Steps justifyContent="center" alignItems="center">
                 {stepsTitle.map((title, idx)=>
-                    <Step title={title} isActive={step === idx} key={idx} />
+                    <Step title={title} isActive={step === idx} key={idx} onClick={()=>{setStep(idx)}} />
                 )}
             </Steps>
-            <ClaimCarousel />
+            <ClaimCarouselContainer>
+                <ConnectCard activeIndex={step} index={0}/>
+                <InvestCard activeIndex={step} index={1}/>
+                <GovernCard activeIndex={step} index={2}/>
+                <DonateCard activeIndex={step} index={3}/>
+                <ClaimCard activeIndex={step} index={4}/>
+            </ClaimCarouselContainer>
+            {/* <ClaimCarousel /> */}
+            {/* <CongratulationsCard /> */}
         </div>
     );
 }

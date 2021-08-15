@@ -1,7 +1,12 @@
 import styled from "styled-components";
 
-export const Card = styled.div`
-    position: relative;
+export interface ICardProps {
+    activeIndex: number;
+    index: number;
+}
+
+export const Card = styled.div<ICardProps>`
+    position: absolute;
     width: 1120px;
     height: 582px;
     background: #3C14C5;
@@ -10,6 +15,10 @@ export const Card = styled.div`
     background-repeat: no-repeat;
     background-size: cover;
     margin: 10px auto;
+    top: 10px;
+    left: ${props => `${(props.index - props.activeIndex) * 100 + 50}%` };
+    transform: translateX(-50%);
+    transition: left 0.3s ease-out;
 `;
 
 export const Header = styled.div`

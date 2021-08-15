@@ -1,9 +1,9 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, FC } from "react";
 import styled from "styled-components";
 import { InputWithUnit } from "../input";
 import { Row } from "../styled-components/Grid";
 import { H2, H4, P } from "../styled-components/Typography";
-import { Card, Header, MaxGIV } from "./common";
+import { Card, Header, ICardProps, MaxGIV } from "./common";
 
 const DonateCardContainer = styled(Card)`
     ::before {
@@ -58,7 +58,7 @@ const DonateHeader = styled(Header)`
     margin-bottom: 16px;
 `;
 
-export const DonateCard = () => {
+export const DonateCard:FC<ICardProps> = ({activeIndex, index}) => {
     const [donation, setDonation] = useState(0);
 
     const stackedChangeHandler = (e:ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +72,7 @@ export const DonateCard = () => {
     }
 
     return (
-        <DonateCardContainer>
+        <DonateCardContainer activeIndex={activeIndex} index={index}>
             <DonateHeader>
                 <Title as="h1">Give GIV to get GIVbacks!</Title>
                 <Description size="small" color={"#CABAFF"}>Donate to verified projects on Giveth to earn more GIV with GIVbacks.</Description>

@@ -1,9 +1,9 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, FC } from "react";
 import styled from "styled-components";
 import { InputWithUnit } from "../input";
 import { Row } from "../styled-components/Grid";
 import { H2, H4,P } from "../styled-components/Typography";
-import { Card, Header, MaxGIV } from "./common";
+import { Card, Header, ICardProps, MaxGIV } from "./common";
 
 const GovernCardContainer = styled(Card)`
     ::before {
@@ -47,7 +47,7 @@ const GovernGIVEarn = styled.div`
     text-align: left;
 `;
 
-const GovernCard = () => {
+const GovernCard:FC<ICardProps> = ({activeIndex, index}) => {
     const [stacked, setStacked] = useState(0);
 
     const stackedChangeHandler = (e:ChangeEvent<HTMLInputElement>) => {
@@ -61,7 +61,7 @@ const GovernCard = () => {
     }
 
     return (
-        <GovernCardContainer>
+        <GovernCardContainer activeIndex={activeIndex} index={index}>
             <Header>
                 <H2 as="h1">Govern in the GIVgarden</H2>
                 <P size="small" color={"#CABAFF"}>Participate in Giveth governance using the GIVgarden. Govern on proposals with GIV and earn rewards.</P>

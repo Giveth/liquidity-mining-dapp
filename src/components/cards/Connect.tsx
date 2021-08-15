@@ -1,9 +1,10 @@
+import { FC } from "react";
 import styled from "styled-components";
 import { InputWithButton } from "../input";
 import { Button } from "../styled-components/Button";
 import { Row } from "../styled-components/Grid";
 import { H2, P } from "../styled-components/Typography";
-import { Card, Header } from "./common";
+import { Card, Header, ICardProps } from "./common";
 
 const ConnectCardContainer = styled(Card)`
     ::before {
@@ -32,9 +33,9 @@ const InputWithButtonContainer = styled.div`
     width: 588px;
 `;
 
-export const ConnectCard = () => {
+export const ConnectCard:FC<ICardProps> = ({activeIndex, index}) => {
     return (
-        <ConnectCardContainer>
+        <ConnectCardContainer activeIndex={activeIndex} index={index} >
             <Header>
                 <H2 as="h1">Claim your GIVdrop</H2>
                 <P size="small" color={"#CABAFF"}>Connect your wallet or check an ethereum address to see your rewards.</P>
