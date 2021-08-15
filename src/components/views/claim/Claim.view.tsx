@@ -7,7 +7,6 @@ import { DonateCard } from "../../cards/Donate";
 import GovernCard from "../../cards/Govern"; "../../cards/Govern";
 import InvestCard from "../../cards/Invest";
 import { Row } from "../../styled-components/Grid";
-import { ICardProps } from "../../cards/common";
 
 const stepsTitle =["Connect", "Invest", "Govern", "Donate", "Claim"]
 
@@ -54,16 +53,22 @@ const Step: FC<IStepProps> = ({title, isActive,onClick}) => {
     );
 }
 
+const ClaimViewContainer = styled.div`
+    background-image: url("/images/cardsbg1.png"),url("/images/cardsbg.png");
+    background-repeat: repeat-x, no-repeat;
+    background-position-y: bottom, top;
+`;
+
 const ClaimCarouselContainer = styled.div`
     overflow-x: hidden;
     position: relative;
     height: calc(100vh - 80px);
 `;
 
-const ClaimView:FC<ICardProps> = ({activeIndex, index}) => {
+const ClaimView = () => {
     const [step,setStep] = useState(0);
     return step < 5 ? 
-        <>
+        <ClaimViewContainer>
             <Steps justifyContent="center" alignItems="center">
                 {stepsTitle.map((title, idx)=>
                     <Step title={title} isActive={step === idx} key={idx} onClick={()=>{setStep(idx)}} />
@@ -76,7 +81,7 @@ const ClaimView:FC<ICardProps> = ({activeIndex, index}) => {
                 <DonateCard activeIndex={step} index={3}/>
                 <ClaimCard activeIndex={step} index={4}/>
             </ClaimCarouselContainer>
-        </>
+        </ClaimViewContainer>
     :
     <CongratulationsCard />
 }

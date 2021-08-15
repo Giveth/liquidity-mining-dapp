@@ -60,7 +60,7 @@ function HomeView() {
     <Container>
       <Section>
         <H1>Welcome to the Giveth Economy</H1>
-        <P size="big">The Giveth Economy is the collective of projects, donors,
+        <P size="large">The Giveth Economy is the collective of projects, donors,
            builders, and community members building the Future of Giving.</P>
         <H2>The Economy of Giving</H2>
         <P>
