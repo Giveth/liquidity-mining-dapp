@@ -3,6 +3,7 @@ import { H1, H2, H3, P } from "../styled-components/Typography";
 import { Row } from "../styled-components/Grid";
 import { Button } from "../styled-components/Button";
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 
 const Section = styled.section`
   padding: 0 132px;
@@ -158,12 +159,19 @@ const ClaimCardTitle = styled(H2)`
 `;
 
 
+
 function HomeView() {
+  const router = useRouter();
+
+  const goToClaim = () => {
+    router.push('/claim')
+  }
+
   return (
     <>
       <Header justifyContent="space-between" alignItems="center">
         <Image width="58" height="58px" alt="Giveth logo" src="/images/logo.svg"/>
-        <HeaderClaimButton secondary>CLAIM GIV</HeaderClaimButton>
+        <HeaderClaimButton secondary onClick={goToClaim}>CLAIM GIV</HeaderClaimButton>
       </Header>
       <Section1>
           <Title>Welcome to the Giveth Economy</Title>
@@ -227,7 +235,7 @@ function HomeView() {
         <ClaimCard>
           <ClaimCardTitle>Claim your GIV tokens</ClaimCardTitle>
           <P size="small">Connect your wallet or check an ethereum address to see your rewards.</P>
-          <ClaimCardButton secondary >CLAIM YOUR GIV</ClaimCardButton>
+          <ClaimCardButton secondary onClick={goToClaim}>CLAIM YOUR GIV</ClaimCardButton>
         </ClaimCard>
       </Section3>
     </>
