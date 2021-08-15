@@ -1,14 +1,13 @@
 import styled from "styled-components";
 
 interface ITypographyProps {
-  size?: "xlarge"|"large"|"medium"|"small";
+  size?: "xlarge"|"large"|"medium"|"small"|"xsmall";
   wight?: "bold"|"normal";
   color?: string;
 }
 
 export const H1 = styled.h1`
   font-family: 'tex_gyre_adventor';
-  max-width: 989px;
   font-size: 120px;
   font-style: normal;
   font-weight: 700;
@@ -66,6 +65,8 @@ export const P = styled.p<ITypographyProps>`
         return '28px';
       case "small":
         return '24px';
+      case "xsmall":
+        return '20px';
       default:
         return 'inherit';
     }
@@ -80,6 +81,8 @@ export const P = styled.p<ITypographyProps>`
         return '38px';
       case "small":
         return '32px';
+      case "xsmall":
+        return '24px';
       default:
         return 'inherit';
     }
