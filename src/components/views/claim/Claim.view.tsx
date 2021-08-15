@@ -1,7 +1,6 @@
 import React, { FC, useState } from "react";
 import styled from "styled-components";
 import CongratulationsCard from "../../cards/Congratulations";
-// import ClaimCarousel from "./steps-carousel";
 import ClaimCard from "../../cards/Claim";
 import { ConnectCard } from "../../cards/Connect";
 import { DonateCard } from "../../cards/Donate";
@@ -63,8 +62,8 @@ const ClaimCarouselContainer = styled.div`
 
 const ClaimView:FC<ICardProps> = ({activeIndex, index}) => {
     const [step,setStep] = useState(0);
-    return (
-        <div>
+    return step < 5 ? 
+        <>
             <Steps justifyContent="center" alignItems="center">
                 {stepsTitle.map((title, idx)=>
                     <Step title={title} isActive={step === idx} key={idx} onClick={()=>{setStep(idx)}} />
@@ -77,10 +76,9 @@ const ClaimView:FC<ICardProps> = ({activeIndex, index}) => {
                 <DonateCard activeIndex={step} index={3}/>
                 <ClaimCard activeIndex={step} index={4}/>
             </ClaimCarouselContainer>
-            {/* <ClaimCarousel /> */}
-            {/* <CongratulationsCard /> */}
-        </div>
-    );
+        </>
+    :
+    <CongratulationsCard />
 }
 
 export default ClaimView;
