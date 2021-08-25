@@ -1,10 +1,12 @@
-import { FC } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { InputWithButton } from '../input'
+import { WalletAddressInputWithButton } from '../input'
 import { Button } from '../styled-components/Button'
 import { Row } from '../styled-components/Grid'
 import { H2, P } from '../styled-components/Typography'
 import { Card, Header, ICardProps } from './common'
+import { Context as OnboardContext } from '../../providers/onboard'
+import { Context as UserContext } from '../../providers/user'
 
 const ConnectCardContainer = styled(Card)`
 	::before {
@@ -34,6 +36,19 @@ const InputWithButtonContainer = styled.div`
 `
 
 export const ConnectCard: FC<ICardProps> = ({ activeIndex, index }) => {
+	const { address, changeWallet = () => {} } = useContext(OnboardContext)
+	const { submitUserAddress } = useContext(UserContext)
+
+	const [walletAddress, setWalletAddress] = useState<string>('')
+
+	useEffect(() => {
+		setWalletAddress(address)
+	}, [address])
+
+	const submitAddress = async (value: string): Promise<void> => {
+		await submitUserAddress(value)
+	}
+
 	return (
 		<ConnectCardContainer activeIndex={activeIndex} index={index}>
 			<Header>
@@ -44,12 +59,16 @@ export const ConnectCard: FC<ICardProps> = ({ activeIndex, index }) => {
 				</P>
 			</Header>
 			<Row alignItems={'center'} justifyContent={'space-between'}>
-				<ConenctButton secondary>CONNECT WALLET</ConenctButton>
+				<ConenctButton secondary onClick={changeWallet}>
+					CONNECT WALLET
+				</ConenctButton>
 				<Span>or</Span>
 				<InputWithButtonContainer>
-					<InputWithButton
+					<WalletAddressInputWithButton
 						btnLable='Check'
 						placeholder='Enter an address to check your GIVdrop'
+						walletAddress={walletAddress}
+						onSubmit={submitAddress}
 					/>
 				</InputWithButtonContainer>
 			</Row>

@@ -7,7 +7,7 @@ interface BasicNetworkConfig {
 	WETH_TOKEN_ADDRESS?: string
 	TOKEN_DISTRO_ADDRESS: string
 	GIV?: PoolConfig
-	nodeUrl?: string
+	nodeUrl: string
 }
 
 interface MainnetNetworkConfig extends BasicNetworkConfig {

@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 interface IHasBG {
@@ -41,24 +41,32 @@ const Button = styled.button<IHasBG>`
 	line-height: 13px;
 `
 
-interface IInputWithButtonProps {
+interface IWalletAddressInputWithButtonProps {
 	placeholder?: string
 	btnLable?: string
-	onClick?: () => {}
+	onSubmit: (address: string) => {}
+	walletAddress?: string
 }
 
-export const InputWithButton: FC<IInputWithButtonProps> = ({
-	placeholder,
-	btnLable,
-	onClick,
-}) => {
-	return (
-		<InputContainer>
-			<Input placeholder={placeholder} />
-			<Button onClick={onClick}>{btnLable}</Button>
-		</InputContainer>
-	)
-}
+export const WalletAddressInputWithButton: FC<IWalletAddressInputWithButtonProps> =
+	({ placeholder, btnLable, onSubmit, walletAddress = '' }) => {
+		const [value, setValue] = useState<string>(walletAddress)
+
+		useEffect(() => {
+			setValue(walletAddress)
+		}, [walletAddress])
+
+		return (
+			<InputContainer>
+				<Input
+					placeholder={placeholder}
+					value={value}
+					onChange={e => setValue(e.target.value)}
+				/>
+				<Button onClick={() => onSubmit(value)}>{btnLable}</Button>
+			</InputContainer>
+		)
+	}
 
 const Unit = styled.span`
 	padding-right: 10px;
