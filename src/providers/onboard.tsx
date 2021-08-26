@@ -87,7 +87,7 @@ export const Onboard: FC<Props> = ({ children }) => {
 
 	return (
 		<Context.Provider value={{ network, address, changeWallet }}>
-			${children}
+			{children}
 		</Context.Provider>
 	)
 }

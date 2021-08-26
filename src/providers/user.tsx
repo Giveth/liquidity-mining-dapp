@@ -64,7 +64,7 @@ export const User: FC<Props> = ({ children }) => {
 				submitUserAddress,
 			}}
 		>
-			${children}
+			{children}
 		</Context.Provider>
 	)
 }
