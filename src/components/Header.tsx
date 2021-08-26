@@ -15,7 +15,6 @@ interface IHeader {
 const StyledHeader = styled(Row)<IHeader>`
 	height: 128px;
 	padding: 0 132px;
-	/* margin-top: 16px; */
 	position: relative;
 	background-color: ${props => props.theme.bg};
 	::before {
