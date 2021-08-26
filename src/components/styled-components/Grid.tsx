@@ -27,6 +27,7 @@ export const Row = styled.div<IRowProps>`
 
 export const Container = styled.div`
 	width: 100%;
+	margin: 0 auto;
 	@media (min-width: 576px) {
 		width: 540px;
 	}
