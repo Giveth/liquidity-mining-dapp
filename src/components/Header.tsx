@@ -13,10 +13,9 @@ interface IHeader {
 const StyledHeader = styled(Row)<IHeader>`
 	height: 128px;
 	padding: 0 132px;
-	margin-top: 16px;
+	/* margin-top: 16px; */
 	position: relative;
-	background-color: ${props =>
-		props.theme === ThemeType.Dark ? '#1B1657' : '#ffffff'};
+	background-color: ${props => props.theme.bg};
 	::before {
 		content: url('/images/homebg1.png');
 		position: absolute;
@@ -37,8 +36,19 @@ const HeaderClaimButton = styled(Button)`
 	padding: 0;
 `
 
+const Title = styled.h1`
+	font-family: 'red-hat';
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: 24px;
+	letter-spacing: 0.02em;
+	text-align: left;
+	color: ${props => props.theme.fg};
+`
+
 const Header: FC<IHeader> = () => {
-	const theme = useContext(ThemeContext)
+	const { theme } = useContext(ThemeContext)
 	const goToClaim = () => {
 		router.push('/claim')
 	}
@@ -49,17 +59,22 @@ const Header: FC<IHeader> = () => {
 			alignItems='center'
 			theme={theme}
 		>
-			<Image
-				width='58'
-				height='58px'
-				alt='Giveth logo'
-				src='/images/logo.svg'
-			/>
-			<div>
+			<Row gap='16px'>
+				<Image
+					width='58'
+					height='58px'
+					alt='Giveth logo'
+					src={`/images/${
+						theme.type === ThemeType.Dark ? 'logod' : 'logol'
+					}.svg`}
+				/>
+				<Title theme={theme}>THE FUTURE OF GIVING</Title>
+			</Row>
+			<Row>
 				<HeaderClaimButton secondary onClick={goToClaim}>
 					CLAIM GIV
 				</HeaderClaimButton>
-			</div>
+			</Row>
 		</StyledHeader>
 	)
 }
