@@ -4,11 +4,12 @@ import CongratulationsCard from '../../cards/Congratulations'
 import ClaimCard from '../../cards/Claim'
 import { ConnectCard } from '../../cards/Connect'
 import { DonateCard } from '../../cards/Donate'
+import { StreamCard } from '../../cards/Stream'
 import GovernCard from '../../cards/Govern'
 import InvestCard from '../../cards/Invest'
 import { Row } from '../../styled-components/Grid'
 
-const stepsTitle = ['Connect', 'Invest', 'Govern', 'Donate', 'Claim']
+const stepsTitle = ['Connect', 'Invest', 'Govern', 'Donate', 'Stream', 'Claim']
 
 const Steps = styled(Row)`
 	height: 80px;
@@ -88,7 +89,8 @@ const ClaimView = () => {
 				<InvestCard activeIndex={step} index={1} />
 				<GovernCard activeIndex={step} index={2} />
 				<DonateCard activeIndex={step} index={3} />
-				<ClaimCard activeIndex={step} index={4} />
+				<StreamCard activeIndex={step} index={4} />
+				<ClaimCard activeIndex={step} index={5} />
 			</ClaimCarouselContainer>
 		</ClaimViewContainer>
 	) : (

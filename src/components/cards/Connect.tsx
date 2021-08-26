@@ -4,20 +4,32 @@ import { WalletAddressInputWithButton } from '../input'
 import { Button } from '../styled-components/Button'
 import { Row } from '../styled-components/Grid'
 import { H2, P } from '../styled-components/Typography'
-import { Card, Header, ICardProps } from './common'
-import { Context as OnboardContext } from '../../providers/onboard'
-import { Context as UserContext } from '../../providers/user'
+import { ArrowButton, Card, Header, ICardProps } from './common'
+import { OnboardContext } from '../../context/onboard.context'
+import { UserContext } from '../../context/user.context'
 
-const ConnectCardContainer = styled(Card)`
+interface IConnectCardContainerProps {
+	data: any
+}
+
+const ConnectCardContainer = styled(Card)<IConnectCardContainerProps>`
 	::before {
 		content: '';
-		background-image: url('/images/connect.png');
+		background-image: url('${props => props.data.bg}');
 		position: absolute;
-		width: 473px;
-		height: 210px;
-		top: 0;
-		right: 0;
+		width: ${props => props.data.width};
+		height: ${props => props.data.height};
+		top: ${props => props.data.top};
+		right: ${props => props.data.right};
+		z-index: -1;
 	}
+`
+const Title = styled(H2)`
+	width: 600px;
+`
+
+const Desc = styled(P)`
+	margin-top: 22px;
 `
 
 const ConenctButton = styled(Button)`
@@ -35,11 +47,39 @@ const InputWithButtonContainer = styled.div`
 	width: 588px;
 `
 
+const SuccessArrowButton = styled(ArrowButton)`
+	right: 300px;
+	bottom: 260px;
+`
+
+const EarnGiv = styled.span`
+	font-family: 'red-hat';
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 13px;
+	letter-spacing: 0.04em;
+	text-align: center;
+
+	position: absolute;
+	right: 54px;
+	top: 494px;
+`
+
+enum GiveDropStateType {
+	notConnected,
+	Success,
+	Missed,
+}
+
 export const ConnectCard: FC<ICardProps> = ({ activeIndex, index }) => {
 	const { address, changeWallet = () => {} } = useContext(OnboardContext)
 	const { submitUserAddress } = useContext(UserContext)
 
 	const [walletAddress, setWalletAddress] = useState<string>('')
+	const [giveDropState, setGiveDropState] = useState<GiveDropStateType>(
+		GiveDropStateType.notConnected,
+	)
 
 	useEffect(() => {
 		setWalletAddress(address)
@@ -49,29 +89,91 @@ export const ConnectCard: FC<ICardProps> = ({ activeIndex, index }) => {
 		await submitUserAddress(value)
 	}
 
+	let title
+	let desc
+	let btnLabel
+	let bg = {
+		width: '473px',
+		height: '210px',
+		top: '0',
+		right: '0',
+		bg: '/images/connectbg.png',
+	}
+	switch (giveDropState) {
+		case GiveDropStateType.notConnected:
+			title = 'Claim your GIVdrop'
+			desc =
+				'Connect your wallet or check an ethereum address to see your rewards.'
+			btnLabel = 'CONNECT WALLET'
+			bg = {
+				width: '473px',
+				height: '210px',
+				top: '0',
+				right: '0',
+				bg: '/images/connectbg.png',
+			}
+			break
+		case GiveDropStateType.Success:
+			title = `You have ${333} GIV to claim.`
+			desc = 'Congrats, your GIVdrop awaits. Go claim it!'
+			bg = {
+				width: '856px',
+				height: '582px',
+				top: '0',
+				right: '0',
+				bg: '/images/connectSuccbg.png',
+			}
+			break
+		case GiveDropStateType.Missed:
+			title = 'You missed the GIVdrop'
+			desc =
+				'But there are more ways to get GIV. Try another address or learn how to earn GIV.'
+			btnLabel = 'CHANGE WALLET'
+			bg = {
+				width: '622px',
+				height: '245px',
+				top: '337px',
+				right: '300px',
+				bg: '/images/connectMissbg.png',
+			}
+			break
+		default:
+			break
+	}
+
 	return (
-		<ConnectCardContainer activeIndex={activeIndex} index={index}>
+		<ConnectCardContainer activeIndex={activeIndex} index={index} data={bg}>
 			<Header>
-				<H2 as='h1'>Claim your GIVdrop</H2>
-				<P size='small' color={'#CABAFF'}>
-					Connect your wallet or check an ethereum address to see your
-					rewards.
-				</P>
+				<Title as='h1'>{title}</Title>
+				<Desc size='small' color={'#CABAFF'}>
+					{desc}
+				</Desc>
 			</Header>
-			<Row alignItems={'center'} justifyContent={'space-between'}>
-				<ConenctButton secondary onClick={changeWallet}>
-					CONNECT WALLET
-				</ConenctButton>
-				<Span>or</Span>
-				<InputWithButtonContainer>
-					<WalletAddressInputWithButton
-						btnLable='Check'
-						placeholder='Enter an address to check your GIVdrop'
-						walletAddress={walletAddress}
-						onSubmit={submitAddress}
-					/>
-				</InputWithButtonContainer>
-			</Row>
+			{giveDropState !== GiveDropStateType.Success && (
+				<Row alignItems={'center'} justifyContent={'space-between'}>
+					<ConenctButton secondary onClick={changeWallet}>
+						{btnLabel}
+					</ConenctButton>
+					<Span>or</Span>
+					<InputWithButtonContainer>
+						<WalletAddressInputWithButton
+							btnLable='Check'
+							placeholder='Enter an address to check your GIVdrop'
+							walletAddress={walletAddress}
+							onSubmit={submitAddress}
+						/>
+					</InputWithButtonContainer>
+				</Row>
+			)}
+			{giveDropState === GiveDropStateType.Missed && (
+				<>
+					<EarnGiv>How to earn GIV</EarnGiv>
+					<ArrowButton />
+				</>
+			)}
+			{giveDropState === GiveDropStateType.Success && (
+				<SuccessArrowButton />
+			)}
 		</ConnectCardContainer>
 	)
 }

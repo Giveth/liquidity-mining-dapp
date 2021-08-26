@@ -39,3 +39,18 @@ export const Header = styled.div`
 export const MaxGIV = styled.span`
 	color: #fed670;
 `
+export const ArrowButton = styled.div`
+	width: 64px;
+	height: 64px;
+	background: #fed670;
+	border-radius: 32px;
+	background-image: url('/images/rarrow.svg');
+	background-repeat: no-repeat;
+	background-position: center;
+
+	cursor: pointer;
+
+	position: absolute;
+	right: -32px;
+	bottom: 48px;
+`
