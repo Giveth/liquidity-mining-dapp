@@ -1,18 +1,18 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
-import { Onboard } from '../src/providers/onboard'
-import { User } from '../src/providers/user'
-import { ThemeProvider } from '../src/providers/theme'
+import { OnboardProvider } from '../src/context/onboard.context'
+import { UserProvider } from '../src/context/user.context'
+import { ThemeProvider } from '../src/context/theme.context'
 
 function MyApp({ Component, pageProps }: AppProps) {
 	return (
-		<User>
-			<Onboard>
+		<UserProvider>
+			<OnboardProvider>
 				<ThemeProvider>
 					<Component {...pageProps} />
 				</ThemeProvider>
-			</Onboard>
-		</User>
+			</OnboardProvider>
+		</UserProvider>
 	)
 }
 export default MyApp

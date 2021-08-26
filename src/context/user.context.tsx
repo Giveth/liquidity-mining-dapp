@@ -15,12 +15,12 @@ const initialValue = {
 	claimableAmount: 0,
 	submitUserAddress: () => {},
 }
-export const Context = createContext<IUserContext>(initialValue)
+export const UserContext = createContext<IUserContext>(initialValue)
 
 type Props = {
 	children?: ReactNode
 }
-export const User: FC<Props> = ({ children }) => {
+export const UserProvider: FC<Props> = ({ children }) => {
 	const [userAddress, setUserAddress] = useState<string>('')
 	const [claimableAmount, setClaimableAmount] = useState<number>(0)
 
@@ -57,7 +57,7 @@ export const User: FC<Props> = ({ children }) => {
 	}
 
 	return (
-		<Context.Provider
+		<UserContext.Provider
 			value={{
 				userAddress,
 				claimableAmount,
@@ -65,6 +65,6 @@ export const User: FC<Props> = ({ children }) => {
 			}}
 		>
 			{children}
-		</Context.Provider>
+		</UserContext.Provider>
 	)
 }

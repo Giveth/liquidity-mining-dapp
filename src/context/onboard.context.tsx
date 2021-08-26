@@ -16,12 +16,12 @@ const initialValue = {
 	network: 0,
 	changeWallet: () => Promise.resolve(),
 }
-export const Context = createContext<IOnboardContext>(initialValue)
+export const OnboardContext = createContext<IOnboardContext>(initialValue)
 
 type Props = {
 	children?: ReactNode
 }
-export const Onboard: FC<Props> = ({ children }) => {
+export const OnboardProvider: FC<Props> = ({ children }) => {
 	const [network, setNetwork] = useState<number>(initialValue.network)
 	const [address, setAddress] = useState<string>(initialValue.address)
 	const [onboard, setOnboard] = useState<API>()
@@ -86,8 +86,8 @@ export const Onboard: FC<Props> = ({ children }) => {
 	}, [])
 
 	return (
-		<Context.Provider value={{ network, address, changeWallet }}>
+		<OnboardContext.Provider value={{ network, address, changeWallet }}>
 			{children}
-		</Context.Provider>
+		</OnboardContext.Provider>
 	)
 }

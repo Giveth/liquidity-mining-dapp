@@ -5,8 +5,8 @@ import { Button } from '../styled-components/Button'
 import { Row } from '../styled-components/Grid'
 import { H2, P } from '../styled-components/Typography'
 import { Card, Header, ICardProps } from './common'
-import { Context as OnboardContext } from '../../providers/onboard'
-import { Context as UserContext } from '../../providers/user'
+import { OnboardContext } from '../../context/onboard.context'
+import { UserContext } from '../../context/user.context'
 
 const ConnectCardContainer = styled(Card)`
 	::before {
