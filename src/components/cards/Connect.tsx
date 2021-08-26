@@ -34,12 +34,20 @@ const Span = styled.div`
 const InputWithButtonContainer = styled.div`
 	width: 588px;
 `
+enum GiveDropStateType {
+	notConnected,
+	Success,
+	Missed,
+}
 
 export const ConnectCard: FC<ICardProps> = ({ activeIndex, index }) => {
 	const { address, changeWallet = () => {} } = useContext(OnboardContext)
 	const { submitUserAddress } = useContext(UserContext)
 
 	const [walletAddress, setWalletAddress] = useState<string>('')
+	const [giveDropState, setGiveDropState] = useState<GiveDropStateType>(
+		GiveDropStateType.notConnected,
+	)
 
 	useEffect(() => {
 		setWalletAddress(address)
@@ -49,14 +57,32 @@ export const ConnectCard: FC<ICardProps> = ({ activeIndex, index }) => {
 		await submitUserAddress(value)
 	}
 
+	let title
+	let desc
+	switch (giveDropState) {
+		case GiveDropStateType.notConnected:
+			title = 'Claim your GIVdrop'
+			desc =
+				'Connect your wallet or check an ethereum address to see your rewards.'
+			break
+		case GiveDropStateType.Success:
+			title = `You have ${333} GIV to claim.`
+			desc = 'Congrats, your GIVdrop awaits. Go claim it!'
+			break
+		case GiveDropStateType.Missed:
+			title = 'You missed the GIVdrop'
+			desc =
+				'But there are more ways to get GIV. Try another address or learn how to earn GIV.'
+			break
+		default:
+			break
+	}
+
 	return (
 		<ConnectCardContainer activeIndex={activeIndex} index={index}>
 			<Header>
-				<H2 as='h1'>Claim your GIVdrop</H2>
-				<P size='small' color={'#CABAFF'}>
-					Connect your wallet or check an ethereum address to see your
-					rewards.
-				</P>
+				<H2 as='h1'>{title}</H2>
+				<P size='small' color={'#CABAFF'}>{desc}</P>
 			</Header>
 			<Row alignItems={'center'} justifyContent={'space-between'}>
 				<ConenctButton secondary onClick={changeWallet}>
