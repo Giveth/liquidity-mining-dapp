@@ -4,7 +4,8 @@ import router from 'next/router'
 import { Row } from './styled-components/Grid'
 import { Button } from './styled-components/Button'
 import { FC, useContext } from 'react'
-import { ThemeContext, ThemeType } from '../providers/theme'
+import { ThemeContext, ThemeType } from '../context/theme.context'
+import { OnboardContext } from '../context/onboard.context'
 
 interface IHeader {
 	theme?: ThemeType
@@ -24,7 +25,7 @@ const StyledHeader = styled(Row)<IHeader>`
 	}
 `
 
-const HeaderClaimButton = styled(Button)`
+const HeaderButton = styled(Button)`
 	height: 36px;
 	width: 140px;
 	font-size: 14px;
@@ -39,8 +40,7 @@ const HeaderClaimButton = styled(Button)`
 const Title = styled.h1`
 	font-family: 'red-hat';
 	font-size: 16px;
-	font-style: normal;
-	font-weight: 500;
+	font-style: bold;
 	line-height: 24px;
 	letter-spacing: 0.02em;
 	text-align: left;
@@ -49,6 +49,7 @@ const Title = styled.h1`
 
 const Header: FC<IHeader> = () => {
 	const { theme } = useContext(ThemeContext)
+	const { network } = useContext(OnboardContext)
 	const goToClaim = () => {
 		router.push('/claim')
 	}
@@ -70,10 +71,11 @@ const Header: FC<IHeader> = () => {
 				/>
 				<Title theme={theme}>THE FUTURE OF GIVING</Title>
 			</Row>
-			<Row>
-				<HeaderClaimButton secondary onClick={goToClaim}>
+			<Row gap='8px'>
+				<HeaderButton secondary onClick={goToClaim}>
 					CLAIM GIV
-				</HeaderClaimButton>
+				</HeaderButton>
+				<HeaderButton>NETWORK {network}</HeaderButton>
 			</Row>
 		</StyledHeader>
 	)
