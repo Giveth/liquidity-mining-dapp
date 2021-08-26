@@ -6,6 +6,7 @@ import { Button } from './styled-components/Button'
 import { FC, useContext } from 'react'
 import { ThemeContext, ThemeType } from '../context/theme.context'
 import { OnboardContext } from '../context/onboard.context'
+import { UserContext } from '../context/user.context'
 
 interface IHeader {
 	theme?: ThemeType
@@ -27,7 +28,6 @@ const StyledHeader = styled(Row)<IHeader>`
 
 const HeaderButton = styled(Button)`
 	height: 36px;
-	width: 140px;
 	font-size: 14px;
 	font-style: normal;
 	font-weight: 700;
@@ -35,6 +35,8 @@ const HeaderButton = styled(Button)`
 	letter-spacing: 0.04em;
 	text-align: center;
 	padding: 0;
+	white-space: nowrap;
+	padding: 0 16px;
 `
 
 const Title = styled.h1`
@@ -50,10 +52,10 @@ const Title = styled.h1`
 const Header: FC<IHeader> = () => {
 	const { theme } = useContext(ThemeContext)
 	const { network } = useContext(OnboardContext)
+	const { userAddress } = useContext(UserContext)
 	const goToClaim = () => {
 		router.push('/claim')
 	}
-
 	return (
 		<StyledHeader
 			justifyContent='space-between'
@@ -75,7 +77,13 @@ const Header: FC<IHeader> = () => {
 				<HeaderButton secondary onClick={goToClaim}>
 					CLAIM GIV
 				</HeaderButton>
-				<HeaderButton>NETWORK {network}</HeaderButton>
+				{userAddress && (
+					<>
+						<HeaderButton>NETWORK {network}</HeaderButton>
+						<HeaderButton neutral>{644} GIV </HeaderButton>
+						<HeaderButton neutral>{userAddress}</HeaderButton>
+					</>
+				)}
 			</Row>
 		</StyledHeader>
 	)
