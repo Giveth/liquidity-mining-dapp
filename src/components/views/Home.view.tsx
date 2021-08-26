@@ -2,8 +2,8 @@ import styled from 'styled-components'
 import { H1, H2, H3, P } from '../styled-components/Typography'
 import { Row } from '../styled-components/Grid'
 import { Button } from '../styled-components/Button'
-import Image from 'next/image'
-import { useRouter } from 'next/router'
+import router from 'next/router'
+import Header from '../Header'
 
 const Section = styled.section`
 	padding: 0 132px;
@@ -49,31 +49,6 @@ const ClaimCardButton = styled(Button)`
 	width: 300px;
 	margin-top: 36px;
 	margin-bottom: 36px;
-`
-
-const Header = styled(Row)`
-	height: 128px;
-	padding: 0 132px;
-	margin-top: 16px;
-	position: relative;
-	::before {
-		content: url('/images/homebg1.png');
-		position: absolute;
-		top: 48px;
-		left: 0;
-	}
-`
-
-const HeaderClaimButton = styled(Button)`
-	height: 36px;
-	width: 140px;
-	font-size: 14px;
-	font-style: normal;
-	font-weight: 700;
-	line-height: 18px;
-	letter-spacing: 0.04em;
-	text-align: center;
-	padding: 0;
 `
 
 const Section1 = styled(Section)`
@@ -157,25 +132,13 @@ const ClaimCardTitle = styled(H2)`
 `
 
 function HomeView() {
-	const router = useRouter()
-
 	const goToClaim = () => {
 		router.push('/claim')
 	}
 
 	return (
 		<>
-			<Header justifyContent='space-between' alignItems='center'>
-				<Image
-					width='58'
-					height='58px'
-					alt='Giveth logo'
-					src='/images/logo.svg'
-				/>
-				<HeaderClaimButton secondary onClick={goToClaim}>
-					CLAIM GIV
-				</HeaderClaimButton>
-			</Header>
+			<Header />
 			<Section1>
 				<Title>Welcome to the Giveth Economy</Title>
 				<SubTitle size='large'>
