@@ -52,6 +52,20 @@ const SuccessArrowButton = styled(ArrowButton)`
 	bottom: 260px;
 `
 
+const EarnGiv = styled.span`
+	font-family: 'red-hat';
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 13px;
+	letter-spacing: 0.04em;
+	text-align: center;
+
+	position: absolute;
+	right: 54px;
+	top: 494px;
+`
+
 enum GiveDropStateType {
 	notConnected,
 	Success,
@@ -151,7 +165,12 @@ export const ConnectCard: FC<ICardProps> = ({ activeIndex, index }) => {
 					</InputWithButtonContainer>
 				</Row>
 			)}
-			{giveDropState === GiveDropStateType.Missed && <ArrowButton />}
+			{giveDropState === GiveDropStateType.Missed && (
+				<>
+					<EarnGiv>How to earn GIV</EarnGiv>
+					<ArrowButton />
+				</>
+			)}
 			{giveDropState === GiveDropStateType.Success && (
 				<SuccessArrowButton />
 			)}
