@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { InputWithUnit } from '../input'
 import { Row } from '../styled-components/Grid'
 import { H2, H4, P } from '../styled-components/Typography'
-import { Card, Header, ICardProps, MaxGIV } from './common'
+import { ArrowButton, Card, Header, ICardProps, MaxGIV } from './common'
 
 const GovernCardContainer = styled(Card)`
 	::before {
@@ -98,6 +98,7 @@ const GovernCard: FC<ICardProps> = ({ activeIndex, index }) => {
 					</div>
 				</YouCanEarn>
 			</Row>
+			<ArrowButton />
 		</GovernCardContainer>
 	)
 }
