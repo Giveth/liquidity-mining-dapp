@@ -78,7 +78,7 @@ export const ConnectCard: FC<ICardProps> = ({ activeIndex, index }) => {
 
 	const [walletAddress, setWalletAddress] = useState<string>('')
 	const [giveDropState, setGiveDropState] = useState<GiveDropStateType>(
-		GiveDropStateType.Missed,
+		GiveDropStateType.notConnected,
 	)
 
 	useEffect(() => {
