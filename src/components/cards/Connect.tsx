@@ -8,15 +8,20 @@ import { ArrowButton, Card, Header, ICardProps } from './common'
 import { OnboardContext } from '../../context/onboard.context'
 import { UserContext } from '../../context/user.context'
 
-const ConnectCardContainer = styled(Card)`
+interface IConnectCardContainerProps {
+	data: any
+}
+
+const ConnectCardContainer = styled(Card)<IConnectCardContainerProps>`
 	::before {
 		content: '';
-		background-image: url('/images/connect.png');
+		background-image: url('${props => props.data.bg}');
 		position: absolute;
-		width: 473px;
-		height: 210px;
-		top: 0;
-		right: 0;
+		width: ${props => props.data.width};
+		height: ${props => props.data.height};
+		top: ${props => props.data.top};
+		right: ${props => props.data.right};
+		z-index: -1;
 	}
 `
 const Title = styled(H2)`
@@ -59,7 +64,7 @@ export const ConnectCard: FC<ICardProps> = ({ activeIndex, index }) => {
 
 	const [walletAddress, setWalletAddress] = useState<string>('')
 	const [giveDropState, setGiveDropState] = useState<GiveDropStateType>(
-		GiveDropStateType.Success,
+		GiveDropStateType.Missed,
 	)
 
 	useEffect(() => {
@@ -73,29 +78,57 @@ export const ConnectCard: FC<ICardProps> = ({ activeIndex, index }) => {
 	let title
 	let desc
 	let btnLabel
+	let bg = {
+		width: '473px',
+		height: '210px',
+		top: '0',
+		right: '0',
+		bg: '/images/connectbg.png',
+	}
 	switch (giveDropState) {
 		case GiveDropStateType.notConnected:
 			title = 'Claim your GIVdrop'
 			desc =
 				'Connect your wallet or check an ethereum address to see your rewards.'
 			btnLabel = 'CONNECT WALLET'
+			bg = {
+				width: '473px',
+				height: '210px',
+				top: '0',
+				right: '0',
+				bg: '/images/connectbg.png',
+			}
 			break
 		case GiveDropStateType.Success:
 			title = `You have ${333} GIV to claim.`
 			desc = 'Congrats, your GIVdrop awaits. Go claim it!'
+			bg = {
+				width: '856px',
+				height: '582px',
+				top: '0',
+				right: '0',
+				bg: '/images/connectSuccbg.png',
+			}
 			break
 		case GiveDropStateType.Missed:
 			title = 'You missed the GIVdrop'
 			desc =
 				'But there are more ways to get GIV. Try another address or learn how to earn GIV.'
 			btnLabel = 'CHANGE WALLET'
+			bg = {
+				width: '622px',
+				height: '245px',
+				top: '337px',
+				right: '300px',
+				bg: '/images/connectMissbg.png',
+			}
 			break
 		default:
 			break
 	}
 
 	return (
-		<ConnectCardContainer activeIndex={activeIndex} index={index}>
+		<ConnectCardContainer activeIndex={activeIndex} index={index} data={bg}>
 			<Header>
 				<Title as='h1'>{title}</Title>
 				<Desc size='small' color={'#CABAFF'}>
