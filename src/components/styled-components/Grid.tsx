@@ -11,6 +11,7 @@ interface IRowProps {
 		| 'space-around'
 		| 'space-evenly'
 	flexDirection?: 'row' | 'row-reverse' | 'column' | 'column-reverse'
+	gap?: string
 }
 
 export const Row = styled.div<IRowProps>`
@@ -21,6 +22,7 @@ export const Row = styled.div<IRowProps>`
 	align-items: ${props => (props.alignItems ? props.alignItems : 'initial')};
 	justify-content: ${props =>
 		props.justifyContent ? props.justifyContent : 'initial'};
+	gap: ${props => props.gap};
 `
 
 export const Container = styled.div`
