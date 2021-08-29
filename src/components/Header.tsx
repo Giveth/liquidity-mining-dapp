@@ -1,15 +1,15 @@
-import styled from 'styled-components'
-import Image from 'next/image'
-import router from 'next/router'
-import { Row } from './styled-components/Grid'
-import { Button } from './styled-components/Button'
-import { FC, useContext } from 'react'
-import { ThemeContext, ThemeType } from '../context/theme.context'
-import { OnboardContext } from '../context/onboard.context'
-import { UserContext } from '../context/user.context'
+import styled from 'styled-components';
+import Image from 'next/image';
+import router from 'next/router';
+import { Row } from './styled-components/Grid';
+import { Button } from './styled-components/Button';
+import { FC, useContext } from 'react';
+import { ThemeContext, ThemeType } from '../context/theme.context';
+import { OnboardContext } from '../context/onboard.context';
+import { UserContext } from '../context/user.context';
 
 interface IHeader {
-	theme?: ThemeType
+	theme?: ThemeType;
 }
 
 const StyledHeader = styled(Row)<IHeader>`
@@ -23,7 +23,7 @@ const StyledHeader = styled(Row)<IHeader>`
 		top: 48px;
 		left: 0;
 	}
-`
+`;
 
 const HeaderButton = styled(Button)`
 	height: 36px;
@@ -36,25 +36,25 @@ const HeaderButton = styled(Button)`
 	padding: 0;
 	white-space: nowrap;
 	padding: 0 16px;
-`
+`;
 
 const Title = styled.h1`
 	font-family: 'red-hat';
 	font-size: 16px;
-	font-style: bold;
+	//font-style: bold;
 	line-height: 24px;
 	letter-spacing: 0.02em;
 	text-align: left;
 	color: ${props => props.theme.fg};
-`
+`;
 
 const Header: FC<IHeader> = () => {
-	const { theme } = useContext(ThemeContext)
-	const { network } = useContext(OnboardContext)
-	const { userAddress } = useContext(UserContext)
+	const { theme } = useContext(ThemeContext);
+	const { network } = useContext(OnboardContext);
+	const { userAddress } = useContext(UserContext);
 	const goToClaim = () => {
-		router.push('/claim')
-	}
+		router.push('/claim');
+	};
 	return (
 		<StyledHeader
 			justifyContent='space-between'
@@ -85,7 +85,7 @@ const Header: FC<IHeader> = () => {
 				)}
 			</Row>
 		</StyledHeader>
-	)
-}
+	);
+};
 
-export default Header
+export default Header;

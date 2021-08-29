@@ -1,9 +1,9 @@
-import { useState, ChangeEvent, FC } from 'react'
-import styled from 'styled-components'
-import { InputWithUnit } from '../input'
-import { Row } from '../styled-components/Grid'
-import { H2, H4, P } from '../styled-components/Typography'
-import { ArrowButton, Card, Header, ICardProps, MaxGIV } from './common'
+import { useState, ChangeEvent, FC } from 'react';
+import styled from 'styled-components';
+import { InputWithUnit } from '../input';
+import { Row } from '../styled-components/Grid';
+import { H2, H4, P } from '../styled-components/Typography';
+import { ArrowButton, Card, Header, ICardProps, MaxGIV } from './common';
 
 const InvestCardContainer = styled(Card)`
 	::before {
@@ -16,15 +16,15 @@ const InvestCardContainer = styled(Card)`
 		right: 0;
 		z-index: 0;
 	}
-`
+`;
 
 const DepositeLable = styled.span`
 	color: #cabaff;
-`
+`;
 
 const DepositInput = styled.div`
 	width: 392px;
-`
+`;
 
 const ImpactCard = styled.div`
 	padding: 20px 30px;
@@ -32,7 +32,7 @@ const ImpactCard = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-`
+`;
 
 const PoolCard = styled.div`
 	width: 399px;
@@ -43,36 +43,36 @@ const PoolCard = styled.div`
 	border-radius: 16px;
 	color: #1b1657;
 	z-index: 1;
-`
+`;
 
 const PoolItems = styled.div`
 	padding: 12px 0;
-`
+`;
 
 const PoolItem = styled.div`
 	font-size: 16px;
 	height: 40px;
 	line-height: 40px;
-`
+`;
 
 const PoolItemBold = styled.div`
 	font-size: 32px;
 	font-weight: bold;
 	line-height: 40px;
-`
+`;
 
 const InvestCard: FC<ICardProps> = ({ activeIndex, index }) => {
-	const [deposite, setDopsite] = useState(0)
+	const [deposite, setDopsite] = useState(0);
 
 	const depositeChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
 		if (e.target.value.length === 0) {
-			setDopsite(0)
+			setDopsite(0);
 		} else if (isNaN(+e.target.value)) {
-			setDopsite(deposite)
+			setDopsite(deposite);
 		} else {
-			setDopsite(+e.target.value)
+			setDopsite(+e.target.value);
 		}
-	}
+	};
 
 	return (
 		<InvestCardContainer activeIndex={activeIndex} index={index}>
@@ -123,7 +123,7 @@ const InvestCard: FC<ICardProps> = ({ activeIndex, index }) => {
 			</Row>
 			<ArrowButton />
 		</InvestCardContainer>
-	)
-}
+	);
+};
 
-export default InvestCard
+export default InvestCard;

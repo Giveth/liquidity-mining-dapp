@@ -1,8 +1,8 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 interface IButtonProps {
-	secondary?: boolean
-	neutral?: boolean
+	secondary?: boolean;
+	neutral?: boolean;
 }
 
 export const Button = styled.button<IButtonProps>`
@@ -20,4 +20,4 @@ export const Button = styled.button<IButtonProps>`
 	line-height: 18px;
 	text-align: center;
 	cursor: pointer;
-`
+`;

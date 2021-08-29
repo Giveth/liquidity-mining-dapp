@@ -1,10 +1,10 @@
-import development from './config/development'
-import production from './config/production'
-import { GlobalConfig } from './types/config'
+import development from './config/development';
+import production from './config/production';
+import { GlobalConfig } from './types/config';
 
-const isProduction = process.env.NEXT_PUBLIC_ENV === 'production'
+const isProduction = process.env.NEXT_PUBLIC_ENV === 'production';
 
-const envConfig = isProduction ? production : development
+const envConfig = isProduction ? production : development;
 
 const config: GlobalConfig = {
 	TOKEN_NAME: 'GIV',
@@ -18,9 +18,9 @@ const config: GlobalConfig = {
 	// included in metamask by default and its rpc endpoint is not infura
 	INFURA_API_KEY: process.env.NEXT_PUBLIC_INFURA_API_KEY,
 	BLOCKNATIVE_DAPP_ID: process.env.BLOCKNATIVE_DAPP_ID,
-}
+};
 
-config.MAINNET_CONFIG.nodeUrl = process.env.NEXT_PUBLIC_NODE_URL || ''
-config.XDAI_CONFIG.nodeUrl = process.env.NEXT_PUBLIC_XDAI_NODE_URL || ''
+config.MAINNET_CONFIG.nodeUrl = process.env.NEXT_PUBLIC_NODE_URL || '';
+config.XDAI_CONFIG.nodeUrl = process.env.NEXT_PUBLIC_XDAI_NODE_URL || '';
 
-export default config
+export default config;

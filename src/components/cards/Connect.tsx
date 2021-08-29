@@ -1,15 +1,16 @@
-import { FC, useContext, useEffect, useState } from 'react'
-import styled from 'styled-components'
-import { WalletAddressInputWithButton } from '../input'
-import { Button } from '../styled-components/Button'
-import { Row } from '../styled-components/Grid'
-import { H2, P } from '../styled-components/Typography'
-import { ArrowButton, Card, Header, ICardProps } from './common'
-import { OnboardContext } from '../../context/onboard.context'
-import { UserContext } from '../../context/user.context'
+import { FC, useContext, useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { WalletAddressInputWithButton } from '../input';
+import { Button } from '../styled-components/Button';
+import { Row } from '../styled-components/Grid';
+import { H2, P } from '../styled-components/Typography';
+import { ArrowButton, Card, Header, ICardProps } from './common';
+import { OnboardContext } from '../../context/onboard.context';
+import { UserContext } from '../../context/user.context';
+import { ethers } from 'ethers';
 
 interface IConnectCardContainerProps {
-	data: any
+	data: any;
 }
 
 const ConnectCardContainer = styled(Card)<IConnectCardContainerProps>`
@@ -23,34 +24,34 @@ const ConnectCardContainer = styled(Card)<IConnectCardContainerProps>`
 		right: ${props => props.data.right};
 		z-index: -1;
 	}
-`
+`;
 const Title = styled(H2)`
 	width: 600px;
-`
+`;
 
 const Desc = styled(P)`
 	margin-top: 22px;
-`
+`;
 
 const ConenctButton = styled(Button)`
 	width: 300px;
-`
+`;
 
 const Span = styled.div`
 	display: inline-block;
 	font-size: 20px;
 	line-height: 26px;
 	text-transform: uppercase;
-`
+`;
 
 const InputWithButtonContainer = styled.div`
 	width: 588px;
-`
+`;
 
 const SuccessArrowButton = styled(ArrowButton)`
 	right: 300px;
 	bottom: 260px;
-`
+`;
 
 const EarnGiv = styled.span`
 	font-family: 'red-hat';
@@ -64,7 +65,7 @@ const EarnGiv = styled.span`
 	position: absolute;
 	right: 54px;
 	top: 494px;
-`
+`;
 
 enum GiveDropStateType {
 	notConnected,
@@ -73,72 +74,96 @@ enum GiveDropStateType {
 }
 
 export const ConnectCard: FC<ICardProps> = ({ activeIndex, index }) => {
-	const { address, changeWallet = () => {} } = useContext(OnboardContext)
-	const { submitUserAddress } = useContext(UserContext)
+	const { address, changeWallet = () => {} } = useContext(OnboardContext);
+	const { submitUserAddress, claimableAmount } = useContext(UserContext);
 
-	const [walletAddress, setWalletAddress] = useState<string>('')
+	const [walletAddress, setWalletAddress] = useState<string>('');
 	const [giveDropState, setGiveDropState] = useState<GiveDropStateType>(
 		GiveDropStateType.notConnected,
-	)
+	);
+	const [addressSubmitted, setAddressSubmitted] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(false);
 
 	useEffect(() => {
-		setWalletAddress(address)
-	}, [address])
+		setWalletAddress(address);
+	}, [address]);
+
+	useEffect(() => {
+		if (addressSubmitted) {
+			console.log(
+				'claimableAmount:',
+				ethers.utils.formatEther(claimableAmount),
+			);
+
+			setGiveDropState(
+				claimableAmount.isZero()
+					? GiveDropStateType.Missed
+					: GiveDropStateType.Success,
+			);
+
+			setLoading(false);
+			setAddressSubmitted(false);
+		}
+	}, [addressSubmitted, claimableAmount]);
 
 	const submitAddress = async (value: string): Promise<void> => {
-		await submitUserAddress(value)
-	}
+		setLoading(true);
+		await submitUserAddress(value);
+		setAddressSubmitted(true);
+	};
 
-	let title
-	let desc
-	let btnLabel
+	let title;
+	let desc;
+	let btnLabel;
 	let bg = {
 		width: '473px',
 		height: '210px',
 		top: '0',
 		right: '0',
 		bg: '/images/connectbg.png',
-	}
+	};
 	switch (giveDropState) {
 		case GiveDropStateType.notConnected:
-			title = 'Claim your GIVdrop'
+			title = 'Claim your GIVdrop';
 			desc =
-				'Connect your wallet or check an ethereum address to see your rewards.'
-			btnLabel = 'CONNECT WALLET'
+				'Connect your wallet or check an ethereum address to see your rewards.';
+			btnLabel = 'CONNECT WALLET';
 			bg = {
 				width: '473px',
 				height: '210px',
 				top: '0',
 				right: '0',
 				bg: '/images/connectbg.png',
-			}
-			break
+			};
+			break;
 		case GiveDropStateType.Success:
-			title = `You have ${333} GIV to claim.`
-			desc = 'Congrats, your GIVdrop awaits. Go claim it!'
+			title = `You have ${ethers.utils.formatEther(
+				claimableAmount,
+			)} GIV to claim.`;
+			desc = 'Congrats, your GIVdrop awaits. Go claim it!';
 			bg = {
 				width: '856px',
 				height: '582px',
 				top: '0',
 				right: '0',
 				bg: '/images/connectSuccbg.png',
-			}
-			break
+			};
+			break;
 		case GiveDropStateType.Missed:
-			title = 'You missed the GIVdrop'
+			title = 'You missed the GIVdrop';
 			desc =
-				'But there are more ways to get GIV. Try another address or learn how to earn GIV.'
-			btnLabel = 'CHANGE WALLET'
+				'But there are more ways to get GIV. Try another address or learn how to earn GIV.';
+			btnLabel = 'CHANGE WALLET';
 			bg = {
 				width: '622px',
 				height: '245px',
 				top: '337px',
 				right: '300px',
 				bg: '/images/connectMissbg.png',
-			}
-			break
+			};
+			break;
 		default:
-			break
+			break;
 	}
 
 	return (
@@ -161,6 +186,12 @@ export const ConnectCard: FC<ICardProps> = ({ activeIndex, index }) => {
 							placeholder='Enter an address to check your GIVdrop'
 							walletAddress={walletAddress}
 							onSubmit={submitAddress}
+							disabled={loading}
+							onUpdate={() => {
+								setGiveDropState(
+									GiveDropStateType.notConnected,
+								);
+							}}
 						/>
 					</InputWithButtonContainer>
 				</Row>
@@ -175,7 +206,7 @@ export const ConnectCard: FC<ICardProps> = ({ activeIndex, index }) => {
 				<SuccessArrowButton />
 			)}
 		</ConnectCardContainer>
-	)
-}
+	);
+};
 
-export default ConnectCard
+export default ConnectCard;

@@ -1,19 +1,19 @@
-import styled from 'styled-components'
-import { Button } from '../styled-components/Button'
-import { H2, P } from '../styled-components/Typography'
+import styled from 'styled-components';
+import { Button } from '../styled-components/Button';
+import { H2, P } from '../styled-components/Typography';
 
 const CongratulationsView = styled.div`
 	min-height: 100vh;
 	background-color: #3c14c5;
 	background-image: url('/images/bgCong.png');
 	background-size: cover;
-`
+`;
 
 const CongratulationsContainer = styled.div`
 	width: 700px;
 	margin: auto;
 	text-align: center;
-`
+`;
 
 const CongHeader = styled.div`
 	text-align: center;
@@ -29,18 +29,18 @@ const CongHeader = styled.div`
 		bottom: 0;
 		left: -110px;
 	}
-`
+`;
 
 const Description = styled.div`
 	padding: 16px 10px 90px 164px;
 	text-align: left;
-`
+`;
 
 const Rate = styled(P)`
 	color: #fed670;
 	display: inline-block;
 	padding: 10px;
-`
+`;
 
 const CongratsButton = styled(Button)`
 	width: 356px;
@@ -50,7 +50,7 @@ const CongratsButton = styled(Button)`
 	line-height: 18px;
 	letter-spacing: 0.04em;
 	margin-top: 36px;
-`
+`;
 
 export const CongratulationsCard = () => {
 	return (
@@ -72,7 +72,7 @@ export const CongratulationsCard = () => {
 				<CongratsButton secondary>GIV me more</CongratsButton>
 			</CongratulationsContainer>
 		</CongratulationsView>
-	)
-}
+	);
+};
 
-export default CongratulationsCard
+export default CongratulationsCard;

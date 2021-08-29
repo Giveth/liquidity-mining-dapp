@@ -1,9 +1,9 @@
-import { FC } from 'react'
-import styled from 'styled-components'
-import { Button } from '../styled-components/Button'
-import { Row } from '../styled-components/Grid'
-import { H2, P } from '../styled-components/Typography'
-import { Card, Header, ICardProps } from './common'
+import { FC } from 'react';
+import styled from 'styled-components';
+import { Button } from '../styled-components/Button';
+import { Row } from '../styled-components/Grid';
+import { H2, P } from '../styled-components/Typography';
+import { Card, Header, ICardProps } from './common';
 
 const ClaimCardContainer = styled(Card)`
 	::before {
@@ -17,16 +17,16 @@ const ClaimCardContainer = styled(Card)`
 		width: 100%;
 		z-index: 0;
 	}
-`
+`;
 
 const ClaimHeader = styled(Header)`
 	margin: 116px auto 48px auto;
 	text-align: center;
-`
+`;
 
 const ClaimButton = styled(Button)`
 	width: 356px;
-`
+`;
 
 const ClaimCard: FC<ICardProps> = ({ activeIndex, index }) => {
 	return (
@@ -41,7 +41,7 @@ const ClaimCard: FC<ICardProps> = ({ activeIndex, index }) => {
 				<ClaimButton secondary>CLAIM {3333} GIV Tokens</ClaimButton>
 			</Row>
 		</ClaimCardContainer>
-	)
-}
+	);
+};
 
-export default ClaimCard
+export default ClaimCard;

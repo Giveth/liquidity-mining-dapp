@@ -1,4 +1,4 @@
-import { EnvConfig } from '../types/config'
+import { EnvConfig } from '../types/config';
 
 const config: EnvConfig = {
 	MAINNET_NETWORK_NUMBER: 1,
@@ -42,6 +42,6 @@ const config: EnvConfig = {
 			LM_ADDRESS: '0xF66823fdc33B9F4C66dB4C3394FF139872C12f16',
 		},
 	},
-}
+};
 
-export default config
+export default config;

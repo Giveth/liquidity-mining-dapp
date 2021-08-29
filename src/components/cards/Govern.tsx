@@ -1,9 +1,9 @@
-import { useState, ChangeEvent, FC } from 'react'
-import styled from 'styled-components'
-import { InputWithUnit } from '../input'
-import { Row } from '../styled-components/Grid'
-import { H2, H4, P } from '../styled-components/Typography'
-import { ArrowButton, Card, Header, ICardProps, MaxGIV } from './common'
+import { useState, ChangeEvent, FC } from 'react';
+import styled from 'styled-components';
+import { InputWithUnit } from '../input';
+import { Row } from '../styled-components/Grid';
+import { H2, H4, P } from '../styled-components/Typography';
+import { ArrowButton, Card, Header, ICardProps, MaxGIV } from './common';
 
 const GovernCardContainer = styled(Card)`
 	::before {
@@ -16,7 +16,7 @@ const GovernCardContainer = styled(Card)`
 		left: 0;
 		z-index: 0;
 	}
-`
+`;
 
 const GovernGIVToken = styled.div`
 	padding: 20px 38px;
@@ -24,17 +24,17 @@ const GovernGIVToken = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-`
+`;
 
 const GovernLabel = styled.span`
 	color: #cabaff;
-`
+`;
 
 const GovernInput = styled.div`
 	width: 392px;
-`
+`;
 
-const YouCanEarn = styled(GovernGIVToken)``
+const YouCanEarn = styled(GovernGIVToken)``;
 
 const GovernGIVEarn = styled.div`
 	font-family: Red Hat Text;
@@ -44,20 +44,20 @@ const GovernGIVEarn = styled.div`
 	line-height: 80px;
 	letter-spacing: 0em;
 	text-align: left;
-`
+`;
 
 const GovernCard: FC<ICardProps> = ({ activeIndex, index }) => {
-	const [stacked, setStacked] = useState(0)
+	const [stacked, setStacked] = useState(0);
 
 	const stackedChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
 		if (e.target.value.length === 0) {
-			setStacked(0)
+			setStacked(0);
 		} else if (isNaN(+e.target.value)) {
-			setStacked(stacked)
+			setStacked(stacked);
 		} else {
-			setStacked(+e.target.value)
+			setStacked(+e.target.value);
 		}
-	}
+	};
 
 	return (
 		<GovernCardContainer activeIndex={activeIndex} index={index}>
@@ -100,7 +100,7 @@ const GovernCard: FC<ICardProps> = ({ activeIndex, index }) => {
 			</Row>
 			<ArrowButton />
 		</GovernCardContainer>
-	)
-}
+	);
+};
 
-export default GovernCard
+export default GovernCard;

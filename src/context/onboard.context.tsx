@@ -1,30 +1,30 @@
-import bnc_onboard from 'bnc-onboard'
-import config from '../configuration'
-import { createContext, FC, ReactNode, useEffect, useState } from 'react'
-import { API } from 'bnc-onboard/dist/src/interfaces'
+import bnc_onboard from 'bnc-onboard';
+import config from '../configuration';
+import { createContext, FC, ReactNode, useEffect, useState } from 'react';
+import { API } from 'bnc-onboard/dist/src/interfaces';
 
-const networkId = config.XDAI_NETWORK_NUMBER
-const dappId = config.BLOCKNATIVE_DAPP_ID
+const networkId = config.XDAI_NETWORK_NUMBER;
+const dappId = config.BLOCKNATIVE_DAPP_ID;
 
 export interface IOnboardContext {
-	address: string
-	network: number
-	changeWallet: () => Promise<void>
+	address: string;
+	network: number;
+	changeWallet: () => Promise<void>;
 }
 const initialValue = {
 	address: '',
 	network: 0,
 	changeWallet: () => Promise.resolve(),
-}
-export const OnboardContext = createContext<IOnboardContext>(initialValue)
+};
+export const OnboardContext = createContext<IOnboardContext>(initialValue);
 
 type Props = {
-	children?: ReactNode
-}
+	children?: ReactNode;
+};
 export const OnboardProvider: FC<Props> = ({ children }) => {
-	const [network, setNetwork] = useState<number>(initialValue.network)
-	const [address, setAddress] = useState<string>(initialValue.address)
-	const [onboard, setOnboard] = useState<API>()
+	const [network, setNetwork] = useState<number>(initialValue.network);
+	const [address, setAddress] = useState<string>(initialValue.address);
+	const [onboard, setOnboard] = useState<API>();
 
 	const initOnboard = () => {
 		const _onboard = bnc_onboard({
@@ -36,7 +36,7 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 					window.localStorage.setItem(
 						'selectedWallet',
 						wallet.name || '',
-					)
+					);
 				},
 				address: setAddress,
 				network: setNetwork,
@@ -60,34 +60,34 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 				{ checkName: 'connect' },
 				{ checkName: 'accounts' },
 			],
-		})
+		});
 
 		const previouslySelectedWallet =
-			window.localStorage.getItem('selectedWallet')
+			window.localStorage.getItem('selectedWallet');
 		if (previouslySelectedWallet) {
 			_onboard
 				.walletSelect(previouslySelectedWallet)
-				.then(selected => selected && _onboard.walletCheck())
+				.then(selected => selected && _onboard.walletCheck());
 		}
 
-		setOnboard(_onboard)
-	}
+		setOnboard(_onboard);
+	};
 
 	const changeWallet = async () => {
 		if (onboard) {
-			onboard.walletReset()
-			await onboard.walletSelect()
-			await onboard.walletCheck()
+			onboard.walletReset();
+			await onboard.walletSelect();
+			await onboard.walletCheck();
 		}
-	}
+	};
 
 	useEffect(() => {
-		initOnboard()
-	}, [])
+		initOnboard();
+	}, []);
 
 	return (
 		<OnboardContext.Provider value={{ network, address, changeWallet }}>
 			{children}
 		</OnboardContext.Provider>
-	)
-}
+	);
+};

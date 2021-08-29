@@ -1,22 +1,22 @@
-import React, { FC, useState } from 'react'
-import styled from 'styled-components'
-import CongratulationsCard from '../../cards/Congratulations'
-import ClaimCard from '../../cards/Claim'
-import { ConnectCard } from '../../cards/Connect'
-import { DonateCard } from '../../cards/Donate'
-import { StreamCard } from '../../cards/Stream'
-import GovernCard from '../../cards/Govern'
-import InvestCard from '../../cards/Invest'
-import { Row } from '../../styled-components/Grid'
+import React, { FC, useState } from 'react';
+import styled from 'styled-components';
+import CongratulationsCard from '../../cards/Congratulations';
+import ClaimCard from '../../cards/Claim';
+import { ConnectCard } from '../../cards/Connect';
+import { DonateCard } from '../../cards/Donate';
+import { StreamCard } from '../../cards/Stream';
+import GovernCard from '../../cards/Govern';
+import InvestCard from '../../cards/Invest';
+import { Row } from '../../styled-components/Grid';
 
-const stepsTitle = ['Connect', 'Invest', 'Govern', 'Donate', 'Stream', 'Claim']
+const stepsTitle = ['Connect', 'Invest', 'Govern', 'Donate', 'Stream', 'Claim'];
 
 const Steps = styled(Row)`
 	height: 80px;
-`
+`;
 
 interface IStepTitleProps {
-	isActive: boolean
+	isActive: boolean;
 }
 
 const StepTitle = styled.div<IStepTitleProps>`
@@ -40,12 +40,12 @@ const StepTitle = styled.div<IStepTitleProps>`
 		border-radius: 3px;
 		background-color: #2fc8e0;
 	}
-`
+`;
 
 interface IStepProps {
-	title: string
-	isActive: boolean
-	onClick: any
+	title: string;
+	isActive: boolean;
+	onClick: any;
 }
 
 const Step: FC<IStepProps> = ({ title, isActive, onClick }) => {
@@ -53,23 +53,23 @@ const Step: FC<IStepProps> = ({ title, isActive, onClick }) => {
 		<StepTitle isActive={isActive} onClick={onClick}>
 			{title}
 		</StepTitle>
-	)
-}
+	);
+};
 
 const ClaimViewContainer = styled.div`
 	background-image: url('/images/cardsbg1.png'), url('/images/cardsbg.png');
 	background-repeat: repeat-x, no-repeat;
 	background-position-y: bottom, top;
-`
+`;
 
 const ClaimCarouselContainer = styled.div`
 	overflow-x: hidden;
 	position: relative;
 	height: calc(100vh - 80px);
-`
+`;
 
 const ClaimView = () => {
-	const [step, setStep] = useState(0)
+	const [step, setStep] = useState(0);
 	return step < 5 ? (
 		<ClaimViewContainer>
 			<Steps justifyContent='center' alignItems='center'>
@@ -79,7 +79,7 @@ const ClaimView = () => {
 						isActive={step === idx}
 						key={idx}
 						onClick={() => {
-							setStep(idx)
+							setStep(idx);
 						}}
 					/>
 				))}
@@ -95,7 +95,7 @@ const ClaimView = () => {
 		</ClaimViewContainer>
 	) : (
 		<CongratulationsCard />
-	)
-}
+	);
+};
 
-export default ClaimView
+export default ClaimView;

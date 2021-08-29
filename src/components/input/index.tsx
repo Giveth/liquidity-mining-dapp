@@ -1,8 +1,8 @@
-import { FC, useEffect, useState } from 'react'
-import styled from 'styled-components'
+import { FC, useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 interface IHasBG {
-	bg?: string
+	bg?: string;
 }
 
 const InputContainer = styled.div<IHasBG>`
@@ -14,7 +14,7 @@ const InputContainer = styled.div<IHasBG>`
 	width: 100%;
 	align-items: center;
 	margin: 8px 0;
-`
+`;
 
 const Input = styled.input<IHasBG>`
 	border: 0;
@@ -26,7 +26,7 @@ const Input = styled.input<IHasBG>`
 	::placeholder {
 		color: white;
 	}
-`
+`;
 
 const Button = styled.button<IHasBG>`
 	border: 0;
@@ -39,45 +39,62 @@ const Button = styled.button<IHasBG>`
 	font-weight: bold;
 	font-size: 12px;
 	line-height: 13px;
-`
+`;
 
 interface IWalletAddressInputWithButtonProps {
-	placeholder?: string
-	btnLable?: string
-	onSubmit: (address: string) => {}
-	walletAddress?: string
+	placeholder?: string;
+	btnLable?: string;
+	onSubmit: (address: string) => {};
+	onUpdate?: () => void;
+	walletAddress?: string;
+	disabled?: boolean;
 }
 
 export const WalletAddressInputWithButton: FC<IWalletAddressInputWithButtonProps> =
-	({ placeholder, btnLable, onSubmit, walletAddress = '' }) => {
-		const [value, setValue] = useState<string>(walletAddress)
+	({
+		placeholder,
+		btnLable,
+		onSubmit,
+		walletAddress = '',
+		disabled = false,
+		onUpdate = () => {},
+	}) => {
+		const [value, setValue] = useState<string>(walletAddress);
 
 		useEffect(() => {
-			setValue(walletAddress)
-		}, [walletAddress])
+			setValue(walletAddress);
+		}, [walletAddress]);
+
+		const onValueChange = (e: any) => {
+			onUpdate();
+			setValue(e.target.value);
+		};
 
 		return (
 			<InputContainer>
 				<Input
 					placeholder={placeholder}
 					value={value}
-					onChange={e => setValue(e.target.value)}
+					onChange={onValueChange}
+					disabled={disabled}
 				/>
-				<Button onClick={() => onSubmit(value)}>{btnLable}</Button>
+				<Button onClick={() => onSubmit(value)} disabled={disabled}>
+					{btnLable}
+				</Button>
 			</InputContainer>
-		)
-	}
+		);
+	};
 
 const Unit = styled.span`
 	padding-right: 10px;
 	color: #cabaff;
-`
+`;
 
 interface IInputWithUnitProps {
-	placeholder?: string
-	unit: string
-	value: string | number
-	onChange?: any
+	placeholder?: string;
+	unit: string;
+	value: string | number;
+	onChange?: any;
 }
 
 export const InputWithUnit: FC<IInputWithUnitProps> = ({
@@ -95,5 +112,5 @@ export const InputWithUnit: FC<IInputWithUnitProps> = ({
 			/>
 			<Unit>{unit}</Unit>
 		</InputContainer>
-	)
-}
+	);
+};

@@ -1,38 +1,38 @@
-import styled from 'styled-components'
-import { H1, H2, H3, P } from '../styled-components/Typography'
-import { Row } from '../styled-components/Grid'
-import { Button } from '../styled-components/Button'
-import router from 'next/router'
-import Header from '../Header'
+import styled from 'styled-components';
+import { H1, H2, H3, P } from '../styled-components/Typography';
+import { Row } from '../styled-components/Grid';
+import { Button } from '../styled-components/Button';
+import router from 'next/router';
+import Header from '../Header';
 
 const Section = styled.section`
 	padding: 0 132px;
 	min-height: 100vh;
-`
+`;
 
 const GivCard = styled.div`
 	padding-right: 180px;
 	flex: 1;
-`
+`;
 
 // eslint-disable-next-line no-unused-vars
 const Container = styled.div`
 	padding: 0 140px;
-`
+`;
 
 const ParticipateCard = styled.div`
 	flex: 1;
 	padding-right: 76px;
-`
+`;
 
 const ParticipateButton = styled(Button)`
 	width: 280px;
-`
+`;
 
 const ParticipateDesc = styled(P)`
 	height: 198px;
 	width: 322px;
-`
+`;
 
 const ParticipateSubDesc = styled.p`
 	font-size: 15px;
@@ -43,13 +43,13 @@ const ParticipateSubDesc = styled.p`
 	text-align: left;
 	color: #c4b2ff;
 	width: 280px;
-`
+`;
 
 const ClaimCardButton = styled(Button)`
 	width: 300px;
 	margin-top: 36px;
 	margin-bottom: 36px;
-`
+`;
 
 const Section1 = styled(Section)`
 	background-image: url('/images/Giv.png');
@@ -60,50 +60,50 @@ const Section1 = styled(Section)`
 		bottom: -1000px;
 		right: 0;
 	}
-`
+`;
 
 const Title = styled(H1)`
 	padding-top: 66px;
 	padding-bottom: 42px;
 	max-width: 989px;
-`
+`;
 
 const SubTitle = styled(P)`
 	max-width: 912px;
 	padding-bottom: 288px;
-`
+`;
 
 const EconomyTitle = styled(H2)`
 	margin-bottom: 30px;
-`
+`;
 
 const EconomyDesc = styled(P)`
 	margin-bottom: 132px;
 	width: 812px;
-`
+`;
 
 const GivCardSub = styled(P)`
 	margin-bottom: 32px;
-`
+`;
 
 const Section2 = styled(Section)`
 	background-image: url('/images/homebg3.png');
 	background-size: contain;
 	padding-top: 180px;
 	padding-bottom: 180px;
-`
+`;
 
 const Section2Title = styled(H2)`
 	margin-bottom: 60px;
-`
+`;
 
 const ParticipateCardTitle = styled(H3)`
 	margin-bottom: 32px;
-`
+`;
 
 const Section3 = styled(Section)`
 	padding-top: 180px;
-`
+`;
 
 const ClaimCard = styled.div`
 	background-color: #3c14c5;
@@ -125,16 +125,16 @@ const ClaimCard = styled.div`
 		bottom: -4px;
 		left: 0;
 	}
-`
+`;
 
 const ClaimCardTitle = styled(H2)`
 	margin-bottom: 22px;
-`
+`;
 
 function HomeView() {
 	const goToClaim = () => {
-		router.push('/claim')
-	}
+		router.push('/claim');
+	};
 
 	return (
 		<>
@@ -233,7 +233,7 @@ function HomeView() {
 				</ClaimCard>
 			</Section3>
 		</>
-	)
+	);
 }
 
-export default HomeView
+export default HomeView;

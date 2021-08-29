@@ -1,60 +1,47 @@
-import { createContext, FC, ReactNode, useState } from 'react'
-import { fetchClaimData } from '../helpers/claim'
-import { networkProviders } from '../helpers/networkProvider'
-import config from '../configuration'
-import { abi as MERKLE_ABI } from '../artifacts/MerkleDrop.json'
-import { Contract, ethers } from 'ethers'
+import { createContext, FC, ReactNode, useState } from 'react';
+import { fetchClaimData, hasClaimed } from '../helpers/claim';
+import { Zero } from '@ethersproject/constants';
+import { BigNumber } from 'ethers';
 
 export interface IUserContext {
-	userAddress: string
-	claimableAmount: number
-	submitUserAddress: (address: string) => void
+	userAddress: string;
+	claimableAmount: BigNumber;
+	submitUserAddress: (address: string) => void;
 }
 const initialValue = {
 	userAddress: '',
-	claimableAmount: 0,
+	claimableAmount: Zero,
 	submitUserAddress: () => {},
-}
-export const UserContext = createContext<IUserContext>(initialValue)
+};
+export const UserContext = createContext<IUserContext>(initialValue);
 
 type Props = {
-	children?: ReactNode
-}
+	children?: ReactNode;
+};
 export const UserProvider: FC<Props> = ({ children }) => {
-	const [userAddress, setUserAddress] = useState<string>('')
-	const [claimableAmount, setClaimableAmount] = useState<number>(0)
+	const [userAddress, setUserAddress] = useState<string>(
+		initialValue.userAddress,
+	);
+	const [claimableAmount, setClaimableAmount] = useState<BigNumber>(
+		initialValue.claimableAmount,
+	);
 
 	const submitUserAddress = async (address: string) => {
-		setUserAddress(address)
-		setClaimableAmount(0)
+		setUserAddress(address);
+		setClaimableAmount(Zero);
 
-		const claimData = await fetchClaimData(address)
+		const claimData = await fetchClaimData(address);
 		if (claimData) {
-			const provider = networkProviders[config.XDAI_NETWORK_NUMBER]
-			console.log('merkle address:', config.XDAI_CONFIG.MERKLE_ADDRESS)
-			console.log('abi:', MERKLE_ABI)
-			console.log('index:', claimData.index)
-
-			const merkleContract = new Contract(
-				config.XDAI_CONFIG.MERKLE_ADDRESS,
-				MERKLE_ABI,
-				provider,
-			)
-			console.log(claimData)
-			const amount = ethers.BigNumber.from(claimData.amount)
-			console.log('amount:', amount.toString())
-
-			try {
-				const isClaimedResult = await merkleContract.isClaimed(
-					Number(claimData.index),
-				)
-
-				console.log('has claimed:', isClaimedResult)
-			} catch (e) {
-				console.error('error:', e)
+			const _hasClaimed = await hasClaimed(address, claimData);
+			console.log('hasClaimed:', _hasClaimed);
+			if (!_hasClaimed) {
+				setClaimableAmount(BigNumber.from(claimData.amount));
+				return;
 			}
 		}
-	}
+
+		setClaimableAmount(Zero);
+	};
 
 	return (
 		<UserContext.Provider
@@ -66,5 +53,5 @@ export const UserProvider: FC<Props> = ({ children }) => {
 		>
 			{children}
 		</UserContext.Provider>
-	)
-}
+	);
+};

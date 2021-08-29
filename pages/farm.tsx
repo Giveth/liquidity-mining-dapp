@@ -1,5 +1,5 @@
-import Head from 'next/head'
-import FarmView from '../src/components/views/Farm.view'
+import Head from 'next/head';
+import FarmView from '../src/components/views/Farm.view';
 
 export default function HomeRoute() {
 	return (
@@ -9,5 +9,5 @@ export default function HomeRoute() {
 			</Head>
 			<FarmView />
 		</>
-	)
+	);
 }

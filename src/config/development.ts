@@ -1,6 +1,6 @@
-import { EnvConfig } from '../types/config'
+import { EnvConfig } from '../types/config';
 
-const INFURA_API_KEY = process.env.NEXT_PUBLIC_INFURA_API_KEY
+const INFURA_API_KEY = process.env.NEXT_PUBLIC_INFURA_API_KEY;
 
 const config: EnvConfig = {
 	MAINNET_NETWORK_NUMBER: 42, // Kovan
@@ -48,6 +48,6 @@ const config: EnvConfig = {
 			LM_ADDRESS: '0xD97DfF18cCd1e0cA32d5E27245C783E195735c00',
 		},
 	},
-}
+};
 
-export default config
+export default config;
