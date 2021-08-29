@@ -8,6 +8,10 @@ import { ArrowButton, Card, Header, ICardProps } from './common';
 import { OnboardContext } from '../../context/onboard.context';
 import { UserContext } from '../../context/user.context';
 import { ethers } from 'ethers';
+import {
+	ClaimViewContext,
+	IClaimViewCardProps,
+} from '../views/claim/Claim.view';
 
 interface IConnectCardContainerProps {
 	data: any;
@@ -73,7 +77,9 @@ enum GiveDropStateType {
 	Missed,
 }
 
-export const ConnectCard: FC<ICardProps> = ({ activeIndex, index }) => {
+export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
+	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
+
 	const { address, changeWallet = () => {} } = useContext(OnboardContext);
 	const { submitUserAddress, claimableAmount } = useContext(UserContext);
 
@@ -202,9 +208,10 @@ export const ConnectCard: FC<ICardProps> = ({ activeIndex, index }) => {
 					<ArrowButton />
 				</>
 			)}
-			{giveDropState === GiveDropStateType.Success && (
-				<SuccessArrowButton />
-			)}
+			{giveDropState === GiveDropStateType.Success &&
+				activeIndex === index && (
+					<SuccessArrowButton onClick={goNextStep} />
+				)}
 		</ConnectCardContainer>
 	);
 };

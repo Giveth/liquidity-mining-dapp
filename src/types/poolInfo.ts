@@ -10,10 +10,13 @@ export interface StakeUserInfo {
 	notStakedLpTokensWei?: BigNumber | number;
 	earned?: Earned;
 }
+
+export type APR = BigNumber | null;
+
 export interface StakePoolInfo extends StakeUserInfo {
 	tokensInPool?: BigNumber | number;
 	tokensInPoolUSD?: BigNumber | number;
-	APR?: BigNumber | null;
+	apr: APR;
 	reserves?: Array<BigNumber>;
 	poolTotalSupply?: BigNumber;
 }

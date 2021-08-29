@@ -1,9 +1,13 @@
-import { useState, ChangeEvent, FC } from 'react';
+import { useState, ChangeEvent, FC, useContext } from 'react';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
 import { H2, H4, P } from '../styled-components/Typography';
 import { ArrowButton, Card, Header, ICardProps, MaxGIV } from './common';
+import {
+	ClaimViewContext,
+	IClaimViewCardProps,
+} from '../views/claim/Claim.view';
 
 const StreamCardContainer = styled(Card)`
 	::before {
@@ -57,7 +61,9 @@ const StreamHeader = styled(Header)`
 	margin-bottom: 16px;
 `;
 
-export const StreamCard: FC<ICardProps> = ({ activeIndex, index }) => {
+export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
+	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
+
 	const [donation, setDonation] = useState(0);
 
 	const stackedChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -80,7 +86,7 @@ export const StreamCard: FC<ICardProps> = ({ activeIndex, index }) => {
 					2026. Increase your flowrate by earning more GIV!
 				</Description>
 			</StreamHeader>
-			<ArrowButton />
+			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
 		</StreamCardContainer>
 	);
 };

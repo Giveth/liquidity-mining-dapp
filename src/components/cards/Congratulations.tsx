@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
 import { H2, P } from '../styled-components/Typography';
+import { useContext } from 'react';
+import { UserContext } from '../../context/user.context';
+import { ethers } from 'ethers';
 
 const CongratulationsView = styled.div`
 	min-height: 100vh;
@@ -53,13 +56,18 @@ const CongratsButton = styled(Button)`
 `;
 
 export const CongratulationsCard = () => {
+	const { claimableAmount } = useContext(UserContext);
 	return (
 		<CongratulationsView>
 			<CongratulationsContainer>
 				<CongHeader>
 					<H2 as='h1'>Congratulations!</H2>
 					<Description>
-						<P>You have successfully claimed {333} GIV tokens.</P>
+						<P>
+							You have successfully claimed{' '}
+							{ethers.utils.formatEther(claimableAmount)} GIV
+							tokens.
+						</P>
 						<P>Add GIV to Metamask</P>
 					</Description>
 				</CongHeader>

@@ -1,9 +1,16 @@
-import { useState, ChangeEvent, FC } from 'react';
+import { useState, ChangeEvent, FC, useContext } from 'react';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
 import { H2, H4, P } from '../styled-components/Typography';
 import { ArrowButton, Card, Header, ICardProps, MaxGIV } from './common';
+import {
+	ClaimViewContext,
+	IClaimViewCardProps,
+} from '../views/claim/Claim.view';
+import { ethers } from 'ethers';
+import { UserContext } from '../../context/user.context';
+import { resourceGone } from '@hapi/boom';
 
 const GovernCardContainer = styled(Card)`
 	::before {
@@ -46,7 +53,10 @@ const GovernGIVEarn = styled.div`
 	text-align: left;
 `;
 
-const GovernCard: FC<ICardProps> = ({ activeIndex, index }) => {
+const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
+	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
+	const { claimableAmount } = useContext(UserContext);
+
 	const [stacked, setStacked] = useState(0);
 
 	const stackedChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +89,9 @@ const GovernCard: FC<ICardProps> = ({ activeIndex, index }) => {
 							<GovernLabel>
 								Amount staked on proposals
 							</GovernLabel>
-							<MaxGIV>{`Max ${333} GIV`}</MaxGIV>
+							<MaxGIV>{`Max ${ethers.utils.formatEther(
+								claimableAmount,
+							)} GIV`}</MaxGIV>
 						</Row>
 						<GovernInput>
 							<InputWithUnit
@@ -98,7 +110,7 @@ const GovernCard: FC<ICardProps> = ({ activeIndex, index }) => {
 					</div>
 				</YouCanEarn>
 			</Row>
-			<ArrowButton />
+			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
 		</GovernCardContainer>
 	);
 };

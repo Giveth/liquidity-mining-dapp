@@ -1,9 +1,15 @@
-import { useState, ChangeEvent, FC } from 'react';
+import { useState, ChangeEvent, FC, useContext } from 'react';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
 import { H2, H4, P } from '../styled-components/Typography';
 import { ArrowButton, Card, Header, ICardProps, MaxGIV } from './common';
+import {
+	ClaimViewContext,
+	IClaimViewCardProps,
+} from '../views/claim/Claim.view';
+import { UserContext } from '../../context/user.context';
+import { ethers } from 'ethers';
 
 const DonateCardContainer = styled(Card)`
 	::before {
@@ -57,7 +63,10 @@ const DonateHeader = styled(Header)`
 	margin-bottom: 16px;
 `;
 
-export const DonateCard: FC<ICardProps> = ({ activeIndex, index }) => {
+export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
+	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
+	const { claimableAmount } = useContext(UserContext);
+
 	const [donation, setDonation] = useState(0);
 
 	const stackedChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -91,7 +100,9 @@ export const DonateCard: FC<ICardProps> = ({ activeIndex, index }) => {
 							justifyContent={'space-between'}
 						>
 							<DonateLabel>Your donation</DonateLabel>
-							<MaxGIV>{`Max ${333} GIV`}</MaxGIV>
+							<MaxGIV>{`Max ${ethers.utils.formatEther(
+								claimableAmount,
+							)} GIV`}</MaxGIV>
 						</Row>
 						<DonateInput>
 							<InputWithUnit
@@ -110,7 +121,7 @@ export const DonateCard: FC<ICardProps> = ({ activeIndex, index }) => {
 					</div>
 				</GetBack>
 			</Row>
-			<ArrowButton />
+			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
 		</DonateCardContainer>
 	);
 };

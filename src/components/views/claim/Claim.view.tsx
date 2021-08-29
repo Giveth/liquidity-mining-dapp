@@ -8,6 +8,7 @@ import { StreamCard } from '../../cards/Stream';
 import GovernCard from '../../cards/Govern';
 import InvestCard from '../../cards/Invest';
 import { Row } from '../../styled-components/Grid';
+import { number } from 'prop-types';
 
 const stepsTitle = ['Connect', 'Invest', 'Govern', 'Donate', 'Stream', 'Claim'];
 
@@ -68,9 +69,25 @@ const ClaimCarouselContainer = styled.div`
 	height: calc(100vh - 80px);
 `;
 
+interface IClaimViewContext {
+	activeIndex: number;
+	goNextStep: () => void;
+	goFirstStep: () => void;
+}
+
+export interface IClaimViewCardProps {
+	index: number;
+}
+
+export const ClaimViewContext = React.createContext<IClaimViewContext>({
+	activeIndex: 0,
+	goNextStep: () => {},
+	goFirstStep: () => {},
+});
+
 const ClaimView = () => {
 	const [step, setStep] = useState(0);
-	return step < 5 ? (
+	return step < 6 ? (
 		<ClaimViewContainer>
 			<Steps justifyContent='center' alignItems='center'>
 				{stepsTitle.map((title, idx) => (
@@ -85,12 +102,24 @@ const ClaimView = () => {
 				))}
 			</Steps>
 			<ClaimCarouselContainer>
-				<ConnectCard activeIndex={step} index={0} />
-				<InvestCard activeIndex={step} index={1} />
-				<GovernCard activeIndex={step} index={2} />
-				<DonateCard activeIndex={step} index={3} />
-				<StreamCard activeIndex={step} index={4} />
-				<ClaimCard activeIndex={step} index={5} />
+				<ClaimViewContext.Provider
+					value={{
+						activeIndex: step,
+						goNextStep: () => {
+							setStep(step + 1);
+						},
+						goFirstStep: () => {
+							setStep(0);
+						},
+					}}
+				>
+					<ConnectCard index={0} />
+					<InvestCard index={1} />
+					<GovernCard index={2} />
+					<DonateCard index={3} />
+					<StreamCard index={4} />
+					<ClaimCard index={5} />
+				</ClaimViewContext.Provider>
 			</ClaimCarouselContainer>
 		</ClaimViewContainer>
 	) : (

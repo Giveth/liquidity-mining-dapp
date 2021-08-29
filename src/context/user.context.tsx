@@ -1,5 +1,5 @@
 import { createContext, FC, ReactNode, useState } from 'react';
-import { fetchClaimData, hasClaimed } from '../helpers/claim';
+import { fetchClaimData, hasClaimed } from '../lib/claim';
 import { Zero } from '@ethersproject/constants';
 import { BigNumber } from 'ethers';
 

@@ -1,9 +1,20 @@
-import { useState, ChangeEvent, FC } from 'react';
+import { useState, ChangeEvent, FC, useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
 import { H2, H4, P } from '../styled-components/Typography';
-import { ArrowButton, Card, Header, ICardProps, MaxGIV } from './common';
+import { ArrowButton, Card, Header, MaxGIV } from './common';
+import {
+	ClaimViewContext,
+	IClaimViewCardProps,
+} from '../views/claim/Claim.view';
+import { UserContext } from '../../context/user.context';
+import { ethers } from 'ethers';
+import { fetchGivMiningInfo } from '../../lib/stakingPool';
+import config from '../../configuration';
+import { APR } from '../../types/poolInfo';
+import BigNumber from 'bignumber.js';
+import { convertEthHelper, Zero } from '../../helpers/number';
 
 const InvestCardContainer = styled(Card)`
 	::before {
@@ -61,18 +72,44 @@ const PoolItemBold = styled.div`
 	line-height: 40px;
 `;
 
-const InvestCard: FC<ICardProps> = ({ activeIndex, index }) => {
-	const [deposite, setDopsite] = useState(0);
+const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
+	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
+	const { claimableAmount } = useContext(UserContext);
 
-	const depositeChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+	const [deposit, setDeposit] = useState(0);
+	const [earnEstimate, setEarnEstimate] = useState<BigNumber>(Zero);
+	const [apr, setApr] = useState<APR>(null);
+
+	const depositChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
 		if (e.target.value.length === 0) {
-			setDopsite(0);
+			setDeposit(0);
 		} else if (isNaN(+e.target.value)) {
-			setDopsite(deposite);
+			setDeposit(deposit);
 		} else {
-			setDopsite(+e.target.value);
+			if (claimableAmount.gte(ethers.utils.parseEther(e.target.value)))
+				setDeposit(+e.target.value);
 		}
 	};
+
+	useEffect(() => {
+		setEarnEstimate(apr ? apr.times(deposit).div(100) : Zero);
+	}, [apr, deposit]);
+
+	useEffect(() => {
+		const cb = () => {
+			fetchGivMiningInfo(
+				config.XDAI_CONFIG.GIV.LM_ADDRESS,
+				config.XDAI_NETWORK_NUMBER,
+			)
+				.then(({ apr: _apr }) => setApr(_apr))
+				.catch(e => console.error('Error on fetching APR:', e));
+		};
+
+		cb();
+		const interval = setInterval(cb, 120 * 1000);
+
+		return () => clearInterval(interval);
+	}, []);
 
 	return (
 		<InvestCardContainer activeIndex={activeIndex} index={index}>
@@ -80,7 +117,7 @@ const InvestCard: FC<ICardProps> = ({ activeIndex, index }) => {
 				<H2 as='h1'>Invest with GIVmining</H2>
 				<P size='small' color={'#CABAFF'}>
 					Provide liquidity or stake your GIV tokens to earn up to
-					140% APY
+					{apr ? convertEthHelper(apr, 2, true) : '?'}% APY
 				</P>
 			</Header>
 			<Row alignItems={'flex-start'} justifyContent={'space-between'}>
@@ -92,13 +129,15 @@ const InvestCard: FC<ICardProps> = ({ activeIndex, index }) => {
 							justifyContent={'space-between'}
 						>
 							<DepositeLable>Your deposit</DepositeLable>
-							<MaxGIV>{`Max ${333} GIV`}</MaxGIV>
+							<MaxGIV>{`Max ${ethers.utils.formatEther(
+								claimableAmount,
+							)} GIV`}</MaxGIV>
 						</Row>
 						<DepositInput>
 							<InputWithUnit
-								value={deposite}
+								value={deposit}
 								unit={'GIV'}
-								onChange={depositeChangeHandler}
+								onChange={depositChangeHandler}
 							/>
 						</DepositInput>
 					</div>
@@ -108,7 +147,7 @@ const InvestCard: FC<ICardProps> = ({ activeIndex, index }) => {
 					<PoolItems>
 						<Row justifyContent='space-between'>
 							<PoolItem>Your deposit</PoolItem>
-							<PoolItem>{deposite}</PoolItem>
+							<PoolItem>{deposit}</PoolItem>
 						</Row>
 						<Row justifyContent='space-between'>
 							<PoolItem>Farm fee</PoolItem>
@@ -116,12 +155,14 @@ const InvestCard: FC<ICardProps> = ({ activeIndex, index }) => {
 						</Row>
 						<Row justifyContent='space-between'>
 							<PoolItem>Annual GIV earned</PoolItem>
-							<PoolItemBold>{0}</PoolItemBold>
+							<PoolItemBold>
+								{convertEthHelper(earnEstimate, 2, true)}
+							</PoolItemBold>
 						</Row>
 					</PoolItems>
 				</PoolCard>
 			</Row>
-			<ArrowButton />
+			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
 		</InvestCardContainer>
 	);
 };

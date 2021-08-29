@@ -6,7 +6,7 @@ interface BasicNetworkConfig {
 	TOKEN_ADDRESS: string;
 	WETH_TOKEN_ADDRESS?: string;
 	TOKEN_DISTRO_ADDRESS: string;
-	GIV?: PoolConfig;
+	GIV: PoolConfig;
 	nodeUrl: string;
 }
 
