@@ -2,8 +2,9 @@ import bnc_onboard from 'bnc-onboard';
 import config from '../configuration';
 import { Web3Provider } from '@ethersproject/providers';
 import { createContext, FC, ReactNode, useEffect, useState } from 'react';
-import { API } from 'bnc-onboard/dist/src/interfaces';
+import { API, Wallet } from 'bnc-onboard/dist/src/interfaces';
 import { ethers } from 'ethers';
+import { awaitExpression } from '@babel/types';
 
 const networkId = config.XDAI_NETWORK_NUMBER;
 const dappId = config.BLOCKNATIVE_DAPP_ID;
@@ -13,6 +14,7 @@ export interface IOnboardContext {
 	network: number;
 	changeWallet: () => Promise<void>;
 	connect: () => Promise<void>;
+	walletCheck: () => Promise<void>;
 	isReady: boolean;
 	provider: Web3Provider | null;
 }
@@ -21,6 +23,7 @@ const initialValue = {
 	network: 0,
 	changeWallet: () => Promise.resolve(),
 	connect: () => Promise.resolve(),
+	walletCheck: () => Promise.resolve(),
 	isReady: false,
 	provider: null,
 };
@@ -35,6 +38,26 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 	const [onboard, setOnboard] = useState<API>();
 	const [isReady, setIsReady] = useState(initialValue.isReady);
 	const [provider, setProvider] = useState<Web3Provider | null>(null);
+	const [wallet, setWallet] = useState<Wallet | null>(null);
+
+	const updateProvider = () => {
+		const ethersProvider =
+			wallet && wallet.provider
+				? new ethers.providers.Web3Provider(wallet.provider)
+				: null;
+		setProvider(ethersProvider);
+	};
+
+	useEffect(() => {
+		if (!wallet) return;
+		if (provider && provider.network?.chainId === network) return;
+		console.log('network:', network);
+		updateProvider();
+	}, [network]);
+
+	useEffect(() => {
+		updateProvider();
+	}, [wallet]);
 
 	const initOnboard = () => {
 		const _onboard = bnc_onboard({
@@ -47,12 +70,7 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 						'selectedWallet',
 						wallet.name || '',
 					);
-
-					const ethersProvider =
-						wallet && wallet.provider
-							? new ethers.providers.Web3Provider(wallet.provider)
-							: null;
-					setProvider(ethersProvider);
+					setWallet(wallet);
 				},
 				address: setAddress,
 				network: setNetwork,
@@ -75,6 +93,7 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 				{ checkName: 'derivationPath' },
 				{ checkName: 'connect' },
 				{ checkName: 'accounts' },
+				{ checkName: 'network' },
 			],
 		});
 
@@ -106,6 +125,12 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 		}
 	};
 
+	const walletCheck = async () => {
+		if (onboard) {
+			const ready = await onboard.walletCheck();
+			setIsReady(ready);
+		}
+	};
 	const changeWallet = async () => {
 		if (onboard) {
 			onboard.walletReset();
@@ -132,6 +157,7 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 				isReady,
 				connect,
 				provider,
+				walletCheck,
 			}}
 		>
 			{children}

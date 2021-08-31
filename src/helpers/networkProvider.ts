@@ -13,7 +13,6 @@ const _networksProviders: {
 
 // eslint-disable-next-line no-restricted-syntax,guard-for-in
 for (const network in NETWORKS_CONFIG) {
-	console.log(NETWORKS_CONFIG[network].nodeUrl);
 	_networksProviders[network] = new JsonRpcProvider(
 		NETWORKS_CONFIG[network].nodeUrl,
 	);

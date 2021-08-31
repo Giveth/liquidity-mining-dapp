@@ -80,7 +80,7 @@ enum GiveDropStateType {
 export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
 
-	const { address, changeWallet = () => {} } = useContext(OnboardContext);
+	const { address, connect } = useContext(OnboardContext);
 	const { submitUserAddress, claimableAmount } = useContext(UserContext);
 
 	const [walletAddress, setWalletAddress] = useState<string>('');
@@ -182,7 +182,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			</Header>
 			{giveDropState !== GiveDropStateType.Success && (
 				<Row alignItems={'center'} justifyContent={'space-between'}>
-					<ConenctButton secondary onClick={changeWallet}>
+					<ConenctButton secondary onClick={connect}>
 						{btnLabel}
 					</ConenctButton>
 					<Span>or</Span>

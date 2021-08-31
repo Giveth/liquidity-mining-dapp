@@ -43,27 +43,30 @@ const ClaimButton = styled(Button)`
 
 const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex } = useContext(ClaimViewContext);
-	const { userAddress, claimableAmount, submitUserAddress } =
-		useContext(UserContext);
-	const { isReady, address, changeWallet, connect, provider } =
+	const { userAddress, claimableAmount } = useContext(UserContext);
+	const { isReady, changeWallet, connect, provider, network, walletCheck } =
 		useContext(OnboardContext);
 
 	const onClaim = async () => {
 		if (!isReady) {
 			console.log('Wallet is not connected');
 			await connect();
-			submitUserAddress(address);
 			return;
 		}
-		if (userAddress.toLowerCase() !== address.toLowerCase() || !provider) {
+
+		if (!provider) {
 			console.log('Connected wallet is not the claimed address');
 			await changeWallet();
-			submitUserAddress(address);
+			return;
+		}
+
+		if (network !== config.XDAI_NETWORK_NUMBER) {
+			await walletCheck();
 			return;
 		}
 
 		try {
-			const tx = await claim(address, provider);
+			const tx = await claim(userAddress, provider);
 
 			showPendingClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
 

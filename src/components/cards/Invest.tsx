@@ -1,4 +1,11 @@
-import { useState, ChangeEvent, FC, useContext, useEffect } from 'react';
+import {
+	useState,
+	ChangeEvent,
+	FC,
+	useContext,
+	useEffect,
+	useRef,
+} from 'react';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
@@ -95,13 +102,21 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		setEarnEstimate(apr ? apr.times(deposit).div(100) : Zero);
 	}, [apr, deposit]);
 
+	const mounted = useRef(true);
+	useEffect(
+		() => () => {
+			mounted.current = false;
+		},
+		[],
+	);
+
 	useEffect(() => {
 		const cb = () => {
 			fetchGivMiningInfo(
 				config.XDAI_CONFIG.GIV.LM_ADDRESS,
 				config.XDAI_NETWORK_NUMBER,
 			)
-				.then(({ apr: _apr }) => setApr(_apr))
+				.then(({ apr: _apr }) => mounted.current && setApr(_apr))
 				.catch(e => console.error('Error on fetching APR:', e));
 		};
 

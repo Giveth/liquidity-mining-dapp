@@ -25,7 +25,6 @@ export const fetchGivMiningInfo = async (
 				.times('100')
 				.div(_totalSupply.toString());
 
-	console.log('APR:', apr && apr.toString());
 	return {
 		tokensInPool: totalSupply,
 		apr,
