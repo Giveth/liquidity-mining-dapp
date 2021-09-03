@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { FC, ReactNode, useState } from 'react';
+import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import { Container, Row } from './styled-components/Grid';
 
 const labelsContainer = styled(Row)``;
@@ -64,10 +64,17 @@ const LabelsContainer = styled.div`
 
 const Tabs: FC<ITabsProps> = ({ tabs }) => {
 	const [index, setIndex] = useState(0);
+	const TabRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (TabRef) {
+			TabRef?.current?.scrollIntoView({ behavior: 'smooth' });
+		}
+	}, [index]);
 
 	return (
 		<>
-			<LabelsContainer>
+			<LabelsContainer ref={TabRef}>
 				<Container>
 					<Row justifyContent='space-between' alignItems='flex-end'>
 						{tabs.map((tab, idx) => (
