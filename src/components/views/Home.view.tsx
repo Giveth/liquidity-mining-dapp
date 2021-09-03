@@ -10,6 +10,7 @@ const WelcomeSection = styled.div`
 	background-image: url('/images/Giv.png');
 	background-size: cover;
 	background-repeat: no-repeat;
+	min-height: calc(100vh - 228px);
 	::before {
 		content: url('/images/homebg1.png');
 		position: absolute;
