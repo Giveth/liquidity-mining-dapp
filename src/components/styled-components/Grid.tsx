@@ -1,17 +1,17 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 interface IRowProps {
-	wrap?: number;
-	alignItems?: 'stretch' | 'center' | 'flex-start' | 'flex-end' | 'baseline';
+	wrap?: number
+	alignItems?: 'stretch' | 'center' | 'flex-start' | 'flex-end' | 'baseline'
 	justifyContent?:
 		| 'flex-start'
 		| 'flex-end'
 		| 'center'
 		| 'space-between'
 		| 'space-around'
-		| 'space-evenly';
-	flexDirection?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
-	gap?: string;
+		| 'space-evenly'
+	flexDirection?: 'row' | 'row-reverse' | 'column' | 'column-reverse'
+	gap?: string
 }
 
 export const Row = styled.div<IRowProps>`
@@ -23,7 +23,7 @@ export const Row = styled.div<IRowProps>`
 	justify-content: ${props =>
 		props.justifyContent ? props.justifyContent : 'initial'};
 	gap: ${props => props.gap};
-`;
+`
 
 export const Container = styled.div`
 	width: 100%;
@@ -43,4 +43,4 @@ export const Container = styled.div`
 	@media (min-width: 1400px) {
 		width: 1320px;
 	}
-`;
+`
