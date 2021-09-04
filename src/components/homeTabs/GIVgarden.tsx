@@ -16,7 +16,7 @@ const OverviewTabContainer = styled(TabContainer)`
 	}
 `;
 
-const TabOverview = () => {
+const TabGIVgarden = () => {
 	const goToClaim = () => {
 		router.push('/claim');
 	};
@@ -25,30 +25,27 @@ const TabOverview = () => {
 		<OverviewTabContainer>
 			<IntroSection>
 				<Container>
-					<TabTitle>The Economy of Giving</TabTitle>
+					<TabTitle>GIVgarden</TabTitle>
 					<TabDesc size='medium'>
-						Giveth is building a future in which giving is
-						effortless and people all around the world are rewarded
-						for creating positive change.
+						The GIVgarden is the decentralized governance platform
+						for the GIVeconomy.
 					</TabDesc>
 					<Row wrap={1}>
 						<GivCard>
-							<H3>GIV Token</H3>
-							<GivCardSub>DONATE, EARN, GOVERN</GivCardSub>
+							<H3>Vote</H3>
 							<P size='xsmall'>
-								GIV fuels and directs the Future of Giving,
-								inspiring people to become Givers and
-								participate in an ecosystem of collective
-								support, abundance, and value-creation.
+								GIV token holders control the treasury, roadmap
+								and mission of the Giveth ecosystem.
 							</P>
+							<ParticipateButton secondary>
+								Govern
+							</ParticipateButton>
 						</GivCard>
 						<GivCard>
-							<H3>GIVbacks</H3>
-							<GivCardSub>GIVE AND RECEIVE</GivCardSub>
+							<H3>Earn</H3>
 							<P size='xsmall'>
-								GIVbacks is a revolutionary concept that
-								incentives donations to verified projects on
-								Giveth.
+								By voting in the GIVgarden you earn rewards on
+								your staked GIV!
 							</P>
 						</GivCard>
 					</Row>
@@ -56,50 +53,40 @@ const TabOverview = () => {
 			</IntroSection>
 			<ParticipateSection>
 				<Container>
-					<Section2Title>How to participate</Section2Title>
+					<Section2Title>Three Pillars of Governance</Section2Title>
 					<Row wrap={1}>
 						<ParticipateCard>
-							<ParticipateCardTitle>Earn</ParticipateCardTitle>
+							<ParticipateCardTitle>
+								Conviction Voting
+							</ParticipateCardTitle>
 							<ParticipateDesc size='xsmall'>
-								Participate in GIVmining by adding liquidity and
-								generating even more GIV in rewards.
+								A token-weighted decision making process in
+								which voting power is accrued as a function of
+								the number of tokens staked and time.
 							</ParticipateDesc>
-							<ParticipateButton>
-								Add Liquidty and Earn
-							</ParticipateButton>
-							<ParticipateSubDesc>
-								Earn GIV by providing liquidity. Up to 140% APR
-								waits for you.
-							</ParticipateSubDesc>
+							<ParticipateButton>learn more</ParticipateButton>
 						</ParticipateCard>
 						<ParticipateCard>
-							<ParticipateCardTitle>Govern</ParticipateCardTitle>
+							<ParticipateCardTitle>
+								Covenant
+							</ParticipateCardTitle>
 							<ParticipateDesc size='xsmall'>
-								Stake GIV in the GIVgarden to participate in
-								governance of the &nbsp;
-								<strong>Giving Economy</strong>. Propose and
-								vote to help shape the Future of Giving.
+								A decentralized social contract that outlines
+								standards for on-chain and off-chain community
+								behaviour.
 							</ParticipateDesc>
-							<ParticipateButton>See proposals</ParticipateButton>
-							<ParticipateSubDesc>
-								Earn GIV by voting on proposals and
-								participating in Giveth governance.
-							</ParticipateSubDesc>
+							<ParticipateButton>read covenant</ParticipateButton>
 						</ParticipateCard>
 						<ParticipateCard>
-							<ParticipateCardTitle>Give</ParticipateCardTitle>
+							<ParticipateCardTitle>Celeste</ParticipateCardTitle>
 							<ParticipateDesc size='xsmall'>
-								Get GIVbacks by donating to verified projects on
-								Giveth. Empower change-makers that are working
-								hard to make a difference.{' '}
+								A decentralized dispute resolution court that
+								judges proposals challenged for not being in
+								line with community values.
 							</ParticipateDesc>
 							<ParticipateButton>
-								Donate to projects
+								explore celeste
 							</ParticipateButton>
-							<ParticipateSubDesc>
-								Earn GIV by donating to verified projects on
-								Giveth.{' '}
-							</ParticipateSubDesc>
 						</ParticipateCard>
 					</Row>
 				</Container>
@@ -107,13 +94,14 @@ const TabOverview = () => {
 			<Container>
 				<Section3>
 					<ClaimCard>
-						<ClaimCardTitle>Claim your GIV tokens</ClaimCardTitle>
+						<ClaimCardTitle>Vote in the GIVgarden</ClaimCardTitle>
 						<P size='small'>
-							Connect your wallet or check an ethereum address to
-							see your rewards.
+							The GIVgarden empowers the Giveth community to
+							coordinate around shared resources from the bottom
+							up.
 						</P>
 						<ClaimCardButton secondary onClick={goToClaim}>
-							CLAIM YOUR GIV
+							govern
 						</ClaimCardButton>
 					</ClaimCard>
 				</Section3>
@@ -133,7 +121,7 @@ const GivCard = styled.div`
 
 const ParticipateCard = styled.div`
 	flex: 1;
-	padding-right: 76px;
+	padding-right: 32px;
 `;
 
 const ParticipateButton = styled(Button)`
@@ -221,4 +209,4 @@ const ClaimCardTitle = styled(H2)`
 	margin-bottom: 22px;
 `;
 
-export default TabOverview;
+export default TabGIVgarden;
