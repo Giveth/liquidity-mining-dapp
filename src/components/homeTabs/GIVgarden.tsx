@@ -8,10 +8,11 @@ import router from 'next/router';
 import { Container } from '../styled-components/Grid';
 
 const OverviewTabContainer = styled(TabContainer)`
+	position: relative;
 	::after {
 		content: url('/images/homebg2.png');
 		position: absolute;
-		bottom: -1000px;
+		top: 0;
 		right: 0;
 	}
 `;
