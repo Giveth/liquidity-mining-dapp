@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Header from '../Header';
+import TabGIVfarm from '../homeTabs/GIVfarm';
 import TabGIVgarden from '../homeTabs/GIVgarden';
 import TabOverview from '../homeTabs/Overview';
 import { Container } from '../styled-components/Grid';
@@ -49,7 +50,7 @@ function HomeView() {
 				tabs={[
 					{ label: 'Overview', component: <TabOverview /> },
 					{ label: 'GIVgarden', component: <TabGIVgarden /> },
-					{ label: 'GIVfarm', component: <></> },
+					{ label: 'GIVfarm', component: <TabGIVfarm /> },
 					{ label: 'GIVbacks', component: <></> },
 					{ label: 'GIVstrem', component: <></> },
 				]}
