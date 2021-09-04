@@ -66,11 +66,11 @@ const Tabs: FC<ITabsProps> = ({ tabs }) => {
 	const [index, setIndex] = useState(0);
 	const TabRef = useRef<HTMLDivElement>(null);
 
-	useEffect(() => {
-		if (TabRef) {
-			TabRef?.current?.scrollIntoView({ behavior: 'smooth' });
-		}
-	}, [index]);
+	// useEffect(() => {
+	// 	if (TabRef && TabRef.current) {
+	// 		TabRef.current.scrollIntoView({ behavior: 'smooth' });
+	// 	}
+	// }, [index]);
 
 	return (
 		<>
