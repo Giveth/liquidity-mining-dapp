@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
 import { Container, Row } from '../styled-components/Grid';
 import { TabContainer } from './commons';
+import StakingPoolCard from '../cards/StakingPoolCard';
 
 const GIVfarmTabContainer = styled(TabContainer)``;
 
@@ -11,130 +12,17 @@ const TabGIVfarm = () => {
 		<GIVfarmTabContainer>
 			<Container>
 				<Row>
-					<SwapCard />
-					<SwapCard wrongNetwork={true} />
+					<StakingPoolCard />
+					<StakingPoolCard />
+					<StakingPoolCard />
+				</Row>
+				<Row>
+					<StakingPoolCard wrongNetwork={true} />
+					<StakingPoolCard wrongNetwork={true} />
+					<StakingPoolCard wrongNetwork={true} />
 				</Row>
 			</Container>
 		</GIVfarmTabContainer>
-	);
-};
-
-const SwapCardContainer = styled.div`
-	width: 380px;
-	padding: 16px 24px 24px;
-	border-radius: 10px;
-	background: #ffffffe5;
-	color: #303b72;
-	position: relative;
-	margin: 32px 16px;
-	overflow: hidden;
-`;
-const SwapCardExchange = styled.div`
-	font-family: red-hat;
-	font-size: 14px;
-	font-style: normal;
-	font-weight: 500;
-	line-height: 18px;
-	letter-spacing: 0.08em;
-`;
-const SwapCardBadge = styled.img`
-	position: absolute;
-	top: 12px;
-	right: 0px;
-`;
-const SwapCardTitle = styled(Row)`
-	margin-top: 12px;
-	margin-bottom: 12px;
-`;
-const SCTImage = styled.img``;
-const SCTLable = styled.span`
-	font-family: red-hat;
-	font-size: 32px;
-	font-style: normal;
-	font-weight: bold;
-	line-height: 38px;
-	letter-spacing: 0em;
-	margin-left: 24px;
-`;
-const SwapCardSubtitle = styled.div`
-	font-family: red-hat;
-	font-style: normal;
-	font-weight: 500;
-	font-size: 14px;
-	line-height: 150%;
-	color: #82899a;
-`;
-const Details = styled.div`
-	margin: 12px 0;
-`;
-const DetailLable = styled.div`
-	font-family: red-hat;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 14px;
-	line-height: 150%;
-	color: #82899a;
-`;
-const DetailValue = styled.div`
-	font-family: red-hat;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 18px;
-	line-height: 24px;
-	letter-spacing: -0.005em;
-	color: #303b72;
-`;
-
-enum SwapCardExchangeType {
-	GIVETH,
-	UNISWAP,
-	HONETSWAP,
-}
-
-const CardButton = styled(Button)`
-	height: 36px;
-	font-size: 12px;
-	width: 265px;
-	margin: 8px auto;
-`;
-
-const CardDisable = styled.div`
-	position: absolute;
-	left: 0;
-	top: 0;
-	height: 100%;
-	width: 100%;
-	background-color: #ffffffa0;
-`;
-
-interface ISwapCardProps {
-	wrongNetwork?: boolean;
-}
-
-const SwapCard: FC<ISwapCardProps> = ({ wrongNetwork }) => {
-	return (
-		<SwapCardContainer>
-			<SwapCardExchange>HONEYSWAP</SwapCardExchange>
-			<SwapCardBadge src='/images/chain/xdai-badge-s.png' />
-			<SwapCardTitle alignItems='center'>
-				<SCTImage src='/images/badge.png' />
-				<SCTLable>{`${'HNY'} / ${'GIV'}`}</SCTLable>
-			</SwapCardTitle>
-			<SwapCardSubtitle>50% GIV, 50%ETH</SwapCardSubtitle>
-			<Details>
-				<DetailLable>APR</DetailLable>
-				<DetailValue>145%</DetailValue>
-				<DetailLable>Claimable</DetailLable>
-				<DetailValue>{`${0} GIV`}</DetailValue>
-				<DetailLable>Streaming</DetailLable>
-				<DetailValue>{`${0} GIV`}</DetailValue>
-			</Details>
-			<CardButton secondary outline>
-				PROVIDE LIQUIDITY
-			</CardButton>
-			<CardButton outline>STAKE LP TOKENS</CardButton>
-			{wrongNetwork && <CardDisable />}
-		</SwapCardContainer>
 	);
 };
 
