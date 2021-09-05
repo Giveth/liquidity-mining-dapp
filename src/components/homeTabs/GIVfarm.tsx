@@ -1,3 +1,4 @@
+import { FC } from 'react';
 import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
 import { Container, Row } from '../styled-components/Grid';
@@ -11,6 +12,7 @@ const TabGIVfarm = () => {
 			<Container>
 				<Row>
 					<SwapCard />
+					<SwapCard wrongNetwork={true} />
 				</Row>
 			</Container>
 		</GIVfarmTabContainer>
@@ -24,8 +26,8 @@ const SwapCardContainer = styled.div`
 	background: #ffffffe5;
 	color: #303b72;
 	position: relative;
-	margin-top: 32px;
-	margin-bottom: 32px;
+	margin: 32px 16px;
+	overflow: hidden;
 `;
 const SwapCardExchange = styled.div`
 	font-family: red-hat;
@@ -96,7 +98,20 @@ const CardButton = styled(Button)`
 	margin: 8px auto;
 `;
 
-const SwapCard = () => {
+const CardDisable = styled.div`
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	background-color: #ffffffa0;
+`;
+
+interface ISwapCardProps {
+	wrongNetwork?: boolean;
+}
+
+const SwapCard: FC<ISwapCardProps> = ({ wrongNetwork }) => {
 	return (
 		<SwapCardContainer>
 			<SwapCardExchange>HONEYSWAP</SwapCardExchange>
@@ -118,6 +133,7 @@ const SwapCard = () => {
 				PROVIDE LIQUIDITY
 			</CardButton>
 			<CardButton outline>STAKE LP TOKENS</CardButton>
+			{wrongNetwork && <CardDisable />}
 		</SwapCardContainer>
 	);
 };
