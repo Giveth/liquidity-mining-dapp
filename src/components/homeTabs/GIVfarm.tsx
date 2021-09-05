@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Button } from '../styled-components/Button';
 import { Container, Row } from '../styled-components/Grid';
 import { TabContainer } from './commons';
 
@@ -88,6 +89,13 @@ enum SwapCardExchangeType {
 	HONETSWAP,
 }
 
+const CardButton = styled(Button)`
+	height: 36px;
+	font-size: 12px;
+	width: 265px;
+	margin: 8px auto;
+`;
+
 const SwapCard = () => {
 	return (
 		<SwapCardContainer>
@@ -106,6 +114,10 @@ const SwapCard = () => {
 				<DetailLable>Streaming</DetailLable>
 				<DetailValue>{`${0} GIV`}</DetailValue>
 			</Details>
+			<CardButton secondary outline>
+				PROVIDE LIQUIDITY
+			</CardButton>
+			<CardButton outline>STAKE LP TOKENS</CardButton>
 		</SwapCardContainer>
 	);
 };

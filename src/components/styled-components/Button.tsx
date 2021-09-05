@@ -3,16 +3,45 @@ import styled from 'styled-components';
 interface IButtonProps {
 	secondary?: boolean;
 	neutral?: boolean;
+	outline?: boolean;
 }
 
 export const Button = styled.button<IButtonProps>`
-	padding: 25px 32px;
-	background: ${props =>
-		props.neutral ? '#F7F7F9' : props.secondary ? '#E1458D' : '#5326EC'};
+	background: ${props => {
+		if (props.outline) {
+			return 'unset';
+		}
+		return props.neutral
+			? '#F7F7F9'
+			: props.secondary
+			? '#E1458D'
+			: '#5326EC';
+	}};
 	height: 64px;
-	border: 0;
+	border-width: 2px;
+	border-style: solid;
+	border-color: ${props => {
+		if (props.secondary) {
+			return '#E1458D';
+		}
+		if (props.neutral) {
+			return '#ffffff';
+		}
+		return '#5326EC';
+	}};
 	border-radius: 88px;
-	color: ${props => (props.neutral ? '#092560' : '#ffffff')};
+	color: ${props => {
+		if (props.outline) {
+			if (props.secondary) {
+				return '#E1458D';
+			}
+			if (props.neutral) {
+				return '#ffffff';
+			}
+			return '#5326EC';
+		}
+		return props.neutral ? '#092560' : '#ffffff';
+	}};
 	width: 100%;
 	font-style: normal;
 	font-weight: bold;
@@ -20,4 +49,5 @@ export const Button = styled.button<IButtonProps>`
 	line-height: 18px;
 	text-align: center;
 	cursor: pointer;
+	display: block;
 `;
