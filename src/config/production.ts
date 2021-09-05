@@ -13,16 +13,24 @@ const config: EnvConfig = {
 
 		nodeUrl: 'https://mainnet.infura.io/v3/' + INFURA_API_KEY,
 
-		UNISWAP: {
-			POOL_ADDRESS: '',
-			LM_ADDRESS: '',
-		},
-		BALANCER: {
-			POOL_ADDRESS: '',
-			LM_ADDRESS: '',
-		},
+		pools: [
+			{
+				POOL_ADDRESS: '',
+				LM_ADDRESS: '',
+				type: '',
+				title: '',
+				description: '',
+			},
+			{
+				POOL_ADDRESS: '',
+				LM_ADDRESS: '',
+				type: '',
+				title: '',
+				description: '',
+			},
+		],
+
 		GIV: {
-			POOL_ADDRESS: '',
 			LM_ADDRESS: '',
 		},
 	},
@@ -34,17 +42,24 @@ const config: EnvConfig = {
 
 		nodeUrl: 'https://rpc.xdaichain.com/',
 
-		UNISWAP_ETH_GIV: {
-			POOL_ADDRESS: '',
-			LM_ADDRESS: '',
-		},
-		UNISWAP_UNI_GIV: {
-			POOL_ADDRESS: '',
-			LM_ADDRESS: '',
-		},
+		pools: [
+			{
+				POOL_ADDRESS: '',
+				LM_ADDRESS: '',
+				type: '',
+				title: '',
+				description: '',
+			},
+			{
+				POOL_ADDRESS: '',
+				LM_ADDRESS: '',
+				type: '',
+				title: '',
+				description: '',
+			},
+		],
 
 		GIV: {
-			POOL_ADDRESS: '0xc60e38C6352875c051B481Cbe79Dd0383AdB7817',
 			LM_ADDRESS: '0xF66823fdc33B9F4C66dB4C3394FF139872C12f16',
 		},
 	},

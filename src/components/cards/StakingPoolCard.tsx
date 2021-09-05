@@ -1,7 +1,10 @@
 import styled from 'styled-components';
 import { Row } from '../styled-components/Grid';
 import { Button } from '../styled-components/Button';
-import { FC } from 'react';
+import { FC, useContext } from 'react';
+import config from '../../configuration';
+import { OnboardContext } from '../../context/onboard.context';
+import { PoolStakingConfig } from '../../types/config';
 
 const StakingPoolContainer = styled.div`
 	width: 380px;
@@ -96,28 +99,34 @@ interface IStakingPoolProps {
 }
 
 interface StakingPoolCardProps {
-	composition: string;
-	name: string;
-	logo: string;
-	option: string;
-	platform: string;
+	// composition: string;
+	// logo: string;
+	// option: string;
+	// platform: string;
 	network: number;
-	provideLiquidityLink: string;
+	poolStakingConfig: PoolStakingConfig;
+	// provideLiquidityLink: string;
 }
-const StakingPoolCard: FC<IStakingPoolProps> = ({ wrongNetwork }) => {
+const StakingPoolCard: FC<StakingPoolCardProps> = ({
+	network,
+	poolStakingConfig,
+}) => {
+	const { network: walletNetwork } = useContext(OnboardContext);
+	const { type, title } = poolStakingConfig;
+
 	return (
 		<StakingPoolContainer>
-			<StakingPoolExchange>HONEYSWAP</StakingPoolExchange>
+			<StakingPoolExchange>{type}</StakingPoolExchange>
 			<StakingPoolBadge
 				src={
-					wrongNetwork
+					network === config.MAINNET_NETWORK_NUMBER
 						? '/images/chain/mainnet-badge-s.svg'
 						: '/images/chain/xdai-badge-s.svg'
 				}
 			/>
 			<SPTitle alignItems='center'>
 				<StakingPoolImage src='/images/pool/giv-eth-logos.svg' />
-				<StakingPoolLabel>{`${'HNY'} / ${'GIV'}`}</StakingPoolLabel>
+				<StakingPoolLabel>{title}</StakingPoolLabel>
 			</SPTitle>
 			<StakingPoolSubtitle>50% GIV, 50%ETH</StakingPoolSubtitle>
 			<Details>
@@ -132,7 +141,7 @@ const StakingPoolCard: FC<IStakingPoolProps> = ({ wrongNetwork }) => {
 				PROVIDE LIQUIDITY
 			</CardButton>
 			<CardButton outline>STAKE LP TOKENS</CardButton>
-			{wrongNetwork && <CardDisable />}
+			{walletNetwork !== network && <CardDisable />}
 		</StakingPoolContainer>
 	);
 };

@@ -4,7 +4,7 @@ import { WalletAddressInputWithButton } from '../input';
 import { Button } from '../styled-components/Button';
 import { Row } from '../styled-components/Grid';
 import { H2, P } from '../styled-components/Typography';
-import { ArrowButton, Card, Header, ICardProps } from './common';
+import { ArrowButton, Card, Header } from './common';
 import { OnboardContext } from '../../context/onboard.context';
 import { UserContext } from '../../context/user.context';
 import { ethers } from 'ethers';

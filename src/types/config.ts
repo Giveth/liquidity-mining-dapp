@@ -1,22 +1,24 @@
-interface PoolConfig {
-	POOL_ADDRESS: string;
+export interface StakingConfig {
 	LM_ADDRESS: string;
 }
-interface BasicNetworkConfig {
+
+export interface PoolStakingConfig extends StakingConfig {
+	POOL_ADDRESS: string;
+	type: string;
+	title: string;
+	description: string;
+}
+export interface BasicNetworkConfig {
 	TOKEN_ADDRESS: string;
 	WETH_TOKEN_ADDRESS?: string;
 	TOKEN_DISTRO_ADDRESS: string;
-	GIV: PoolConfig;
+	GIV: StakingConfig;
 	nodeUrl: string;
+	pools: Array<PoolStakingConfig>;
 }
 
-interface MainnetNetworkConfig extends BasicNetworkConfig {
-	UNISWAP?: PoolConfig;
-	BALANCER?: PoolConfig;
-}
+interface MainnetNetworkConfig extends BasicNetworkConfig {}
 interface XDaiNetworkConfig extends BasicNetworkConfig {
-	UNISWAP_ETH_GIV?: PoolConfig;
-	UNISWAP_UNI_GIV?: PoolConfig;
 	MERKLE_ADDRESS: string;
 }
 export interface EnvConfig {

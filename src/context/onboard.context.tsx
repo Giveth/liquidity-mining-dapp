@@ -4,7 +4,6 @@ import { Web3Provider } from '@ethersproject/providers';
 import { createContext, FC, ReactNode, useEffect, useState } from 'react';
 import { API, Wallet } from 'bnc-onboard/dist/src/interfaces';
 import { ethers } from 'ethers';
-import { awaitExpression } from '@babel/types';
 
 const networkId = config.XDAI_NETWORK_NUMBER;
 const dappId = config.BLOCKNATIVE_DAPP_ID;

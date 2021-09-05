@@ -42,10 +42,15 @@ const Title = styled.h1`
 	color: ${props => props.theme.fg};
 `;
 
+const ConenctButton = styled(Button)`
+	height: 36px;
+	width: 300px;
+`;
+
 const Header: FC<IHeader> = () => {
 	const { theme } = useContext(ThemeContext);
-	const { network } = useContext(OnboardContext);
-	const { userAddress } = useContext(UserContext);
+	const { network, connect, address, walletCheck } =
+		useContext(OnboardContext);
 	const goToClaim = () => {
 		router.push('/claim');
 	};
@@ -70,12 +75,18 @@ const Header: FC<IHeader> = () => {
 				<HeaderButton secondary onClick={goToClaim}>
 					CLAIM GIV
 				</HeaderButton>
-				{userAddress && (
+				{address ? (
 					<>
 						<HeaderButton>NETWORK {network}</HeaderButton>
 						<HeaderButton neutral>{644} GIV </HeaderButton>
-						<HeaderButton neutral>{userAddress}</HeaderButton>
+						<HeaderButton neutral onClick={connect}>
+							{address}
+						</HeaderButton>
 					</>
+				) : (
+					<ConenctButton secondary onClick={connect}>
+						Connect Wallet
+					</ConenctButton>
 				)}
 			</Row>
 		</StyledHeader>
