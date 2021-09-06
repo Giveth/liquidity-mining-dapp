@@ -1,7 +1,8 @@
-import { FC, useState } from 'react';
+import { FC, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
 import { Container, Row } from '../styled-components/Grid';
+import { H4, P } from '../styled-components/Typography';
 import { TabContainer } from './commons';
 
 const GIVfarmTabContainer = styled(TabContainer)``;
@@ -120,6 +121,33 @@ const CardDisable = styled.div`
 	background-color: #ffffffa0;
 `;
 
+export const Input = styled.input`
+	height: 48px;
+	padding-left: 10px;
+	background: #f4f5f6;
+	border-radius: 8px;
+	height: 48px;
+	color: #222a29;
+	font-family: 'Inter';
+	border: solid 0px transparent;
+	font-size: 14px;
+	line-height: 16px;
+	margin-top: 16px;
+	width: calc(100% - 12px);
+	&:focus {
+		outline: none;
+		background: #eefcfb;
+	}
+	&[type='number'] {
+		-moz-appearance: textfield;
+	}
+	&::-webkit-outer-spin-button,
+	&::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+`;
+
 interface ISwapCardProps {
 	wrongNetwork?: boolean;
 	max: number;
@@ -134,6 +162,11 @@ enum SwapCardStates {
 
 const SwapCard: FC<ISwapCardProps> = ({ wrongNetwork }) => {
 	const [state, setState] = useState(SwapCardStates.Default);
+	const [amount, setAmount] = useState<string>('0');
+
+	const onChange = useCallback(value => {
+		setAmount(value.toString());
+	}, []);
 
 	return (
 		<SwapCardContainer>
@@ -196,8 +229,22 @@ const SwapCard: FC<ISwapCardProps> = ({ wrongNetwork }) => {
 					</CardButton>
 				</>
 			)}
-			{state == SwapCardStates.Deposit && <></>}
-			{state == SwapCardStates.Withdraw && <></>}
+			{state == SwapCardStates.Deposit && (
+				<>
+					<H4>Deposit LP tokens</H4>
+					<P>
+						You currently have <b>{0}</b> staked LP tokens. Deposit
+						more to accrue more rewards.
+					</P>
+					<P>BALANCE: {0} LP Tokens</P>
+					<Input
+						onChange={e => onChange(+e.target.value || '0')}
+						type='number'
+						value={amount}
+					/>
+					<CardButton secondary>Deposit</CardButton>
+				</>
+			)}
 			{wrongNetwork && <CardDisable />}
 		</SwapCardContainer>
 	);
