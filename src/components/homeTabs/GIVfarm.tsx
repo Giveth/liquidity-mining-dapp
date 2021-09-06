@@ -293,6 +293,22 @@ const SwapCard: FC<ISwapCardProps> = ({ wrongNetwork }) => {
 					<CardButton secondary>Deposit</CardButton>
 				</>
 			)}
+			{state == SwapCardStates.Withdraw && (
+				<>
+					<H4>Deposit LP tokens</H4>
+					<P>
+						You currently have <b>{0}</b> staked LP tokens. Deposit
+						more to accrue more rewards.
+					</P>
+					<P>BALANCE: {0} LP Tokens</P>
+					<Input
+						onChange={e => onChange(+e.target.value || '0')}
+						type='number'
+						value={amount}
+					/>
+					<CardButton>Withdraw</CardButton>
+				</>
+			)}
 			{wrongNetwork && <CardDisable />}
 		</SwapCardContainer>
 	);
