@@ -160,6 +160,17 @@ enum SwapCardStates {
 	Withdraw,
 }
 
+export const Return = styled.img`
+	background: transparent;
+	width: 50px;
+	height: 50px;
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	right: 0;
+	padding: 16px;
+`;
+
 const SwapCard: FC<ISwapCardProps> = ({ wrongNetwork }) => {
 	const [state, setState] = useState(SwapCardStates.Default);
 	const [amount, setAmount] = useState<string>('0');
@@ -247,10 +258,10 @@ const SwapCard: FC<ISwapCardProps> = ({ wrongNetwork }) => {
 			)}
 			{state == SwapCardStates.Withdraw && (
 				<>
-					<H4>Deposit LP tokens</H4>
+					<H4>Withdraw LP tokens</H4>
 					<P>
-						You currently have <b>{0}</b> staked LP tokens. Deposit
-						more to accrue more rewards.
+						You currently have <b>{0}</b> staked LP tokens. Enter
+						the amount you’d like to withdraw.
 					</P>
 					<P>BALANCE: {0} LP Tokens</P>
 					<Input
@@ -262,6 +273,12 @@ const SwapCard: FC<ISwapCardProps> = ({ wrongNetwork }) => {
 				</>
 			)}
 			{wrongNetwork && <CardDisable />}
+			{state !== SwapCardStates.Default && (
+				<Return
+					src='/images/close.svg'
+					onClick={() => setState(SwapCardStates.Default)}
+				/>
+			)}
 		</SwapCardContainer>
 	);
 };
