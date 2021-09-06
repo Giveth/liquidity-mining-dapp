@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import { Row } from '../styled-components/Grid';
 import { Button } from '../styled-components/Button';
-import { FC, useContext } from 'react';
 import config from '../../configuration';
 import { OnboardContext } from '../../context/onboard.context';
 import { PoolStakingConfig } from '../../types/config';
+import { FC, useState, useCallback, useContext } from 'react';
+import { H4, P } from '../styled-components/Typography';
 
 const StakingPoolContainer = styled.div`
 	width: 380px;
@@ -51,9 +52,6 @@ const StakingPoolSubtitle = styled.div`
 	line-height: 150%;
 	color: #82899a;
 `;
-const Details = styled.div`
-	margin: 12px 0;
-`;
 const DetailLabel = styled.div`
 	font-family: red-hat;
 	font-style: normal;
@@ -61,6 +59,39 @@ const DetailLabel = styled.div`
 	font-size: 14px;
 	line-height: 150%;
 	color: #82899a;
+`;
+
+enum StakingPoolExchangeType {
+	GIVETH,
+	UNISWAP,
+	HONETSWAP,
+}
+
+interface IStakingPoolCardProps {
+	// composition: string;
+	// logo: string;
+	// option: string;
+	// platform: string;
+	network: number;
+	poolStakingConfig: PoolStakingConfig;
+	// provideLiquidityLink: string;
+}
+const Details = styled.div`
+	margin: 12px 0;
+`;
+const DetailHeader = styled(Row)`
+	font-family: red-hat;
+`;
+const DetailLink = styled.button`
+	font-style: normal;
+	font-weight: bold;
+	font-size: 12px;
+	line-height: 15px;
+	text-align: center;
+	color: #303b72;
+	border: 0;
+	background-color: unset;
+	cursor: pointer;
 `;
 const DetailValue = styled.div`
 	font-family: red-hat;
@@ -72,7 +103,7 @@ const DetailValue = styled.div`
 	color: #303b72;
 `;
 
-enum StakingPoolExchangeType {
+enum SwapCardExchangeType {
 	GIVETH,
 	UNISWAP,
 	HONETSWAP,
@@ -94,53 +125,170 @@ const CardDisable = styled.div`
 	background-color: #ffffffa0;
 `;
 
-interface IStakingPoolProps {
-	wrongNetwork?: boolean;
+export const Input = styled.input`
+	height: 48px;
+	padding-left: 10px;
+	background: #f4f5f6;
+	border-radius: 8px;
+	height: 48px;
+	color: #222a29;
+	font-family: 'Inter';
+	border: solid 0px transparent;
+	font-size: 14px;
+	line-height: 16px;
+	margin-top: 16px;
+	width: calc(100% - 12px);
+	&:focus {
+		outline: none;
+		background: #eefcfb;
+	}
+	&[type='number'] {
+		-moz-appearance: textfield;
+	}
+	&::-webkit-outer-spin-button,
+	&::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+`;
+
+enum SwapCardStates {
+	Default,
+	Manage,
+	Deposit,
+	Withdraw,
 }
 
-interface StakingPoolCardProps {
-	// composition: string;
-	// logo: string;
-	// option: string;
-	// platform: string;
-	network: number;
-	poolStakingConfig: PoolStakingConfig;
-	// provideLiquidityLink: string;
-}
-const StakingPoolCard: FC<StakingPoolCardProps> = ({
+export const Return = styled.img`
+	background: transparent;
+	width: 50px;
+	height: 50px;
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	right: 0;
+	padding: 16px;
+`;
+
+const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 	network,
 	poolStakingConfig,
 }) => {
 	const { network: walletNetwork } = useContext(OnboardContext);
+	const [state, setState] = useState(SwapCardStates.Default);
+	const [amount, setAmount] = useState<string>('0');
+
+	const onChange = useCallback(value => {
+		setAmount(value.toString());
+	}, []);
+
 	const { type, title } = poolStakingConfig;
 
 	return (
 		<StakingPoolContainer>
-			<StakingPoolExchange>{type}</StakingPoolExchange>
-			<StakingPoolBadge
-				src={
-					network === config.MAINNET_NETWORK_NUMBER
-						? '/images/chain/mainnet-badge-s.svg'
-						: '/images/chain/xdai-badge-s.svg'
-				}
-			/>
-			<SPTitle alignItems='center'>
-				<StakingPoolImage src='/images/pool/giv-eth-logos.svg' />
-				<StakingPoolLabel>{title}</StakingPoolLabel>
-			</SPTitle>
-			<StakingPoolSubtitle>50% GIV, 50%ETH</StakingPoolSubtitle>
-			<Details>
-				<DetailLabel>APR</DetailLabel>
-				<DetailValue>145%</DetailValue>
-				<DetailLabel>Claimable</DetailLabel>
-				<DetailValue>{`${0} GIV`}</DetailValue>
-				<DetailLabel>Streaming</DetailLabel>
-				<DetailValue>{`${0} GIV`}</DetailValue>
-			</Details>
-			<CardButton secondary outline>
-				PROVIDE LIQUIDITY
-			</CardButton>
-			<CardButton outline>STAKE LP TOKENS</CardButton>
+			{state == SwapCardStates.Default && (
+				<>
+					<StakingPoolExchange>{type}</StakingPoolExchange>
+					<StakingPoolBadge
+						src={
+							network === config.MAINNET_NETWORK_NUMBER
+								? '/images/chain/mainnet-badge-s.svg'
+								: '/images/chain/xdai-badge-s.svg'
+						}
+					/>
+					<SPTitle alignItems='center'>
+						<StakingPoolImage src='/images/pool/giv-eth-logos.svg' />
+						<StakingPoolLabel>{title}</StakingPoolLabel>
+					</SPTitle>
+					<StakingPoolSubtitle>50% GIV, 50%ETH</StakingPoolSubtitle>
+					<Details>
+						<DetailHeader justifyContent='space-between'>
+							<DetailLabel>APR</DetailLabel>
+							<DetailLink>See details</DetailLink>
+						</DetailHeader>
+						<DetailValue>145%</DetailValue>
+						<DetailHeader justifyContent='space-between'>
+							<DetailLabel>Claimable</DetailLabel>
+							<DetailLink
+								onClick={() => {
+									setState(SwapCardStates.Manage);
+								}}
+							>
+								Manage
+							</DetailLink>
+						</DetailHeader>
+						<DetailValue>{`${0} GIV`}</DetailValue>
+						<DetailHeader>
+							<DetailLabel>Streaming</DetailLabel>
+							<DetailLink>?</DetailLink>
+						</DetailHeader>
+						<DetailValue>{`${0} GIV`}</DetailValue>
+					</Details>
+					<CardButton secondary outline>
+						PROVIDE LIQUIDITY
+					</CardButton>
+					<CardButton outline>STAKE LP TOKENS</CardButton>
+				</>
+			)}
+			{state == SwapCardStates.Manage && (
+				<>
+					<CardButton
+						secondary
+						outline
+						onClick={() => {
+							setState(SwapCardStates.Deposit);
+						}}
+					>
+						Depsite
+					</CardButton>
+					<CardButton
+						outline
+						onClick={() => {
+							setState(SwapCardStates.Withdraw);
+						}}
+					>
+						Withdraw
+					</CardButton>
+				</>
+			)}
+			{state == SwapCardStates.Deposit && (
+				<>
+					<H4>Deposit LP tokens</H4>
+					<P>
+						You currently have <b>{0}</b> staked LP tokens. Deposit
+						more to accrue more rewards.
+					</P>
+					<P>BALANCE: {0} LP Tokens</P>
+					<Input
+						onChange={e => onChange(+e.target.value || '0')}
+						type='number'
+						value={amount}
+					/>
+					<CardButton secondary>Deposit</CardButton>
+				</>
+			)}
+			{state == SwapCardStates.Withdraw && (
+				<>
+					<H4>Withdraw LP tokens</H4>
+					<P>
+						You currently have <b>{0}</b> staked LP tokens. Enter
+						the amount you’d like to withdraw.
+					</P>
+					<P>BALANCE: {0} LP Tokens</P>
+					<Input
+						onChange={e => onChange(+e.target.value || '0')}
+						type='number'
+						value={amount}
+					/>
+					<CardButton>Withdraw</CardButton>
+				</>
+			)}
+			{state !== SwapCardStates.Default && (
+				<Return
+					src='/images/close.svg'
+					onClick={() => setState(SwapCardStates.Default)}
+				/>
+			)}
 			{walletNetwork !== network && <CardDisable />}
 		</StakingPoolContainer>
 	);
