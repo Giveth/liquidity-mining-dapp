@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
 import { Container, Row } from '../styled-components/Grid';
@@ -11,8 +11,8 @@ const TabGIVfarm = () => {
 		<GIVfarmTabContainer>
 			<Container>
 				<Row>
-					<SwapCard />
-					<SwapCard wrongNetwork={true} />
+					<SwapCard max={100} />
+					<SwapCard wrongNetwork={true} max={0} />
 				</Row>
 			</Container>
 		</GIVfarmTabContainer>
@@ -67,13 +67,26 @@ const SwapCardSubtitle = styled.div`
 const Details = styled.div`
 	margin: 12px 0;
 `;
-const DetailLable = styled.div`
+const DetailHeader = styled(Row)`
 	font-family: red-hat;
+`;
+const DetailLable = styled.div`
 	font-style: normal;
 	font-weight: normal;
 	font-size: 14px;
 	line-height: 150%;
 	color: #82899a;
+`;
+const DetailLink = styled.button`
+	font-style: normal;
+	font-weight: bold;
+	font-size: 12px;
+	line-height: 15px;
+	text-align: center;
+	color: #303b72;
+	border: 0;
+	background-color: unset;
+	cursor: pointer;
 `;
 const DetailValue = styled.div`
 	font-family: red-hat;
@@ -109,30 +122,82 @@ const CardDisable = styled.div`
 
 interface ISwapCardProps {
 	wrongNetwork?: boolean;
+	max: number;
+}
+
+enum SwapCardStates {
+	Default,
+	Manage,
+	Deposit,
+	Withdraw,
 }
 
 const SwapCard: FC<ISwapCardProps> = ({ wrongNetwork }) => {
+	const [state, setState] = useState(SwapCardStates.Default);
+
 	return (
 		<SwapCardContainer>
-			<SwapCardExchange>HONEYSWAP</SwapCardExchange>
-			<SwapCardBadge src='/images/chain/xdai-badge-s.png' />
-			<SwapCardTitle alignItems='center'>
-				<SCTImage src='/images/badge.png' />
-				<SCTLable>{`${'HNY'} / ${'GIV'}`}</SCTLable>
-			</SwapCardTitle>
-			<SwapCardSubtitle>50% GIV, 50%ETH</SwapCardSubtitle>
-			<Details>
-				<DetailLable>APR</DetailLable>
-				<DetailValue>145%</DetailValue>
-				<DetailLable>Claimable</DetailLable>
-				<DetailValue>{`${0} GIV`}</DetailValue>
-				<DetailLable>Streaming</DetailLable>
-				<DetailValue>{`${0} GIV`}</DetailValue>
-			</Details>
-			<CardButton secondary outline>
-				PROVIDE LIQUIDITY
-			</CardButton>
-			<CardButton outline>STAKE LP TOKENS</CardButton>
+			{state == SwapCardStates.Default && (
+				<>
+					<SwapCardExchange>HONEYSWAP</SwapCardExchange>
+					<SwapCardBadge src='/images/chain/xdai-badge-s.png' />
+					<SwapCardTitle alignItems='center'>
+						<SCTImage src='/images/badge.png' />
+						<SCTLable>{`${'HNY'} / ${'GIV'}`}</SCTLable>
+					</SwapCardTitle>
+					<SwapCardSubtitle>50% GIV, 50%ETH</SwapCardSubtitle>
+					<Details>
+						<DetailHeader justifyContent='space-between'>
+							<DetailLable>APR</DetailLable>
+							<DetailLink>See details</DetailLink>
+						</DetailHeader>
+						<DetailValue>145%</DetailValue>
+						<DetailHeader justifyContent='space-between'>
+							<DetailLable>Claimable</DetailLable>
+							<DetailLink
+								onClick={() => {
+									setState(SwapCardStates.Manage);
+								}}
+							>
+								Manage
+							</DetailLink>
+						</DetailHeader>
+						<DetailValue>{`${0} GIV`}</DetailValue>
+						<DetailHeader>
+							<DetailLable>Streaming</DetailLable>
+							<DetailLink>?</DetailLink>
+						</DetailHeader>
+						<DetailValue>{`${0} GIV`}</DetailValue>
+					</Details>
+					<CardButton secondary outline>
+						PROVIDE LIQUIDITY
+					</CardButton>
+					<CardButton outline>STAKE LP TOKENS</CardButton>
+				</>
+			)}
+			{state == SwapCardStates.Manage && (
+				<>
+					<CardButton
+						secondary
+						outline
+						onClick={() => {
+							setState(SwapCardStates.Deposit);
+						}}
+					>
+						Depsite
+					</CardButton>
+					<CardButton
+						outline
+						onClick={() => {
+							setState(SwapCardStates.Withdraw);
+						}}
+					>
+						Withdraw
+					</CardButton>
+				</>
+			)}
+			{state == SwapCardStates.Deposit && <></>}
+			{state == SwapCardStates.Withdraw && <></>}
 			{wrongNetwork && <CardDisable />}
 		</SwapCardContainer>
 	);
