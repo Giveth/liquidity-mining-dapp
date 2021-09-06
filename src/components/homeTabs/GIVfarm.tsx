@@ -6,6 +6,7 @@ import { TabContainer } from './commons';
 import StakingPoolCard from '../cards/StakingPoolCard';
 import config from '../../configuration';
 import { BasicNetworkConfig, PoolStakingConfig } from '../../types/config';
+import { Button } from '../styled-components/Button';
 
 const GIVfarmTabContainer = styled(TabContainer)``;
 
