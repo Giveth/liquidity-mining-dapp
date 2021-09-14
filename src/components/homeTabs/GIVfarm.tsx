@@ -3,18 +3,22 @@ import { Container, Row } from '../styled-components/Grid';
 import { TabContainer } from './commons';
 import StakingPoolCard from '../cards/StakingPoolCard';
 import config from '../../configuration';
-import { BasicNetworkConfig, PoolStakingConfig } from '../../types/config';
+import {
+	BasicNetworkConfig,
+	SimplePoolStakingConfig,
+	StakingType,
+} from '../../types/config';
 
 const GIVfarmTabContainer = styled(TabContainer)``;
 
 const TabGIVfarm = () => {
 	const getGivStakingConfig = (
 		networkConfig: BasicNetworkConfig,
-	): PoolStakingConfig => {
+	): SimplePoolStakingConfig => {
 		return {
 			...networkConfig.GIV,
 			POOL_ADDRESS: networkConfig.TOKEN_ADDRESS,
-			type: 'GIV Stream',
+			type: StakingType.GIV_STREAM,
 			title: 'GIV',
 			description: '100% GIV',
 		};

@@ -13,22 +13,7 @@ const config: EnvConfig = {
 
 		nodeUrl: 'https://mainnet.infura.io/v3/' + INFURA_API_KEY,
 
-		pools: [
-			{
-				POOL_ADDRESS: '',
-				LM_ADDRESS: '',
-				type: '',
-				title: '',
-				description: '',
-			},
-			{
-				POOL_ADDRESS: '',
-				LM_ADDRESS: '',
-				type: '',
-				title: '',
-				description: '',
-			},
-		],
+		pools: [],
 
 		GIV: {
 			LM_ADDRESS: '',
@@ -42,22 +27,7 @@ const config: EnvConfig = {
 
 		nodeUrl: 'https://rpc.xdaichain.com/',
 
-		pools: [
-			{
-				POOL_ADDRESS: '',
-				LM_ADDRESS: '',
-				type: '',
-				title: '',
-				description: '',
-			},
-			{
-				POOL_ADDRESS: '',
-				LM_ADDRESS: '',
-				type: '',
-				title: '',
-				description: '',
-			},
-		],
+		pools: [],
 
 		GIV: {
 			LM_ADDRESS: '0xF66823fdc33B9F4C66dB4C3394FF139872C12f16',

@@ -17,7 +17,7 @@ import {
 } from '../views/claim/Claim.view';
 import { UserContext } from '../../context/user.context';
 import { ethers } from 'ethers';
-import { fetchGivMiningInfo } from '../../lib/stakingPool';
+import { fetchGivStakingInfo } from '../../lib/stakingPool';
 import config from '../../configuration';
 import { APR } from '../../types/poolInfo';
 import BigNumber from 'bignumber.js';
@@ -112,7 +112,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	useEffect(() => {
 		const cb = () => {
-			fetchGivMiningInfo(
+			fetchGivStakingInfo(
 				config.XDAI_CONFIG.GIV.LM_ADDRESS,
 				config.XDAI_NETWORK_NUMBER,
 			)

@@ -3,9 +3,25 @@ import { Row } from '../styled-components/Grid';
 import { Button } from '../styled-components/Button';
 import config from '../../configuration';
 import { OnboardContext } from '../../context/onboard.context';
-import { PoolStakingConfig } from '../../types/config';
-import { FC, useState, useCallback, useContext } from 'react';
+import {
+	BalancerPoolStakingConfig,
+	PoolStakingConfig,
+	SimplePoolStakingConfig,
+	StakingType,
+} from '../../types/config';
+import {
+	FC,
+	useCallback,
+	useContext,
+	useEffect,
+	useRef,
+	useState,
+} from 'react';
 import { H4, P } from '../styled-components/Typography';
+import { fetchGivStakingInfo, fetchLPStakingInfo } from '../../lib/stakingPool';
+import BigNumber from 'bignumber.js';
+import { StakePoolInfo } from '../../types/poolInfo';
+import { convertEthHelper } from '../../helpers/number';
 
 const StakingPoolContainer = styled.div`
 	width: 380px;
@@ -177,12 +193,37 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 	const { network: walletNetwork } = useContext(OnboardContext);
 	const [state, setState] = useState(SwapCardStates.Default);
 	const [amount, setAmount] = useState<string>('0');
+	const [apr, setApr] = useState<BigNumber | null>(null);
+	const { type, title, description, LM_ADDRESS, POOL_ADDRESS } =
+		poolStakingConfig;
+
+	const stakePoolPoll = useRef<NodeJS.Timer | null>(null);
+
+	useEffect(() => {
+		const cb = () => {
+			const promise: Promise<StakePoolInfo> =
+				type === StakingType.GIV_STREAM
+					? fetchGivStakingInfo(LM_ADDRESS, network)
+					: fetchLPStakingInfo(poolStakingConfig, network);
+
+			promise.then(({ apr: _apr }) => setApr(_apr));
+		};
+
+		cb();
+
+		stakePoolPoll.current = setInterval(cb, 15000); // Every 15 seconds
+
+		return () => {
+			if (stakePoolPoll.current) {
+				clearInterval(stakePoolPoll.current);
+				stakePoolPoll.current = null;
+			}
+		};
+	}, [type, LM_ADDRESS, network]);
 
 	const onChange = useCallback(value => {
 		setAmount(value.toString());
 	}, []);
-
-	const { type, title } = poolStakingConfig;
 
 	return (
 		<StakingPoolContainer>
@@ -200,13 +241,15 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 						<StakingPoolImage src='/images/pool/giv-eth-logos.svg' />
 						<StakingPoolLabel>{title}</StakingPoolLabel>
 					</SPTitle>
-					<StakingPoolSubtitle>50% GIV, 50%ETH</StakingPoolSubtitle>
+					<StakingPoolSubtitle>{description}</StakingPoolSubtitle>
 					<Details>
 						<DetailHeader justifyContent='space-between'>
 							<DetailLabel>APR</DetailLabel>
 							<DetailLink>See details</DetailLink>
 						</DetailHeader>
-						<DetailValue>145%</DetailValue>
+						<DetailValue>
+							{apr && convertEthHelper(apr, 2)}%
+						</DetailValue>
 						<DetailHeader justifyContent='space-between'>
 							<DetailLabel>Claimable</DetailLabel>
 							<DetailLink
