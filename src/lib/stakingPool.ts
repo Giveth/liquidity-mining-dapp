@@ -5,16 +5,19 @@ import { abi as UNI_ABI } from '../artifacts/UNI.json';
 import { abi as BAL_WEIGHTED_POOL_ABI } from '../artifacts/BalancerWeightedPool.json';
 import { abi as BAL_VAULT_ABI } from '../artifacts/BalancerVault.json';
 
-import { StakePoolInfo } from '../types/poolInfo';
+import { StakePoolInfo, StakeUserInfo } from '../types/poolInfo';
 import { networkProviders } from '../helpers/networkProvider';
 import BigNumber from 'bignumber.js';
 import config from '../configuration';
 import {
 	BalancerPoolStakingConfig,
+	BasicStakingConfig,
 	PoolStakingConfig,
 	SimplePoolStakingConfig,
 	StakingType,
 } from '../types/config';
+import { Zero } from '@ethersproject/constants';
+import { isAddress } from 'ethers/lib/utils';
 
 const toBigNumber = (eb: ethers.BigNumber): BigNumber =>
 	new BigNumber(eb.toString());
@@ -113,9 +116,6 @@ const fetchBalancerPoolStakingInfo = async (
 		.div(BigNumber.sum(...weights).div(weights[0]))
 		.div(balances[0]);
 
-	console.log('balancer lp:', lp.toString());
-	console.log('rewardRate:', _rewardRate.toString());
-
 	const apr = _totalSupply.isZero()
 		? null
 		: toBigNumber(_rewardRate)
@@ -173,47 +173,47 @@ const fetchSimplePoolStakingInfo = async (
 	};
 };
 
-// export const fetchUserInfo = async (
-// 	address: string,
-// 	poolAddress: string,
-// 	lmAddress: string,
-// 	network: number,
-// ): Promise<StakeUserInfo> => {
-// 	const provider = networkProviders[network];
-//
-// 	let validAddress = '';
-// 	try {
-// 		validAddress = ethers.utils.getAddress(address);
-// 	} catch (_) {
-// 		return {
-// 			earned: {
-// 				amount: new BigNumber(0),
-// 				token: config.TOKEN_NAME,
-// 				displayToken: config.TOKEN_NAME,
-// 			},
-// 			stakedLpTokens: 0,
-// 		};
-// 	}
-//
-// 	const lmContract = new Contract(lmAddress, LM_ABI, provider);
-// 	const poolContract = new Contract(poolAddress, UNI_ABI, provider);
-//
-// 	const [stakedLpTokens, earned, notStakedLpTokensWei] = await Promise.all([
-// 		lmContract.balanceOf(validAddress),
-// 		lmContract.earned(validAddress),
-// 		poolContract.balanceOf(validAddress),
-// 	]);
-//
-// 	return {
-// 		stakedLpTokens: new BigNumber(ethers.utils.formatEther(stakedLpTokens)),
-// 		earned: {
-// 			amount: new BigNumber(ethers.utils.formatEther(earned)),
-// 			token: config.TOKEN_NAME,
-// 			displayToken: isMainnet(network) ? 'NODE' : 'xNODE',
-// 		},
-// 		notStakedLpTokensWei: notStakedLpTokensWei.toString(),
-// 	};
-// };
+export const fetchUserStakeInfo = async (
+	address: string,
+	stakingConfig: BasicStakingConfig,
+	network: number,
+): Promise<StakeUserInfo> => {
+	const provider = networkProviders[network];
+	if (isAddress(address) && provider) {
+		const { LM_ADDRESS } = stakingConfig;
+
+		const lmContract = new Contract(LM_ADDRESS, LM_ABI, provider);
+
+		const [stakedLpAmount, earned] = await Promise.all([
+			lmContract.balanceOf(address),
+			lmContract.earned(address),
+		]);
+
+		return {
+			stakedLpAmount,
+			earned,
+		};
+	}
+	return {
+		earned: Zero,
+		stakedLpAmount: Zero,
+	};
+};
+
+export const fetchUserNotStakedToken = async (
+	address: string,
+	stakingConfig: PoolStakingConfig,
+	network: number,
+): Promise<ethers.BigNumber> => {
+	const provider = networkProviders[network];
+	if (isAddress(address) && provider) {
+		const { POOL_ADDRESS } = stakingConfig;
+		const poolContract = new Contract(POOL_ADDRESS, UNI_ABI, provider);
+
+		return poolContract.balanceOf(address);
+	}
+	return Zero;
+};
 //
 // async function permitTokensMainnet(provider, poolAddress, lmAddress, amount) {
 // 	const signer = provider.getSigner();

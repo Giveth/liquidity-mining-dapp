@@ -3,12 +3,7 @@ import { Row } from '../styled-components/Grid';
 import { Button } from '../styled-components/Button';
 import config from '../../configuration';
 import { OnboardContext } from '../../context/onboard.context';
-import {
-	BalancerPoolStakingConfig,
-	PoolStakingConfig,
-	SimplePoolStakingConfig,
-	StakingType,
-} from '../../types/config';
+import { PoolStakingConfig, StakingType } from '../../types/config';
 import {
 	FC,
 	useCallback,
@@ -18,10 +13,18 @@ import {
 	useState,
 } from 'react';
 import { H4, P } from '../styled-components/Typography';
-import { fetchGivStakingInfo, fetchLPStakingInfo } from '../../lib/stakingPool';
+import {
+	fetchGivStakingInfo,
+	fetchLPStakingInfo,
+	fetchUserNotStakedToken,
+	fetchUserStakeInfo,
+} from '../../lib/stakingPool';
 import BigNumber from 'bignumber.js';
-import { StakePoolInfo } from '../../types/poolInfo';
-import { convertEthHelper } from '../../helpers/number';
+import { StakePoolInfo, StakeUserInfo } from '../../types/poolInfo';
+import { formatEthHelper, formatWeiHelper } from '../../helpers/number';
+import { Zero } from '@ethersproject/constants';
+import { ethers } from 'ethers';
+import { TokenBalanceContext } from '../../context/tokenBalance.context';
 
 const StakingPoolContainer = styled.div`
 	width: 380px;
@@ -90,7 +93,6 @@ interface IStakingPoolCardProps {
 	// platform: string;
 	network: number;
 	poolStakingConfig: PoolStakingConfig;
-	// provideLiquidityLink: string;
 }
 const Details = styled.div`
 	margin: 12px 0;
@@ -190,11 +192,20 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 	network,
 	poolStakingConfig,
 }) => {
-	const { network: walletNetwork } = useContext(OnboardContext);
+	const { network: walletNetwork, address } = useContext(OnboardContext);
+	const { xDaiTokenBalance, mainnetTokenBalance } =
+		useContext(TokenBalanceContext);
+
 	const [state, setState] = useState(SwapCardStates.Default);
 	const [amount, setAmount] = useState<string>('0');
 	const [apr, setApr] = useState<BigNumber | null>(null);
-	const { type, title, description, LM_ADDRESS, POOL_ADDRESS } =
+	const [userStakeInfo, setUserStakeInfo] = useState<StakeUserInfo>({
+		earned: Zero,
+		stakedLpAmount: Zero,
+	});
+	const [userNotStakedAmount, setNotStakedAmount] =
+		useState<ethers.BigNumber>(Zero);
+	const { type, title, description, LM_ADDRESS, provideLiquidityLink } =
 		poolStakingConfig;
 
 	const stakePoolPoll = useRef<NodeJS.Timer | null>(null);
@@ -220,6 +231,48 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 			}
 		};
 	}, [type, LM_ADDRESS, network]);
+
+	const isMounted = useRef(true);
+	useEffect(
+		() => () => {
+			isMounted.current = false;
+		},
+		[],
+	);
+
+	useEffect(() => {
+		let lpBalancePromise: Promise<ethers.BigNumber>;
+
+		if (type === StakingType.GIV_STREAM) {
+			const value =
+				network === config.MAINNET_NETWORK_NUMBER
+					? mainnetTokenBalance
+					: xDaiTokenBalance;
+			lpBalancePromise = Promise.resolve(value);
+		} else {
+			lpBalancePromise = fetchUserNotStakedToken(
+				address,
+				poolStakingConfig,
+				network,
+			);
+		}
+		Promise.all([
+			fetchUserStakeInfo(address, poolStakingConfig, network),
+			lpBalancePromise,
+		]).then(([_userStakeInfo, _lpBalance]) => {
+			if (isMounted.current) {
+				setUserStakeInfo(_userStakeInfo);
+				setNotStakedAmount(_lpBalance);
+			}
+		});
+	}, [
+		address,
+		network,
+		poolStakingConfig,
+		mainnetTokenBalance,
+		xDaiTokenBalance,
+		type,
+	]);
 
 	const onChange = useCallback(value => {
 		setAmount(value.toString());
@@ -248,7 +301,7 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 							<DetailLink>See details</DetailLink>
 						</DetailHeader>
 						<DetailValue>
-							{apr && convertEthHelper(apr, 2)}%
+							{apr && formatEthHelper(apr, 2)}%
 						</DetailValue>
 						<DetailHeader justifyContent='space-between'>
 							<DetailLabel>Claimable</DetailLabel>
@@ -260,16 +313,25 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 								Manage
 							</DetailLink>
 						</DetailHeader>
-						<DetailValue>{`${0} GIV`}</DetailValue>
+						<DetailValue>{`${formatWeiHelper(
+							userStakeInfo.earned,
+							config.TOKEN_PRECISION,
+						)} GIV`}</DetailValue>
 						<DetailHeader>
 							<DetailLabel>Streaming</DetailLabel>
 							<DetailLink>?</DetailLink>
 						</DetailHeader>
 						<DetailValue>{`${0} GIV`}</DetailValue>
 					</Details>
-					<CardButton secondary outline>
-						PROVIDE LIQUIDITY
-					</CardButton>
+					{type !== StakingType.GIV_STREAM && (
+						<CardButton
+							secondary
+							outline
+							onClick={() => window.open(provideLiquidityLink)}
+						>
+							PROVIDE LIQUIDITY
+						</CardButton>
+					)}
 					<CardButton outline>STAKE LP TOKENS</CardButton>
 				</>
 			)}
@@ -298,10 +360,23 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 				<>
 					<H4>Deposit LP tokens</H4>
 					<P>
-						You currently have <b>{0}</b> staked LP tokens. Deposit
-						more to accrue more rewards.
+						You currently have{' '}
+						<b>
+							{formatWeiHelper(
+								userStakeInfo.stakedLpAmount,
+								config.TOKEN_PRECISION,
+							)}
+						</b>{' '}
+						staked LP tokens. Deposit more to accrue more rewards.
 					</P>
-					<P>BALANCE: {0} LP Tokens</P>
+					<P>
+						BALANCE:{' '}
+						{formatWeiHelper(
+							userNotStakedAmount,
+							config.TOKEN_PRECISION,
+						)}{' '}
+						LP Tokens
+					</P>
 					<Input
 						onChange={e => onChange(+e.target.value || '0')}
 						type='number'
@@ -314,8 +389,15 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 				<>
 					<H4>Withdraw LP tokens</H4>
 					<P>
-						You currently have <b>{0}</b> staked LP tokens. Enter
-						the amount you’d like to withdraw.
+						You currently have{' '}
+						<b>
+							{formatWeiHelper(
+								userStakeInfo.stakedLpAmount,
+								config.TOKEN_PRECISION,
+							)}
+						</b>{' '}
+						staked LP tokens. Enter the amount you’d like to
+						withdraw.
 					</P>
 					<P>BALANCE: {0} LP Tokens</P>
 					<Input

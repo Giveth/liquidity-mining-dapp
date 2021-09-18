@@ -1,12 +1,13 @@
 import BigNumber from 'bignumber.js';
+import { ethers } from 'ethers';
 
 export const Zero = new BigNumber(0);
 
-export const convertEthHelper = (
+export const formatEthHelper = (
 	amount: BigNumber.Value,
 	decimals: number,
 	format = true,
-) => {
+): string => {
 	if (!amount) return '0';
 	let amt: BigNumber =
 		amount instanceof BigNumber ? amount : new BigNumber(amount);
@@ -22,4 +23,18 @@ export const convertEthHelper = (
 				decimalSeparator: '.',
 		  })
 		: amt.toFixed();
+};
+
+export const formatWeiHelper = (
+	amountWei: ethers.BigNumber | BigNumber.Value,
+	decimals: number,
+	format = true,
+): string => {
+	let amountEth: BigNumber.Value;
+	if (amountWei instanceof ethers.BigNumber)
+		amountEth = ethers.utils.formatEther(amountWei);
+	else {
+		amountEth = new BigNumber(amountWei).div(10 ** 18);
+	}
+	return formatEthHelper(amountEth, decimals, format);
 };

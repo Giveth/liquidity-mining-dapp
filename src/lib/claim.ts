@@ -16,6 +16,27 @@ export const formatAddress = (address: string): string => {
 	}
 };
 
+export const getERC20Contract = (address: string, network: number) => {
+	const networkConfig = config.NETWORKS_CONFIG[network];
+	const provider = networkProviders[network];
+
+	if (!networkConfig || !provider) {
+		return null;
+	}
+
+	const ERC20ABI = [
+		// read balanceOf
+		{
+			constant: true,
+			inputs: [{ name: '_owner', type: 'address' }],
+			name: 'balanceOf',
+			outputs: [{ name: 'balance', type: 'uint256' }],
+			type: 'function',
+		},
+	];
+	return new Contract(address, ERC20ABI, provider);
+};
+
 export const fetchClaimData = async (
 	address: string,
 ): Promise<ClaimData | undefined> => {

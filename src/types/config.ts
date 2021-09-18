@@ -18,6 +18,7 @@ export interface SimplePoolStakingConfig extends BasicStakingConfig {
 	type: StakingType;
 	title: string;
 	description: string;
+	provideLiquidityLink?: string;
 }
 
 export interface BalancerPoolStakingConfig extends SimplePoolStakingConfig {
@@ -47,6 +48,9 @@ export interface EnvConfig {
 
 export interface GlobalConfig extends EnvConfig {
 	TOKEN_NAME: string;
+	POLLING_INTERVAL: number;
+	TOKEN_PRECISION: number;
+
 	NETWORKS_CONFIG: {
 		[key: number]: MainnetNetworkConfig | XDaiNetworkConfig;
 	};

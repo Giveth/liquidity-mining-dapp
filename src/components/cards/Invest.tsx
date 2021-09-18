@@ -21,7 +21,7 @@ import { fetchGivStakingInfo } from '../../lib/stakingPool';
 import config from '../../configuration';
 import { APR } from '../../types/poolInfo';
 import BigNumber from 'bignumber.js';
-import { convertEthHelper, Zero } from '../../helpers/number';
+import { formatEthHelper, Zero } from '../../helpers/number';
 
 const InvestCardContainer = styled(Card)`
 	::before {
@@ -132,7 +132,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 				<H2 as='h1'>Invest with GIVmining</H2>
 				<P size='small' color={'#CABAFF'}>
 					Provide liquidity or stake your GIV tokens to earn up to
-					{apr ? convertEthHelper(apr, 2, true) : '?'}% APY
+					{apr ? formatEthHelper(apr, 2) : '?'}% APY
 				</P>
 			</Header>
 			<Row alignItems={'flex-start'} justifyContent={'space-between'}>
@@ -171,7 +171,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 						<Row justifyContent='space-between'>
 							<PoolItem>Annual GIV earned</PoolItem>
 							<PoolItemBold>
-								{convertEthHelper(earnEstimate, 2, true)}
+								{formatEthHelper(earnEstimate, 2)}
 							</PoolItemBold>
 						</Row>
 					</PoolItems>

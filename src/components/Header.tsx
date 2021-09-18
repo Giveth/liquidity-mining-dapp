@@ -6,7 +6,9 @@ import { Button } from './styled-components/Button';
 import { FC, useContext } from 'react';
 import { ThemeContext, ThemeType } from '../context/theme.context';
 import { OnboardContext } from '../context/onboard.context';
-import { UserContext } from '../context/user.context';
+import { TokenBalanceContext } from '../context/tokenBalance.context';
+import { formatWeiHelper } from '../helpers/number';
+import config from '../configuration';
 
 interface IHeader {
 	theme?: ThemeType;
@@ -49,6 +51,8 @@ const ConenctButton = styled(Button)`
 
 const Header: FC<IHeader> = () => {
 	const { theme } = useContext(ThemeContext);
+	const { tokenBalance } = useContext(TokenBalanceContext);
+
 	const { network, connect, address, walletCheck } =
 		useContext(OnboardContext);
 	const goToClaim = () => {
@@ -78,7 +82,13 @@ const Header: FC<IHeader> = () => {
 				{address ? (
 					<>
 						<HeaderButton>NETWORK {network}</HeaderButton>
-						<HeaderButton neutral>{644} GIV </HeaderButton>
+						<HeaderButton neutral>
+							{formatWeiHelper(
+								tokenBalance,
+								config.TOKEN_PRECISION,
+							)}{' '}
+							GIV{' '}
+						</HeaderButton>
 						<HeaderButton neutral onClick={connect}>
 							{address}
 						</HeaderButton>
