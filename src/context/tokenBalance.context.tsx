@@ -60,7 +60,11 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 			if (mainnetTokenContract) {
 				mainnetTokenContract
 					.balanceOf(address)
-					.then(setMainnetTokenBalance)
+					.then(
+						(newBalance: ethers.BigNumber) =>
+							mainnetTokenBalance.eq(newBalance) ||
+							setMainnetTokenBalance(newBalance),
+					)
 					.catch((e: Error) =>
 						console.error(
 							'Error on fetching user mainnet token balance:',
@@ -77,7 +81,11 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 			if (xDaiTokenContract) {
 				xDaiTokenContract
 					.balanceOf(address)
-					.then(setXDaiTokenBalance)
+					.then(
+						(newBalance: ethers.BigNumber) =>
+							xDaiTokenBalance.eq(newBalance) ||
+							setXDaiTokenBalance(newBalance),
+					)
 					.catch((e: Error) =>
 						console.error(
 							'Error on fetching user xDai token balance:',
@@ -104,7 +112,7 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 				clearInterval(interval);
 			};
 		}
-	}, [address, network]);
+	}, [address]);
 
 	return (
 		<TokenBalanceContext.Provider

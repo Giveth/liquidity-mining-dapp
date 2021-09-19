@@ -16,8 +16,11 @@ import {
 	SimplePoolStakingConfig,
 	StakingType,
 } from '../types/config';
+import * as stakeToast from './notifications/stake';
+
 import { Zero } from '@ethersproject/constants';
 import { isAddress } from 'ethers/lib/utils';
+import { TransactionResponse, Web3Provider } from '@ethersproject/providers';
 
 const toBigNumber = (eb: ethers.BigNumber): BigNumber =>
 	new BigNumber(eb.toString());
@@ -214,175 +217,106 @@ export const fetchUserNotStakedToken = async (
 	}
 	return Zero;
 };
-//
-// async function permitTokensMainnet(provider, poolAddress, lmAddress, amount) {
-// 	const signer = provider.getSigner();
-// 	const signerAddress = await signer.getAddress();
-//
-// 	const poolContract = new Contract(poolAddress, UNI_ABI, signer);
-//
-// 	const domain = {
-// 		name: await poolContract.name(),
-// 		version: '1',
-// 		chainId: provider.network.chainId,
-// 		verifyingContract: poolAddress,
-// 	};
-//
-// 	// The named list of all type definitions
-// 	const types = {
-// 		Permit: [
-// 			{ name: 'owner', type: 'address' },
-// 			{ name: 'spender', type: 'address' },
-// 			{ name: 'value', type: 'uint256' },
-// 			{ name: 'nonce', type: 'uint256' },
-// 			{ name: 'deadline', type: 'uint256' },
-// 		],
-// 	};
-//
-// 	// The data to sign
-// 	const value = {
-// 		owner: signerAddress,
-// 		spender: lmAddress,
-// 		value: amount,
-// 		nonce: await poolContract.nonces(signerAddress),
-// 		deadline: ethers.constants.MaxUint256,
-// 	};
-//
-// 	// eslint-disable-next-line no-underscore-dangle
-// 	const rawSignature = await signer._signTypedData(domain, types, value);
-// 	const signature = ethers.utils.splitSignature(rawSignature);
-//
-// 	const rawPermitCall = await poolContract.populateTransaction.permit(
-// 		signerAddress,
-// 		lmAddress,
-// 		amount,
-// 		ethers.constants.MaxUint256,
-// 		signature.v,
-// 		signature.r,
-// 		signature.s,
-// 	);
-//
-// 	return rawPermitCall;
-// }
 
-// async function permitTokensXDai(provider, poolAddress, lmAddress) {
-// 	const signer = provider.getSigner();
-// 	const signerAddress = await signer.getAddress();
+const permitTokens = async (
+	provider: Web3Provider,
+	poolAddress: string,
+	lmAddress: string,
+	amount: string,
+) => {
+	const signer = provider.getSigner();
+	const signerAddress = await signer.getAddress();
 
-// const poolContract = new Contract(poolAddress, BRIDGE_ABI, signer);
+	const poolContract = new Contract(poolAddress, UNI_ABI, signer);
 
-// const domain = {
-// 	name: await poolContract.name(),
-// 	version: '1',
-// 	chainId: provider.network.chainId,
-// 	verifyingContract: poolContract.address,
-// };
+	const domain = {
+		name: await poolContract.name(),
+		version: '1',
+		chainId: provider.network.chainId,
+		verifyingContract: poolAddress,
+	};
 
-// // The named list of all type definitions
-// const types = {
-// 	Permit: [
-// 		{ name: 'holder', type: 'address' },
-// 		{ name: 'spender', type: 'address' },
-// 		{ name: 'nonce', type: 'uint256' },
-// 		{ name: 'expiry', type: 'uint256' },
-// 		{ name: 'allowed', type: 'bool' },
-// 	],
-// };
+	// The named list of all type definitions
+	const types = {
+		Permit: [
+			{ name: 'owner', type: 'address' },
+			{ name: 'spender', type: 'address' },
+			{ name: 'value', type: 'uint256' },
+			{ name: 'nonce', type: 'uint256' },
+			{ name: 'deadline', type: 'uint256' },
+		],
+	};
 
-// const nonce = await poolContract.nonces(signerAddress);
-// const expiry = Math.floor(Date.now() / 1000) + 3600;
-// const value = {
-// 	holder: signerAddress,
-// 	spender: lmAddress,
-// 	nonce,
-// 	expiry,
-// 	allowed: true,
-// };
+	// The data to sign
+	const value = {
+		owner: signerAddress,
+		spender: lmAddress,
+		value: amount,
+		nonce: await poolContract.nonces(signerAddress),
+		deadline: ethers.constants.MaxUint256,
+	};
 
-// // eslint-disable-next-line no-underscore-dangle
-// const rawSignature = await signer._signTypedData(domain, types, value);
-// const sign = ethers.utils.splitSignature(rawSignature);
+	// eslint-disable-next-line no-underscore-dangle
+	const rawSignature = await signer._signTypedData(domain, types, value);
+	const signature = ethers.utils.splitSignature(rawSignature);
 
-// console.log([
-// 	signerAddress,
-// 	lmAddress,
-// 	nonce.toString(),
-// 	expiry,
-// 	true,
-// 	sign.v,
-// 	sign.r,
-// 	sign.s,
-// ]);
+	return await poolContract.populateTransaction.permit(
+		signerAddress,
+		lmAddress,
+		amount,
+		ethers.constants.MaxUint256,
+		signature.v,
+		signature.r,
+		signature.s,
+	);
+};
 
-// const rawPermitCall = await poolContract.populateTransaction.permit(
-// 	signerAddress,
-// 	lmAddress,
-// 	nonce,
-// 	expiry,
-// 	true,
-// 	sign.v,
-// 	sign.r,
-// 	sign.s,
-// );
+export const stakeTokens = async (
+	amount: string,
+	poolAddress: string,
+	lmAddress: string,
+	provider: Web3Provider,
+): Promise<TransactionResponse | undefined> => {
+	if (amount === '0') return;
 
-// 	console.log('rawPermitCall: ', rawPermitCall);
-// 	return rawPermitCall;
-// }
+	const signer = provider.getSigner();
 
-// export async function stakeTokens(
-// 	amount: string,
-// 	poolAddress: string,
-// 	lmAddress: string,
-// 	provider: Web3Provider,
-// ): Promise<TransactionResponse> {
-// 	if (amount === '0') return;
+	const lmContract = new Contract(lmAddress, LM_ABI, signer);
 
-// const signer = provider.getSigner();
+	const rawPermitCall = await permitTokens(
+		provider,
+		poolAddress,
+		lmAddress,
+		amount,
+	);
 
-// const lmContract = new Contract(lmAddress, LM_ABI, signer);
+	const txResponse: TransactionResponse = await lmContract
+		.connect(signer.connectUnchecked())
+		.stakeWithPermit(
+			ethers.BigNumber.from(amount.toString()),
+			rawPermitCall.data,
+			{
+				gasLimit: 300_000,
+			},
+		);
 
-// const rawPermitCall =
-// 	provider.network.chainId === config.MAINNET_NETWORK_NUMBER
-// 		? await permitTokensMainnet(
-// 				provider,
-// 				poolAddress,
-// 				lmAddress,
-// 				amount,
-// 		  )
-// 		: await permitTokensMainnet(
-// 				provider,
-// 				poolAddress,
-// 				lmAddress,
-// 				amount,
-// 		  );
+	stakeToast.showPendingStake(
+		ethers.utils.formatEther(amount),
+		provider.network.chainId,
+		txResponse.hash,
+	);
 
-// const txResponse: TransactionResponse = await lmContract
-// 	.connect(signer.connectUnchecked())
-// 	.stakeWithPermit(
-// 		ethers.BigNumber.from(amount.toString()),
-// 		rawPermitCall.data,
-// 		{
-// 			gasLimit: 300_000,
-// 		},
-// 	);
+	const { status } = await txResponse.wait();
 
-// stakeToast.showPendingStake(
-// 	ethers.utils.formatEther(amount),
-// 	provider.network.chainId,
-// 	txResponse.hash,
-// );
-
-// const { status } = await txResponse.wait();
-
-// 	if (status) {
-// 		stakeToast.showConfirmedStake(
-// 			provider.network.chainId,
-// 			txResponse.hash,
-// 		);
-// 	} else {
-// 		stakeToast.showFailedStake(provider.network.chainId, txResponse.hash);
-// 	}
-// }
+	if (status) {
+		stakeToast.showConfirmedStake(
+			provider.network.chainId,
+			txResponse.hash,
+		);
+	} else {
+		stakeToast.showFailedStake(provider.network.chainId, txResponse.hash);
+	}
+};
 
 //export const harvestTokens = async (
 //	lmAddress: string,
