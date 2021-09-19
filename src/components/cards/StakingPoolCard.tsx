@@ -19,6 +19,7 @@ import {
 	fetchUserNotStakedToken,
 	fetchUserStakeInfo,
 	stakeTokens,
+	withdrawTokens,
 } from '../../lib/stakingPool';
 import BigNumber from 'bignumber.js';
 import { StakePoolInfo, StakeUserInfo } from '../../types/poolInfo';
@@ -227,8 +228,6 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 	);
 
 	const onChange = useCallback(value => {
-		console.log('value:', value);
-		console.log('type of value:', typeof value);
 		setDisplayAmount(formatEthHelper(value, 6, false));
 		setAmount(ethers.utils.parseUnits('' + value).toString());
 	}, []);
@@ -240,6 +239,12 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 	const onDeposit = () => {
 		if (provider) {
 			stakeTokens(amount, POOL_ADDRESS, LM_ADDRESS, provider);
+		}
+	};
+
+	const onWithdraw = () => {
+		if (provider) {
+			withdrawTokens(amount, LM_ADDRESS, provider);
 		}
 	};
 
@@ -373,7 +378,7 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 						type='number'
 						value={displayAmount}
 					/>
-					<CardButton>Withdraw</CardButton>
+					<CardButton onClick={onWithdraw}>Withdraw</CardButton>
 				</>
 			)}
 			{state !== SwapCardStates.Default && (

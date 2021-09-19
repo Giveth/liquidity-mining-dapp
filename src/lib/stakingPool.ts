@@ -17,6 +17,7 @@ import {
 	StakingType,
 } from '../types/config';
 import * as stakeToast from './notifications/stake';
+import * as withdrawToast from './notifications/withdraw';
 
 import { Zero } from '@ethersproject/constants';
 import { isAddress } from 'ethers/lib/utils';
@@ -290,31 +291,34 @@ export const stakeTokens = async (
 		amount,
 	);
 
-	const txResponse: TransactionResponse = await lmContract
-		.connect(signer.connectUnchecked())
-		.stakeWithPermit(
-			ethers.BigNumber.from(amount.toString()),
-			rawPermitCall.data,
-			{
-				gasLimit: 300_000,
-			},
-		);
+	try {
+		const txResponse: TransactionResponse = await lmContract
+			.connect(signer.connectUnchecked())
+			.stakeWithPermit(
+				ethers.BigNumber.from(amount),
+				rawPermitCall.data,
+				{
+					gasLimit: 300_000,
+				},
+			);
 
-	stakeToast.showPendingStake(
-		ethers.utils.formatEther(amount),
-		provider.network.chainId,
-		txResponse.hash,
-	);
+		const network = provider.network.chainId;
 
-	const { status } = await txResponse.wait();
-
-	if (status) {
-		stakeToast.showConfirmedStake(
-			provider.network.chainId,
+		stakeToast.showPendingStake(
+			ethers.utils.formatEther(amount),
+			network,
 			txResponse.hash,
 		);
-	} else {
-		stakeToast.showFailedStake(provider.network.chainId, txResponse.hash);
+
+		const { status } = await txResponse.wait();
+
+		if (status) {
+			stakeToast.showConfirmedStake(network, txResponse.hash);
+		} else {
+			stakeToast.showFailedStake(network, txResponse.hash);
+		}
+	} catch (e) {
+		console.error('Error on staking:', e);
 	}
 };
 
@@ -342,27 +346,33 @@ export const stakeTokens = async (
 //	}
 //};
 
-// export const withdrawTokens = async (
-// 	amount: number,
-// 	lmAddress: string,
-// 	network: number,
-// 	signer,
-// ) => {
-// 	const lmContract = new Contract(
-// 		lmAddress,
-// 		LM_ABI,
-// 		signer.connectUnchecked(),
-// 	);
-//
-// 	const tx = await lmContract.withdraw(ethers.BigNumber.from(amount));
-//
-// 	withdrawToast.showPendingWithdraw(network, tx.hash);
-//
-// 	const { status } = await tx.wait();
-//
-// 	if (status) {
-// 		withdrawToast.showConfirmedWithdraw(network, tx.hash);
-// 	} else {
-// 		withdrawToast.showFailedWithdraw(network, tx.hash);
-// 	}
-// };
+export const withdrawTokens = async (
+	amount: string,
+	lmAddress: string,
+	provider: Web3Provider,
+): Promise<void> => {
+	const signer = provider.getSigner();
+
+	const lmContract = new Contract(
+		lmAddress,
+		LM_ABI,
+		signer.connectUnchecked(),
+	);
+
+	try {
+		const tx = await lmContract.withdraw(ethers.BigNumber.from(amount));
+		const network = provider.network.chainId;
+
+		withdrawToast.showPendingWithdraw(network, tx.hash);
+
+		const { status } = await tx.wait();
+
+		if (status) {
+			withdrawToast.showConfirmedWithdraw(network, tx.hash);
+		} else {
+			withdrawToast.showFailedWithdraw(network, tx.hash);
+		}
+	} catch (e) {
+		console.error('Error on withdrawing:', e);
+	}
+};
