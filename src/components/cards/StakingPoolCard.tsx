@@ -4,29 +4,11 @@ import { Button } from '../styled-components/Button';
 import config from '../../configuration';
 import { OnboardContext } from '../../context/onboard.context';
 import { PoolStakingConfig, StakingType } from '../../types/config';
-import {
-	FC,
-	useCallback,
-	useContext,
-	useEffect,
-	useRef,
-	useState,
-} from 'react';
+import { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { H4, P } from '../styled-components/Typography';
-import {
-	fetchGivStakingInfo,
-	fetchLPStakingInfo,
-	fetchUserNotStakedToken,
-	fetchUserStakeInfo,
-	stakeTokens,
-	withdrawTokens,
-} from '../../lib/stakingPool';
-import BigNumber from 'bignumber.js';
-import { StakePoolInfo, StakeUserInfo } from '../../types/poolInfo';
+import { stakeTokens, withdrawTokens } from '../../lib/stakingPool';
 import { formatEthHelper, formatWeiHelper } from '../../helpers/number';
-import { Zero } from '@ethersproject/constants';
 import { ethers } from 'ethers';
-import { TokenBalanceContext } from '../../context/tokenBalance.context';
 import { useStakingPool } from '../../hooks/useStakingPool';
 
 const StakingPoolContainer = styled.div`
