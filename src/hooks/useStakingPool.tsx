@@ -100,7 +100,7 @@ export const useStakingPool = (
 
 		cb();
 
-		userStakeInfoPoll.current = setInterval(cb, 5000); // Every 15 seconds
+		userStakeInfoPoll.current = setInterval(cb, config.POLLING_INTERVAL); // Every 15 seconds
 
 		return () => {
 			if (userStakeInfoPoll.current) {
