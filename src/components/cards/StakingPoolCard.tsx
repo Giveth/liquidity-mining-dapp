@@ -6,10 +6,15 @@ import { OnboardContext } from '../../context/onboard.context';
 import { PoolStakingConfig, StakingType } from '../../types/config';
 import { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { H4, P } from '../styled-components/Typography';
-import { stakeTokens, withdrawTokens } from '../../lib/stakingPool';
+import {
+	harvestTokens,
+	stakeTokens,
+	withdrawTokens,
+} from '../../lib/stakingPool';
 import { formatEthHelper, formatWeiHelper } from '../../helpers/number';
 import { ethers } from 'ethers';
 import { useStakingPool } from '../../hooks/useStakingPool';
+import { Zero } from '@ethersproject/constants';
 
 const StakingPoolContainer = styled.div`
 	width: 380px;
@@ -214,21 +219,14 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 		setAmount(ethers.utils.parseUnits('' + value).toString());
 	}, []);
 
-	useEffect(() => {
-		setAmount('0');
-	}, [state]);
+	useEffect(() => setAmount('0'), [state]);
 
-	const onDeposit = () => {
-		if (provider) {
-			stakeTokens(amount, POOL_ADDRESS, LM_ADDRESS, provider);
-		}
-	};
+	const onDeposit = () =>
+		stakeTokens(amount, POOL_ADDRESS, LM_ADDRESS, provider);
 
-	const onWithdraw = () => {
-		if (provider) {
-			withdrawTokens(amount, LM_ADDRESS, provider);
-		}
-	};
+	const onWithdraw = () => withdrawTokens(amount, LM_ADDRESS, provider);
+
+	const onHarvest = () => harvestTokens(LM_ADDRESS, provider);
 
 	return (
 		<StakingPoolContainer>
@@ -290,6 +288,11 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 					>
 						STAKE LP TOKENS
 					</CardButton>
+					{!userStakeInfo.earned.eq(Zero) && (
+						<CardButton outline onClick={onHarvest}>
+							Harvest
+						</CardButton>
+					)}
 				</>
 			)}
 			{state == SwapCardStates.Manage && (

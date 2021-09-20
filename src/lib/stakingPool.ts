@@ -18,6 +18,7 @@ import {
 } from '../types/config';
 import * as stakeToast from './notifications/stake';
 import * as withdrawToast from './notifications/withdraw';
+import * as harvestToast from './notifications/harvest';
 
 import { Zero } from '@ethersproject/constants';
 import { isAddress } from 'ethers/lib/utils';
@@ -276,9 +277,13 @@ export const stakeTokens = async (
 	amount: string,
 	poolAddress: string,
 	lmAddress: string,
-	provider: Web3Provider,
+	provider: Web3Provider | null,
 ): Promise<TransactionResponse | undefined> => {
 	if (amount === '0') return;
+	if (!provider) {
+		console.error('Provider is null');
+		return;
+	}
 
 	const signer = provider.getSigner();
 
@@ -322,35 +327,46 @@ export const stakeTokens = async (
 	}
 };
 
-//export const harvestTokens = async (
-//	lmAddress: string,
-//	network: number,
-//	signer,
-//) => {
-//	const lmContract = new Contract(
-//		lmAddress,
-//		LM_ABI,
-//		signer.connectUnchecked(),
-//	);
-//
-//	const tx = await lmContract.getReward();
-//
-//	harvestToast.showPendingHarvest(network, tx.hash);
-//
-//	const { status } = await tx.wait();
-//
-//	if (status) {
-//		harvestToast.showConfirmedHarvest(network, tx.hash);
-//	} else {
-//		harvestToast.showFailedHarvest(network, tx.hash);
-//	}
-//};
+export const harvestTokens = async (
+	lmAddress: string,
+	provider: Web3Provider | null,
+) => {
+	if (!provider) {
+		console.error('Provider is null');
+		return;
+	}
+
+	const signer = provider.getSigner();
+	const lmContract = new Contract(
+		lmAddress,
+		LM_ABI,
+		signer.connectUnchecked(),
+	);
+
+	const tx = await lmContract.getReward();
+
+	const network = provider.network.chainId;
+	harvestToast.showPendingHarvest(network, tx.hash);
+
+	const { status } = await tx.wait();
+
+	if (status) {
+		harvestToast.showConfirmedHarvest(network, tx.hash);
+	} else {
+		harvestToast.showFailedHarvest(network, tx.hash);
+	}
+};
 
 export const withdrawTokens = async (
 	amount: string,
 	lmAddress: string,
-	provider: Web3Provider,
+	provider: Web3Provider | null,
 ): Promise<void> => {
+	if (!provider) {
+		console.error('Provider is null');
+		return;
+	}
+
 	const signer = provider.getSigner();
 
 	const lmContract = new Contract(

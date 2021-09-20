@@ -51,7 +51,7 @@ export const useStakingPool = (
 
 		cb();
 
-		stakePoolInfoPoll.current = setInterval(cb, 15000); // Every 15 seconds
+		stakePoolInfoPoll.current = setInterval(cb, 60000); // Every 15 seconds
 
 		return () => {
 			if (stakePoolInfoPoll.current) {
@@ -62,12 +62,11 @@ export const useStakingPool = (
 	}, [type, LM_ADDRESS, network]);
 
 	const isMounted = useRef(true);
-	useEffect(
-		() => () => {
+	useEffect(() => {
+		return () => {
 			isMounted.current = false;
-		},
-		[],
-	);
+		};
+	}, []);
 
 	useEffect(() => {
 		const cb = () => {
@@ -90,7 +89,9 @@ export const useStakingPool = (
 				fetchUserStakeInfo(address, poolStakingConfig, network),
 				lpBalancePromise,
 			]).then(([_userStakeInfo, _lpBalance]) => {
+				console.log('isMounted:', isMounted.current, new Date());
 				if (isMounted.current) {
+					console.log('update userStakeInfo');
 					setUserStakeInfo(_userStakeInfo);
 					setNotStakedAmount(_lpBalance);
 				}
@@ -99,7 +100,7 @@ export const useStakingPool = (
 
 		cb();
 
-		userStakeInfoPoll.current = setInterval(cb, 15000); // Every 15 seconds
+		userStakeInfoPoll.current = setInterval(cb, 5000); // Every 15 seconds
 
 		return () => {
 			if (userStakeInfoPoll.current) {

@@ -1,4 +1,11 @@
-import { createContext, FC, useContext, useEffect, useState } from 'react';
+import {
+	createContext,
+	FC,
+	useCallback,
+	useContext,
+	useEffect,
+	useState,
+} from 'react';
 import { Contract, ethers } from 'ethers';
 import { Zero } from '@ethersproject/constants';
 import { OnboardContext } from './onboard.context';
@@ -28,6 +35,21 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 	const [xDaiTokenBalance, setXDaiTokenBalance] =
 		useState<ethers.BigNumber>(Zero);
 
+	// const [_mainnetTokenBalance, _setMainnetTokenBalance] =
+	// 	useState<ethers.BigNumber>(Zero);
+	// const [_xDaiTokenBalance, _setXDaiTokenBalance] =
+	// 	useState<ethers.BigNumber>(Zero);
+
+	useEffect(() => {
+		console.log(
+			'on update mainnetTOkenBalance:',
+			mainnetTokenBalance.toString(),
+		);
+	}, [mainnetTokenBalance]);
+	useEffect(() => {
+		console.log('on update xdaiTokenBalance:', xDaiTokenBalance.toString());
+	}, [xDaiTokenBalance]);
+
 	useEffect(() => {
 		switch (network) {
 			case config.MAINNET_NETWORK_NUMBER:
@@ -42,62 +64,75 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 		}
 	}, [mainnetTokenBalance, xDaiTokenBalance, network]);
 
+	const getTokenContract = (network: number) => {
+		const networkConfig = config.NETWORKS_CONFIG[network];
+
+		if (!networkConfig) {
+			return null;
+		}
+
+		return getERC20Contract(networkConfig.TOKEN_ADDRESS, network);
+	};
+
+	const fetchTokenBalance = async (): Promise<void> => {
+		const mainnetTokenContract = getTokenContract(
+			config.MAINNET_NETWORK_NUMBER,
+		);
+		if (mainnetTokenContract) {
+			try {
+				console.log(
+					'mainnetTokenBalance:',
+					mainnetTokenBalance.toString(),
+				);
+				const newBalance = await mainnetTokenContract.balanceOf(
+					address,
+				);
+				if (!mainnetTokenBalance.eq(newBalance)) {
+					console.log(
+						'mainnet token balance updated ',
+						new Date(),
+						mainnetTokenBalance.toString(),
+						newBalance.toString(),
+						mainnetTokenBalance.sub(newBalance).toString(),
+					);
+					setMainnetTokenBalance(newBalance);
+				}
+			} catch (e) {
+				console.error(
+					'Error on fetching user mainnet token balance:',
+					e,
+				);
+			}
+		} else {
+			console.log('mainnet contract is not ready');
+		}
+
+		const xDaiTokenContract = getTokenContract(config.XDAI_NETWORK_NUMBER);
+		if (xDaiTokenContract) {
+			try {
+				console.log('xdaiBalance:', xDaiTokenBalance.toString());
+				const newBalance = await xDaiTokenContract.balanceOf(address);
+				if (!xDaiTokenBalance.eq(newBalance)) {
+					console.log(
+						'xdai token balance updated ',
+						new Date(),
+						xDaiTokenBalance.toString(),
+						newBalance.toString(),
+						xDaiTokenBalance.sub(newBalance).toString(),
+					);
+					setXDaiTokenBalance(newBalance);
+				}
+			} catch (e) {
+				console.error('Error on fetching user xDai token balance:', e);
+			}
+		} else {
+			console.log('xdai contract is not ready');
+		}
+	};
+
 	useEffect(() => {
-		const getTokenContract = (network: number) => {
-			const networkConfig = config.NETWORKS_CONFIG[network];
-
-			if (!networkConfig) {
-				return null;
-			}
-
-			return getERC20Contract(networkConfig.TOKEN_ADDRESS, network);
-		};
-
-		const fetchTokenBalance = (): void => {
-			const mainnetTokenContract = getTokenContract(
-				config.MAINNET_NETWORK_NUMBER,
-			);
-			if (mainnetTokenContract) {
-				mainnetTokenContract
-					.balanceOf(address)
-					.then(
-						(newBalance: ethers.BigNumber) =>
-							mainnetTokenBalance.eq(newBalance) ||
-							setMainnetTokenBalance(newBalance),
-					)
-					.catch((e: Error) =>
-						console.error(
-							'Error on fetching user mainnet token balance:',
-							e,
-						),
-					);
-			} else {
-				console.log('mainnet contract is not ready');
-			}
-
-			const xDaiTokenContract = getTokenContract(
-				config.XDAI_NETWORK_NUMBER,
-			);
-			if (xDaiTokenContract) {
-				xDaiTokenContract
-					.balanceOf(address)
-					.then(
-						(newBalance: ethers.BigNumber) =>
-							xDaiTokenBalance.eq(newBalance) ||
-							setXDaiTokenBalance(newBalance),
-					)
-					.catch((e: Error) =>
-						console.error(
-							'Error on fetching user xDai token balance:',
-							e,
-						),
-					);
-			} else {
-				console.log('xdai contract is not ready');
-			}
-		};
-
 		if (isAddress(address)) {
+			console.log('address is changed');
 			setTokenBalance(Zero);
 			setMainnetTokenBalance(Zero);
 			setXDaiTokenBalance(Zero);
