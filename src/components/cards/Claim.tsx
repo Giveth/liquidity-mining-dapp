@@ -16,7 +16,7 @@ import { OnboardContext } from '../../context/onboard.context';
 import { isAddress } from 'ethers/lib/utils';
 import config from '../../configuration';
 import { abi as TOKEN_DISTRO_ABI } from '../../artifacts/TokenDistro.json';
-import { claim } from '../../lib/claim';
+import { claimAirDrop } from '../../lib/claim';
 
 const ClaimCardContainer = styled(Card)`
 	::before {
@@ -66,7 +66,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 		}
 
 		try {
-			const tx = await claim(userAddress, provider);
+			const tx = await claimAirDrop(userAddress, provider);
 
 			showPendingClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
 

@@ -50,7 +50,7 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 	useEffect(() => {
 		if (!wallet) return;
 		if (provider && provider.network?.chainId === network) return;
-		console.log('network:', network);
+
 		updateProvider();
 	}, [network]);
 
@@ -92,17 +92,8 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 				{ checkName: 'derivationPath' },
 				{ checkName: 'connect' },
 				{ checkName: 'accounts' },
-				{ checkName: 'network' },
 			],
 		});
-
-		const previouslySelectedWallet =
-			window.localStorage.getItem('selectedWallet');
-		if (previouslySelectedWallet) {
-			_onboard
-				.walletSelect(previouslySelectedWallet)
-				.then(selected => selected && _onboard.walletCheck());
-		}
 
 		setOnboard(_onboard);
 	};
@@ -147,6 +138,19 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 		initOnboard();
 	}, []);
 
+	useEffect(() => {
+		if (onboard) {
+			const previouslySelectedWallet =
+				window.localStorage.getItem('selectedWallet');
+			if (previouslySelectedWallet) {
+				onboard
+					.walletSelect(previouslySelectedWallet)
+					.then(selected => {
+						selected && walletCheck();
+					});
+			}
+		}
+	}, [onboard]);
 	return (
 		<OnboardContext.Provider
 			value={{

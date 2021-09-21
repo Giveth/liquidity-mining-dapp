@@ -8,6 +8,8 @@ const envConfig = isProduction ? production : development;
 
 const config: GlobalConfig = {
 	TOKEN_NAME: 'GIV',
+	POLLING_INTERVAL: 15000,
+	TOKEN_PRECISION: 2,
 
 	...envConfig,
 	NETWORKS_CONFIG: {

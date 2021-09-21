@@ -6,7 +6,10 @@ import { Button } from './styled-components/Button';
 import { FC, useContext } from 'react';
 import { ThemeContext, ThemeType } from '../context/theme.context';
 import { OnboardContext } from '../context/onboard.context';
-import { UserContext } from '../context/user.context';
+import { TokenBalanceContext } from '../context/tokenBalance.context';
+import { formatWeiHelper } from '../helpers/number';
+import config from '../configuration';
+import { claimReward } from '../lib/claim';
 
 interface IHeader {
 	theme?: ThemeType;
@@ -49,11 +52,21 @@ const ConenctButton = styled(Button)`
 
 const Header: FC<IHeader> = () => {
 	const { theme } = useContext(ThemeContext);
-	const { network, connect, address, walletCheck } =
-		useContext(OnboardContext);
+	const { tokenBalance, tokenDistroBalance } =
+		useContext(TokenBalanceContext);
+
+	const { network, connect, address, provider } = useContext(OnboardContext);
 	const goToClaim = () => {
 		router.push('/claim');
 	};
+
+	const onClaimReward = () => {
+		claimReward(
+			config.NETWORKS_CONFIG[network]?.TOKEN_DISTRO_ADDRESS,
+			provider,
+		);
+	};
+
 	return (
 		<StyledHeader
 			justifyContent='space-between'
@@ -73,12 +86,27 @@ const Header: FC<IHeader> = () => {
 			</Row>
 			<Row gap='8px'>
 				<HeaderButton secondary onClick={goToClaim}>
-					CLAIM GIV
+					CLAIM GIVdrop
 				</HeaderButton>
 				{address ? (
 					<>
 						<HeaderButton>NETWORK {network}</HeaderButton>
-						<HeaderButton neutral>{644} GIV </HeaderButton>
+						<HeaderButton neutral>
+							{'Balance: ' +
+								formatWeiHelper(
+									tokenBalance,
+									config.TOKEN_PRECISION,
+								)}{' '}
+							GIV{' '}
+						</HeaderButton>
+						<HeaderButton neutral onClick={onClaimReward}>
+							{'Claimable: ' +
+								formatWeiHelper(
+									tokenDistroBalance.claimable,
+									config.TOKEN_PRECISION,
+								)}{' '}
+							GIV{' '}
+						</HeaderButton>
 						<HeaderButton neutral onClick={connect}>
 							{address}
 						</HeaderButton>

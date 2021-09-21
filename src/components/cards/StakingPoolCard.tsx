@@ -3,25 +3,18 @@ import { Row } from '../styled-components/Grid';
 import { Button } from '../styled-components/Button';
 import config from '../../configuration';
 import { OnboardContext } from '../../context/onboard.context';
-import {
-	BalancerPoolStakingConfig,
-	PoolStakingConfig,
-	SimplePoolStakingConfig,
-	StakingType,
-} from '../../types/config';
-import {
-	FC,
-	useCallback,
-	useContext,
-	useEffect,
-	useRef,
-	useState,
-} from 'react';
+import { PoolStakingConfig, StakingType } from '../../types/config';
+import { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { H4, P } from '../styled-components/Typography';
-import { fetchGivStakingInfo, fetchLPStakingInfo } from '../../lib/stakingPool';
-import BigNumber from 'bignumber.js';
-import { StakePoolInfo } from '../../types/poolInfo';
-import { convertEthHelper } from '../../helpers/number';
+import {
+	harvestTokens,
+	stakeTokens,
+	withdrawTokens,
+} from '../../lib/stakingPool';
+import { formatEthHelper, formatWeiHelper } from '../../helpers/number';
+import { ethers } from 'ethers';
+import { useStakingPool } from '../../hooks/useStakingPool';
+import { Zero } from '@ethersproject/constants';
 
 const StakingPoolContainer = styled.div`
 	width: 380px;
@@ -90,7 +83,6 @@ interface IStakingPoolCardProps {
 	// platform: string;
 	network: number;
 	poolStakingConfig: PoolStakingConfig;
-	// provideLiquidityLink: string;
 }
 const Details = styled.div`
 	margin: 12px 0;
@@ -190,40 +182,51 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 	network,
 	poolStakingConfig,
 }) => {
-	const { network: walletNetwork } = useContext(OnboardContext);
+	const { network: walletNetwork, provider } = useContext(OnboardContext);
+
 	const [state, setState] = useState(SwapCardStates.Default);
 	const [amount, setAmount] = useState<string>('0');
-	const [apr, setApr] = useState<BigNumber | null>(null);
-	const { type, title, description, LM_ADDRESS, POOL_ADDRESS } =
-		poolStakingConfig;
+	const [displayAmount, setDisplayAmount] = useState('0');
 
-	const stakePoolPoll = useRef<NodeJS.Timer | null>(null);
+	const {
+		type,
+		title,
+		description,
+		provideLiquidityLink,
+		LM_ADDRESS,
+		POOL_ADDRESS,
+	} = poolStakingConfig;
 
-	useEffect(() => {
-		const cb = () => {
-			const promise: Promise<StakePoolInfo> =
-				type === StakingType.GIV_STREAM
-					? fetchGivStakingInfo(LM_ADDRESS, network)
-					: fetchLPStakingInfo(poolStakingConfig, network);
+	const { apr, userStakeInfo, userNotStakedAmount } = useStakingPool(
+		poolStakingConfig,
+		network,
+	);
 
-			promise.then(({ apr: _apr }) => setApr(_apr));
-		};
-
-		cb();
-
-		stakePoolPoll.current = setInterval(cb, 15000); // Every 15 seconds
-
-		return () => {
-			if (stakePoolPoll.current) {
-				clearInterval(stakePoolPoll.current);
-				stakePoolPoll.current = null;
-			}
-		};
-	}, [type, LM_ADDRESS, network]);
+	const setAmountPercentage = useCallback(
+		(percentage: number): void => {
+			const newAmount = ethers.BigNumber.from(userNotStakedAmount)
+				.mul(percentage)
+				.div(100)
+				.toString();
+			setAmount(newAmount);
+			setDisplayAmount(formatWeiHelper(newAmount, 6, false));
+		},
+		[userNotStakedAmount],
+	);
 
 	const onChange = useCallback(value => {
-		setAmount(value.toString());
+		setDisplayAmount(formatEthHelper(value, 6, false));
+		setAmount(ethers.utils.parseUnits('' + value).toString());
 	}, []);
+
+	useEffect(() => setAmount('0'), [state]);
+
+	const onDeposit = () =>
+		stakeTokens(amount, POOL_ADDRESS, LM_ADDRESS, provider);
+
+	const onWithdraw = () => withdrawTokens(amount, LM_ADDRESS, provider);
+
+	const onHarvest = () => harvestTokens(LM_ADDRESS, provider);
 
 	return (
 		<StakingPoolContainer>
@@ -248,7 +251,7 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 							<DetailLink>See details</DetailLink>
 						</DetailHeader>
 						<DetailValue>
-							{apr && convertEthHelper(apr, 2)}%
+							{apr && formatEthHelper(apr, 2)}%
 						</DetailValue>
 						<DetailHeader justifyContent='space-between'>
 							<DetailLabel>Claimable</DetailLabel>
@@ -260,17 +263,36 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 								Manage
 							</DetailLink>
 						</DetailHeader>
-						<DetailValue>{`${0} GIV`}</DetailValue>
+						<DetailValue>{`${formatWeiHelper(
+							userStakeInfo.earned,
+							config.TOKEN_PRECISION,
+						)} GIV`}</DetailValue>
 						<DetailHeader>
 							<DetailLabel>Streaming</DetailLabel>
 							<DetailLink>?</DetailLink>
 						</DetailHeader>
 						<DetailValue>{`${0} GIV`}</DetailValue>
 					</Details>
-					<CardButton secondary outline>
-						PROVIDE LIQUIDITY
+					{type !== StakingType.GIV_STREAM && (
+						<CardButton
+							secondary
+							outline
+							onClick={() => window.open(provideLiquidityLink)}
+						>
+							PROVIDE LIQUIDITY
+						</CardButton>
+					)}
+					<CardButton
+						outline
+						onClick={() => setState(SwapCardStates.Deposit)}
+					>
+						STAKE LP TOKENS
 					</CardButton>
-					<CardButton outline>STAKE LP TOKENS</CardButton>
+					{!userStakeInfo.earned.eq(Zero) && (
+						<CardButton outline onClick={onHarvest}>
+							Harvest
+						</CardButton>
+					)}
 				</>
 			)}
 			{state == SwapCardStates.Manage && (
@@ -278,17 +300,13 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 					<CardButton
 						secondary
 						outline
-						onClick={() => {
-							setState(SwapCardStates.Deposit);
-						}}
+						onClick={() => setState(SwapCardStates.Deposit)}
 					>
 						Depsite
 					</CardButton>
 					<CardButton
 						outline
-						onClick={() => {
-							setState(SwapCardStates.Withdraw);
-						}}
+						onClick={() => setState(SwapCardStates.Withdraw)}
 					>
 						Withdraw
 					</CardButton>
@@ -298,32 +316,54 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 				<>
 					<H4>Deposit LP tokens</H4>
 					<P>
-						You currently have <b>{0}</b> staked LP tokens. Deposit
-						more to accrue more rewards.
+						You currently have{' '}
+						<b>
+							{formatWeiHelper(
+								userStakeInfo.stakedLpAmount,
+								config.TOKEN_PRECISION,
+							)}
+						</b>{' '}
+						staked LP tokens. Deposit more to accrue more rewards.
 					</P>
-					<P>BALANCE: {0} LP Tokens</P>
+					<P>
+						BALANCE:{' '}
+						{formatWeiHelper(
+							userNotStakedAmount,
+							config.TOKEN_PRECISION,
+						)}{' '}
+						LP Tokens
+					</P>
 					<Input
 						onChange={e => onChange(+e.target.value || '0')}
 						type='number'
-						value={amount}
+						value={displayAmount}
 					/>
-					<CardButton secondary>Deposit</CardButton>
+					<CardButton secondary onClick={onDeposit}>
+						Deposit
+					</CardButton>
 				</>
 			)}
 			{state == SwapCardStates.Withdraw && (
 				<>
 					<H4>Withdraw LP tokens</H4>
 					<P>
-						You currently have <b>{0}</b> staked LP tokens. Enter
-						the amount you’d like to withdraw.
+						You currently have{' '}
+						<b>
+							{formatWeiHelper(
+								userStakeInfo.stakedLpAmount,
+								config.TOKEN_PRECISION,
+							)}
+						</b>{' '}
+						staked LP tokens. Enter the amount you’d like to
+						withdraw.
 					</P>
 					<P>BALANCE: {0} LP Tokens</P>
 					<Input
 						onChange={e => onChange(+e.target.value || '0')}
 						type='number'
-						value={amount}
+						value={displayAmount}
 					/>
-					<CardButton>Withdraw</CardButton>
+					<CardButton onClick={onWithdraw}>Withdraw</CardButton>
 				</>
 			)}
 			{state !== SwapCardStates.Default && (

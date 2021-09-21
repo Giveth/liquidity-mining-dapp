@@ -23,6 +23,8 @@ const config: EnvConfig = {
 				type: StakingType.UNISWAP,
 				title: 'GIV / ETH',
 				description: '50% GIV, 50% ETH',
+				provideLiquidityLink:
+					'https://app.uniswap.org/#/add/v2/0x86B94D365c94De153d6023f243c2b6e6c6c7626C/ETH',
 			},
 			{
 				POOL_ADDRESS: '0x632045A9CFa9d232d0dd46702033C850D0E06f0F',
@@ -33,6 +35,8 @@ const config: EnvConfig = {
 				type: StakingType.BALANCER,
 				title: 'GIV / ETH',
 				description: '80% GIV, 20% ETH',
+				provideLiquidityLink:
+					'https://kovan.balancer.fi/#/pool/0x632045a9cfa9d232d0dd46702033c850d0e06f0f000200000000000000000128',
 			},
 		],
 	},
@@ -54,6 +58,8 @@ const config: EnvConfig = {
 				type: StakingType.UNISWAP,
 				title: 'GIV / UNI',
 				description: '50% GIV, 50% UNI',
+				provideLiquidityLink:
+					'https://app.uniswap.org/#/add/v2/0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984/0x6F45aFf8c1e50DB099DAb43292C28240be2b7485',
 			},
 			{
 				POOL_ADDRESS: '0x8fb2d187eba62970c13d0037304260b9fef721c5',
@@ -61,6 +67,8 @@ const config: EnvConfig = {
 				type: StakingType.UNISWAP,
 				title: 'ETH / UNI',
 				description: '50% ETH, 50% UNI',
+				provideLiquidityLink:
+					'https://app.uniswap.org/#/add/v2/ETH/0x6F45aFf8c1e50DB099DAb43292C28240be2b7485',
 			},
 		],
 	},
