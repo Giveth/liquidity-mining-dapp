@@ -89,9 +89,7 @@ export const useStakingPool = (
 				fetchUserStakeInfo(address, poolStakingConfig, network),
 				lpBalancePromise,
 			]).then(([_userStakeInfo, _lpBalance]) => {
-				console.log('isMounted:', isMounted.current, new Date());
 				if (isMounted.current) {
-					console.log('update userStakeInfo');
 					setUserStakeInfo(_userStakeInfo);
 					setNotStakedAmount(_lpBalance);
 				}

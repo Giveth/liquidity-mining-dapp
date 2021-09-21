@@ -1,12 +1,17 @@
 import { getAddress, isAddress } from 'ethers/lib/utils';
 import { constants, Contract } from 'ethers';
 import { fetchMerkleResults } from '../helpers/utils';
-import { ClaimData } from '../types/giveDrop';
+import { ClaimData, ITokenDistroBalance } from '../types/GIV';
 import { networkProviders } from '../helpers/networkProvider';
 import config from '../configuration';
 import { abi as MERKLE_ABI } from '../artifacts/MerkleDrop.json';
 import { abi as TOKEN_DISTRO_ABI } from '../artifacts/TokenDistro.json';
 import { Web3Provider } from '@ethersproject/providers';
+import {
+	showConfirmedClaim,
+	showFailedClaim,
+	showPendingClaim,
+} from './notifications/claim';
 
 export const formatAddress = (address: string): string => {
 	try {
@@ -37,7 +42,7 @@ export const getERC20Contract = (address: string, network: number) => {
 	return new Contract(address, ERC20ABI, provider);
 };
 
-export const fetchClaimData = async (
+export const fetchAirDropClaimData = async (
 	address: string,
 ): Promise<ClaimData | undefined> => {
 	try {
@@ -52,7 +57,7 @@ export const fetchClaimData = async (
 	}
 };
 
-export const hasClaimed = async (
+export const hasClaimedAirDrop = async (
 	address: string,
 	claimData: ClaimData,
 ): Promise<boolean> => {
@@ -75,7 +80,7 @@ export const hasClaimed = async (
 	}
 };
 
-export const claim = async (
+export const claimAirDrop = async (
 	address: string,
 	provider: Web3Provider,
 ): Promise<any> => {
@@ -86,7 +91,7 @@ export const claim = async (
 	const signer = provider.getSigner().connectUnchecked();
 	const merkleContract = new Contract(merkleAddress, MERKLE_ABI, provider);
 
-	const claimData = await fetchClaimData(address);
+	const claimData = await fetchAirDropClaimData(address);
 
 	if (!claimData) throw new Error('No claim data');
 
@@ -95,4 +100,59 @@ export const claim = async (
 	return await merkleContract
 		.connect(signer.connectUnchecked())
 		.claim(...args);
+};
+
+export const getTokenDistroAmounts = async (
+	address: string,
+	tokenDistroAddress: string,
+	networkNumber: number,
+): Promise<ITokenDistroBalance> => {
+	if (!isAddress(tokenDistroAddress)) {
+		return {
+			claimable: constants.Zero,
+			locked: constants.Zero,
+		};
+	}
+
+	const tokenDistro = new Contract(
+		tokenDistroAddress,
+		TOKEN_DISTRO_ABI,
+		networkProviders[networkNumber],
+	);
+
+	const balances = await tokenDistro.balances(address);
+	const claimable = await tokenDistro.claimableNow(address);
+
+	const locked = balances[0].sub(balances[1]);
+
+	return { claimable, locked };
+};
+
+export const claimReward = async (
+	tokenDistroAddress: string,
+	provider: Web3Provider | null,
+): Promise<void> => {
+	if (!isAddress(tokenDistroAddress)) return;
+	if (!provider) return;
+
+	const signer = provider.getSigner();
+	const network = provider.network.chainId;
+
+	const tokenDistro = new Contract(
+		tokenDistroAddress,
+		TOKEN_DISTRO_ABI,
+		signer.connectUnchecked(),
+	);
+
+	const tx = await tokenDistro.claim();
+
+	showPendingClaim(network, tx.hash);
+
+	const { status } = await tx.wait();
+
+	if (status) {
+		showConfirmedClaim(network, tx.hash);
+	} else {
+		showFailedClaim(network, tx.hash);
+	}
 };

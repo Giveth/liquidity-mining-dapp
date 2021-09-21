@@ -1,5 +1,5 @@
 import { createContext, FC, ReactNode, useState } from 'react';
-import { fetchClaimData, hasClaimed } from '../lib/claim';
+import { fetchAirDropClaimData, hasClaimedAirDrop } from '../lib/claim';
 import { Zero } from '@ethersproject/constants';
 import { BigNumber } from 'ethers';
 
@@ -30,9 +30,9 @@ export const UserProvider: FC<Props> = ({ children }) => {
 		setUserAddress(address);
 		setClaimableAmount(Zero);
 
-		const claimData = await fetchClaimData(address);
+		const claimData = await fetchAirDropClaimData(address);
 		if (claimData) {
-			const _hasClaimed = await hasClaimed(address, claimData);
+			const _hasClaimed = await hasClaimedAirDrop(address, claimData);
 			console.log('hasClaimed:', _hasClaimed);
 			if (!_hasClaimed) {
 				setClaimableAmount(BigNumber.from(claimData.amount));
