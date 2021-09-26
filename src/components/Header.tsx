@@ -95,6 +95,13 @@ const ConenctButton = styled(Button)`
 	width: 300px;
 `;
 
+const NotifButton = styled(HeaderButton)`
+	padding: 23px;
+	background-image: url('/images/notif.svg');
+	background-position: center;
+    background-repeat: no-repeat;
+`;
+
 const Header: FC<IHeader> = () => {
 	const { theme } = useContext(ThemeContext);
 	const { tokenBalance, tokenDistroBalance } =
@@ -130,9 +137,7 @@ const Header: FC<IHeader> = () => {
 				<Title theme={theme}>THE FUTURE OF GIVING</Title>
 			</Row>
 			<Row gap='8px'>
-				<HeaderButton secondary onClick={goToClaim}>
-					CLAIM GIVdrop
-				</HeaderButton>
+				<NotifButton />
 				{address ? (
 					<>
 						<HeaderButton outline onClick={onClaimReward}>
