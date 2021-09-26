@@ -17,8 +17,8 @@ interface IHeader {
 }
 
 const StyledHeader = styled(Row)<IHeader>`
-	height: 128px;
-	padding: 0 132px;
+	height: 104px;
+	padding: 0 32px;
 	position: relative;
 	background-color: ${props => props.theme.bg};
 `;
@@ -90,9 +90,7 @@ const Title = styled.h1`
 	color: ${props => props.theme.fg};
 `;
 
-const ConenctButton = styled(Button)`
-	height: 36px;
-	width: 300px;
+const ConenctButton = styled(HeaderButton)`
 `;
 
 const NotifButton = styled(HeaderButton)`
@@ -100,6 +98,7 @@ const NotifButton = styled(HeaderButton)`
 	background-image: url('/images/notif.svg');
 	background-position: center;
     background-repeat: no-repeat;
+	max-width: 48px;
 `;
 
 const Header: FC<IHeader> = () => {
@@ -127,14 +126,17 @@ const Header: FC<IHeader> = () => {
 		>
 			<Row gap='16px'>
 				<Image
-					width='58'
-					height='58px'
+					width='32p'
+					height='32px'
 					alt='Giveth logo'
-					src={`/images/${
-						theme.type === ThemeType.Dark ? 'logod' : 'logol'
-					}.svg`}
+					src={`/images/logo/logo.svg`}
 				/>
-				<Title theme={theme}>THE FUTURE OF GIVING</Title>
+				<Image
+					width='94px'
+					height='20px'
+					alt='Giveth logo'
+					src={`/images/logo/givethio.svg`}
+				/>
 			</Row>
 			<Row gap='8px'>
 				<NotifButton />
