@@ -42,7 +42,7 @@ const HeaderButton = styled(Button)`
 const WalletButton = styled(HeaderButton)`
 	font-size: 14px;
 	width: 176px;
-	padding: 4px 16px;
+	padding: 6px 16px;
 `;
 
 const HBContainer = styled.div`
