@@ -137,7 +137,7 @@ const Header: FC<IHeader> = () => {
 					<>
 						<HeaderButton outline onClick={onClaimReward}>
 							<HBContainer>
-								<HBBalanceLogo src={"/images/placeholders/profile.png"} alt="Profile Pic" width={'24px'} height={'24px'}/>
+								<HBBalanceLogo src={"/images/logo/logo.svg"} alt="Profile Pic" width={'24px'} height={'24px'}/>
 								<HBContent>
 								{formatWeiHelper(
 									tokenBalance,
