@@ -90,6 +90,44 @@ const Title = styled.h1`
 	color: ${props => props.theme.fg};
 `;
 
+interface IHeaderLinkProps {
+	active?: boolean;
+	important?: boolean;
+}
+
+const HeaderLink = styled.a<IHeaderLinkProps>`
+	font-family: 'red-hat';
+	font-style: normal;
+	font-weight: normal;
+	font-size: 16px;
+	line-height: 104px;
+	position: relative;
+	height: 100%;
+	// height: 104px;
+	color: ${props => {
+		if (props.active) {
+			return '#FCFCFF';
+		}
+
+		if (props.important) {
+			return '#2FC8E0';
+		}
+		
+		return '#A3B0F6';
+	}};
+	::after {
+		content: "";
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		width: 100%;
+		height: 3px;
+		${props => props.active ? 'background: #FCFCFF;' : ''}
+	}
+	
+`;
+
 const ConenctButton = styled(HeaderButton)`
 `;
 
@@ -137,6 +175,12 @@ const Header: FC<IHeader> = () => {
 					alt='Giveth logo'
 					src={`/images/logo/givethio.svg`}
 				/>
+			</Row>
+			<Row gap='40px'>
+					<HeaderLink>Projects</HeaderLink>
+					<HeaderLink active>GIVeconomy</HeaderLink>
+					<HeaderLink>Join</HeaderLink>
+					<HeaderLink important>Create a Project</HeaderLink>
 			</Row>
 			<Row gap='8px'>
 				<NotifButton />
