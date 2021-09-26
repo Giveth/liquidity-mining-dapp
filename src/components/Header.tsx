@@ -10,6 +10,7 @@ import { TokenBalanceContext } from '../context/tokenBalance.context';
 import { formatWeiHelper } from '../helpers/number';
 import config from '../configuration';
 import { claimReward } from '../lib/claim';
+import { networksParams } from '../helpers/blockchain';
 
 interface IHeader {
 	theme?: ThemeType;
@@ -34,6 +35,49 @@ const HeaderButton = styled(Button)`
 	white-space: nowrap;
 	padding: 0 16px;
 `;
+
+
+const WalletButton = styled(Button)`
+	display: flex;
+	width: 176px;
+	height: 48px;
+	color: white;
+	font-family: 'red-hat';
+	font-style: normal;
+	font-weight: normal;
+	font-size: 14px;
+	line-height: 22px;
+	padding: 4px 16px;
+	// border: 1px solid #3811BF;
+	// box-sizing: border-box;
+	border-radius: 48px;
+	text-align: left;
+`;
+const WBContainer = styled.div`
+	display: flex;
+	align-items: center;
+`; 
+
+const WBInfo = styled.div`
+	display: flex;
+	flex-direction: column;
+	margin-left: 8px;
+`; 
+
+const WBNetwork = styled.span`
+	font-family: 'red-hat';
+	font-style: normal;
+	font-weight: normal;
+	font-size: 10px;
+	line-height: 13px;
+	color: #B9A7FF;
+	width: 120px;
+`;
+
+const WBProfilePic = styled.img`
+	border-radius: 24px;
+`;
+
 
 const Title = styled.h1`
 	font-family: 'red-hat';
@@ -107,9 +151,15 @@ const Header: FC<IHeader> = () => {
 								)}{' '}
 							GIV{' '}
 						</HeaderButton>
-						<HeaderButton neutral onClick={connect}>
-							{address}
-						</HeaderButton>
+						<WalletButton outline onClick={connect}>
+							<WBContainer>
+								<WBProfilePic src={"/images/placeholders/profile.png"} alt="Profile Pic" width={'24px'} height={'24px'}/>
+								<WBInfo>
+									<span>{`${address.substr(0,6)}...${address.substr(address.length-5,address.length)}`}</span>
+									<WBNetwork>Connected to {networksParams[network].nativeCurrency.symbol}</WBNetwork> 
+								</WBInfo>
+							</WBContainer>
+						</WalletButton>
 					</>
 				) : (
 					<ConenctButton secondary onClick={connect}>
