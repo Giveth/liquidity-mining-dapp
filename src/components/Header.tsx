@@ -24,36 +24,28 @@ const StyledHeader = styled(Row)<IHeader>`
 `;
 
 const HeaderButton = styled(Button)`
-	height: 36px;
-	font-size: 14px;
-	font-style: normal;
-	font-weight: 700;
-	line-height: 18px;
-	letter-spacing: 0.04em;
-	text-align: center;
-	padding: 0;
-	white-space: nowrap;
-	padding: 0 16px;
-`;
-
-
-const WalletButton = styled(Button)`
 	display: flex;
-	width: 176px;
 	height: 48px;
 	color: white;
 	font-family: 'red-hat';
 	font-style: normal;
 	font-weight: normal;
-	font-size: 14px;
+	font-size: 16px;
 	line-height: 22px;
-	padding: 4px 16px;
-	// border: 1px solid #3811BF;
-	// box-sizing: border-box;
+	padding: 11px;
 	border-radius: 48px;
 	text-align: left;
+	border: 1px solid #3811BF;
 `;
-const WBContainer = styled.div`
+
+
+const WalletButton = styled(HeaderButton)`
+	font-size: 14px;
+	width: 176px;
+	padding: 4px 16px;
+`;
+
+const HBContainer = styled.div`
 	display: flex;
 	align-items: center;
 `; 
@@ -74,8 +66,17 @@ const WBNetwork = styled.span`
 	width: 120px;
 `;
 
-const WBProfilePic = styled.img`
+const HBPic = styled.img`
 	border-radius: 24px;
+`;
+
+const HBBalanceLogo  = styled(HBPic)`
+	padding: 4px;
+	background: #5326EC;
+`;
+
+const HBContent  = styled.span`
+	margin-left: 8px;
 `;
 
 
@@ -134,31 +135,26 @@ const Header: FC<IHeader> = () => {
 				</HeaderButton>
 				{address ? (
 					<>
-						<HeaderButton>NETWORK {network}</HeaderButton>
-						<HeaderButton neutral>
-							{'Balance: ' +
-								formatWeiHelper(
+						<HeaderButton outline onClick={onClaimReward}>
+							<HBContainer>
+								<HBBalanceLogo src={"/images/placeholders/profile.png"} alt="Profile Pic" width={'24px'} height={'24px'}/>
+								<HBContent>
+								{formatWeiHelper(
 									tokenBalance,
+									// tokenDistroBalance.claimable,
 									config.TOKEN_PRECISION,
-								)}{' '}
-							GIV{' '}
-						</HeaderButton>
-						<HeaderButton neutral onClick={onClaimReward}>
-							{'Claimable: ' +
-								formatWeiHelper(
-									tokenDistroBalance.claimable,
-									config.TOKEN_PRECISION,
-								)}{' '}
-							GIV{' '}
+								)}
+								</HBContent>
+							</HBContainer>
 						</HeaderButton>
 						<WalletButton outline onClick={connect}>
-							<WBContainer>
-								<WBProfilePic src={"/images/placeholders/profile.png"} alt="Profile Pic" width={'24px'} height={'24px'}/>
+							<HBContainer>
+								<HBPic src={"/images/placeholders/profile.png"} alt="Profile Pic" width={'24px'} height={'24px'}/>
 								<WBInfo>
 									<span>{`${address.substr(0,6)}...${address.substr(address.length-5,address.length)}`}</span>
 									<WBNetwork>Connected to {networksParams[network].nativeCurrency.symbol}</WBNetwork> 
 								</WBInfo>
-							</WBContainer>
+							</HBContainer>
 						</WalletButton>
 					</>
 				) : (
