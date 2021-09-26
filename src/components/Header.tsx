@@ -3,7 +3,7 @@ import Image from 'next/image';
 import router from 'next/router';
 import { Row } from './styled-components/Grid';
 import { Button } from './styled-components/Button';
-import { FC, useContext } from 'react';
+import { FC, useContext, useRef, useEffect, useState } from 'react';
 import { ThemeContext, ThemeType } from '../context/theme.context';
 import { OnboardContext } from '../context/onboard.context';
 import { TokenBalanceContext } from '../context/tokenBalance.context';
@@ -14,13 +14,24 @@ import { networksParams } from '../helpers/blockchain';
 
 interface IHeader {
 	theme?: ThemeType;
+	scrolled: boolean;
 }
 
 const StyledHeader = styled(Row)<IHeader>`
 	height: 104px;
 	padding: 0 32px;
-	position: relative;
+	position: fixed;
 	background-color: ${props => props.theme.bg};
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1050;
+	transition: box-shadow 0.3s ease;
+	${props => {
+		if (props.scrolled) {
+			return 'box-shadow: 0px 0px 13px 4px rgba(0,0,0,0.5);';
+		}
+	}}
 `;
 
 const HeaderButton = styled(Button)`
@@ -139,11 +150,17 @@ const NotifButton = styled(HeaderButton)`
 	max-width: 48px;
 `;
 
+const HeaderPlaceHolder = styled.div`
+	height: 120px;
+`;
+
 const Header: FC<IHeader> = () => {
+	const [scrolled,setScrolled] = useState(false);
+
 	const { theme } = useContext(ThemeContext);
+	const placeholderRef = useRef<HTMLDivElement>(null);
 	const { tokenBalance, tokenDistroBalance } =
 		useContext(TokenBalanceContext);
-
 	const { network, connect, address, provider } = useContext(OnboardContext);
 	const goToClaim = () => {
 		router.push('/claim');
@@ -156,65 +173,98 @@ const Header: FC<IHeader> = () => {
 		);
 	};
 
+	useEffect(() => {
+		let observer: IntersectionObserver;
+		if (!('IntersectionObserver' in window) ||
+				!('IntersectionObserverEntry' in window) ||
+				!('intersectionRatio' in window.IntersectionObserverEntry.prototype)) {
+				// TODO: load polyfill
+				// console.log('load polyfill now');
+				
+		} else {
+		  observer = new IntersectionObserver(
+			([entry]) => {
+			  setScrolled(!entry.isIntersecting)
+			},
+			{
+			  root: null,
+			  rootMargin: "-30px",
+			}
+		  );
+		  if (placeholderRef.current) {
+			observer.observe(placeholderRef.current);
+		  }
+		  return () => {
+			if (observer) {
+			  observer.disconnect()
+			}
+		  }
+		}
+	  }, [placeholderRef]);
+
 	return (
-		<StyledHeader
-			justifyContent='space-between'
-			alignItems='center'
-			theme={theme}
-		>
-			<Row gap='16px'>
-				<Image
-					width='32p'
-					height='32px'
-					alt='Giveth logo'
-					src={`/images/logo/logo.svg`}
-				/>
-				<Image
-					width='94px'
-					height='20px'
-					alt='Giveth logo'
-					src={`/images/logo/givethio.svg`}
-				/>
-			</Row>
-			<Row gap='40px'>
-					<HeaderLink>Projects</HeaderLink>
-					<HeaderLink active>GIVeconomy</HeaderLink>
-					<HeaderLink>Join</HeaderLink>
-					<HeaderLink important>Create a Project</HeaderLink>
-			</Row>
-			<Row gap='8px'>
-				<NotifButton />
-				{address ? (
-					<>
-						<HeaderButton outline onClick={onClaimReward}>
-							<HBContainer>
-								<HBBalanceLogo src={"/images/logo/logo.svg"} alt="Profile Pic" width={'24px'} height={'24px'}/>
-								<HBContent>
-								{formatWeiHelper(
-									tokenBalance,
-									// tokenDistroBalance.claimable,
-									config.TOKEN_PRECISION,
-								)}
-								</HBContent>
-							</HBContainer>
-						</HeaderButton>
-						<WalletButton outline onClick={connect}>
-							<HBContainer>
-								<HBPic src={"/images/placeholders/profile.png"} alt="Profile Pic" width={'24px'} height={'24px'}/>
-								<WBInfo>
-									<span>{`${address.substr(0,6)}...${address.substr(address.length-5,address.length)}`}</span>
-									<WBNetwork>Connected to {networksParams[network].nativeCurrency.symbol}</WBNetwork> 
-								</WBInfo>
-							</HBContainer>
-						</WalletButton>
-					</>
-				) : (
-					<ConenctButton secondary onClick={connect}>
-						Connect Wallet
-					</ConenctButton>
-				)}
-			</Row>
-		</StyledHeader>
+		<>
+			<HeaderPlaceHolder ref={placeholderRef} />
+			<StyledHeader
+				justifyContent='space-between'
+				alignItems='center'
+				theme={theme}
+				scrolled={scrolled}
+			>
+				<Row gap='16px'>
+					<Image
+						width='32p'
+						height='32px'
+						alt='Giveth logo'
+						src={`/images/logo/logo.svg`}
+					/>
+					<Image
+						width='94px'
+						height='20px'
+						alt='Giveth logo'
+						src={`/images/logo/givethio.svg`}
+					/>
+				</Row>
+				<Row gap='40px'>
+						<HeaderLink>Projects</HeaderLink>
+						<HeaderLink active>GIVeconomy</HeaderLink>
+						<HeaderLink>Join</HeaderLink>
+						<HeaderLink important>Create a Project</HeaderLink>
+				</Row>
+				<Row gap='8px'>
+					<NotifButton />
+					{address ? (
+						<>
+							<HeaderButton outline onClick={onClaimReward}>
+								<HBContainer>
+									<HBBalanceLogo src={"/images/logo/logo.svg"} alt="Profile Pic" width={'24px'} height={'24px'}/>
+									<HBContent>
+									{formatWeiHelper(
+										tokenBalance,
+										// tokenDistroBalance.claimable,
+										config.TOKEN_PRECISION,
+									)}
+									</HBContent>
+								</HBContainer>
+							</HeaderButton>
+							<WalletButton outline onClick={connect}>
+								<HBContainer>
+									<HBPic src={"/images/placeholders/profile.png"} alt="Profile Pic" width={'24px'} height={'24px'}/>
+									<WBInfo>
+										<span>{`${address.substr(0,6)}...${address.substr(address.length-5,address.length)}`}</span>
+										<WBNetwork>Connected to {networksParams[network].nativeCurrency.symbol}</WBNetwork> 
+									</WBInfo>
+								</HBContainer>
+							</WalletButton>
+						</>
+					) : (
+						<ConenctButton secondary onClick={connect}>
+							Connect Wallet
+						</ConenctButton>
+					)}
+				</Row>
+			</StyledHeader>
+		</>
 	);
 };
 
