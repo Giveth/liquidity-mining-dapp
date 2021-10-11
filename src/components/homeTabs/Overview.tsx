@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { TabContainer } from './commons';
 
-import { H2, H3, P } from '../styled-components/Typography';
+import { H1, H2, H3, P, H4 } from '../styled-components/Typography';
 import { Row } from '../styled-components/Grid';
 import { Button } from '../styled-components/Button';
 import router from 'next/router';
@@ -17,7 +17,49 @@ const OverviewTabContainer = styled(TabContainer)`
 	}
 `;
 
-const TabOverview = () => {
+
+export const TabOverviewTop = () => {
+	return (
+		<WelcomeSection>
+			<Container>
+				<PreTitle as="span">Welcome to the</PreTitle>
+				<Title>Giveth Economy</Title>
+				<SubTitle size='medium'>
+					The Giveth Economy is the collective of projects, donors, builders,
+					 and community members building the Future of Giving.
+				</SubTitle>
+			</Container>
+		</WelcomeSection>
+	);
+}
+
+const WelcomeSection = styled.div`
+	background-image: url('/images/Giv.png');
+	background-size: cover;
+	// background-repeat: no-repeat;
+	// min-height: calc(100vh - 228px);
+`;
+
+const Title = styled(H1)`
+	font-size: 107px;
+	padding-bottom: 42px;
+	max-width: 989px;
+`;
+
+const PreTitle = styled(H1)`
+	color: #A3B0F6;
+	font-size: 88px;
+	padding-top: 66px;
+	padding-bottom: 42px;
+	max-width: 798px;
+`;
+
+const SubTitle = styled(P)`
+	max-width: 828px;
+	padding-bottom: 156px;
+`;
+
+export const TabOverviewBottom = () => {
 	const goToClaim = () => {
 		router.push('/claim');
 	};
@@ -221,5 +263,3 @@ const ClaimCard = styled.div`
 const ClaimCardTitle = styled(H2)`
 	margin-bottom: 22px;
 `;
-
-export default TabOverview;
