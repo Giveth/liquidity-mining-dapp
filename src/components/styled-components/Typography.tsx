@@ -88,5 +88,5 @@ export const P = styled.p<ITypographyProps>`
 		}
 	}};
 	margin: 0;
-	color: ${props => props.color || '#inherit'};
+	color: ${props => props.color || 'inherit'};
 `;
