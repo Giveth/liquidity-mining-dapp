@@ -3,36 +3,90 @@ import Image from 'next/image';
 import router from 'next/router';
 import { Row } from './styled-components/Grid';
 import { Button } from './styled-components/Button';
-import { FC, useContext } from 'react';
+import { FC, useContext, useRef, useEffect, useState } from 'react';
 import { ThemeContext, ThemeType } from '../context/theme.context';
 import { OnboardContext } from '../context/onboard.context';
 import { TokenBalanceContext } from '../context/tokenBalance.context';
 import { formatWeiHelper } from '../helpers/number';
 import config from '../configuration';
 import { claimReward } from '../lib/claim';
+import { networksParams } from '../helpers/blockchain';
 
 interface IHeader {
 	theme?: ThemeType;
+	scrolled?: boolean;
 }
 
 const StyledHeader = styled(Row)<IHeader>`
-	height: 128px;
-	padding: 0 132px;
-	position: relative;
+	height: 104px;
+	padding: 0 32px;
+	position: fixed;
 	background-color: ${props => props.theme.bg};
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1050;
+	transition: box-shadow 0.3s ease;
+	${props => {
+		if (props.scrolled) {
+			return 'box-shadow: 0px 0px 13px 4px rgba(0,0,0,0.5);';
+		}
+	}}
 `;
 
 const HeaderButton = styled(Button)`
-	height: 36px;
-	font-size: 14px;
+	display: flex;
+	height: 48px;
+	color: white;
+	font-family: 'red-hat';
 	font-style: normal;
-	font-weight: 700;
-	line-height: 18px;
-	letter-spacing: 0.04em;
-	text-align: center;
-	padding: 0;
-	white-space: nowrap;
-	padding: 0 16px;
+	font-weight: normal;
+	font-size: 16px;
+	line-height: 22px;
+	padding: 11px;
+	border-radius: 48px;
+	text-align: left;
+	border: 1px solid #3811bf;
+`;
+
+const WalletButton = styled(HeaderButton)`
+	font-size: 14px;
+	width: 176px;
+	padding: 6px 16px;
+`;
+
+const HBContainer = styled.div`
+	display: flex;
+	align-items: center;
+`;
+
+const WBInfo = styled.div`
+	display: flex;
+	flex-direction: column;
+	margin-left: 8px;
+`;
+
+const WBNetwork = styled.span`
+	font-family: 'red-hat';
+	font-style: normal;
+	font-weight: normal;
+	font-size: 10px;
+	line-height: 13px;
+	color: #b9a7ff;
+	width: 120px;
+`;
+
+const HBPic = styled.img`
+	border-radius: 24px;
+`;
+
+const HBBalanceLogo = styled(HBPic)`
+	padding: 4px;
+	background: #5326ec;
+`;
+
+const HBContent = styled.span`
+	margin-left: 8px;
 `;
 
 const Title = styled.h1`
@@ -45,16 +99,64 @@ const Title = styled.h1`
 	color: ${props => props.theme.fg};
 `;
 
-const ConenctButton = styled(Button)`
-	height: 36px;
-	width: 300px;
+interface IHeaderLinkProps {
+	active?: boolean;
+	important?: boolean;
+}
+
+const HeaderLink = styled.a<IHeaderLinkProps>`
+	font-family: 'red-hat';
+	font-style: normal;
+	font-weight: normal;
+	font-size: 16px;
+	line-height: 104px;
+	position: relative;
+	height: 100%;
+	// height: 104px;
+	color: ${props => {
+		if (props.active) {
+			return '#FCFCFF';
+		}
+
+		if (props.important) {
+			return '#2FC8E0';
+		}
+
+		return '#A3B0F6';
+	}};
+	::after {
+		content: '';
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		width: 100%;
+		height: 3px;
+		${props => (props.active ? 'background: #FCFCFF;' : '')}
+	}
+`;
+
+const ConenctButton = styled(HeaderButton)``;
+
+const NotifButton = styled(HeaderButton)`
+	padding: 23px;
+	background-image: url('/images/notif.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	max-width: 48px;
+`;
+
+const HeaderPlaceHolder = styled.div`
+	height: 120px;
 `;
 
 const Header: FC<IHeader> = () => {
+	const [scrolled, setScrolled] = useState(false);
+
 	const { theme } = useContext(ThemeContext);
+	const placeholderRef = useRef<HTMLDivElement>(null);
 	const { tokenBalance, tokenDistroBalance } =
 		useContext(TokenBalanceContext);
-
 	const { network, connect, address, provider } = useContext(OnboardContext);
 	const goToClaim = () => {
 		router.push('/claim');
@@ -67,57 +169,121 @@ const Header: FC<IHeader> = () => {
 		);
 	};
 
+	useEffect(() => {
+		let observer: IntersectionObserver;
+		if (
+			!('IntersectionObserver' in window) ||
+			!('IntersectionObserverEntry' in window) ||
+			!('intersectionRatio' in window.IntersectionObserverEntry.prototype)
+		) {
+			// TODO: load polyfill
+			// console.log('load polyfill now');
+		} else {
+			observer = new IntersectionObserver(
+				([entry]) => {
+					setScrolled(!entry.isIntersecting);
+				},
+				{
+					root: null,
+					rootMargin: '-30px',
+				},
+			);
+			if (placeholderRef.current) {
+				observer.observe(placeholderRef.current);
+			}
+			return () => {
+				if (observer) {
+					observer.disconnect();
+				}
+			};
+		}
+	}, [placeholderRef]);
+
 	return (
-		<StyledHeader
-			justifyContent='space-between'
-			alignItems='center'
-			theme={theme}
-		>
-			<Row gap='16px'>
-				<Image
-					width='58'
-					height='58px'
-					alt='Giveth logo'
-					src={`/images/${
-						theme.type === ThemeType.Dark ? 'logod' : 'logol'
-					}.svg`}
-				/>
-				<Title theme={theme}>THE FUTURE OF GIVING</Title>
-			</Row>
-			<Row gap='8px'>
-				<HeaderButton secondary onClick={goToClaim}>
-					CLAIM GIVdrop
-				</HeaderButton>
-				{address ? (
-					<>
-						<HeaderButton>NETWORK {network}</HeaderButton>
-						<HeaderButton neutral>
-							{'Balance: ' +
-								formatWeiHelper(
-									tokenBalance,
-									config.TOKEN_PRECISION,
-								)}{' '}
-							GIV{' '}
-						</HeaderButton>
-						<HeaderButton neutral onClick={onClaimReward}>
-							{'Claimable: ' +
-								formatWeiHelper(
-									tokenDistroBalance.claimable,
-									config.TOKEN_PRECISION,
-								)}{' '}
-							GIV{' '}
-						</HeaderButton>
-						<HeaderButton neutral onClick={connect}>
-							{address}
-						</HeaderButton>
-					</>
-				) : (
-					<ConenctButton secondary onClick={connect}>
-						Connect Wallet
-					</ConenctButton>
-				)}
-			</Row>
-		</StyledHeader>
+		<>
+			<HeaderPlaceHolder ref={placeholderRef} />
+			<StyledHeader
+				justifyContent='space-between'
+				alignItems='center'
+				theme={theme}
+				scrolled={scrolled}
+			>
+				<Row gap='16px'>
+					<Image
+						width='32p'
+						height='32px'
+						alt='Giveth logo'
+						src={`/images/logo/logo.svg`}
+					/>
+					<Image
+						width='94px'
+						height='20px'
+						alt='Giveth logo'
+						src={`/images/logo/givethio.svg`}
+					/>
+				</Row>
+				<Row gap='40px'>
+					<HeaderLink>Projects</HeaderLink>
+					<HeaderLink active>GIVeconomy</HeaderLink>
+					<HeaderLink>Join</HeaderLink>
+					<HeaderLink important>Create a Project</HeaderLink>
+				</Row>
+				<Row gap='8px'>
+					<NotifButton />
+					{address ? (
+						<>
+							<HeaderButton outline onClick={onClaimReward}>
+								<HBContainer>
+									<HBBalanceLogo
+										src={'/images/logo/logo.svg'}
+										alt='Profile Pic'
+										width={'24px'}
+										height={'24px'}
+									/>
+									<HBContent>
+										{formatWeiHelper(
+											tokenBalance,
+											// tokenDistroBalance.claimable,
+											config.TOKEN_PRECISION,
+										)}
+									</HBContent>
+								</HBContainer>
+							</HeaderButton>
+							<WalletButton outline onClick={connect}>
+								<HBContainer>
+									<HBPic
+										src={'/images/placeholders/profile.png'}
+										alt='Profile Pic'
+										width={'24px'}
+										height={'24px'}
+									/>
+									<WBInfo>
+										<span>{`${address.substr(
+											0,
+											6,
+										)}...${address.substr(
+											address.length - 5,
+											address.length,
+										)}`}</span>
+										<WBNetwork>
+											Connected to{' '}
+											{
+												networksParams[network]
+													.nativeCurrency.symbol
+											}
+										</WBNetwork>
+									</WBInfo>
+								</HBContainer>
+							</WalletButton>
+						</>
+					) : (
+						<ConenctButton secondary onClick={connect}>
+							Connect Wallet
+						</ConenctButton>
+					)}
+				</Row>
+			</StyledHeader>
+		</>
 	);
 };
 

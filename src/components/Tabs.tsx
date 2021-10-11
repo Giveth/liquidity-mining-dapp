@@ -6,7 +6,8 @@ const labelsContainer = styled(Row)``;
 
 interface ITabs {
 	label: string;
-	component: ReactNode;
+	topComponent: ReactNode;
+	bottomComponent: ReactNode;
 }
 
 interface ITabsProps {
@@ -74,6 +75,7 @@ const Tabs: FC<ITabsProps> = ({ tabs }) => {
 
 	return (
 		<>
+			<div>{tabs[index].topComponent}</div>
 			<LabelsContainer ref={TabRef}>
 				<Container>
 					<Row justifyContent='space-between' alignItems='flex-end'>
@@ -91,7 +93,7 @@ const Tabs: FC<ITabsProps> = ({ tabs }) => {
 					</Row>
 				</Container>
 			</LabelsContainer>
-			<div>{tabs[index].component}</div>
+			<div>{tabs[index].bottomComponent}</div>
 		</>
 	);
 };
