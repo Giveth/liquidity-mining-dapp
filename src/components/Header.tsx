@@ -14,7 +14,7 @@ import { networksParams } from '../helpers/blockchain';
 
 interface IHeader {
 	theme?: ThemeType;
-	scrolled: boolean;
+	scrolled?: boolean;
 }
 
 const StyledHeader = styled(Row)<IHeader>`
@@ -46,9 +46,8 @@ const HeaderButton = styled(Button)`
 	padding: 11px;
 	border-radius: 48px;
 	text-align: left;
-	border: 1px solid #3811BF;
+	border: 1px solid #3811bf;
 `;
-
 
 const WalletButton = styled(HeaderButton)`
 	font-size: 14px;
@@ -59,13 +58,13 @@ const WalletButton = styled(HeaderButton)`
 const HBContainer = styled.div`
 	display: flex;
 	align-items: center;
-`; 
+`;
 
 const WBInfo = styled.div`
 	display: flex;
 	flex-direction: column;
 	margin-left: 8px;
-`; 
+`;
 
 const WBNetwork = styled.span`
 	font-family: 'red-hat';
@@ -73,7 +72,7 @@ const WBNetwork = styled.span`
 	font-weight: normal;
 	font-size: 10px;
 	line-height: 13px;
-	color: #B9A7FF;
+	color: #b9a7ff;
 	width: 120px;
 `;
 
@@ -81,15 +80,14 @@ const HBPic = styled.img`
 	border-radius: 24px;
 `;
 
-const HBBalanceLogo  = styled(HBPic)`
+const HBBalanceLogo = styled(HBPic)`
 	padding: 4px;
-	background: #5326EC;
+	background: #5326ec;
 `;
 
-const HBContent  = styled.span`
+const HBContent = styled.span`
 	margin-left: 8px;
 `;
-
 
 const Title = styled.h1`
 	font-family: 'red-hat';
@@ -123,30 +121,28 @@ const HeaderLink = styled.a<IHeaderLinkProps>`
 		if (props.important) {
 			return '#2FC8E0';
 		}
-		
+
 		return '#A3B0F6';
 	}};
 	::after {
-		content: "";
+		content: '';
 		position: absolute;
 		bottom: 0;
 		left: 0;
 		right: 0;
 		width: 100%;
 		height: 3px;
-		${props => props.active ? 'background: #FCFCFF;' : ''}
+		${props => (props.active ? 'background: #FCFCFF;' : '')}
 	}
-	
 `;
 
-const ConenctButton = styled(HeaderButton)`
-`;
+const ConenctButton = styled(HeaderButton)``;
 
 const NotifButton = styled(HeaderButton)`
 	padding: 23px;
 	background-image: url('/images/notif.svg');
 	background-position: center;
-    background-repeat: no-repeat;
+	background-repeat: no-repeat;
 	max-width: 48px;
 `;
 
@@ -155,7 +151,7 @@ const HeaderPlaceHolder = styled.div`
 `;
 
 const Header: FC<IHeader> = () => {
-	const [scrolled,setScrolled] = useState(false);
+	const [scrolled, setScrolled] = useState(false);
 
 	const { theme } = useContext(ThemeContext);
 	const placeholderRef = useRef<HTMLDivElement>(null);
@@ -175,32 +171,33 @@ const Header: FC<IHeader> = () => {
 
 	useEffect(() => {
 		let observer: IntersectionObserver;
-		if (!('IntersectionObserver' in window) ||
-				!('IntersectionObserverEntry' in window) ||
-				!('intersectionRatio' in window.IntersectionObserverEntry.prototype)) {
-				// TODO: load polyfill
-				// console.log('load polyfill now');
-				
+		if (
+			!('IntersectionObserver' in window) ||
+			!('IntersectionObserverEntry' in window) ||
+			!('intersectionRatio' in window.IntersectionObserverEntry.prototype)
+		) {
+			// TODO: load polyfill
+			// console.log('load polyfill now');
 		} else {
-		  observer = new IntersectionObserver(
-			([entry]) => {
-			  setScrolled(!entry.isIntersecting)
-			},
-			{
-			  root: null,
-			  rootMargin: "-30px",
+			observer = new IntersectionObserver(
+				([entry]) => {
+					setScrolled(!entry.isIntersecting);
+				},
+				{
+					root: null,
+					rootMargin: '-30px',
+				},
+			);
+			if (placeholderRef.current) {
+				observer.observe(placeholderRef.current);
 			}
-		  );
-		  if (placeholderRef.current) {
-			observer.observe(placeholderRef.current);
-		  }
-		  return () => {
-			if (observer) {
-			  observer.disconnect()
-			}
-		  }
+			return () => {
+				if (observer) {
+					observer.disconnect();
+				}
+			};
 		}
-	  }, [placeholderRef]);
+	}, [placeholderRef]);
 
 	return (
 		<>
@@ -226,10 +223,10 @@ const Header: FC<IHeader> = () => {
 					/>
 				</Row>
 				<Row gap='40px'>
-						<HeaderLink>Projects</HeaderLink>
-						<HeaderLink active>GIVeconomy</HeaderLink>
-						<HeaderLink>Join</HeaderLink>
-						<HeaderLink important>Create a Project</HeaderLink>
+					<HeaderLink>Projects</HeaderLink>
+					<HeaderLink active>GIVeconomy</HeaderLink>
+					<HeaderLink>Join</HeaderLink>
+					<HeaderLink important>Create a Project</HeaderLink>
 				</Row>
 				<Row gap='8px'>
 					<NotifButton />
@@ -237,22 +234,44 @@ const Header: FC<IHeader> = () => {
 						<>
 							<HeaderButton outline onClick={onClaimReward}>
 								<HBContainer>
-									<HBBalanceLogo src={"/images/logo/logo.svg"} alt="Profile Pic" width={'24px'} height={'24px'}/>
+									<HBBalanceLogo
+										src={'/images/logo/logo.svg'}
+										alt='Profile Pic'
+										width={'24px'}
+										height={'24px'}
+									/>
 									<HBContent>
-									{formatWeiHelper(
-										tokenBalance,
-										// tokenDistroBalance.claimable,
-										config.TOKEN_PRECISION,
-									)}
+										{formatWeiHelper(
+											tokenBalance,
+											// tokenDistroBalance.claimable,
+											config.TOKEN_PRECISION,
+										)}
 									</HBContent>
 								</HBContainer>
 							</HeaderButton>
 							<WalletButton outline onClick={connect}>
 								<HBContainer>
-									<HBPic src={"/images/placeholders/profile.png"} alt="Profile Pic" width={'24px'} height={'24px'}/>
+									<HBPic
+										src={'/images/placeholders/profile.png'}
+										alt='Profile Pic'
+										width={'24px'}
+										height={'24px'}
+									/>
 									<WBInfo>
-										<span>{`${address.substr(0,6)}...${address.substr(address.length-5,address.length)}`}</span>
-										<WBNetwork>Connected to {networksParams[network].nativeCurrency.symbol}</WBNetwork> 
+										<span>{`${address.substr(
+											0,
+											6,
+										)}...${address.substr(
+											address.length - 5,
+											address.length,
+										)}`}</span>
+										<WBNetwork>
+											Connected to{' '}
+											{
+												networksParams[network]
+													.nativeCurrency.symbol
+											}
+										</WBNetwork>
 									</WBInfo>
 								</HBContainer>
 							</WalletButton>
