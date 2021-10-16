@@ -23,40 +23,40 @@ a {
 
 
 @font-face {
-  font-family: 'tex_gyre_adventor';
-  font-weight: normal;
+  font-family: 'Red Hat Text';
   font-style: normal;
-  font-display: swap;
-  src: url('/fonts/tex-gyre/texgyreadventor-bold-webfont.eot');
-  src: url('/fonts/tex-gyre/texgyreadventor-bold-webfont.eot?#iefix') format('embedded-opentype'),
-       url('/fonts/tex-gyre/texgyreadventor-bold-webfont.woff2') format('woff2'),
-       url('/fonts/tex-gyre/texgyreadventor-bold-webfont.woff') format('woff'),
-       url('/fonts/tex-gyre/texgyreadventor-bold-webfont.ttf') format('truetype'),
-       url('/fonts/tex-gyre/texgyreadventor-bold-webfont.svg#tex_gyre_adventorbold') format('svg');
+  font-weight: 400;
+  src: local(''),
+      url('/fonts/red-hat-text-v6-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+      url('/fonts/red-hat-text-v6-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
-
+/* red-hat-text-500 - latin */
 @font-face {
-  font-family: 'tex_gyre_adventor';
-  font-weight: bold;
+  font-family: 'Red Hat Text';
   font-style: normal;
-  font-display: swap;
-    src: url('/fonts/tex-gyre/texgyreadventor-bold-webfont.eot');
-    src: url('/fonts/tex-gyre/texgyreadventor-bold-webfont.eot?#iefix') format('embedded-opentype'),
-         url('/fonts/tex-gyre/texgyreadventor-bold-webfont.woff2') format('woff2'),
-         url('/fonts/tex-gyre/texgyreadventor-bold-webfont.woff') format('woff'),
-         url('/fonts/tex-gyre/texgyreadventor-bold-webfont.ttf') format('truetype'),
-         url('/fonts/tex-gyre/texgyreadventor-bold-webfont.svg#tex_gyre_adventorbold') format('svg');
+  font-weight: 500;
+  src: local(''),
+      url('/fonts/red-hat-text-v6-latin-500.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+      url('/fonts/red-hat-text-v6-latin-500.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
-
+/* red-hat-display-700 - latin */
 @font-face {
-  font-family: 'red-hat';
-  font-weight: normal;
+  font-family: 'Red Hat Display';
   font-style: normal;
-  font-display: swap;
-  src: url('/fonts/red-hat-text-v3-latin/red-hat-text-v3-latin-regular.eot');
-  src: url('/fonts/red-hat-text-v3-latin/red-hat-text-v3-latin-regular.eot?#iefix') format('embedded-opentype'),
-       url('/fonts/red-hat-text-v3-latin/red-hat-text-v3-latin-regular.woff2') format('woff2'),
-       url('/fonts/red-hat-text-v3-latin/red-hat-text-v3-latin-regular.woff') format('woff'),
-       url('/fonts/red-hat-text-v3-latin/red-hat-text-v3-latin-regular.ttf') format('truetype'),
-       url('/fonts/red-hat-text-v3-latin/red-hat-text-v3-latin-regular.svg#tex_gyre_adventorbold') format('svg');
+  font-weight: 700;
+  src: local(''),
+      url('/fonts/red-hat-display-v7-latin-700.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+      url('/fonts/red-hat-display-v7-latin-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+@font-face {
+  font-family: 'TeX Gyre Adventor';
+  font-style: normal;
+  font-weight: normal;
+  src: url('/fonts/texgyreadventor-regular-webfont.woff');
+}
+@font-face {
+  font-family: 'TeX Gyre Adventor';
+  font-style: normal;
+  font-weight: 700;
+  src: url('/fonts/texgyreadventor-bold-webfont.woff');
 }

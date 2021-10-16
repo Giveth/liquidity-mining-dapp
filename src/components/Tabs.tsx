@@ -1,6 +1,12 @@
 import styled from 'styled-components';
-import { FC, ReactNode, useEffect, useRef, useState } from 'react';
-import { Container, Row } from './styled-components/Grid';
+import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import {
+	brandColors,
+	Container,
+	GLink,
+	neutralColors,
+} from '@giveth/ui-design-system';
+import { Row } from './styled-components/Grid';
 
 const labelsContainer = styled(Row)``;
 
@@ -19,48 +25,22 @@ interface ILabelProps {
 }
 
 const Label = styled.div<ILabelProps>`
-	font-family: red-hat;
-	font-size: 28px;
-	font-style: normal;
-	font-weight: 700;
-	line-height: 34px;
-	letter-spacing: 0em;
-	text-align: left;
-	padding: 24px;
-	transition: color 0.1s ease-out;
-	color: ${props => (props.isActive ? '#2fc8e0' : '#235d8e')};
-	position: relative;
+	width: 176px;
+	padding: 12px;
+	text-align: center;
+	color: ${props =>
+		props.isActive ? neutralColors.gray[100] : brandColors.deep[100]};
+	background-color: ${props =>
+		props.isActive ? brandColors.giv[600] : 'unset'};
+	border: 1px solid ${brandColors.giv[600]};
+	box-sizing: border-box;
+	border-radius: 54px;
+
 	cursor: pointer;
-	::after {
-		content: '';
-		position: absolute;
-		background: #2fc8e0;
-		left: 0;
-		right: 0;
-		bottom: ${props => (props.isActive ? 0 : '-8px')};
-		height: 8px;
-		z-index: 1;
-		transition: bottom 0.1s ease-out;
-	}
 `;
 
 const LabelsContainer = styled.div`
-	overflow: hidden;
-	position: relative;
-	::after {
-		content: '';
-		position: absolute;
-		background: #0c0840;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		height: 8px;
-	}
-	& > div {
-		& > div {
-			height: 100px;
-		}
-	}
+	padding: 42px 0;
 `;
 
 const Tabs: FC<ITabsProps> = ({ tabs }) => {
@@ -87,7 +67,7 @@ const Tabs: FC<ITabsProps> = ({ tabs }) => {
 									setIndex(idx);
 								}}
 							>
-								{tab.label}
+								<GLink size='Big'>{tab.label}</GLink>
 							</Label>
 						))}
 					</Row>
