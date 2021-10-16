@@ -51,7 +51,7 @@ export const TabOverviewBottom = () => {
 		<OverviewBottomContainer>
 			<IntroSection>
 				<Container>
-					<TabTitle>The Economy of Giving</TabTitle>
+					<TabTitle weight={700}>The Economy of Giving</TabTitle>
 					<TabDesc size='medium'>
 						Giveth is building a future in which giving is
 						effortless and people all around the world are rewarded

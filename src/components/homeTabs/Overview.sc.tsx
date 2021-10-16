@@ -25,14 +25,9 @@ export const OverviewTitle = styled(D3)`
 
 export const PreTitle = styled(D3)`
 	color: #a3b0f6;
-	// font-size: 88px;
-	// padding-top: 66px;
-	// padding-bottom: 42px;
-	// max-width: 798px;
 `;
 
 export const SubTitle = styled(QuoteText)`
-	display: block;
 	max-width: 798px;
 	padding-bottom: 156px;
 `;
@@ -81,9 +76,9 @@ export const TabTitle = styled(H1)`
 	margin-bottom: 40px;
 `;
 
-export const TabDesc = styled(P)`
-	margin-bottom: 132px;
+export const TabDesc = styled(QuoteText)`
 	width: 812px;
+	margin-bottom: 50px;
 `;
 
 export const GivCardSub = styled(P)`
