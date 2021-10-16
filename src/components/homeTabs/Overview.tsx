@@ -1,29 +1,22 @@
 import React from 'react';
 import { Row } from '../styled-components/Grid';
 import router from 'next/router';
-import { Container, H3, P } from '@giveth/ui-design-system';
+import { Container, IconGiveth, P, QuoteText } from '@giveth/ui-design-system';
 import {
 	OverviewTopContainer,
 	PreTitle,
 	OverviewTitle,
 	OverviewBottomContainer,
-	IntroSection,
 	ClaimCard,
 	ClaimCardButton,
 	ClaimCardTitle,
-	GivCard,
-	GivCardSub,
-	ParticipateButton,
-	ParticipateCard,
-	ParticipateCardTitle,
-	ParticipateDesc,
-	ParticipateSection,
-	ParticipateSubDesc,
 	Section2Title,
-	Section3,
 	TabDesc,
 	TabTitle,
 	SubTitle,
+	EGDataBlock,
+	ParticipateDataBlock,
+	ClaimCardQuote,
 } from './Overview.sc';
 
 export const TabOverviewTop = () => {
@@ -49,94 +42,87 @@ export const TabOverviewBottom = () => {
 
 	return (
 		<OverviewBottomContainer>
-			<IntroSection>
-				<Container>
-					<TabTitle weight={700}>The Economy of Giving</TabTitle>
-					<TabDesc size='medium'>
-						Giveth is building a future in which giving is
-						effortless and people all around the world are rewarded
-						for creating positive change.
-					</TabDesc>
-					<Row wrap={1}>
-						<GivCard>
-							<H3>GIV Token</H3>
-							<GivCardSub>DONATE, EARN, GOVERN</GivCardSub>
-							<P>
-								GIV fuels and directs the Future of Giving,
-								inspiring people to become Givers and
-								participate in an ecosystem of collective
-								support, abundance, and value-creation.
-							</P>
-						</GivCard>
-						<GivCard>
-							<H3>GIVbacks</H3>
-							<GivCardSub>GIVE AND RECEIVE</GivCardSub>
-							<P>
-								GIVbacks is a revolutionary concept that
-								incentives donations to verified projects on
-								Giveth.
-							</P>
-						</GivCard>
-					</Row>
-				</Container>
-			</IntroSection>
-			<ParticipateSection>
-				<Container>
-					<Section2Title>How to participate</Section2Title>
-					<Row wrap={1}>
-						<ParticipateCard>
-							<ParticipateCardTitle>Earn</ParticipateCardTitle>
-							<ParticipateDesc size='xsmall'>
-								Participate in GIVmining by adding liquidity and
-								generating even more GIV in rewards.
-							</ParticipateDesc>
-							<ParticipateButton label='Add Liquidty and Earn' />
-							<ParticipateSubDesc>
-								Earn GIV by providing liquidity. Up to 140% APR
-								waits for you.
-							</ParticipateSubDesc>
-						</ParticipateCard>
-						<ParticipateCard>
-							<ParticipateCardTitle>Govern</ParticipateCardTitle>
-							<ParticipateDesc size='xsmall'>
-								Stake GIV in the GIVgarden to participate in
-								governance of the &nbsp;
-								<strong>Giving Economy</strong>. Propose and
-								vote to help shape the Future of Giving.
-							</ParticipateDesc>
-							<ParticipateButton label='See proposals' />
-							<ParticipateSubDesc>
-								Earn GIV by voting on proposals and
-								participating in Giveth governance.
-							</ParticipateSubDesc>
-						</ParticipateCard>
-						<ParticipateCard>
-							<ParticipateCardTitle>Give</ParticipateCardTitle>
-							<ParticipateDesc size='xsmall'>
-								Get GIVbacks by donating to verified projects on
-								Giveth. Empower change-makers that are working
-								hard to make a difference.{' '}
-							</ParticipateDesc>
-							<ParticipateButton label='Donate to projects' />
-							<ParticipateSubDesc>
-								Earn GIV by donating to verified projects on
-								Giveth.{' '}
-							</ParticipateSubDesc>
-						</ParticipateCard>
-					</Row>
-				</Container>
-			</ParticipateSection>
 			<Container>
-				<Section3>
-					<ClaimCard>
-						<ClaimCardTitle>Claim your GIV tokens</ClaimCardTitle>
-						<P>
-							Connect your wallet or check an ethereum address to
-							see your rewards.
-						</P>
-						<ClaimCardButton label='CLAIM YOUR GIV'></ClaimCardButton>
-					</ClaimCard>
-				</Section3>
+				<TabTitle weight={700}>The Economy of Giving</TabTitle>
+				<TabDesc size='medium'>
+					Giveth is building a future in which giving is effortless
+					and people all around the world are rewarded for creating
+					positive change.
+				</TabDesc>
+				<Row wrap={1} justifyContent='space-between'>
+					<EGDataBlock
+						title='GIV Token'
+						subtitle='Donate, earn, govern'
+						actionLabel='CLAIM YOUR GIV'
+						type='primary'
+						ActionCb={() => {}}
+						icon={<IconGiveth size={32} />}
+					>
+						GIV fuels and directs the Future of Giving, inspiring
+						people to become Givers and participate in an ecosystem
+						of collective support, abundance, and value-creation.
+					</EGDataBlock>
+					<EGDataBlock
+						title='GIVbacks'
+						subtitle='GIVE AND RECEIVE'
+						ActionCb={() => {}}
+					>
+						Giveth is a donor owned and governed economy. With
+						GIVbacks, we reward donors to verified projects on
+						Giveth with GIV tokens.
+					</EGDataBlock>
+					<EGDataBlock
+						title='GIVstream'
+						subtitle='Get more GIV'
+						ActionCb={() => {}}
+					>
+						Welcome to the expanding GIViverse! With the GIVstream,
+						our community members become long-term stakeholders in
+						the Future of Giving.
+					</EGDataBlock>
+				</Row>
+				<Section2Title>How to participate</Section2Title>
+				<Row wrap={1} justifyContent='space-between'>
+					<ParticipateDataBlock
+						title='Give'
+						actionLabel='Donate to projects'
+						ActionCb={() => {}}
+					>
+						Donate to empower change-makers that are working hard to
+						make a difference. Get GIVbacks when you donate to
+						verified projects.
+					</ParticipateDataBlock>
+					<ParticipateDataBlock
+						title='Govern'
+						actionLabel='See proposals'
+						ActionCb={() => {}}
+					>
+						The GIVeconomy empowers our collective of projects,
+						donors, builders and community members to build the
+						Future of Giving.
+					</ParticipateDataBlock>
+					<ParticipateDataBlock
+						title='Earn'
+						actionLabel='Add Liquidty and Earn'
+						ActionCb={() => {}}
+					>
+						Become a liquidity provider and stake tokens in the
+						GIVfarm to generate even more GIV in rewards.
+					</ParticipateDataBlock>
+				</Row>
+				<ClaimCard>
+					<ClaimCardTitle weight={900}>
+						Claim your GIV tokens
+					</ClaimCardTitle>
+					<ClaimCardQuote size='small'>
+						Connect your wallet or check an ethereum address to see
+						your rewards.
+					</ClaimCardQuote>
+					<ClaimCardButton
+						label='CLAIM YOUR GIV'
+						buttonType='primary'
+					></ClaimCardButton>
+				</ClaimCard>
 			</Container>
 		</OverviewBottomContainer>
 	);
