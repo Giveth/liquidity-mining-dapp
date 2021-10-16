@@ -58,7 +58,7 @@ const Tabs: FC<ITabsProps> = ({ tabs }) => {
 			<div>{tabs[index].topComponent}</div>
 			<LabelsContainer ref={TabRef}>
 				<Container>
-					<Row justifyContent='space-between' alignItems='flex-end'>
+					<Row gap='16px'>
 						{tabs.map((tab, idx) => (
 							<Label
 								key={idx}
