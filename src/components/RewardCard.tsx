@@ -18,15 +18,17 @@ interface IRewardCardProps {
 	amount: number;
 	actionLabel?: string;
 	actionCb?: MouseEventHandler<HTMLButtonElement>;
+	className?: string;
 }
 
 export const RewardCard: FC<IRewardCardProps> = ({
 	amount,
 	actionLabel,
 	actionCb,
+	className,
 }) => {
 	return (
-		<RewadCardContainer>
+		<RewadCardContainer className={className}>
 			<CardHeader justifyContent='space-between'>
 				<CardTitle>Total Claimable Rewards</CardTitle>
 				<ChainInfo>
