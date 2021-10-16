@@ -32,7 +32,7 @@ export const TabOverviewTop = () => {
 			<Container>
 				<PreTitle as='span'>Welcome to the</PreTitle>
 				<OverviewTitle>Giveth Economy</OverviewTitle>
-				<SubTitle>
+				<SubTitle size='medium'>
 					The Giveth Economy is the collective of projects, donors,
 					builders, and community members building the Future of
 					Giving.

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { D3, H1, H2, H3, P, Button } from '@giveth/ui-design-system';
+import { D3, H1, H2, H3, P, Button, QuoteText } from '@giveth/ui-design-system';
 import { TabContainer } from './commons';
 
 export const OverviewBottomContainer = styled(TabContainer)`
@@ -31,8 +31,9 @@ export const PreTitle = styled(D3)`
 	// max-width: 798px;
 `;
 
-export const SubTitle = styled(P)`
-	max-width: 828px;
+export const SubTitle = styled(QuoteText)`
+	display: block;
+	max-width: 798px;
 	padding-bottom: 156px;
 `;
 
