@@ -10,7 +10,7 @@ import {
 	DataBlock,
 	brandColors,
 } from '@giveth/ui-design-system';
-import { TabContainer } from './commons';
+import { TabContainer, TopContainer } from './commons';
 
 export const OverviewBottomContainer = styled.div`
 	background-image: url('/images/backgrounds/curves.svg');
@@ -19,10 +19,7 @@ export const OverviewBottomContainer = styled.div`
 	background-repeat: no-repeat;
 `;
 
-export const OverviewTopContainer = styled.div`
-	background-image: url('/images/Giv.png');
-	background-size: cover;
-`;
+export const OverviewTopContainer = styled(TopContainer)``;
 
 export const OverviewTitle = styled(D3)`
 	font-size: 107px;
