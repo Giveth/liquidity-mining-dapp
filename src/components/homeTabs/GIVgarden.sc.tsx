@@ -107,6 +107,7 @@ export const VoteCard = styled.div`
 		url('/images/backgrounds/giv-outline.svg');
 	background-repeat: no-repeat, repeat;
 	background-position: bottom left, top;
+	border-radius: 8px;
 	min-height: 480px;
 	margin: 80px 0 45px;
 	position: relative;

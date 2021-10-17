@@ -61,6 +61,7 @@ export const ClaimCard = styled.div`
 	background-color: #3c14c5;
 	padding: 105px 146px;
 	background-image: url('/images/backgrounds/giv-outline.svg');
+	border-radius: 8px;
 	min-height: 480px;
 	margin: 80px 0 45px;
 	position: relative;
