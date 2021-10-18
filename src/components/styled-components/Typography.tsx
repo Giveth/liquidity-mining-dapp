@@ -53,7 +53,7 @@ export const H4 = styled.h3`
 `;
 
 export const P = styled.p<ITypographyProps>`
-	font-family: 'red-hat';
+	font-family: 'Red Hat Text';
 	font-weight: normal;
 	font-size: ${props => {
 		switch (props.size) {
