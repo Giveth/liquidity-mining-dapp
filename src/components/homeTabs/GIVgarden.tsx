@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { H1, Container, IconGIVGarden } from '@giveth/ui-design-system';
 
@@ -22,9 +22,11 @@ import {
 	VoteCardDesc,
 	VoteCardButton,
 } from './GIVgarden.sc';
-import styled from 'styled-components';
+import { HarvestModal } from '../modals/Harvest';
 
 export const TabGardenTop = () => {
+	const [showModal, setShowModal] = useState(false);
+
 	return (
 		<GardenTopContainer>
 			<Container>
@@ -44,11 +46,14 @@ export const TabGardenTop = () => {
 						<GardenRewardCard
 							amount={257.9055}
 							actionLabel='HARVEST'
-							actionCb={() => {}}
+							actionCb={() => {
+								setShowModal(true);
+							}}
 						/>
 					</Right>
 				</Row>
 			</Container>
+			<HarvestModal showModal={showModal} setShowModal={setShowModal} />
 		</GardenTopContainer>
 	);
 };
