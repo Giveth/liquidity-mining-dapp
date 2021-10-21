@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Container, Row } from '../styled-components/Grid';
+import { Row } from '../styled-components/Grid';
 import { TabContainer } from './commons';
 import StakingPoolCard from '../cards/StakingPoolCard';
 import config from '../../configuration';
@@ -8,10 +8,43 @@ import {
 	SimplePoolStakingConfig,
 	StakingType,
 } from '../../types/config';
+import React from 'react';
+import {
+	GIVfarmTopContainer,
+	Left,
+	Right,
+	Subtitle,
+	Title,
+	GIVfarmRewardCard,
+} from './GIVfarm.sc';
+import { Container, IconGIVFarm } from '@giveth/ui-design-system';
 
 const GIVfarmTabContainer = styled(TabContainer)``;
 
-const TabGIVfarm = () => {
+export const TabGIVfarmTop = () => {
+	return (
+		<GIVfarmTopContainer>
+			<Container>
+				<Row justifyContent='space-between'>
+					<Left>
+						<Row alignItems='baseline' gap='16px'>
+							<Title>GIVfarm</Title>
+							<IconGIVFarm size={64} />
+						</Row>
+						<Subtitle size='medium'>
+							Stake tokens in the GIVfarm to grow your rewards.
+						</Subtitle>
+					</Left>
+					<Right>
+						<GIVfarmRewardCard amount={257.9055} />
+					</Right>
+				</Row>
+			</Container>
+		</GIVfarmTopContainer>
+	);
+};
+
+export const TabGIVfarmBottom = () => {
 	const getGivStakingConfig = (
 		networkConfig: BasicNetworkConfig,
 	): SimplePoolStakingConfig => {
@@ -69,5 +102,3 @@ const TabGIVfarm = () => {
 		</GIVfarmTabContainer>
 	);
 };
-
-export default TabGIVfarm;

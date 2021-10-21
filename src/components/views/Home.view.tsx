@@ -1,5 +1,5 @@
 import Header from '../Header';
-import TabGIVfarm from '../homeTabs/GIVfarm';
+import { TabGIVfarmTop, TabGIVfarmBottom } from '../homeTabs/GIVfarm';
 import { TabGardenTop, TabGardenBottom } from '../homeTabs/GIVgarden';
 import { TabOverviewTop, TabOverviewBottom } from '../homeTabs/Overview';
 
@@ -24,8 +24,8 @@ function HomeView() {
 					},
 					{
 						label: 'GIVfarm',
-						topComponent: <></>,
-						bottomComponent: <TabGIVfarm />,
+						topComponent: <TabGIVfarmTop />,
+						bottomComponent: <TabGIVfarmBottom />,
 					},
 					{
 						label: 'GIVbacks',
