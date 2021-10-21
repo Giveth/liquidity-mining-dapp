@@ -27,7 +27,7 @@ const StakingPoolContainer = styled.div`
 	overflow: hidden;
 `;
 const StakingPoolExchange = styled.div`
-	font-family: red-hat;
+	font-family: 'Red Hat Text';
 	font-size: 14px;
 	font-style: normal;
 	font-weight: 500;
@@ -45,7 +45,7 @@ const SPTitle = styled(Row)`
 `;
 const StakingPoolImage = styled.img``;
 const StakingPoolLabel = styled.span`
-	font-family: red-hat;
+	font-family: 'Red Hat Text';
 	font-size: 32px;
 	font-style: normal;
 	font-weight: bold;
@@ -54,7 +54,7 @@ const StakingPoolLabel = styled.span`
 	margin-left: 24px;
 `;
 const StakingPoolSubtitle = styled.div`
-	font-family: red-hat;
+	font-family: 'Red Hat Text';
 	font-style: normal;
 	font-weight: 500;
 	font-size: 14px;
@@ -62,7 +62,7 @@ const StakingPoolSubtitle = styled.div`
 	color: #82899a;
 `;
 const DetailLabel = styled.div`
-	font-family: red-hat;
+	font-family: 'Red Hat Text';
 	font-style: normal;
 	font-weight: normal;
 	font-size: 14px;
@@ -88,7 +88,7 @@ const Details = styled.div`
 	margin: 12px 0;
 `;
 const DetailHeader = styled(Row)`
-	font-family: red-hat;
+	font-family: 'Red Hat Text';
 `;
 const DetailLink = styled.button`
 	font-style: normal;
@@ -102,7 +102,7 @@ const DetailLink = styled.button`
 	cursor: pointer;
 `;
 const DetailValue = styled.div`
-	font-family: red-hat;
+	font-family: 'Red Hat Text';
 	font-style: normal;
 	font-weight: bold;
 	font-size: 18px;
