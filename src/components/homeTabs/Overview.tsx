@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row } from '../styled-components/Grid';
 import router from 'next/router';
-import { Container, IconGiveth, P, QuoteText } from '@giveth/ui-design-system';
+import { Container, IconGiveth, Button } from '@giveth/ui-design-system';
 import {
 	OverviewTopContainer,
 	PreTitle,
@@ -53,29 +53,24 @@ export const TabOverviewBottom = () => {
 					<EGDataBlock
 						title='GIV Token'
 						subtitle='Donate, earn, govern'
-						actionLabel='CLAIM YOUR GIV'
-						type='primary'
-						ActionCb={() => {}}
+						button={
+							<Button
+								label='CLAIM YOUR GIV'
+								buttonType='primary'
+							/>
+						}
 						icon={<IconGiveth size={32} />}
 					>
 						GIV fuels and directs the Future of Giving, inspiring
 						people to become Givers and participate in an ecosystem
 						of collective support, abundance, and value-creation.
 					</EGDataBlock>
-					<EGDataBlock
-						title='GIVbacks'
-						subtitle='GIVE AND RECEIVE'
-						ActionCb={() => {}}
-					>
+					<EGDataBlock title='GIVbacks' subtitle='GIVE AND RECEIVE'>
 						Giveth is a donor owned and governed economy. With
 						GIVbacks, we reward donors to verified projects on
 						Giveth with GIV tokens.
 					</EGDataBlock>
-					<EGDataBlock
-						title='GIVstream'
-						subtitle='Get more GIV'
-						ActionCb={() => {}}
-					>
+					<EGDataBlock title='GIVstream' subtitle='Get more GIV'>
 						Welcome to the expanding GIViverse! With the GIVstream,
 						our community members become long-term stakeholders in
 						the Future of Giving.
@@ -85,8 +80,7 @@ export const TabOverviewBottom = () => {
 				<Row wrap={1} justifyContent='space-between'>
 					<ParticipateDataBlock
 						title='Give'
-						actionLabel='Donate to projects'
-						ActionCb={() => {}}
+						button={<Button label='Donate to projects' />}
 					>
 						Donate to empower change-makers that are working hard to
 						make a difference. Get GIVbacks when you donate to
@@ -94,8 +88,7 @@ export const TabOverviewBottom = () => {
 					</ParticipateDataBlock>
 					<ParticipateDataBlock
 						title='Govern'
-						actionLabel='See proposals'
-						ActionCb={() => {}}
+						button={<Button label='See proposals' />}
 					>
 						The GIVeconomy empowers our collective of projects,
 						donors, builders and community members to build the
@@ -103,8 +96,7 @@ export const TabOverviewBottom = () => {
 					</ParticipateDataBlock>
 					<ParticipateDataBlock
 						title='Earn'
-						actionLabel='Add Liquidty and Earn'
-						ActionCb={() => {}}
+						button={<Button label='Add Liquidty and Earn' />}
 					>
 						Become a liquidity provider and stake tokens in the
 						GIVfarm to generate even more GIV in rewards.

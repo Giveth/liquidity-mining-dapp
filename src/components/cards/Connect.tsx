@@ -58,7 +58,7 @@ const SuccessArrowButton = styled(ArrowButton)`
 `;
 
 const EarnGiv = styled.span`
-	font-family: 'red-hat';
+	font-family: 'Red Hat Text';
 	font-size: 16px;
 	font-style: normal;
 	font-weight: 700;

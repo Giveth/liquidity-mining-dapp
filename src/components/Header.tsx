@@ -38,7 +38,7 @@ const HeaderButton = styled(Button)`
 	display: flex;
 	height: 48px;
 	color: white;
-	font-family: 'red-hat';
+	font-family: 'Red Hat Text';
 	font-style: normal;
 	font-weight: normal;
 	font-size: 16px;
@@ -67,7 +67,7 @@ const WBInfo = styled.div`
 `;
 
 const WBNetwork = styled.span`
-	font-family: 'red-hat';
+	font-family: 'Red Hat Text';
 	font-style: normal;
 	font-weight: normal;
 	font-size: 10px;
@@ -90,7 +90,7 @@ const HBContent = styled.span`
 `;
 
 const Title = styled.h1`
-	font-family: 'red-hat';
+	font-family: 'Red Hat Text';
 	font-size: 16px;
 	//font-style: bold;
 	line-height: 24px;
@@ -105,7 +105,7 @@ interface IHeaderLinkProps {
 }
 
 const HeaderLink = styled.a<IHeaderLinkProps>`
-	font-family: 'red-hat';
+	font-family: 'Red Hat Text';
 	font-style: normal;
 	font-weight: normal;
 	font-size: 16px;
