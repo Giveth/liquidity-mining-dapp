@@ -8,7 +8,7 @@ import {
 	SimplePoolStakingConfig,
 	StakingType,
 } from '../../types/config';
-import React from 'react';
+import React, { useContext } from 'react';
 import {
 	GIVfarmTopContainer,
 	Left,
@@ -18,6 +18,7 @@ import {
 	GIVfarmRewardCard,
 } from './GIVfarm.sc';
 import { Container, IconGIVFarm } from '@giveth/ui-design-system';
+import { OnboardContext } from '../../context/onboard.context';
 
 const GIVfarmTabContainer = styled(TabContainer)``;
 
@@ -56,48 +57,53 @@ export const TabGIVfarmBottom = () => {
 			description: '100% GIV',
 		};
 	};
+	const { network: walletNetwork } = useContext(OnboardContext);
 
 	return (
 		<GIVfarmTabContainer>
 			<Container>
-				<Row>
-					{config.XDAI_CONFIG.pools.map(
-						(poolStakingConfig, index) => {
-							return (
-								<StakingPoolCard
-									key={`staking_pool_card_xdai_${index}`}
-									network={config.XDAI_NETWORK_NUMBER}
-									poolStakingConfig={poolStakingConfig}
-								/>
-							);
-						},
-					)}
-					<StakingPoolCard
-						network={config.XDAI_NETWORK_NUMBER}
-						poolStakingConfig={getGivStakingConfig(
-							config.XDAI_CONFIG,
+				{walletNetwork === 4 && (
+					<Row>
+						{config.XDAI_CONFIG.pools.map(
+							(poolStakingConfig, index) => {
+								return (
+									<StakingPoolCard
+										key={`staking_pool_card_xdai_${index}`}
+										network={config.XDAI_NETWORK_NUMBER}
+										poolStakingConfig={poolStakingConfig}
+									/>
+								);
+							},
 						)}
-					/>
-				</Row>
-				<Row>
-					{config.MAINNET_CONFIG.pools.map(
-						(poolStakingConfig, index) => {
-							return (
-								<StakingPoolCard
-									key={`staking_pool_card_mainnet_${index}`}
-									network={config.MAINNET_NETWORK_NUMBER}
-									poolStakingConfig={poolStakingConfig}
-								/>
-							);
-						},
-					)}
-					<StakingPoolCard
-						network={config.MAINNET_NETWORK_NUMBER}
-						poolStakingConfig={getGivStakingConfig(
-							config.MAINNET_CONFIG,
+						<StakingPoolCard
+							network={config.XDAI_NETWORK_NUMBER}
+							poolStakingConfig={getGivStakingConfig(
+								config.XDAI_CONFIG,
+							)}
+						/>
+					</Row>
+				)}
+				{walletNetwork === 1 && (
+					<Row>
+						{config.MAINNET_CONFIG.pools.map(
+							(poolStakingConfig, index) => {
+								return (
+									<StakingPoolCard
+										key={`staking_pool_card_mainnet_${index}`}
+										network={config.MAINNET_NETWORK_NUMBER}
+										poolStakingConfig={poolStakingConfig}
+									/>
+								);
+							},
 						)}
-					/>
-				</Row>
+						<StakingPoolCard
+							network={config.MAINNET_NETWORK_NUMBER}
+							poolStakingConfig={getGivStakingConfig(
+								config.MAINNET_CONFIG,
+							)}
+						/>
+					</Row>
+				)}
 			</Container>
 		</GIVfarmTabContainer>
 	);

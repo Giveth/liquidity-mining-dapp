@@ -243,7 +243,6 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 					onClick={() => setState(SwapCardStates.Default)}
 				/>
 			)}
-			{walletNetwork !== network && <CardDisable />}
 		</StakingPoolContainer>
 	);
 };
