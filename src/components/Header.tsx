@@ -267,10 +267,9 @@ const Header: FC<IHeader> = () => {
 										)}`}</span>
 										<WBNetwork>
 											Connected to{' '}
-											{
+											{networksParams[network] &&
 												networksParams[network]
-													.nativeCurrency.symbol
-											}
+													.nativeCurrency.symbol}
 										</WBNetwork>
 									</WBInfo>
 								</HBContainer>
