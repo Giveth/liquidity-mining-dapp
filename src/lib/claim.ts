@@ -95,7 +95,7 @@ export const claimAirDrop = async (
 
 	if (!claimData) throw new Error('No claim data');
 
-	const args = [claimData.index, address, claimData.amount, claimData.proof];
+	const args = [claimData.index, claimData.amount, claimData.proof];
 
 	return await merkleContract
 		.connect(signer.connectUnchecked())
