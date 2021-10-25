@@ -1,25 +1,33 @@
 import styled from 'styled-components';
 import { Row } from '../styled-components/Grid';
-import { Button } from '../styled-components/Button';
+import {
+	brandColors,
+	neutralColors,
+	Overline,
+	H4,
+	B,
+	P,
+	Caption,
+	Button,
+	OulineButton,
+} from '@giveth/ui-design-system';
 
 export const StakingPoolContainer = styled.div`
-	width: 380px;
-	padding: 16px 24px 24px;
-	border-radius: 10px;
-	background: #ffffffe5;
-	color: #303b72;
+	width: 383px;
+	border-radius: 8px;
+	background: ${brandColors.giv[600]};
+	color: ${neutralColors.gray[100]};
 	position: relative;
-	margin: 32px 16px;
 	overflow: hidden;
 `;
-export const StakingPoolExchange = styled.div`
-	font-family: 'Red Hat Text';
-	font-size: 14px;
-	font-style: normal;
-	font-weight: 500;
-	line-height: 18px;
-	letter-spacing: 0.08em;
+export const StakingPoolExchangeRow = styled(Row)`
+	margin: 16px;
 `;
+
+export const StakingPoolExchange = styled(Overline)`
+	color: ${brandColors.deep[100]};
+`;
+
 export const StakingPoolBadge = styled.img`
 	position: absolute;
 	top: 12px;
@@ -27,67 +35,82 @@ export const StakingPoolBadge = styled.img`
 `;
 export const SPTitle = styled(Row)`
 	margin-top: 12px;
-	margin-bottom: 12px;
+	margin-bottom: 24px;
 `;
-export const StakingPoolImage = styled.img``;
-export const StakingPoolLabel = styled.span`
-	font-family: 'Red Hat Text';
-	font-size: 32px;
-	font-style: normal;
-	font-weight: bold;
-	line-height: 38px;
-	letter-spacing: 0em;
-	margin-left: 24px;
+
+interface IStakingPoolImagesProps {
+	lenght: number;
+}
+
+export const StakingPoolImages = styled.div<IStakingPoolImagesProps>`
+	padding-left: 27px;
+	padding-right: 31px;
+	height: 56px;
+	width: ${props => (props.lenght == 1 ? 72 : 105)}px;
+	background: ${brandColors.giv[700]};
+	position: relative;
+	border-radius: 0 28px 28px 0;
+	& > div {
+		position: absolute;
+		right: 38px;
+		top: 8px;
+		z-index: 1;
+		:last-child {
+			z-index: 0;
+			right: 7px;
+		}
+	}
 `;
-export const StakingPoolSubtitle = styled.div`
-	font-family: 'Red Hat Text';
-	font-style: normal;
-	font-weight: 500;
-	font-size: 14px;
-	line-height: 150%;
-	color: #82899a;
-`;
-export const DetailLabel = styled.div`
-	font-family: 'Red Hat Text';
-	font-style: normal;
-	font-weight: normal;
-	font-size: 14px;
-	line-height: 150%;
-	color: #82899a;
+
+export const StakingPoolLabel = styled(H4)``;
+
+export const StakingPoolSubtitle = styled(Caption)``;
+
+export const StakePoolInfoContainer = styled.div`
+	padding: 0 24px;
 `;
 
 export const Details = styled.div`
 	margin: 12px 0;
 `;
-export const DetailHeader = styled(Row)`
-	font-family: 'Red Hat Text';
-`;
-export const DetailLink = styled.button`
-	font-style: normal;
-	font-weight: bold;
-	font-size: 12px;
-	line-height: 15px;
-	text-align: center;
-	color: #303b72;
-	border: 0;
-	background-color: unset;
-	cursor: pointer;
-`;
-export const DetailValue = styled.div`
-	font-family: 'Red Hat Text';
-	font-style: normal;
-	font-weight: bold;
-	font-size: 18px;
-	line-height: 24px;
-	letter-spacing: -0.005em;
-	color: #303b72;
+export const FirstDetail = styled(Row)`
+	margin-bottom: 28px;
 `;
 
-export const CardButton = styled(Button)`
-	height: 36px;
-	font-size: 12px;
-	width: 265px;
-	margin: 8px auto;
+export const Detail = styled(Row)`
+	margin-bottom: 16px;
+`;
+
+export const DetailLabel = styled(Caption)``;
+export const DetailValue = styled(B)``;
+export const DetailUnit = styled(P)`
+	color: ${brandColors.deep[100]};
+`;
+
+export const ClaimButton = styled(Button)`
+	width: 100%;
+`;
+
+export const StakeButtonsRow = styled(Row)`
+	margin: 16px 0;
+	gap: 16px;
+`;
+
+export const StakeButton = styled(OulineButton)`
+	width: 100%;
+`;
+
+export const StakeContainer = styled(Row)`
+	gap: 6px;
+	width: 100%;
+`;
+export const StakeAmount = styled(Caption)`
+	text-align: center;
+`;
+
+export const LiquidityButton = styled(Button)`
+	width: 100%;
+	margin-bottom: 16px;
 `;
 
 export const CardDisable = styled.div`
