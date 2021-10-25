@@ -36,6 +36,7 @@ import {
 	StakeContainer,
 	StakeAmount,
 	LiquidityButton,
+	IconContainer,
 } from './StakingPoolCard.sc';
 import {
 	IconGiveth,
@@ -47,6 +48,7 @@ import {
 	IconHelp,
 	IconExternalLink,
 } from '@giveth/ui-design-system';
+import { APRModal } from '../modals/APR';
 
 enum SwapCardStates {
 	Default,
@@ -81,6 +83,7 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 	const [state, setState] = useState(SwapCardStates.Default);
 	const [amount, setAmount] = useState<string>('0');
 	const [displayAmount, setDisplayAmount] = useState('0');
+	const [showAPRModal, setShowAPRModal] = useState(false);
 
 	const {
 		type,
@@ -125,125 +128,132 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 	const currencies = title.split(' / ');
 
 	return (
-		<StakingPoolContainer>
-			{state == SwapCardStates.Default && (
-				<>
-					<StakingPoolExchangeRow>
-						{/* {network === config.MAINNET_NETWORK_NUMBER ? 
+		<>
+			<StakingPoolContainer>
+				{state == SwapCardStates.Default && (
+					<>
+						<StakingPoolExchangeRow>
+							{/* {network === config.MAINNET_NETWORK_NUMBER ? 
 							<
 						:
 						} */}
-						<StakingPoolExchange styleType='Small'>
-							{type}
-						</StakingPoolExchange>
-					</StakingPoolExchangeRow>
-					{/* <StakingPoolBadge
+							<StakingPoolExchange styleType='Small'>
+								{type}
+							</StakingPoolExchange>
+						</StakingPoolExchangeRow>
+						{/* <StakingPoolBadge
 						src={
 							network === config.MAINNET_NETWORK_NUMBER
 								? '/images/chain/mainnet-badge-s.svg'
 								: '/images/chain/xdai-badge-s.svg'
 						}
 					/> */}
-					<SPTitle alignItems='center' gap='16px'>
-						<StakingPoolImages lenght={currencies.length}>
-							{currencies.map((currency, idx) => (
-								<div key={idx}>
-									{getCurIconWithName(currency)}
-								</div>
-							))}
-						</StakingPoolImages>
-						<div>
-							<StakingPoolLabel weight={900}>
-								{title}
-							</StakingPoolLabel>
-							<StakingPoolSubtitle>
-								{description}
-							</StakingPoolSubtitle>
-						</div>
-					</SPTitle>
-					<StakePoolInfoContainer>
-						<Details>
-							<FirstDetail justifyContent='space-between'>
-								<Row gap='8px' alignItems='center'>
-									<DetailLabel>APR</DetailLabel>
-									<IconCalculator size={16} />
-								</Row>
-								<Row gap='8px' alignItems='center'>
-									<IconSpark
-										size={24}
-										color={brandColors.mustard[500]}
-									/>
+						<SPTitle alignItems='center' gap='16px'>
+							<StakingPoolImages lenght={currencies.length}>
+								{currencies.map((currency, idx) => (
+									<div key={idx}>
+										{getCurIconWithName(currency)}
+									</div>
+								))}
+							</StakingPoolImages>
+							<div>
+								<StakingPoolLabel weight={900}>
+									{title}
+								</StakingPoolLabel>
+								<StakingPoolSubtitle>
+									{description}
+								</StakingPoolSubtitle>
+							</div>
+						</SPTitle>
+						<StakePoolInfoContainer>
+							<Details>
+								<FirstDetail justifyContent='space-between'>
+									<Row gap='8px' alignItems='center'>
+										<DetailLabel>APR</DetailLabel>
+										<IconContainer
+											onClick={() =>
+												setShowAPRModal(true)
+											}
+										>
+											<IconCalculator size={16} />
+										</IconContainer>
+									</Row>
+									<Row gap='8px' alignItems='center'>
+										<IconSpark
+											size={24}
+											color={brandColors.mustard[500]}
+										/>
+										<DetailValue>
+											{apr && formatEthHelper(apr, 2)}%
+										</DetailValue>
+									</Row>
+								</FirstDetail>
+								<Detail justifyContent='space-between'>
+									<DetailLabel>Claimable</DetailLabel>
 									<DetailValue>
-										{apr && formatEthHelper(apr, 2)}%
+										{`${formatWeiHelper(
+											userStakeInfo.earned,
+											config.TOKEN_PRECISION,
+										)} GIV`}
 									</DetailValue>
-								</Row>
-							</FirstDetail>
-							<Detail justifyContent='space-between'>
-								<DetailLabel>Claimable</DetailLabel>
-								<DetailValue>
-									{`${formatWeiHelper(
-										userStakeInfo.earned,
-										config.TOKEN_PRECISION,
-									)} GIV`}
-								</DetailValue>
-							</Detail>
-							<Detail justifyContent='space-between'>
-								<Row gap='8px' alignItems='center'>
-									<DetailLabel>Streaming</DetailLabel>
-									<IconHelp size={16} />
-								</Row>
-								<Row gap='4px' alignItems='center'>
-									<DetailValue>{0}</DetailValue>
-									<DetailUnit>GIV/week</DetailUnit>
-								</Row>
-							</Detail>
-						</Details>
-						<ClaimButton
-							disabled={userStakeInfo.earned.isZero()}
-							label='CLAIM Rewards'
-						/>
-						<StakeButtonsRow>
-							<StakeContainer flexDirection='column'>
-								<StakeButton
-									disabled={userNotStakedAmount.isZero()}
-									label='STAKE'
-									size='small'
-								/>
-								<StakeAmount>
-									{formatWeiHelper(
-										userNotStakedAmount,
-										config.TOKEN_PRECISION,
-									)}{' '}
-									LP
-								</StakeAmount>
-							</StakeContainer>
-							<StakeContainer flexDirection='column'>
-								<StakeButton
-									disabled={userStakeInfo.stakedLpAmount.isZero()}
-									label='UNSTAKE'
-									size='small'
-								/>
-								<StakeAmount>
-									{formatWeiHelper(
-										userStakeInfo.stakedLpAmount,
-										config.TOKEN_PRECISION,
-									)}{' '}
-									LP
-								</StakeAmount>
-							</StakeContainer>
-						</StakeButtonsRow>
-						<LiquidityButton
-							label='Provide Liquidity'
-							buttonType='texty'
-							icon={
-								<IconExternalLink
-									size={16}
-									color={brandColors.deep[100]}
-								/>
-							}
-						/>
-					</StakePoolInfoContainer>
-					{/* {type !== StakingType.GIV_STREAM && (
+								</Detail>
+								<Detail justifyContent='space-between'>
+									<Row gap='8px' alignItems='center'>
+										<DetailLabel>Streaming</DetailLabel>
+										<IconHelp size={16} />
+									</Row>
+									<Row gap='4px' alignItems='center'>
+										<DetailValue>{0}</DetailValue>
+										<DetailUnit>GIV/week</DetailUnit>
+									</Row>
+								</Detail>
+							</Details>
+							<ClaimButton
+								disabled={userStakeInfo.earned.isZero()}
+								label='CLAIM Rewards'
+							/>
+							<StakeButtonsRow>
+								<StakeContainer flexDirection='column'>
+									<StakeButton
+										disabled={userNotStakedAmount.isZero()}
+										label='STAKE'
+										size='small'
+									/>
+									<StakeAmount>
+										{formatWeiHelper(
+											userNotStakedAmount,
+											config.TOKEN_PRECISION,
+										)}{' '}
+										LP
+									</StakeAmount>
+								</StakeContainer>
+								<StakeContainer flexDirection='column'>
+									<StakeButton
+										disabled={userStakeInfo.stakedLpAmount.isZero()}
+										label='UNSTAKE'
+										size='small'
+									/>
+									<StakeAmount>
+										{formatWeiHelper(
+											userStakeInfo.stakedLpAmount,
+											config.TOKEN_PRECISION,
+										)}{' '}
+										LP
+									</StakeAmount>
+								</StakeContainer>
+							</StakeButtonsRow>
+							<LiquidityButton
+								label='Provide Liquidity'
+								buttonType='texty'
+								icon={
+									<IconExternalLink
+										size={16}
+										color={brandColors.deep[100]}
+									/>
+								}
+							/>
+						</StakePoolInfoContainer>
+						{/* {type !== StakingType.GIV_STREAM && (
 						<ClaimButton
 							secondary
 							outline
@@ -263,11 +273,11 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 							Harvest
 						</ClaimButton>
 					)} */}
-				</>
-			)}
-			{state == SwapCardStates.Manage && (
+					</>
+				)}
+				{/* {state == SwapCardStates.Manage && (
 				<>
-					{/* <ClaimButton
+					<ClaimButton
 						secondary
 						outline
 						onClick={() => setState(SwapCardStates.Deposit)}
@@ -279,10 +289,10 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 						onClick={() => setState(SwapCardStates.Withdraw)}
 					>
 						Withdraw
-					</ClaimButton> */}
+					</ClaimButton>
 				</>
-			)}
-			{state == SwapCardStates.Deposit && (
+			)} */}
+				{/* {state == SwapCardStates.Deposit && (
 				<>
 					<H4>Deposit LP tokens</H4>
 					<P>
@@ -308,12 +318,12 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 						type='number'
 						value={displayAmount}
 					/>
-					{/* <ClaimButton secondary onClick={onDeposit}>
+					<ClaimButton secondary onClick={onDeposit}>
 						Deposit
-					</ClaimButton> */}
+					</ClaimButton>
 				</>
-			)}
-			{state == SwapCardStates.Withdraw && (
+			)} */}
+				{/* {state == SwapCardStates.Withdraw && (
 				<>
 					<H4>Withdraw LP tokens</H4>
 					<P>
@@ -333,16 +343,18 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 						type='number'
 						value={displayAmount}
 					/>
-					{/* <ClaimButton onClick={onWithdraw}>Withdraw</ClaimButton> */}
+					<ClaimButton onClick={onWithdraw}>Withdraw</ClaimButton>
 				</>
-			)}
-			{state !== SwapCardStates.Default && (
+			)} */}
+				{/* {state !== SwapCardStates.Default && (
 				<Return
 					src='/images/close.svg'
 					onClick={() => setState(SwapCardStates.Default)}
 				/>
-			)}
-		</StakingPoolContainer>
+			)} */}
+			</StakingPoolContainer>
+			<APRModal showModal={showAPRModal} setShowModal={setShowAPRModal} />
+		</>
 	);
 };
 

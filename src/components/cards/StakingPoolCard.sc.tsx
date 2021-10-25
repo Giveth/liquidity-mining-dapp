@@ -113,6 +113,10 @@ export const LiquidityButton = styled(Button)`
 	margin-bottom: 16px;
 `;
 
+export const IconContainer = styled.div`
+	cursor: pointer;
+`;
+
 export const CardDisable = styled.div`
 	position: absolute;
 	left: 0;
