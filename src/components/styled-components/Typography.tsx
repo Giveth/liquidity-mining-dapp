@@ -7,7 +7,7 @@ interface ITypographyProps {
 }
 
 export const H1 = styled.h1`
-	font-family: 'tex_gyre_adventor';
+	font-family: 'TeX Gyre Adventor';
 	font-size: 120px;
 	font-style: normal;
 	font-weight: 700;
@@ -20,7 +20,7 @@ export const H1 = styled.h1`
 `;
 
 export const H2 = styled.h2`
-	font-family: 'tex_gyre_adventor';
+	font-family: 'TeX Gyre Adventor';
 	font-style: normal;
 	font-weight: bold;
 	font-size: 64px;
@@ -31,7 +31,7 @@ export const H2 = styled.h2`
 `;
 
 export const H3 = styled.h3`
-	font-family: 'tex_gyre_adventor';
+	font-family: 'TeX Gyre Adventor';
 	font-style: normal;
 	font-weight: bold;
 	font-size: 44px;
@@ -42,7 +42,7 @@ export const H3 = styled.h3`
 `;
 
 export const H4 = styled.h3`
-	font-family: 'tex_gyre_adventor';
+	font-family: 'TeX Gyre Adventor';
 	font-style: normal;
 	font-weight: bold;
 	font-size: 24px;
