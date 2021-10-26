@@ -43,18 +43,18 @@ const config: EnvConfig = {
 
 	XDAI_CONFIG: {
 		TOKEN_ADDRESS: '0x6F45aFf8c1e50DB099DAb43292C28240be2b7485',
-		MERKLE_ADDRESS: '0x93C057F95C51dfa3b2A536d97691E855B00D0178',
-		TOKEN_DISTRO_ADDRESS: '0xE77D387b4be1076891868060c32E81BC3b89C730',
+		MERKLE_ADDRESS: '0x2fce044d590552b0aaae13b73981ed9b2C6a2eF4',
+		TOKEN_DISTRO_ADDRESS: '0x11f46f4dC9e3d2Ca7179bAEa2418e0ef8cCB5736',
 
 		nodeUrl: 'https://rinkeby.infura.io/v3/' + INFURA_API_KEY,
 		GIV: {
-			LM_ADDRESS: '0x3c44b1E8b93efb496D0946Aa132E7b4C190d28fB',
+			LM_ADDRESS: '0xdF6e8a7A6A8F8861E44234fFBC42C1A2d1B1B0ec',
 		},
 
 		pools: [
 			{
 				POOL_ADDRESS: '0xb3c4538b9413522c25e18ba1095f43ca780813f2',
-				LM_ADDRESS: '0xC3B9d4FC4A9CdD6a410A09Bae11d5619286254cE',
+				LM_ADDRESS: '0x3dFAF139203e890Ed79fE7f8cc1AC14951270e40',
 				type: StakingType.UNISWAP,
 				title: 'GIV / UNI',
 				description: '50% GIV, 50% UNI',
@@ -63,10 +63,10 @@ const config: EnvConfig = {
 			},
 			{
 				POOL_ADDRESS: '0x8fb2d187eba62970c13d0037304260b9fef721c5',
-				LM_ADDRESS: '0xa194A63a0F5B362C0958DC9FB2D01B2d5e2F9DB7',
+				LM_ADDRESS: '0x9c2A4b85e5b6CC72d112E2707844eB68DE616ee1',
 				type: StakingType.UNISWAP,
-				title: 'ETH / UNI',
-				description: '50% ETH, 50% UNI',
+				title: 'ETH / GIV',
+				description: '50% ETH, 50% GIV',
 				provideLiquidityLink:
 					'https://app.uniswap.org/#/add/v2/ETH/0x6F45aFf8c1e50DB099DAb43292C28240be2b7485',
 			},
