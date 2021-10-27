@@ -17,7 +17,6 @@ import {
 	StakingPoolContainer,
 	StakingPoolExchangeRow,
 	SPTitle,
-	StakingPoolImages,
 	StakingPoolLabel,
 	StakingPoolSubtitle,
 	Details,
@@ -27,8 +26,6 @@ import {
 	DetailValue,
 	ClaimButton,
 	StakeButton,
-	Input,
-	Return,
 	StakingPoolExchange,
 	StakePoolInfoContainer,
 	DetailUnit,
@@ -39,9 +36,6 @@ import {
 	IconContainer,
 } from './StakingPoolCard.sc';
 import {
-	IconGiveth,
-	IconETH,
-	IconHoney,
 	IconCalculator,
 	IconSpark,
 	brandColors,
@@ -49,6 +43,8 @@ import {
 	IconExternalLink,
 } from '@giveth/ui-design-system';
 import { APRModal } from '../modals/APR';
+import { StakeModal } from '../modals/Stake';
+import { StakingPoolImages } from '../StakingPoolImages';
 
 enum SwapCardStates {
 	Default,
@@ -61,19 +57,6 @@ interface IStakingPoolCardProps {
 	poolStakingConfig: PoolStakingConfig;
 }
 
-const getCurIconWithName = (currency: string) => {
-	switch (currency) {
-		case 'GIV':
-			return <IconGiveth size={40} />;
-		case 'ETH':
-			return <IconETH size={40} />;
-		case 'HNY':
-			return <IconHoney size={40} />;
-		default:
-			break;
-	}
-};
-
 const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 	network,
 	poolStakingConfig,
@@ -84,6 +67,7 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 	const [amount, setAmount] = useState<string>('0');
 	const [displayAmount, setDisplayAmount] = useState('0');
 	const [showAPRModal, setShowAPRModal] = useState(false);
+	const [showStakeModal, setShowStakeModal] = useState(false);
 
 	const {
 		type,
@@ -125,8 +109,6 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 
 	const onHarvest = () => harvestTokens(LM_ADDRESS, provider);
 
-	const currencies = title.split(' / ');
-
 	return (
 		<>
 			<StakingPoolContainer>
@@ -149,13 +131,7 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 						}
 					/> */}
 						<SPTitle alignItems='center' gap='16px'>
-							<StakingPoolImages lenght={currencies.length}>
-								{currencies.map((currency, idx) => (
-									<div key={idx}>
-										{getCurIconWithName(currency)}
-									</div>
-								))}
-							</StakingPoolImages>
+							<StakingPoolImages title={title} />
 							<div>
 								<StakingPoolLabel weight={900}>
 									{title}
@@ -218,6 +194,7 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 										disabled={userNotStakedAmount.isZero()}
 										label='STAKE'
 										size='small'
+										onClick={() => setShowStakeModal(true)}
 									/>
 									<StakeAmount>
 										{formatWeiHelper(
@@ -244,6 +221,9 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 							</StakeButtonsRow>
 							<LiquidityButton
 								label='Provide Liquidity'
+								onClick={() =>
+									window.open(provideLiquidityLink)
+								}
 								buttonType='texty'
 								icon={
 									<IconExternalLink
@@ -354,6 +334,14 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 			)} */}
 			</StakingPoolContainer>
 			<APRModal showModal={showAPRModal} setShowModal={setShowAPRModal} />
+			{showStakeModal && (
+				<StakeModal
+					showModal={showStakeModal}
+					setShowModal={setShowStakeModal}
+					poolStakingConfig={poolStakingConfig}
+					maxAmount={userNotStakedAmount}
+				/>
+			)}
 		</>
 	);
 };
