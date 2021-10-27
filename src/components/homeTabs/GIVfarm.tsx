@@ -61,7 +61,7 @@ export const TabGIVfarmBottom = () => {
 
 	return (
 		<GIVfarmTabContainer>
-			{walletNetwork === 4 && (
+			{(walletNetwork === 42 || walletNetwork === 100) && (
 				<Row justifyContent='center' gap='24px' wrap={1}>
 					{config.XDAI_CONFIG.pools.map(
 						(poolStakingConfig, index) => {
@@ -82,7 +82,7 @@ export const TabGIVfarmBottom = () => {
 					/>
 				</Row>
 			)}
-			{walletNetwork === 1 && (
+			{(walletNetwork === 1 || walletNetwork === 4) && (
 				<Row justifyContent='center' gap='24px' wrap={1}>
 					{config.MAINNET_CONFIG.pools.map(
 						(poolStakingConfig, index) => {
