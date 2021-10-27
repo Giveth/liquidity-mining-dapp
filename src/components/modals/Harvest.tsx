@@ -55,7 +55,7 @@ export const HarvestModal: FC<IHarvesModalProps> = ({
 		<Modal
 			showModal={showModal}
 			setShowModal={setShowModal}
-			title='Your GIVgardens Rewards'
+			// title='Your GIVgardens Rewards'
 		>
 			{state === States.Harvest && (
 				<HarvestModalContainer>
@@ -161,6 +161,7 @@ export const HarvestModal: FC<IHarvesModalProps> = ({
 
 const HarvestModalContainer = styled.div`
 	width: 686px;
+	padding: 24px;
 `;
 
 const StyledGivethIcon = styled.div`
@@ -202,17 +203,19 @@ const CancelButton = styled(Button)`
 
 const WitingModalContainer = styled.div`
 	width: 546px;
+	padding: 24px;
 `;
 
 const WaitinMessage = styled(H6)`
 	color: ${neutralColors.gray[100]};
+	padding: 24px;
 	margin-top: 18px;
 	margin-bottom: 40px;
 `;
 
 const ConfirmedModalContainer = styled.div`
 	width: 522px;
-	padding: 0 86px;
+	padding: 24px 86px;
 `;
 
 const ConfirmedMessage = styled(H6)`
