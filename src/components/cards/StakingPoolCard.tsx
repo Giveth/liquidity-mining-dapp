@@ -1,11 +1,9 @@
-import styled from 'styled-components';
-import { Row } from '../styled-components/Grid';
-import { Button } from '../styled-components/Button';
 import config from '../../configuration';
 import { OnboardContext } from '../../context/onboard.context';
-import { PoolStakingConfig, StakingType } from '../../types/config';
-import { FC, useCallback, useContext, useEffect, useState } from 'react';
+import { PoolStakingConfig } from '../../types/config';
+import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { H4, P } from '../styled-components/Typography';
+import { Row } from '../styled-components/Grid';
 import {
 	harvestTokens,
 	stakeTokens,
@@ -15,150 +13,38 @@ import { formatEthHelper, formatWeiHelper } from '../../helpers/number';
 import { ethers } from 'ethers';
 import { useStakingPool } from '../../hooks/useStakingPool';
 import { Zero } from '@ethersproject/constants';
-
-const StakingPoolContainer = styled.div`
-	width: 380px;
-	padding: 16px 24px 24px;
-	border-radius: 10px;
-	background: #ffffffe5;
-	color: #303b72;
-	position: relative;
-	margin: 32px 16px;
-	overflow: hidden;
-`;
-const StakingPoolExchange = styled.div`
-	font-family: red-hat;
-	font-size: 14px;
-	font-style: normal;
-	font-weight: 500;
-	line-height: 18px;
-	letter-spacing: 0.08em;
-`;
-const StakingPoolBadge = styled.img`
-	position: absolute;
-	top: 12px;
-	right: 0px;
-`;
-const SPTitle = styled(Row)`
-	margin-top: 12px;
-	margin-bottom: 12px;
-`;
-const StakingPoolImage = styled.img``;
-const StakingPoolLabel = styled.span`
-	font-family: red-hat;
-	font-size: 32px;
-	font-style: normal;
-	font-weight: bold;
-	line-height: 38px;
-	letter-spacing: 0em;
-	margin-left: 24px;
-`;
-const StakingPoolSubtitle = styled.div`
-	font-family: red-hat;
-	font-style: normal;
-	font-weight: 500;
-	font-size: 14px;
-	line-height: 150%;
-	color: #82899a;
-`;
-const DetailLabel = styled.div`
-	font-family: red-hat;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 14px;
-	line-height: 150%;
-	color: #82899a;
-`;
-
-enum StakingPoolExchangeType {
-	GIVETH,
-	UNISWAP,
-	HONETSWAP,
-}
-
-interface IStakingPoolCardProps {
-	// composition: string;
-	// logo: string;
-	// option: string;
-	// platform: string;
-	network: number;
-	poolStakingConfig: PoolStakingConfig;
-}
-const Details = styled.div`
-	margin: 12px 0;
-`;
-const DetailHeader = styled(Row)`
-	font-family: red-hat;
-`;
-const DetailLink = styled.button`
-	font-style: normal;
-	font-weight: bold;
-	font-size: 12px;
-	line-height: 15px;
-	text-align: center;
-	color: #303b72;
-	border: 0;
-	background-color: unset;
-	cursor: pointer;
-`;
-const DetailValue = styled.div`
-	font-family: red-hat;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 18px;
-	line-height: 24px;
-	letter-spacing: -0.005em;
-	color: #303b72;
-`;
-
-enum SwapCardExchangeType {
-	GIVETH,
-	UNISWAP,
-	HONETSWAP,
-}
-
-const CardButton = styled(Button)`
-	height: 36px;
-	font-size: 12px;
-	width: 265px;
-	margin: 8px auto;
-`;
-
-const CardDisable = styled.div`
-	position: absolute;
-	left: 0;
-	top: 0;
-	height: 100%;
-	width: 100%;
-	background-color: #ffffffa0;
-`;
-
-export const Input = styled.input`
-	height: 48px;
-	padding-left: 10px;
-	background: #f4f5f6;
-	border-radius: 8px;
-	height: 48px;
-	color: #222a29;
-	font-family: 'Inter';
-	border: solid 0px transparent;
-	font-size: 14px;
-	line-height: 16px;
-	margin-top: 16px;
-	width: calc(100% - 12px);
-	&:focus {
-		outline: none;
-		background: #eefcfb;
-	}
-	&[type='number'] {
-		-moz-appearance: textfield;
-	}
-	&::-webkit-outer-spin-button,
-	&::-webkit-inner-spin-button {
-		-webkit-appearance: none;
-		margin: 0;
-	}
-`;
+import {
+	StakingPoolContainer,
+	StakingPoolExchangeRow,
+	SPTitle,
+	StakingPoolLabel,
+	StakingPoolSubtitle,
+	Details,
+	FirstDetail,
+	Detail,
+	DetailLabel,
+	DetailValue,
+	ClaimButton,
+	StakeButton,
+	StakingPoolExchange,
+	StakePoolInfoContainer,
+	DetailUnit,
+	StakeButtonsRow,
+	StakeContainer,
+	StakeAmount,
+	LiquidityButton,
+	IconContainer,
+} from './StakingPoolCard.sc';
+import {
+	IconCalculator,
+	IconSpark,
+	brandColors,
+	IconHelp,
+	IconExternalLink,
+} from '@giveth/ui-design-system';
+import { APRModal } from '../modals/APR';
+import { StakeModal } from '../modals/Stake';
+import { StakingPoolImages } from '../StakingPoolImages';
 
 enum SwapCardStates {
 	Default,
@@ -166,17 +52,10 @@ enum SwapCardStates {
 	Deposit,
 	Withdraw,
 }
-
-export const Return = styled.img`
-	background: transparent;
-	width: 50px;
-	height: 50px;
-	position: absolute;
-	cursor: pointer;
-	top: 0;
-	right: 0;
-	padding: 16px;
-`;
+interface IStakingPoolCardProps {
+	network: number;
+	poolStakingConfig: PoolStakingConfig;
+}
 
 const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 	network,
@@ -187,6 +66,8 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 	const [state, setState] = useState(SwapCardStates.Default);
 	const [amount, setAmount] = useState<string>('0');
 	const [displayAmount, setDisplayAmount] = useState('0');
+	const [showAPRModal, setShowAPRModal] = useState(false);
+	const [showStakeModal, setShowStakeModal] = useState(false);
 
 	const {
 		type,
@@ -229,90 +110,169 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 	const onHarvest = () => harvestTokens(LM_ADDRESS, provider);
 
 	return (
-		<StakingPoolContainer>
-			{state == SwapCardStates.Default && (
-				<>
-					<StakingPoolExchange>{type}</StakingPoolExchange>
-					<StakingPoolBadge
+		<>
+			<StakingPoolContainer>
+				{state == SwapCardStates.Default && (
+					<>
+						<StakingPoolExchangeRow>
+							{/* {network === config.MAINNET_NETWORK_NUMBER ? 
+							<
+						:
+						} */}
+							<StakingPoolExchange styleType='Small'>
+								{type}
+							</StakingPoolExchange>
+						</StakingPoolExchangeRow>
+						{/* <StakingPoolBadge
 						src={
 							network === config.MAINNET_NETWORK_NUMBER
 								? '/images/chain/mainnet-badge-s.svg'
 								: '/images/chain/xdai-badge-s.svg'
 						}
-					/>
-					<SPTitle alignItems='center'>
-						<StakingPoolImage src='/images/pool/giv-eth-logos.svg' />
-						<StakingPoolLabel>{title}</StakingPoolLabel>
-					</SPTitle>
-					<StakingPoolSubtitle>{description}</StakingPoolSubtitle>
-					<Details>
-						<DetailHeader justifyContent='space-between'>
-							<DetailLabel>APR</DetailLabel>
-							<DetailLink>See details</DetailLink>
-						</DetailHeader>
-						<DetailValue>
-							{apr && formatEthHelper(apr, 2)}%
-						</DetailValue>
-						<DetailHeader justifyContent='space-between'>
-							<DetailLabel>Claimable</DetailLabel>
-							<DetailLink
-								onClick={() => {
-									setState(SwapCardStates.Manage);
-								}}
-							>
-								Manage
-							</DetailLink>
-						</DetailHeader>
-						<DetailValue>{`${formatWeiHelper(
-							userStakeInfo.earned,
-							config.TOKEN_PRECISION,
-						)} GIV`}</DetailValue>
-						<DetailHeader>
-							<DetailLabel>Streaming</DetailLabel>
-							<DetailLink>?</DetailLink>
-						</DetailHeader>
-						<DetailValue>{`${0} GIV`}</DetailValue>
-					</Details>
-					{type !== StakingType.GIV_STREAM && (
-						<CardButton
+					/> */}
+						<SPTitle alignItems='center' gap='16px'>
+							<StakingPoolImages title={title} />
+							<div>
+								<StakingPoolLabel weight={900}>
+									{title}
+								</StakingPoolLabel>
+								<StakingPoolSubtitle>
+									{description}
+								</StakingPoolSubtitle>
+							</div>
+						</SPTitle>
+						<StakePoolInfoContainer>
+							<Details>
+								<FirstDetail justifyContent='space-between'>
+									<Row gap='8px' alignItems='center'>
+										<DetailLabel>APR</DetailLabel>
+										<IconContainer
+											onClick={() =>
+												setShowAPRModal(true)
+											}
+										>
+											<IconCalculator size={16} />
+										</IconContainer>
+									</Row>
+									<Row gap='8px' alignItems='center'>
+										<IconSpark
+											size={24}
+											color={brandColors.mustard[500]}
+										/>
+										<DetailValue>
+											{apr && formatEthHelper(apr, 2)}%
+										</DetailValue>
+									</Row>
+								</FirstDetail>
+								<Detail justifyContent='space-between'>
+									<DetailLabel>Claimable</DetailLabel>
+									<DetailValue>
+										{`${formatWeiHelper(
+											userStakeInfo.earned,
+											config.TOKEN_PRECISION,
+										)} GIV`}
+									</DetailValue>
+								</Detail>
+								<Detail justifyContent='space-between'>
+									<Row gap='8px' alignItems='center'>
+										<DetailLabel>Streaming</DetailLabel>
+										<IconHelp size={16} />
+									</Row>
+									<Row gap='4px' alignItems='center'>
+										<DetailValue>{0}</DetailValue>
+										<DetailUnit>GIV/week</DetailUnit>
+									</Row>
+								</Detail>
+							</Details>
+							<ClaimButton
+								disabled={userStakeInfo.earned.isZero()}
+								label='CLAIM Rewards'
+							/>
+							<StakeButtonsRow>
+								<StakeContainer flexDirection='column'>
+									<StakeButton
+										disabled={userNotStakedAmount.isZero()}
+										label='STAKE'
+										size='small'
+										onClick={() => setShowStakeModal(true)}
+									/>
+									<StakeAmount>
+										{formatWeiHelper(
+											userNotStakedAmount,
+											config.TOKEN_PRECISION,
+										)}{' '}
+										LP
+									</StakeAmount>
+								</StakeContainer>
+								<StakeContainer flexDirection='column'>
+									<StakeButton
+										disabled={userStakeInfo.stakedLpAmount.isZero()}
+										label='UNSTAKE'
+										size='small'
+									/>
+									<StakeAmount>
+										{formatWeiHelper(
+											userStakeInfo.stakedLpAmount,
+											config.TOKEN_PRECISION,
+										)}{' '}
+										LP
+									</StakeAmount>
+								</StakeContainer>
+							</StakeButtonsRow>
+							<LiquidityButton
+								label='Provide Liquidity'
+								onClick={() =>
+									window.open(provideLiquidityLink)
+								}
+								buttonType='texty'
+								icon={
+									<IconExternalLink
+										size={16}
+										color={brandColors.deep[100]}
+									/>
+								}
+							/>
+						</StakePoolInfoContainer>
+						{/* {type !== StakingType.GIV_STREAM && (
+						<ClaimButton
 							secondary
 							outline
 							onClick={() => window.open(provideLiquidityLink)}
 						>
 							PROVIDE LIQUIDITY
-						</CardButton>
+						</ClaimButton>
 					)}
-					<CardButton
+					<ClaimButton
 						outline
 						onClick={() => setState(SwapCardStates.Deposit)}
 					>
 						STAKE LP TOKENS
-					</CardButton>
+					</ClaimButton>
 					{!userStakeInfo.earned.eq(Zero) && (
-						<CardButton outline onClick={onHarvest}>
+						<ClaimButton outline onClick={onHarvest}>
 							Harvest
-						</CardButton>
-					)}
-				</>
-			)}
-			{state == SwapCardStates.Manage && (
+						</ClaimButton>
+					)} */}
+					</>
+				)}
+				{/* {state == SwapCardStates.Manage && (
 				<>
-					<CardButton
+					<ClaimButton
 						secondary
 						outline
 						onClick={() => setState(SwapCardStates.Deposit)}
 					>
 						Depsite
-					</CardButton>
-					<CardButton
+					</ClaimButton>
+					<ClaimButton
 						outline
 						onClick={() => setState(SwapCardStates.Withdraw)}
 					>
 						Withdraw
-					</CardButton>
+					</ClaimButton>
 				</>
-			)}
-			{state == SwapCardStates.Deposit && (
+			)} */}
+				{/* {state == SwapCardStates.Deposit && (
 				<>
 					<H4>Deposit LP tokens</H4>
 					<P>
@@ -338,12 +298,12 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 						type='number'
 						value={displayAmount}
 					/>
-					<CardButton secondary onClick={onDeposit}>
+					<ClaimButton secondary onClick={onDeposit}>
 						Deposit
-					</CardButton>
+					</ClaimButton>
 				</>
-			)}
-			{state == SwapCardStates.Withdraw && (
+			)} */}
+				{/* {state == SwapCardStates.Withdraw && (
 				<>
 					<H4>Withdraw LP tokens</H4>
 					<P>
@@ -363,17 +323,26 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 						type='number'
 						value={displayAmount}
 					/>
-					<CardButton onClick={onWithdraw}>Withdraw</CardButton>
+					<ClaimButton onClick={onWithdraw}>Withdraw</ClaimButton>
 				</>
-			)}
-			{state !== SwapCardStates.Default && (
+			)} */}
+				{/* {state !== SwapCardStates.Default && (
 				<Return
 					src='/images/close.svg'
 					onClick={() => setState(SwapCardStates.Default)}
 				/>
+			)} */}
+			</StakingPoolContainer>
+			<APRModal showModal={showAPRModal} setShowModal={setShowAPRModal} />
+			{showStakeModal && (
+				<StakeModal
+					showModal={showStakeModal}
+					setShowModal={setShowStakeModal}
+					poolStakingConfig={poolStakingConfig}
+					maxAmount={userNotStakedAmount}
+				/>
 			)}
-			{walletNetwork !== network && <CardDisable />}
-		</StakingPoolContainer>
+		</>
 	);
 };
 

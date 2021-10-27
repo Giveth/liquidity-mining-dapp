@@ -9,6 +9,12 @@ export enum StakingType {
 	GIV_STREAM = 'GIV STREAM',
 }
 
+export enum Currencies {
+	GIV,
+	ETH,
+	UNI,
+}
+
 export type PoolStakingConfig =
 	| SimplePoolStakingConfig
 	| BalancerPoolStakingConfig;

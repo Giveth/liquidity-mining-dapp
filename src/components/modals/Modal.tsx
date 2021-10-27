@@ -22,15 +22,15 @@ const ModalWrapper = styled.div<IModalWrapper>`
 	border-radius: 8px;
 	color: ${brandColors.deep[100]};
 	position: relative;
-	padding: 24px;
+	// padding: 24px;
 	z-index: 10;
 	text-align: center;
 `;
 
 const CloseModalButton = styled.div`
 	position: absolute;
-	top: 24px;
-	right: 24px;
+	top: 16px;
+	right: 16px;
 	cursor: pointer;
 `;
 
@@ -48,13 +48,13 @@ export interface IModal {
 	showModal: boolean;
 	setShowModal: (value: boolean) => void;
 	children?: React.ReactNode;
-	title?: string;
+	// title?: string;
 }
 
 export const Modal: FC<IModal> = ({
 	showModal,
 	setShowModal,
-	title,
+	// title,
 	children,
 }) => {
 	const modalRef = useRef(null);
@@ -101,7 +101,7 @@ export const Modal: FC<IModal> = ({
 							>
 								<IconX size={24} />
 							</CloseModalButton>
-							<ModalTitle>{title}</ModalTitle>
+							{/* <ModalTitle>{title}</ModalTitle> */}
 							{children}
 						</ModalWrapper>
 					</animated.div>
