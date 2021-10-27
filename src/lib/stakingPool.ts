@@ -322,8 +322,10 @@ export const stakeTokens = async (
 		} else {
 			stakeToast.showFailedStake(network, txResponse.hash);
 		}
+		return txResponse;
 	} catch (e) {
 		console.error('Error on staking:', e);
+		return;
 	}
 };
 
