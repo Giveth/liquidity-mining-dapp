@@ -186,6 +186,7 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 							</Details>
 							<ClaimButton
 								disabled={userStakeInfo.earned.isZero()}
+								onClick={onHarvest}
 								label='CLAIM Rewards'
 							/>
 							<StakeButtonsRow>
