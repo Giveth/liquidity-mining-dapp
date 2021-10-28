@@ -210,6 +210,7 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 										disabled={userStakeInfo.stakedLpAmount.isZero()}
 										label='UNSTAKE'
 										size='small'
+										onClick={onWithdraw}
 									/>
 									<StakeAmount>
 										{formatWeiHelper(
