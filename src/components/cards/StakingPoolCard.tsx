@@ -44,6 +44,7 @@ import {
 } from '@giveth/ui-design-system';
 import { APRModal } from '../modals/APR';
 import { StakeModal } from '../modals/Stake';
+import { UnStakeModal } from '../modals/UnStake';
 import { StakingPoolImages } from '../StakingPoolImages';
 
 enum SwapCardStates {
@@ -68,6 +69,7 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 	const [displayAmount, setDisplayAmount] = useState('0');
 	const [showAPRModal, setShowAPRModal] = useState(false);
 	const [showStakeModal, setShowStakeModal] = useState(false);
+	const [showUnStakeModal, setShowUnStakeModal] = useState(false);
 
 	const {
 		type,
@@ -210,7 +212,9 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 										disabled={userStakeInfo.stakedLpAmount.isZero()}
 										label='UNSTAKE'
 										size='small'
-										onClick={onWithdraw}
+										onClick={() =>
+											setShowUnStakeModal(true)
+										}
 									/>
 									<StakeAmount>
 										{formatWeiHelper(
@@ -342,6 +346,14 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 					setShowModal={setShowStakeModal}
 					poolStakingConfig={poolStakingConfig}
 					maxAmount={userNotStakedAmount}
+				/>
+			)}
+			{showUnStakeModal && (
+				<UnStakeModal
+					showModal={showUnStakeModal}
+					setShowModal={setShowUnStakeModal}
+					poolStakingConfig={poolStakingConfig}
+					maxAmount={userStakeInfo.stakedLpAmount}
 				/>
 			)}
 		</>
