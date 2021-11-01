@@ -319,10 +319,11 @@ export const stakeTokens = async (
 
 		if (status) {
 			stakeToast.showConfirmedStake(network, txResponse.hash);
+			return txResponse;
 		} else {
 			stakeToast.showFailedStake(network, txResponse.hash);
+			return;
 		}
-		return txResponse;
 	} catch (e) {
 		console.error('Error on staking:', e);
 		return;
@@ -363,7 +364,7 @@ export const withdrawTokens = async (
 	amount: string,
 	lmAddress: string,
 	provider: Web3Provider | null,
-): Promise<void> => {
+): Promise<TransactionResponse | undefined> => {
 	if (!provider) {
 		console.error('Provider is null');
 		return;
@@ -387,8 +388,10 @@ export const withdrawTokens = async (
 
 		if (status) {
 			withdrawToast.showConfirmedWithdraw(network, tx.hash);
+			return tx;
 		} else {
 			withdrawToast.showFailedWithdraw(network, tx.hash);
+			return;
 		}
 	} catch (e) {
 		console.error('Error on withdrawing:', e);
