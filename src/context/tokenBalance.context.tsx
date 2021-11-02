@@ -117,6 +117,8 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 				return;
 			}
 
+			console.log('before!!!!!');
+
 			try {
 				const [
 					_newMainnetBalance,
@@ -138,13 +140,24 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 					),
 				]);
 
+				console.log(
+					'all',
+					_newMainnetBalance,
+					_newXDaiBalance,
+					_mainnetTokenDistro,
+					_xDaiTokenDistro,
+				);
+
 				setNewMainnetTokenBalance(_newMainnetBalance);
 				setNewXDaiTokenBalance(_newXDaiBalance);
 
 				setMainnetTokenDistroBalance(_mainnetTokenDistro);
 				setXDaiTokenDistroBalance(_xDaiTokenDistro);
 			} catch (e) {
-				console.error('Error in fetching token and streaming balances');
+				console.error(
+					'Error in fetching token and streaming balances',
+					e,
+				);
 			}
 		};
 
