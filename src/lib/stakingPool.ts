@@ -47,15 +47,19 @@ export const fetchGivStakingInfo = async (
 		lmContract.rewardPerToken(),
 	]);
 	totalSupply = new BigNumber(_totalSupply.toString());
+
+	const rewardRatePerToken = toBigNumber(_rewardRate).div(
+		_totalSupply.toString(),
+	);
+
 	apr = totalSupply.isZero()
 		? null
-		: new BigNumber(_rewardRate.toString())
-				.times('31536000')
-				.times('100')
-				.div(_totalSupply.toString());
+		: rewardRatePerToken.times('31536000').times('100');
+
 	return {
 		tokensInPool: totalSupply,
 		apr,
+		rewardRatePerToken: rewardRatePerToken,
 	};
 };
 
@@ -137,8 +141,10 @@ const fetchBalancerPoolStakingInfo = async (
 	const apr = _totalSupply.isZero()
 		? null
 		: rewardRatePerToken.times('31536000').times('100').times(lp);
+
 	return {
 		apr,
+		rewardRatePerToken,
 	};
 };
 const fetchSimplePoolStakingInfo = async (
@@ -182,17 +188,19 @@ const fetchSimplePoolStakingInfo = async (
 		.times(10 ** 18)
 		.div(2)
 		.div(reserves[0]);
+	const rewardRatePerToken = toBigNumber(_rewardRate).div(
+		_totalSupply.toString(),
+	);
 	const apr = _totalSupply.isZero()
 		? null
-		: toBigNumber(_rewardRate)
+		: rewardRatePerToken
 				.times('31536000')
 				.times('100')
-				.div(toBigNumber(_totalSupply))
 				.times(lp)
 				.div(10 ** 18);
-	const rewardPerToken = _rewardPerToken;
 	return {
 		apr,
+		rewardRatePerToken,
 	};
 };
 

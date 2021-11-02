@@ -80,10 +80,8 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 		POOL_ADDRESS,
 	} = poolStakingConfig;
 
-	const { apr, userStakeInfo, userNotStakedAmount } = useStakingPool(
-		poolStakingConfig,
-		network,
-	);
+	const { apr, userStakeInfo, userNotStakedAmount, rewardRatePerToken } =
+		useStakingPool(poolStakingConfig, network);
 
 	const setAmountPercentage = useCallback(
 		(percentage: number): void => {
@@ -96,7 +94,6 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 		},
 		[userNotStakedAmount],
 	);
-
 	const onChange = useCallback(value => {
 		setDisplayAmount(formatEthHelper(value, 6, false));
 		setAmount(ethers.utils.parseUnits('' + value).toString());
@@ -181,7 +178,25 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 										<IconHelp size={16} />
 									</Row>
 									<Row gap='4px' alignItems='center'>
-										<DetailValue>{0}</DetailValue>
+										<DetailValue>
+											{/* {formatWeiHelper(
+												rewardRatePerToken
+													?.times('604800')
+													.toString() || 10,
+												config.TOKEN_PRECISION,
+											)} */}
+											{rewardRatePerToken
+												? formatEthHelper(
+														rewardRatePerToken?.times(
+															'604800',
+														),
+														2,
+												  )
+												: 0}
+											{/* {rewardRatePerToken
+												?.times('604800')
+												.toString()} */}
+										</DetailValue>
 										<DetailUnit>GIV/week</DetailUnit>
 									</Row>
 								</Detail>

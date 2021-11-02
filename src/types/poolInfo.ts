@@ -11,5 +11,5 @@ export type APR = BigNumber | null;
 export interface StakePoolInfo {
 	tokensInPool?: BigNumber;
 	apr: APR;
-	rewardPerToken: ethers.BigNumber;
+	rewardRatePerToken: BigNumber;
 }

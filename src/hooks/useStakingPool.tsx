@@ -21,15 +21,15 @@ export const useStakingPool = (
 	apr: BigNumber | null;
 	userStakeInfo: StakeUserInfo;
 	userNotStakedAmount: ethers.BigNumber;
-	rewardPerToken: ethers.BigNumber | null;
+	rewardRatePerToken: BigNumber | null;
 } => {
 	const { xDaiTokenBalance, mainnetTokenBalance } =
 		useContext(TokenBalanceContext);
 	const { address } = useContext(OnboardContext);
 
 	const [apr, setApr] = useState<BigNumber | null>(null);
-	const [rewardPerToken, setRewardPerToken] =
-		useState<ethers.BigNumber | null>(null);
+	const [rewardRatePerToken, setRewardRatePerToken] =
+		useState<BigNumber | null>(null);
 	const [userStakeInfo, setUserStakeInfo] = useState<StakeUserInfo>({
 		earned: Zero,
 		stakedLpAmount: Zero,
@@ -49,10 +49,12 @@ export const useStakingPool = (
 					? fetchGivStakingInfo(LM_ADDRESS, network)
 					: fetchLPStakingInfo(poolStakingConfig, network);
 
-			promise.then(({ apr: _apr, rewardPerToken: _rewardPerToken }) => {
-				setApr(_apr);
-				setRewardPerToken(_rewardPerToken);
-			});
+			promise.then(
+				({ apr: _apr, rewardRatePerToken: _rewardRatePerToken }) => {
+					setApr(_apr);
+					setRewardRatePerToken(_rewardRatePerToken);
+				},
+			);
 		};
 
 		cb();
@@ -125,6 +127,6 @@ export const useStakingPool = (
 		apr,
 		userStakeInfo,
 		userNotStakedAmount,
-		rewardPerToken,
+		rewardRatePerToken,
 	};
 };
