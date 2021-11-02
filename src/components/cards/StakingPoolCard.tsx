@@ -80,10 +80,8 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 		POOL_ADDRESS,
 	} = poolStakingConfig;
 
-	const { apr, userStakeInfo, userNotStakedAmount } = useStakingPool(
-		poolStakingConfig,
-		network,
-	);
+	const { apr, userStakeInfo, userNotStakedAmount, rewardPerToken } =
+		useStakingPool(poolStakingConfig, network);
 
 	const setAmountPercentage = useCallback(
 		(percentage: number): void => {
@@ -181,7 +179,12 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 										<IconHelp size={16} />
 									</Row>
 									<Row gap='4px' alignItems='center'>
-										<DetailValue>{0}</DetailValue>
+										<DetailValue>
+											{formatWeiHelper(
+												rewardPerToken || Zero,
+												config.TOKEN_PRECISION,
+											)}
+										</DetailValue>
 										<DetailUnit>GIV/week</DetailUnit>
 									</Row>
 								</Detail>
