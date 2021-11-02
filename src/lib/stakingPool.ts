@@ -53,11 +53,9 @@ export const fetchGivStakingInfo = async (
 				.times('31536000')
 				.times('100')
 				.div(_totalSupply.toString());
-	const rewardPerToken = _rewardPerToken;
 	return {
 		tokensInPool: totalSupply,
 		apr,
-		rewardPerToken,
 	};
 };
 
@@ -132,17 +130,15 @@ const fetchBalancerPoolStakingInfo = async (
 		.div(BigNumber.sum(...weights).div(weights[0]))
 		.div(balances[0]);
 
+	const rewardRatePerToken = toBigNumber(_rewardRate).div(
+		_totalSupply.toString(),
+	);
+
 	const apr = _totalSupply.isZero()
 		? null
-		: toBigNumber(_rewardRate)
-				.times('31536000')
-				.times('100')
-				.div(toBigNumber(_totalSupply))
-				.times(lp);
-	const rewardPerToken = _rewardPerToken;
+		: rewardRatePerToken.times('31536000').times('100').times(lp);
 	return {
 		apr,
-		rewardPerToken,
 	};
 };
 const fetchSimplePoolStakingInfo = async (
@@ -197,7 +193,6 @@ const fetchSimplePoolStakingInfo = async (
 	const rewardPerToken = _rewardPerToken;
 	return {
 		apr,
-		rewardPerToken,
 	};
 };
 

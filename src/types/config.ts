@@ -2,6 +2,10 @@ export interface BasicStakingConfig {
 	LM_ADDRESS: string;
 }
 
+export interface GIVStakingConfig extends BasicStakingConfig {
+	GARDEN_ADDRESS?: string;
+}
+
 export enum StakingType {
 	UNISWAP = 'UNISWAP',
 	BALANCER = 'BALANCER',
@@ -35,7 +39,7 @@ export interface BasicNetworkConfig {
 	TOKEN_ADDRESS: string;
 	WETH_TOKEN_ADDRESS?: string;
 	TOKEN_DISTRO_ADDRESS: string;
-	GIV: BasicStakingConfig;
+	GIV: GIVStakingConfig;
 	nodeUrl: string;
 	pools: Array<SimplePoolStakingConfig | BalancerPoolStakingConfig>;
 }
