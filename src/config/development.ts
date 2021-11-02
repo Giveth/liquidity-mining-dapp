@@ -49,6 +49,7 @@ const config: EnvConfig = {
 		nodeUrl: 'https://rpc.xdaichain.com/',
 		GIV: {
 			LM_ADDRESS: '0xcdB04cb27AA12B31F30789731B94712C72080FF0',
+			GARDEN_ADDRESS: '0x0bbec1F6bf78955ade32E7A927058aD6044B1Da5',
 		},
 
 		pools: [

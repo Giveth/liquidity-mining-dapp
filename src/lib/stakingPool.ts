@@ -121,13 +121,13 @@ const fetchBalancerPoolStakingInfo = async (
 		.div(BigNumber.sum(...weights).div(weights[0]))
 		.div(balances[0]);
 
+	const rewardRatePerToken = toBigNumber(_rewardRate).div(
+		_totalSupply.toString(),
+	);
+
 	const apr = _totalSupply.isZero()
 		? null
-		: toBigNumber(_rewardRate)
-				.times('31536000')
-				.times('100')
-				.div(toBigNumber(_totalSupply))
-				.times(lp);
+		: rewardRatePerToken.times('31536000').times('100').times(lp);
 	return {
 		apr,
 	};
