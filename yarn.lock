@@ -725,10 +725,10 @@
     "@ethersproject/properties" "^5.4.0"
     "@ethersproject/strings" "^5.4.0"
 
-"@giveth/ui-design-system@^1.2.18":
-  version "1.2.18"
-  resolved "https://registry.yarnpkg.com/@giveth/ui-design-system/-/ui-design-system-1.2.18.tgz#09b96c65d22011682f9f6bf0aad64fc584a7f37d"
-  integrity sha512-044e1N5/Gh4deEY2aXGUJAxSEf0ZiB3D1D/RtZGKMbIM+M8zEiKlU1zzoS7gZ3qUjLvERFR6dLHZErZRuuB+Dw==
+"@giveth/ui-design-system@^1.2.19":
+  version "1.2.19"
+  resolved "https://registry.yarnpkg.com/@giveth/ui-design-system/-/ui-design-system-1.2.19.tgz#b4cd7c714c624b42831f3ca1f344194ff4061de2"
+  integrity sha512-q9+DRzEW5CjhFsCq7CSxIa4DQ2OYxWh5Cw8K8B1lH0NpA191XMyXZ5DPBrnP62k91uHEC7iSQLGCW7q+EN3brw==
   dependencies:
     "@types/styled-components" "^5.1.14"
     styled-components "^5.3.1"
