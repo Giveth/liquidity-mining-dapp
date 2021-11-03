@@ -4,9 +4,11 @@ import router from 'next/router';
 import {
 	Button,
 	Container,
+	IconExternalLink,
 	IconGIVBack,
 	P,
 	Title,
+	brandColors,
 } from '@giveth/ui-design-system';
 import {
 	GIVbacksTopContainer,
@@ -25,6 +27,12 @@ import {
 	RoundInfoRow,
 	RoundInfoTallRow,
 	RoundButton,
+	InfoSection,
+	InfoImage,
+	InfoTitle,
+	InfoDesc,
+	GivAllocated,
+	InfoReadMore,
 } from './GIVbacks.sc';
 
 export const TabGIVbacksTop = () => {
@@ -98,7 +106,7 @@ export const TabGIVbacksBottom = () => {
 					</GbDataBlock>
 				</Row>
 				<GIVBackCard>
-					<Row>
+					<Row justifyContent='space-between' alignItems='center'>
 						<RoundSection>
 							<RoundTitle>GIVback Round 8</RoundTitle>
 							<RoundInfo>
@@ -112,10 +120,10 @@ export const TabGIVbacksBottom = () => {
 								</RoundInfoRow>
 								<RoundInfoTallRow
 									justifyContent='space-between'
-									alignItems='baseline'
+									alignItems='center'
 								>
 									<P>GIV Allocated to Round</P>
-									<Title>133,291</Title>
+									<GivAllocated>133,291</GivAllocated>
 								</RoundInfoTallRow>
 								<RoundButton
 									size='small'
@@ -124,6 +132,27 @@ export const TabGIVbacksBottom = () => {
 								/>
 							</RoundInfo>
 						</RoundSection>
+						<InfoSection>
+							<InfoImage src='/images/hands.svg' />
+							<InfoTitle weight={700}>
+								When you give you get GIV back!
+							</InfoTitle>
+							<InfoDesc>
+								GIVbacks rounds last two weeks. After the End
+								Date, the GIV Allocated to Round will be
+								distributed to Givers who donated to verified
+								project during the round. Projects must apply
+								for verification at least 1 week prior to the
+								Start Date in order to be included in the round.
+							</InfoDesc>
+							<InfoReadMore>
+								Read More{' '}
+								<IconExternalLink
+									size={16}
+									color={brandColors.cyan[500]}
+								/>
+							</InfoReadMore>
+						</InfoSection>
 					</Row>
 				</GIVBackCard>
 			</Container>
