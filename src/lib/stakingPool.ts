@@ -1,9 +1,11 @@
-import { Contract, ethers } from 'ethers';
+import { Contract, ethers, utils } from 'ethers';
 
 import { abi as LM_ABI } from '../artifacts/UnipoolTokenDistributor.json';
 import { abi as UNI_ABI } from '../artifacts/UNI.json';
 import { abi as BAL_WEIGHTED_POOL_ABI } from '../artifacts/BalancerWeightedPool.json';
 import { abi as BAL_VAULT_ABI } from '../artifacts/BalancerVault.json';
+import { abi as TOKEN_MANAGER_ABI } from '../artifacts/HookedTokenManager.json';
+import { abi as ERC20_ABI } from '../artifacts/ERC20.json';
 
 import { StakePoolInfo, StakeUserInfo } from '../types/poolInfo';
 import { networkProviders } from '../helpers/networkProvider';
@@ -37,19 +39,29 @@ export const fetchGivStakingInfo = async (
 	let apr: BigNumber | null;
 	let totalSupply;
 
-	const [_totalSupply, _rewardRate]: [ethers.BigNumber, ethers.BigNumber] =
-		await Promise.all([lmContract.totalSupply(), lmContract.rewardRate()]);
+	const [_totalSupply, _rewardRate, _rewardPerToken]: [
+		ethers.BigNumber,
+		ethers.BigNumber,
+		ethers.BigNumber,
+	] = await Promise.all([
+		lmContract.totalSupply(),
+		lmContract.rewardRate(),
+		lmContract.rewardPerToken(),
+	]);
 	totalSupply = new BigNumber(_totalSupply.toString());
+
+	const rewardRatePerToken = toBigNumber(_rewardRate).div(
+		_totalSupply.toString(),
+	);
+
 	apr = totalSupply.isZero()
 		? null
-		: new BigNumber(_rewardRate.toString())
-				.times('31536000')
-				.times('100')
-				.div(_totalSupply.toString());
+		: rewardRatePerToken.times('31536000').times('100');
 
 	return {
 		tokensInPool: totalSupply,
 		apr,
+		rewardRatePerToken: rewardRatePerToken,
 	};
 };
 
@@ -95,10 +107,12 @@ const fetchBalancerPoolStakingInfo = async (
 		_poolNormalizedWeights,
 		_totalSupply,
 		_rewardRate,
+		_rewardPerToken,
 	]: [
 		PoolTokens,
 		ethers.BigNumber,
 		Array<ethers.BigNumber>,
+		ethers.BigNumber,
 		ethers.BigNumber,
 		ethers.BigNumber,
 	] = await Promise.all([
@@ -107,6 +121,7 @@ const fetchBalancerPoolStakingInfo = async (
 		poolContract.getNormalizedWeights(),
 		lmContract.totalSupply(),
 		lmContract.rewardRate(),
+		lmContract.rewardPerToken(),
 	]);
 
 	const weights = _poolNormalizedWeights.map(toBigNumber);
@@ -128,8 +143,10 @@ const fetchBalancerPoolStakingInfo = async (
 	const apr = _totalSupply.isZero()
 		? null
 		: rewardRatePerToken.times('31536000').times('100').times(lp);
+
 	return {
 		apr,
+		rewardRatePerToken,
 	};
 };
 const fetchSimplePoolStakingInfo = async (
@@ -144,9 +161,17 @@ const fetchSimplePoolStakingInfo = async (
 	let reserves;
 
 	const poolContract = new Contract(POOL_ADDRESS, UNI_ABI, provider);
-	const [_reserves, _token0, _poolTotalSupply, _totalSupply, _rewardRate]: [
+	const [
+		_reserves,
+		_token0,
+		_poolTotalSupply,
+		_totalSupply,
+		_rewardRate,
+		_rewardPerToken,
+	]: [
 		Array<ethers.BigNumber>,
 		string,
+		ethers.BigNumber,
 		ethers.BigNumber,
 		ethers.BigNumber,
 		ethers.BigNumber,
@@ -156,6 +181,7 @@ const fetchSimplePoolStakingInfo = async (
 		poolContract.totalSupply(),
 		lmContract.totalSupply(),
 		lmContract.rewardRate(),
+		lmContract.rewardPerToken(),
 	]);
 	reserves = _reserves.map(toBigNumber);
 	if (_token0.toLowerCase() !== tokenAddress.toLowerCase())
@@ -164,17 +190,19 @@ const fetchSimplePoolStakingInfo = async (
 		.times(10 ** 18)
 		.div(2)
 		.div(reserves[0]);
+	const rewardRatePerToken = toBigNumber(_rewardRate).div(
+		_totalSupply.toString(),
+	);
 	const apr = _totalSupply.isZero()
 		? null
-		: toBigNumber(_rewardRate)
+		: rewardRatePerToken
 				.times('31536000')
 				.times('100')
-				.div(toBigNumber(_totalSupply))
 				.times(lp)
 				.div(10 ** 18);
-
 	return {
 		apr,
+		rewardRatePerToken,
 	};
 };
 
@@ -271,6 +299,133 @@ const permitTokens = async (
 		signature.r,
 		signature.s,
 	);
+};
+
+export const approveERC20tokenTransfer = async (
+	amount: string,
+	owenerAddress: string,
+	spenderAddress: string,
+	poolAddress: string,
+	provider: Web3Provider | null,
+): Promise<boolean> => {
+	if (amount === '0') return false;
+	if (!provider) {
+		console.error('Provider is null');
+		return false;
+	}
+
+	const signer = provider.getSigner();
+
+	const tokenContract = new Contract(poolAddress, ERC20_ABI, signer);
+	const allowance: BigNumber = await tokenContract.allowance(
+		owenerAddress,
+		spenderAddress,
+	);
+
+	const amountNumber = ethers.BigNumber.from(amount);
+	const allowanceNumber = ethers.BigNumber.from(allowance.toString());
+
+	console.log('amountNumber', amountNumber.toString());
+	console.log('allowanceNumber', allowanceNumber.toString());
+
+	if (amountNumber.lte(allowanceNumber)) {
+		console.log('Allowance is GT Amount');
+		return true;
+	}
+
+	if (!allowance.isZero()) {
+		console.log('Lets Zero Aprove');
+		try {
+			const approveZero: TransactionResponse = await tokenContract
+				.connect(signer.connectUnchecked())
+				.approve(spenderAddress, Zero);
+
+			const { status } = await approveZero.wait();
+		} catch (error) {
+			console.log('Error on Zero Approve', error);
+			return false;
+		}
+	}
+
+	try {
+		const approve = await tokenContract
+			.connect(signer.connectUnchecked())
+			.approve(spenderAddress, amountNumber);
+
+		const { status } = await approve.wait();
+		console.log('approve', approve);
+	} catch (error) {
+		console.log('Error on Amount Approve', error);
+		return false;
+	}
+	return true;
+};
+
+export const wrapToken = async (
+	amount: string,
+	poolAddress: string,
+	gardenAddress: string,
+	provider: Web3Provider | null,
+): Promise<TransactionResponse | undefined> => {
+	if (amount === '0') return;
+	if (!provider) {
+		console.error('Provider is null');
+		return;
+	}
+
+	const signer = provider.getSigner();
+
+	const userAddress = await signer.getAddress();
+
+	const isApproved = await approveERC20tokenTransfer(
+		amount,
+		userAddress,
+		gardenAddress,
+		poolAddress,
+		provider,
+	);
+
+	if (!isApproved) return;
+
+	const gardenContract = new Contract(
+		gardenAddress,
+		TOKEN_MANAGER_ABI,
+		signer,
+	);
+	const txResponse: TransactionResponse = await gardenContract
+		.connect(signer.connectUnchecked())
+		.wrap(amount);
+
+	const { status } = await txResponse.wait();
+
+	return txResponse;
+};
+
+export const unwrapToken = async (
+	amount: string,
+	gardenAddress: string,
+	provider: Web3Provider | null,
+): Promise<TransactionResponse | undefined> => {
+	if (amount === '0') return;
+	if (!provider) {
+		console.error('Provider is null');
+		return;
+	}
+
+	const signer = provider.getSigner();
+
+	const gardenContract = new Contract(
+		gardenAddress,
+		TOKEN_MANAGER_ABI,
+		signer,
+	);
+	const txResponse: TransactionResponse = await gardenContract
+		.connect(signer.connectUnchecked())
+		.unwrap(amount);
+
+	const { status } = await txResponse.wait();
+
+	return txResponse;
 };
 
 export const stakeTokens = async (
