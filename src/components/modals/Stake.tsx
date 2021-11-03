@@ -1,4 +1,4 @@
-import { FC, useCallback, useState, useContext } from 'react';
+import { FC, useState, useContext } from 'react';
 import { Modal, IModal } from './Modal';
 import {
 	neutralColors,
@@ -12,11 +12,7 @@ import { PoolStakingConfig } from '../../types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
 import { ethers } from 'ethers';
 import { AmountInput } from '../AmountInput';
-import {
-	harvestTokens,
-	stakeTokens,
-	withdrawTokens,
-} from '../../lib/stakingPool';
+import { stakeTokens, wrapToken } from '../../lib/stakingPool';
 import { OnboardContext } from '../../context/onboard.context';
 
 interface IStakeModalProps extends IModal {
@@ -32,21 +28,18 @@ export const StakeModal: FC<IStakeModalProps> = ({
 }) => {
 	const [amount, setAmount] = useState('0');
 	const [label, setLabel] = useState('APPROVE');
-	const { network: walletNetwork, provider } = useContext(OnboardContext);
+	const { provider } = useContext(OnboardContext);
 
-	const {
-		type,
-		title,
-		description,
-		provideLiquidityLink,
-		LM_ADDRESS,
-		POOL_ADDRESS,
-	} = poolStakingConfig;
+	const { title, LM_ADDRESS, POOL_ADDRESS, GARDEN_ADDRESS } =
+		poolStakingConfig;
 
 	const onApprove = () => {
-		console.log('onApprove called');
 		setLabel('PENDING APPROVAL');
-		const promises = stakeTokens(amount, POOL_ADDRESS, LM_ADDRESS, provider)
+		const promise = GARDEN_ADDRESS
+			? wrapToken(amount, POOL_ADDRESS, GARDEN_ADDRESS, provider)
+			: stakeTokens(amount, POOL_ADDRESS, LM_ADDRESS, provider);
+
+		promise
 			.then(data => {
 				console.log('data: ', data);
 				if (data) {
