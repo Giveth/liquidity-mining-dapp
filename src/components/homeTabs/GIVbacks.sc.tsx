@@ -28,12 +28,12 @@ export const Right = styled.div`
 	width: 360px;
 `;
 
-export const Title = styled(D1)`
+export const GBTitle = styled(D1)`
 	margin-top: 60px;
 	margin-bottom: 24px;
 `;
 
-export const Subtitle = styled(QuoteText)`
+export const GBSubtitle = styled(QuoteText)`
 	margin-bottom: 89px;
 `;
 
@@ -43,6 +43,8 @@ export const GIVbackRewardCard = styled(RewardCard)`
 	bottom: -37px;
 `;
 
+export const GIVbacksBottomContainer = styled.div``;
+
 export const GbDataBlock = styled(DataBlock)`
 	width: 459px;
 `;
@@ -51,4 +53,32 @@ export const GbButton = styled(Button)`
 	padding: 24px 31px;
 `;
 
-export const GIVbacksBottomContainer = styled.div``;
+export const GIVBackCard = styled.div`
+	margin: 132px 0 41px;
+	background-color: #3c14c5;
+	padding: 50px;
+	background-image: url('/images/backgrounds/giv-outline.svg');
+	border-radius: 8px;
+	min-height: 480px;
+	position: relative;
+`;
+
+export const RoundSection = styled.div``;
+
+export const RoundTitle = styled(H2)``;
+
+export const RoundInfo = styled.div`
+	margin: 38px auto 32px 0;
+`;
+
+export const RoundInfoRow = styled(Row)`
+	margin: 14px 0;
+`;
+
+export const RoundInfoTallRow = styled(Row)`
+	margin: 32px 0;
+`;
+
+export const RoundButton = styled(Button)`
+	padding: 16px 55px;
+`;

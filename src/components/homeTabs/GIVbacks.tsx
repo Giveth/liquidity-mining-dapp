@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { Row } from '../styled-components/Grid';
 import router from 'next/router';
 import {
-	Container,
-	IconGiveth,
 	Button,
-	IconGIVFarm,
+	Container,
 	IconGIVBack,
+	P,
+	Title,
 } from '@giveth/ui-design-system';
 import {
 	GIVbacksTopContainer,
@@ -14,10 +14,17 @@ import {
 	GIVbackRewardCard,
 	Left,
 	Right,
-	Subtitle,
-	Title,
+	GBSubtitle,
+	GBTitle,
 	GbDataBlock,
 	GbButton,
+	GIVBackCard,
+	RoundSection,
+	RoundTitle,
+	RoundInfo,
+	RoundInfoRow,
+	RoundInfoTallRow,
+	RoundButton,
 } from './GIVbacks.sc';
 
 export const TabGIVbacksTop = () => {
@@ -29,13 +36,13 @@ export const TabGIVbacksTop = () => {
 				<Row justifyContent='space-between'>
 					<Left>
 						<Row alignItems='baseline' gap='16px'>
-							<Title>GIVbacks</Title>
+							<GBTitle>GIVbacks</GBTitle>
 							<IconGIVBack size={64} />
 						</Row>
-						<Subtitle size='medium'>
+						<GBSubtitle size='medium'>
 							GIVbacks is a revolutionary concept that rewards
 							donors to verified projects with GIV tokens.
-						</Subtitle>
+						</GBSubtitle>
 					</Left>
 					<Right>
 						<GIVbackRewardCard
@@ -90,6 +97,35 @@ export const TabGIVbacksBottom = () => {
 						become eligible to receive GIVbacks.
 					</GbDataBlock>
 				</Row>
+				<GIVBackCard>
+					<Row>
+						<RoundSection>
+							<RoundTitle>GIVback Round 8</RoundTitle>
+							<RoundInfo>
+								<RoundInfoRow justifyContent='space-between'>
+									<P>Start Date</P>
+									<P>October 31, 2021</P>
+								</RoundInfoRow>
+								<RoundInfoRow justifyContent='space-between'>
+									<P>End Date</P>
+									<P>November 14, 2021 </P>
+								</RoundInfoRow>
+								<RoundInfoTallRow
+									justifyContent='space-between'
+									alignItems='baseline'
+								>
+									<P>GIV Allocated to Round</P>
+									<Title>133,291</Title>
+								</RoundInfoTallRow>
+								<RoundButton
+									size='small'
+									label={'DONATE TO EARN GIV'}
+									buttonType='primary'
+								/>
+							</RoundInfo>
+						</RoundSection>
+					</Row>
+				</GIVBackCard>
 			</Container>
 		</GIVbacksBottomContainer>
 		// 	<Container>
