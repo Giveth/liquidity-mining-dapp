@@ -1,9 +1,11 @@
-import { Contract, ethers } from 'ethers';
+import { Contract, ethers, utils } from 'ethers';
 
 import { abi as LM_ABI } from '../artifacts/UnipoolTokenDistributor.json';
 import { abi as UNI_ABI } from '../artifacts/UNI.json';
 import { abi as BAL_WEIGHTED_POOL_ABI } from '../artifacts/BalancerWeightedPool.json';
 import { abi as BAL_VAULT_ABI } from '../artifacts/BalancerVault.json';
+import { abi as TOKEN_MANAGER_ABI } from '../artifacts/HookedTokenManager.json';
+import { abi as ERC20_ABI } from '../artifacts/ERC20.json';
 
 import { StakePoolInfo, StakeUserInfo } from '../types/poolInfo';
 import { networkProviders } from '../helpers/networkProvider';
@@ -297,6 +299,133 @@ const permitTokens = async (
 		signature.r,
 		signature.s,
 	);
+};
+
+export const approveERC20tokenTransfer = async (
+	amount: string,
+	owenerAddress: string,
+	spenderAddress: string,
+	poolAddress: string,
+	provider: Web3Provider | null,
+): Promise<boolean> => {
+	if (amount === '0') return false;
+	if (!provider) {
+		console.error('Provider is null');
+		return false;
+	}
+
+	const signer = provider.getSigner();
+
+	const tokenContract = new Contract(poolAddress, ERC20_ABI, signer);
+	const allowance: BigNumber = await tokenContract.allowance(
+		owenerAddress,
+		spenderAddress,
+	);
+
+	const amountNumber = ethers.BigNumber.from(amount);
+	const allowanceNumber = ethers.BigNumber.from(allowance.toString());
+
+	console.log('amountNumber', amountNumber.toString());
+	console.log('allowanceNumber', allowanceNumber.toString());
+
+	if (amountNumber.lte(allowanceNumber)) {
+		console.log('Allowance is GT Amount');
+		return true;
+	}
+
+	if (!allowance.isZero()) {
+		console.log('Lets Zero Aprove');
+		try {
+			const approveZero: TransactionResponse = await tokenContract
+				.connect(signer.connectUnchecked())
+				.approve(spenderAddress, Zero);
+
+			const { status } = await approveZero.wait();
+		} catch (error) {
+			console.log('Error on Zero Approve', error);
+			return false;
+		}
+	}
+
+	try {
+		const approve = await tokenContract
+			.connect(signer.connectUnchecked())
+			.approve(spenderAddress, amountNumber);
+
+		const { status } = await approve.wait();
+		console.log('approve', approve);
+	} catch (error) {
+		console.log('Error on Amount Approve', error);
+		return false;
+	}
+	return true;
+};
+
+export const wrapToken = async (
+	amount: string,
+	poolAddress: string,
+	gardenAddress: string,
+	provider: Web3Provider | null,
+): Promise<TransactionResponse | undefined> => {
+	if (amount === '0') return;
+	if (!provider) {
+		console.error('Provider is null');
+		return;
+	}
+
+	const signer = provider.getSigner();
+
+	const userAddress = await signer.getAddress();
+
+	const isApproved = await approveERC20tokenTransfer(
+		amount,
+		userAddress,
+		gardenAddress,
+		poolAddress,
+		provider,
+	);
+
+	if (!isApproved) return;
+
+	const gardenContract = new Contract(
+		gardenAddress,
+		TOKEN_MANAGER_ABI,
+		signer,
+	);
+	const txResponse: TransactionResponse = await gardenContract
+		.connect(signer.connectUnchecked())
+		.wrap(amount);
+
+	const { status } = await txResponse.wait();
+
+	return txResponse;
+};
+
+export const unwrapToken = async (
+	amount: string,
+	gardenAddress: string,
+	provider: Web3Provider | null,
+): Promise<TransactionResponse | undefined> => {
+	if (amount === '0') return;
+	if (!provider) {
+		console.error('Provider is null');
+		return;
+	}
+
+	const signer = provider.getSigner();
+
+	const gardenContract = new Contract(
+		gardenAddress,
+		TOKEN_MANAGER_ABI,
+		signer,
+	);
+	const txResponse: TransactionResponse = await gardenContract
+		.connect(signer.connectUnchecked())
+		.unwrap(amount);
+
+	const { status } = await txResponse.wait();
+
+	return txResponse;
 };
 
 export const stakeTokens = async (
