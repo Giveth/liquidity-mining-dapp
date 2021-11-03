@@ -1,4 +1,4 @@
-import { FC, useCallback, useState, useContext } from 'react';
+import { FC, useState, useContext } from 'react';
 import { Modal, IModal } from './Modal';
 import { neutralColors, Button, H4 } from '@giveth/ui-design-system';
 import { Row } from '../styled-components/Grid';
@@ -7,7 +7,7 @@ import { PoolStakingConfig } from '../../types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
 import { ethers } from 'ethers';
 import { AmountInput } from '../AmountInput';
-import { withdrawTokens } from '../../lib/stakingPool';
+import { unwrapToken, withdrawTokens } from '../../lib/stakingPool';
 import { OnboardContext } from '../../context/onboard.context';
 
 interface IUnStakeModalProps extends IModal {
@@ -23,21 +23,17 @@ export const UnStakeModal: FC<IUnStakeModalProps> = ({
 }) => {
 	const [amount, setAmount] = useState('0');
 	const [label, setLabel] = useState('UNSTAKE');
-	const { network: walletNetwork, provider } = useContext(OnboardContext);
+	const { provider } = useContext(OnboardContext);
 
-	const {
-		type,
-		title,
-		description,
-		provideLiquidityLink,
-		LM_ADDRESS,
-		POOL_ADDRESS,
-	} = poolStakingConfig;
+	const { title, LM_ADDRESS, GARDEN_ADDRESS } = poolStakingConfig;
 
 	const onWithdraw = () => {
 		console.log('onApprove called');
 		setLabel('PENDING UNSTAKE');
-		const promises = withdrawTokens(amount, LM_ADDRESS, provider)
+		const promise = GARDEN_ADDRESS
+			? unwrapToken(amount, GARDEN_ADDRESS, provider)
+			: withdrawTokens(amount, LM_ADDRESS, provider);
+		promise
 			.then(data => {
 				console.log('data: ', data);
 				if (data) {
