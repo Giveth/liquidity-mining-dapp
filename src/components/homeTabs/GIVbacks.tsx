@@ -17,6 +17,7 @@ import {
 	Subtitle,
 	Title,
 	GbDataBlock,
+	GbButton,
 } from './GIVbacks.sc';
 
 export const TabGIVbacksTop = () => {
@@ -63,7 +64,7 @@ export const TabGIVbacksBottom = () => {
 					<GbDataBlock
 						title='Donor Rewards'
 						button={
-							<Button
+							<GbButton
 								label='DONATE TO EARN GIV'
 								buttonType='secondary'
 								size='large'
@@ -77,7 +78,7 @@ export const TabGIVbacksBottom = () => {
 					<GbDataBlock
 						title='Project Verification'
 						button={
-							<Button
+							<GbButton
 								label='VERIFY YOUR PROJECT'
 								buttonType='secondary'
 								size='large'
