@@ -18,6 +18,8 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 
 	const { LM_ADDRESS } = poolStakingConfig;
 
+	const isV3Staking = type === StakingType.UNISWAP;
+
 	const { apr, rewardRatePerToken, userNotStakedAmount, userStakeInfo } =
 		useStakingPool(poolStakingConfig, network);
 
