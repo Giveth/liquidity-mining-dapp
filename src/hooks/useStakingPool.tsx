@@ -1,18 +1,18 @@
-import { PoolStakingConfig, StakingType } from '../types/config';
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import BigNumber from 'bignumber.js';
-import { StakePoolInfo, StakeUserInfo } from '../types/poolInfo';
 import { Zero } from '@ethersproject/constants';
 import { ethers } from 'ethers';
+
 import {
 	fetchGivStakingInfo,
 	fetchLPStakingInfo,
 	fetchUserNotStakedToken,
 	fetchUserStakeInfo,
-} from '../lib/stakingPool';
-import config from '../configuration';
-import { TokenBalanceContext } from '../context/tokenBalance.context';
-import { OnboardContext } from '../context/onboard.context';
+} from '@/lib/stakingPool';
+import config from '@/configuration';
+import { useOnboard, useTokenBalance } from '@/context';
+import { PoolStakingConfig, StakingType } from '@/types/config';
+import { StakePoolInfo, StakeUserInfo } from '@/types/poolInfo';
 
 export const useStakingPool = (
 	poolStakingConfig: PoolStakingConfig,
@@ -23,9 +23,8 @@ export const useStakingPool = (
 	userNotStakedAmount: ethers.BigNumber;
 	rewardRatePerToken: BigNumber | null;
 } => {
-	const { xDaiTokenBalance, mainnetTokenBalance } =
-		useContext(TokenBalanceContext);
-	const { address } = useContext(OnboardContext);
+	const { xDaiTokenBalance, mainnetTokenBalance } = useTokenBalance();
+	const { address } = useOnboard();
 
 	const [apr, setApr] = useState<BigNumber | null>(null);
 	const [rewardRatePerToken, setRewardRatePerToken] =

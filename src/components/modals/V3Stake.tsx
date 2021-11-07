@@ -1,27 +1,19 @@
-import { FC, useState, useContext } from 'react';
-import Image from 'next/image';
+import { FC } from 'react';
 import { Modal, IModal } from './Modal';
 import {
-	IconExternalLink,
 	neutralColors,
 	brandColors,
 	Button,
-	OulineButton,
 	H4,
 	Overline,
 	B,
-	IconGiveth,
-	IconETH,
 } from '@giveth/ui-design-system';
 import { Row } from '../styled-components/Grid';
 import styled from 'styled-components';
 import { PoolStakingConfig } from '../../types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
-import { OnboardContext } from '../../context/onboard.context';
-import { useV3Liquidity } from '../../context/nfts.context';
-import { LiquidityPosition } from '../../types/nfts';
-import V3StakingCard from '../cards/V3StakingCard';
-
+import { useV3Liquidity } from '../../context/useV3Liquidity';
+import V3StakingCard from '../cards/PositionCard';
 interface IV3StakeModalProps extends IModal {
 	poolStakingConfig: PoolStakingConfig;
 	isUnstakingModal?: boolean;
@@ -87,7 +79,7 @@ const InnerModal = styled.div`
 	display: flex;
 	flex-direction: column;
 	padding: 0 24px;
-	gap: 24px;
+	gap: 36px;
 `;
 
 export const PositionContainer = styled.div`
