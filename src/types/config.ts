@@ -18,7 +18,7 @@ export interface SimplePoolStakingConfig extends BasicStakingConfig {
 	POOL_ADDRESS: string;
 	type: StakingType;
 	title: string;
-	description: string;
+	description?: string;
 	provideLiquidityLink?: string;
 }
 
