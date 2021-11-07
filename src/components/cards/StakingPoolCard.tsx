@@ -1,6 +1,6 @@
 import config from '../../configuration';
 import { OnboardContext } from '../../context/onboard.context';
-import { PoolStakingConfig } from '../../types/config';
+import { PoolStakingConfig, StakingType } from '../../types/config';
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { H4, P } from '../styled-components/Typography';
 import { Row } from '../styled-components/Grid';
@@ -46,6 +46,7 @@ import { APRModal } from '../modals/APR';
 import { StakeModal } from '../modals/Stake';
 import { UnStakeModal } from '../modals/UnStake';
 import { StakingPoolImages } from '../StakingPoolImages';
+import { V3StakeModal } from '../modals/V3Stake';
 
 enum SwapCardStates {
 	Default,
@@ -79,6 +80,8 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 		LM_ADDRESS,
 		POOL_ADDRESS,
 	} = poolStakingConfig;
+
+	const isV3Staking = type === StakingType.UNISWAP;
 
 	const { apr, userStakeInfo, userNotStakedAmount, rewardRatePerToken } =
 		useStakingPool(poolStakingConfig, network);
@@ -209,7 +212,6 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 							<StakeButtonsRow>
 								<StakeContainer flexDirection='column'>
 									<StakeButton
-										disabled={userNotStakedAmount.isZero()}
 										label='STAKE'
 										size='small'
 										onClick={() => setShowStakeModal(true)}
@@ -224,7 +226,6 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 								</StakeContainer>
 								<StakeContainer flexDirection='column'>
 									<StakeButton
-										disabled={userStakeInfo.stakedLpAmount.isZero()}
 										label='UNSTAKE'
 										size='small'
 										onClick={() =>
@@ -355,22 +356,37 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 			)} */}
 			</StakingPoolContainer>
 			<APRModal showModal={showAPRModal} setShowModal={setShowAPRModal} />
-			{showStakeModal && (
-				<StakeModal
-					showModal={showStakeModal}
-					setShowModal={setShowStakeModal}
-					poolStakingConfig={poolStakingConfig}
-					maxAmount={userNotStakedAmount}
-				/>
-			)}
-			{showUnStakeModal && (
-				<UnStakeModal
-					showModal={showUnStakeModal}
-					setShowModal={setShowUnStakeModal}
-					poolStakingConfig={poolStakingConfig}
-					maxAmount={userStakeInfo.stakedLpAmount}
-				/>
-			)}
+			{showStakeModal &&
+				(isV3Staking ? (
+					<V3StakeModal
+						showModal={showStakeModal}
+						setShowModal={setShowStakeModal}
+						poolStakingConfig={poolStakingConfig}
+					/>
+				) : (
+					<StakeModal
+						showModal={showStakeModal}
+						setShowModal={setShowStakeModal}
+						poolStakingConfig={poolStakingConfig}
+						maxAmount={userNotStakedAmount}
+					/>
+				))}
+			{showUnStakeModal &&
+				(isV3Staking ? (
+					<V3StakeModal
+						isUnstakingModal={true}
+						showModal={showUnStakeModal}
+						setShowModal={setShowUnStakeModal}
+						poolStakingConfig={poolStakingConfig}
+					/>
+				) : (
+					<UnStakeModal
+						showModal={showUnStakeModal}
+						setShowModal={setShowUnStakeModal}
+						poolStakingConfig={poolStakingConfig}
+						maxAmount={userStakeInfo.stakedLpAmount}
+					/>
+				))}
 		</>
 	);
 };
