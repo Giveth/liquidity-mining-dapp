@@ -19,6 +19,7 @@ import {
 } from './GIVfarm.sc';
 import { Container, IconGIVFarm } from '@giveth/ui-design-system';
 import { OnboardContext } from '../../context/onboard.context';
+import StakingPositionCard from '../cards/StakingPositionCard';
 
 const GIVfarmTabContainer = styled(TabContainer)``;
 
@@ -86,7 +87,14 @@ export const TabGIVfarmBottom = () => {
 				<Row justifyContent='center' gap='24px' wrap={1}>
 					{config.MAINNET_CONFIG.pools.map(
 						(poolStakingConfig, index) => {
-							return (
+							return poolStakingConfig.type ===
+								StakingType.UNISWAP ? (
+								<StakingPositionCard
+									key={`staking_pool_card_mainnet_${index}`}
+									network={config.MAINNET_NETWORK_NUMBER}
+									poolStakingConfig={poolStakingConfig}
+								/>
+							) : (
 								<StakingPoolCard
 									key={`staking_pool_card_mainnet_${index}`}
 									network={config.MAINNET_NETWORK_NUMBER}

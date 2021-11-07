@@ -157,34 +157,25 @@ export function useV3Staking(tokenId: number | undefined) {
 		],
 	);
 
-	const claim = useCallback(
-		async (next: () => void) => {
-			if (
-				!walletAddress ||
-				!uniswapV3StakerContract ||
-				!currentIncentive.key
-			)
-				return;
+	const claim = useCallback(async () => {
+		if (!walletAddress || !uniswapV3StakerContract || !currentIncentive.key)
+			return;
 
-			try {
-				setIsWorking('Claiming...');
+		try {
+			setIsWorking('Claiming...');
 
-				uniswapV3StakerContract.claimReward(
-					currentIncentive.key[0],
-					walletAddress,
-					0,
-				);
-
-				next();
-			} catch (e) {
-				console.warn(e);
-				setIsWorking(null);
-			} finally {
-				setIsWorking(null);
-			}
-		},
-		[walletAddress, currentIncentive.key, uniswapV3StakerContract],
-	);
+			uniswapV3StakerContract.claimReward(
+				currentIncentive.key[0],
+				walletAddress,
+				0,
+			);
+		} catch (e) {
+			console.warn(e);
+			setIsWorking(null);
+		} finally {
+			setIsWorking(null);
+		}
+	}, [walletAddress, currentIncentive.key, uniswapV3StakerContract]);
 
 	const stake = useCallback(async () => {
 		if (
