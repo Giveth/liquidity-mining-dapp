@@ -1,23 +1,3 @@
-const chainName = (chainId: number) => {
-	switch (chainId) {
-		case 31337:
-			return 'Hardhat';
-		case 1:
-			return 'Mainnet';
-		case 4:
-			return 'Rinkeby';
-		case 100:
-			return 'xDai';
-		default:
-			return 'Unknown';
-	}
-};
-
-export const DRAWER_WIDTH = 240;
-
-export const NETWORK_MAINNET = chainName(1);
-export const NETWORK_RINKEBY = chainName(4);
-
 export const INCENTIVE_START_TIME: Record<number, number> = {
 	4: 1633615415,
 	42: 1635007800,
@@ -62,12 +42,6 @@ export const WETH: Record<string, string> = {
 	100: '',
 };
 
-export const HNY: Record<string, string> = {
-	4: '',
-	1: '',
-	100: '0x71850b7e9ee3f13ab46d67167341e4bdc905eef9',
-};
-
 export const GIV: Record<string, string> = {
 	4: '0x6F45aFf8c1e50DB099DAb43292C28240be2b7485',
 	42: '0x03472537CB64652Aa1224E4aaF6f33a34e73E877',
@@ -79,18 +53,6 @@ export const REWARD_TOKEN: Record<string, string> = {
 	42: '0x6b66368EddB78E61179523cf21049af40f797F4E',
 	1: '',
 	100: '',
-};
-
-export const SUBS: Record<string, string> = {
-	4: '',
-	1: '',
-	100: '',
-};
-
-export const HONEYSWAP_LP_POOL: Record<string, string> = {
-	4: '',
-	1: '',
-	100: '0x0907239acfe1d0cfc7f960fc7651e946bb34a7b0',
 };
 
 export const UNISWAP_V3_LP_POOL: Record<string, string> = {
