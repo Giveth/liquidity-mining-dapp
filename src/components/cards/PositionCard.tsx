@@ -12,14 +12,12 @@ import {
 	IconGiveth,
 	IconETH,
 	semanticColors,
-	Subline,
 } from '@giveth/ui-design-system';
 
-import { transfer, exit } from '@/lib/stakingNFT';
 import { LiquidityPosition } from '@/types/nfts';
+import { useV3Staking } from '@/hooks/useStakingNFT';
 import { Row } from '@/components/styled-components/Grid';
-import { useLiquidityPositions, useOnboard } from '@/context';
-import { IconWithTooltip } from '../IconWithToolTip';
+
 interface IV3StakeCardProps {
 	position: LiquidityPosition;
 	isUnstaking?: boolean;
@@ -28,8 +26,8 @@ interface IV3StakeCardProps {
 const STARTS_WITH = 'data:application/json;base64,';
 
 const V3StakingCard: FC<IV3StakeCardProps> = ({ position, isUnstaking }) => {
-	const { address, provider } = useOnboard();
-	const { currentIncentive } = useLiquidityPositions();
+	const { transfer, exit } = useV3Staking(position.tokenId?.toNumber());
+
 	const { pool, tickLower, tickUpper } = position._position || {};
 
 	// Check price range
@@ -58,22 +56,10 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({ position, isUnstaking }) => {
 	const { image } = parseUri(position.uri);
 
 	const handleAction = () => {
-		if (!provider) return;
-
 		if (isUnstaking) {
-			return exit(
-				position.tokenId.toNumber(),
-				address,
-				provider,
-				currentIncentive,
-			);
+			return exit();
 		} else {
-			return transfer(
-				position.tokenId.toNumber(),
-				address,
-				provider,
-				currentIncentive,
-			);
+			return transfer();
 		}
 	};
 
@@ -102,28 +88,9 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({ position, isUnstaking }) => {
 								<GreenDot /> In Range
 							</>
 						) : (
-							<IconWithTooltip
-								icon={
-									<>
-										<YellowDot />
-										Out of Range
-									</>
-								}
-								direction={'top'}
-							>
-								<RangeTooltip>
-									Your staked position is out of range and is
-									not earning rewards.{' '}
-									<PositionLink
-										target='_blank'
-										referrerPolicy='no-referrer'
-										href={`https://app.uniswap.org/#/pool/${position.tokenId.toString()}`}
-									>
-										View position
-									</PositionLink>{' '}
-									for more details.
-								</RangeTooltip>
-							</IconWithTooltip>
+							<>
+								<YellowDot /> Out of Range
+							</>
 						)}
 					</RoundedInfo>
 				</PositionInfoRow>
@@ -232,7 +199,7 @@ export const FullWidthButton = styled(Button)`
 	width: 100%;
 `;
 
-export const SimpleDot = styled.div`
+export const SimpleDot = styled.span`
 	display: inline-block;
 	border-radius: 50%;
 	height: 8px;
@@ -246,15 +213,6 @@ export const GreenDot = styled(SimpleDot)`
 
 export const YellowDot = styled(SimpleDot)`
 	background-color: ${semanticColors.golden[500]};
-`;
-
-export const RangeTooltip = styled(Subline)`
-	color: ${neutralColors.gray[100]};
-	width: 280px;
-`;
-
-export const PositionLink = styled.a`
-	color: ${brandColors.cyan[500]};
 `;
 
 export default V3StakingCard;
