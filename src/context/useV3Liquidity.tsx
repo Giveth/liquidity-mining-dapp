@@ -39,7 +39,7 @@ export const ERC721NftsProvider: FC<{ children: ReactNode }> = ({
 	const {
 		nftManagerPositionsContract,
 		uniswapV3StakerContract,
-		brightV3PoolContract,
+		givethV3PoolContract,
 	} = useContracts();
 	const { network, address: walletAddress } = useContext(OnboardContext);
 
@@ -57,7 +57,7 @@ export const ERC721NftsProvider: FC<{ children: ReactNode }> = ({
 
 	const wethAddress = !network ? null : WETH[network];
 
-	const brightAddress = !network ? null : GIV[network];
+	const givethAddress = !network ? null : GIV[network];
 	const rewardToken = !network ? null : REWARD_TOKEN[network];
 
 	const poolAddress = !network ? null : UNISWAP_V3_LP_POOL[network];
@@ -89,17 +89,17 @@ export const ERC721NftsProvider: FC<{ children: ReactNode }> = ({
 		};
 	}, [rewardToken, poolAddress, incentiveRefundeeAddress, network]);
 
-	// check for WETH / BRIGHT Pair
-	const checkForBrightLp = useCallback(
+	// check for WETH / GIV Pair
+	const checkForGivethLp = useCallback(
 		(token0: string, token1: string): boolean => {
-			if (!wethAddress || !brightAddress) return false;
+			if (!wethAddress || !givethAddress) return false;
 			if (
 				token0.toLowerCase() === wethAddress.toLowerCase() &&
-				token1.toLowerCase() === brightAddress.toLowerCase()
+				token1.toLowerCase() === givethAddress.toLowerCase()
 			) {
 				return true;
 			} else if (
-				token0.toLowerCase() === brightAddress.toLowerCase() &&
+				token0.toLowerCase() === givethAddress.toLowerCase() &&
 				token1.toLowerCase() === wethAddress.toLowerCase()
 			) {
 				return true;
@@ -107,7 +107,7 @@ export const ERC721NftsProvider: FC<{ children: ReactNode }> = ({
 				return false;
 			}
 		},
-		[wethAddress, brightAddress],
+		[wethAddress, givethAddress],
 	);
 
 	const loadPositions = useCallback(() => {
@@ -115,8 +115,8 @@ export const ERC721NftsProvider: FC<{ children: ReactNode }> = ({
 			!nftManagerPositionsContract ||
 			!uniswapV3StakerContract ||
 			!walletAddress ||
-			!brightAddress ||
-			!brightV3PoolContract ||
+			!givethAddress ||
+			!givethV3PoolContract ||
 			!network
 		)
 			return;
@@ -169,9 +169,9 @@ export const ERC721NftsProvider: FC<{ children: ReactNode }> = ({
 					);
 
 				// get pool info
-				const slot0 = await brightV3PoolContract.slot0();
+				const slot0 = await givethV3PoolContract.slot0();
 
-				// return Bright / Eth positions owned by user
+				// return GIV / Eth positions owned by user
 				const positions: any[] = (
 					await Promise.all(
 						encodedPositions.map(
@@ -213,8 +213,8 @@ export const ERC721NftsProvider: FC<{ children: ReactNode }> = ({
 					return null;
 				}
 
-				// check for Bright / ETH pair
-				if (!checkForBrightLp(token0, token1)) {
+				// check for GIV / ETH pair
+				if (!checkForGivethLp(token0, token1)) {
 					return null;
 				}
 
@@ -236,7 +236,7 @@ export const ERC721NftsProvider: FC<{ children: ReactNode }> = ({
 						let _token1: Token;
 						if (
 							token0.toLowerCase() ===
-							brightAddress?.toLowerCase()
+							givethAddress?.toLowerCase()
 						) {
 							_token0 = new Token(
 								network,
@@ -376,11 +376,11 @@ export const ERC721NftsProvider: FC<{ children: ReactNode }> = ({
 		uniswapV3StakerContract,
 		nftManagerPositionsContract,
 		walletAddress,
-		checkForBrightLp,
+		checkForGivethLp,
 		network,
-		brightV3PoolContract,
+		givethV3PoolContract,
 		poolAddress,
-		brightAddress,
+		givethAddress,
 	]);
 
 	//initial load of positions

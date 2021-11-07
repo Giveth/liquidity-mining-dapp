@@ -19,7 +19,7 @@ interface IContractsContext {
 	uniswapV3StakerContract: Contract | null;
 	stakingRewardsContract: Contract | null;
 	nftManagerPositionsContract: Contract | null;
-	brightV3PoolContract: Contract | null;
+	givethV3PoolContract: Contract | null;
 	quoterContract: Contract | null;
 }
 
@@ -41,7 +41,7 @@ export const ContractsProvider: FC<{ children: ReactNode }> = ({
 		? null
 		: STAKING_REWARDS_CONTRACT[network];
 
-	const brightV3PoolAddress = !network ? null : UNISWAP_V3_LP_POOL[network];
+	const givethV3PoolAddress = !network ? null : UNISWAP_V3_LP_POOL[network];
 
 	const quoterAddress = !network ? null : UNISWAP_QUOTER[network];
 
@@ -81,12 +81,12 @@ export const ContractsProvider: FC<{ children: ReactNode }> = ({
 		[stakingRewardsAddress, signer],
 	);
 
-	const brightV3PoolContract = useMemo(
+	const givethV3PoolContract = useMemo(
 		() =>
-			!(brightV3PoolAddress && signer)
+			!(givethV3PoolAddress && signer)
 				? null
-				: new Contract(brightV3PoolAddress, UniswapV3PoolABI, signer),
-		[brightV3PoolAddress, signer],
+				: new Contract(givethV3PoolAddress, UniswapV3PoolABI, signer),
+		[givethV3PoolAddress, signer],
 	);
 
 	const quoterContract = useMemo(
@@ -103,7 +103,7 @@ export const ContractsProvider: FC<{ children: ReactNode }> = ({
 				uniswapV3StakerContract,
 				nftManagerPositionsContract,
 				stakingRewardsContract,
-				brightV3PoolContract,
+				givethV3PoolContract,
 				quoterContract,
 			}}
 		>
