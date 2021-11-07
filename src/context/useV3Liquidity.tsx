@@ -11,7 +11,7 @@ import {
 import { Pool, Position } from '@uniswap/v3-sdk';
 import { Token } from '@uniswap/sdk-core';
 import { OnboardContext } from './onboard.context';
-import { useContracts } from './contracts';
+import { useContracts } from './useContracts';
 // import useTokenInfo from 'hooks/useTokenInfo';
 import { LiquidityPosition } from '../types/nfts';
 import {
@@ -395,7 +395,6 @@ export const ERC721NftsProvider: FC<{ children: ReactNode }> = ({
 		// only check if network is ethereum or rinkeby
 		if (network && (network === 1 || network === 4 || network == 42)) {
 			loadPositions();
-			console.log('hu');
 		}
 	}, [
 		walletAddress,
@@ -414,8 +413,6 @@ export const ERC721NftsProvider: FC<{ children: ReactNode }> = ({
 			return;
 
 		const handleTransfer = (_1: any, address1: any, address2: string) => {
-			console.log('handling transfer', _1, address1, address2);
-
 			loadPositions();
 		};
 
@@ -467,24 +464,10 @@ export const ERC721NftsProvider: FC<{ children: ReactNode }> = ({
 
 export function useV3Liquidity() {
 	const context = useContext(ERC721NftContext);
-	if (!context) {
-		throw new Error('Missing Data context');
-	}
-	const {
-		totalNftPositions,
-		stakedPositions,
-		unstakedPositions,
-		currentIncentive,
-		loadingNftPositions,
-		loadPositions,
-	} = context;
 
-	return {
-		totalNftPositions,
-		stakedPositions,
-		unstakedPositions,
-		currentIncentive,
-		loadingNftPositions,
-		loadPositions,
-	};
+	if (!context) {
+		throw new Error('ERC721 context not found!');
+	}
+
+	return context;
 }

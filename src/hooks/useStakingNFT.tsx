@@ -1,14 +1,13 @@
-import { useContext, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { utils } from 'ethers';
-import { useContracts } from '../context/contracts';
-import { useV3Liquidity } from '../context/nfts.context';
-import { LiquidityPosition } from '../types/nfts';
-import { OnboardContext } from '../context/onboard.context';
+
+import { useContracts, useV3Liquidity, useOnboard } from '@/context';
+import { LiquidityPosition } from '@/types/nfts';
 
 const abiEncoder = utils.defaultAbiCoder;
 
 export function useV3Staking(tokenId: number | undefined) {
-	const { address: walletAddress } = useContext(OnboardContext);
+	const { address: walletAddress } = useOnboard();
 	const { nftManagerPositionsContract, uniswapV3StakerContract } =
 		useContracts();
 	const { currentIncentive, stakedPositions } = useV3Liquidity();

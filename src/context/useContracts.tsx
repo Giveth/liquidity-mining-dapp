@@ -15,13 +15,15 @@ import { OnboardContext } from './onboard.context';
 import UNISWAP_V3_STAKER_ABI from '../artifacts/uniswap_v3_staker.json';
 import STAKING_REWARDS_ABI from '../artifacts/staking_rewards.json';
 
-const ContractsContext = createContext<{
+interface IContractsContext {
 	uniswapV3StakerContract: Contract | null;
 	stakingRewardsContract: Contract | null;
 	nftManagerPositionsContract: Contract | null;
 	brightV3PoolContract: Contract | null;
 	quoterContract: Contract | null;
-} | null>(null);
+}
+
+const ContractsContext = createContext<IContractsContext | null>(null);
 
 export const ContractsProvider: FC<{ children: ReactNode }> = ({
 	children,
@@ -112,22 +114,10 @@ export const ContractsProvider: FC<{ children: ReactNode }> = ({
 
 export function useContracts() {
 	const context = useContext(ContractsContext);
-	if (!context) {
-		throw new Error('Missing Contracts context');
-	}
-	const {
-		uniswapV3StakerContract,
-		nftManagerPositionsContract,
-		stakingRewardsContract,
-		brightV3PoolContract,
-		quoterContract,
-	} = context;
 
-	return {
-		uniswapV3StakerContract,
-		nftManagerPositionsContract,
-		stakingRewardsContract,
-		brightV3PoolContract,
-		quoterContract,
-	};
+	if (!context) {
+		throw new Error('Contracts context not found!');
+	}
+
+	return context;
 }

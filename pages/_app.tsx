@@ -1,11 +1,13 @@
-import '../styles/globals.css';
 import type { AppProps } from 'next/app';
-import { OnboardProvider } from '../src/context/onboard.context';
-import { UserProvider } from '../src/context/user.context';
-import { ThemeProvider } from '../src/context/theme.context';
-import { TokenBalanceProvider } from '../src/context/tokenBalance.context';
-import { ContractsProvider } from '../src/context/contracts';
-import { ERC721NftsProvider } from '../src/context/nfts.context';
+
+import '../styles/globals.css';
+
+import { OnboardProvider } from '@/context/onboard.context';
+import { UserProvider } from '@/context/user.context';
+import { ThemeProvider } from '@/context/theme.context';
+import { TokenBalanceProvider } from '@/context/tokenBalance.context';
+import { ContractsProvider } from '@/context/useContracts';
+import { ERC721NftsProvider } from '@/context/useV3Liquidity';
 
 function MyApp({ Component, pageProps }: AppProps) {
 	return (
