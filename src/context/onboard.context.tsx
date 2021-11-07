@@ -1,7 +1,14 @@
 import bnc_onboard from 'bnc-onboard';
 import config from '../configuration';
 import { Web3Provider } from '@ethersproject/providers';
-import { createContext, FC, ReactNode, useEffect, useState } from 'react';
+import {
+	useContext,
+	createContext,
+	FC,
+	ReactNode,
+	useEffect,
+	useState,
+} from 'react';
 import { API, Wallet } from 'bnc-onboard/dist/src/interfaces';
 import { ethers } from 'ethers';
 
@@ -167,3 +174,13 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 		</OnboardContext.Provider>
 	);
 };
+
+export function useOnboard() {
+	const context = useContext(OnboardContext);
+
+	if (!context) {
+		throw new Error('Onboard context not found!');
+	}
+
+	return context;
+}

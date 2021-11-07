@@ -1,4 +1,4 @@
-import { createContext, FC, useContext, useEffect, useState } from 'react';
+import { createContext, FC, useEffect, useState, useContext } from 'react';
 import { ethers } from 'ethers';
 import { Zero } from '@ethersproject/constants';
 import { OnboardContext } from './onboard.context';
@@ -184,3 +184,13 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 		</TokenBalanceContext.Provider>
 	);
 };
+
+export function useTokenBalance() {
+	const context = useContext(TokenBalanceContext);
+
+	if (!context) {
+		throw new Error('Token balance context not found!');
+	}
+
+	return context;
+}

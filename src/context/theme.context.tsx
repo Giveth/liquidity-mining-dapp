@@ -1,4 +1,4 @@
-import { createContext, FC, ReactNode, useState } from 'react';
+import { useContext, createContext, FC, ReactNode, useState } from 'react';
 
 export enum ThemeType {
 	Light,
@@ -41,3 +41,13 @@ export const ThemeProvider: FC<Props> = ({ children }) => {
 		</ThemeContext.Provider>
 	);
 };
+
+export default function useTheme() {
+	const context = useContext(ThemeContext);
+
+	if (!context) {
+		throw new Error('Theme context not found!');
+	}
+
+	return context;
+}
