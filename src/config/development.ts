@@ -17,15 +17,13 @@ const config: EnvConfig = {
 		nodeUrl: 'https://kovan.infura.io/v3/' + INFURA_API_KEY,
 
 		pools: [
-			// {
-			// 	POOL_ADDRESS: '0xa48C26fF05F47a2eEd88C09664de1cb604A21b01',
-			// 	LM_ADDRESS: '0x1aD46D40648639f84a396Fef32132888038c5aA8',
-			// 	type: StakingType.UNISWAP,
-			// 	title: 'GIV / ETH',
-			// 	description: '50% GIV, 50% ETH',
-			// 	provideLiquidityLink:
-			// 		'https://app.uniswap.org/#/add/v2/0x46e37D6E86022a1A2b9E6380960130f8e3EB1246/ETH',
-			// },
+			{
+				POOL_ADDRESS: '0xa48C26fF05F47a2eEd88C09664de1cb604A21b01',
+				LM_ADDRESS: '0x1aD46D40648639f84a396Fef32132888038c5aA8',
+				type: StakingType.UNISWAP,
+				title: 'GIV / ETH',
+				provideLiquidityLink: `https://app.uniswap.org/#/add/ETH/0x03472537CB64652Aa1224E4aaF6f33a34e73E877/3000`,
+			},
 			{
 				POOL_ADDRESS: '0x1ee71e1ed744ae6d4058f5c7797c2e583dbfb095',
 				VAULT_ADDRESS: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
