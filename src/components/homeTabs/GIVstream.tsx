@@ -19,6 +19,7 @@ import {
 	IconSpark,
 	IconGIVGarden,
 	IconGIVFarm,
+	Subline,
 } from '@giveth/ui-design-system';
 import {
 	GIVstreamTopContainer,
@@ -45,7 +46,12 @@ import {
 	GsHFrUnit,
 	HistoryTitle,
 	HistoryContainer,
+	FlowRateTooltip,
+	GsPTooltip,
+	HistoryTitleRow,
+	HistoryTooltip,
 } from './GIVstream.sc';
+import { IconWithTooltip } from '../IconWithToolTip';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -93,7 +99,15 @@ export const TabGIVstreamBottom = () => {
 					<IconGIVStream size={64} />
 					<H1>{16.06}</H1>
 					<FlowRateUnit>GIV/week</FlowRateUnit>
-					<IconHelp size={16} />
+					<IconWithTooltip
+						icon={<IconHelp size={16} />}
+						direction={'top'}
+					>
+						<FlowRateTooltip>
+							The GIVstream progress shows how much time is left
+							for your GIVstream to flow.
+						</FlowRateTooltip>
+					</IconWithTooltip>
 				</FlowRateRow>
 				<GIVstreamProgress
 					percentage={20}
@@ -129,7 +143,19 @@ export const TabGIVstreamBottom = () => {
 						liquid & flows to our community.
 					</GsDataBlock>
 				</Row>
-				<HistoryTitle>History</HistoryTitle>
+				<HistoryTitleRow>
+					<HistoryTitle>History</HistoryTitle>
+					<IconWithTooltip
+						icon={<IconHelp size={16} />}
+						direction={'top'}
+					>
+						<HistoryTooltip>
+							Every time you claim GIV rewards from GIVbacks, the
+							GIVgarden, or the GIVfarm, your GIVstream flowrate
+							increases. Below is a summary.
+						</HistoryTooltip>
+					</IconWithTooltip>
+				</HistoryTitleRow>
 				<GIVstreamHistory />
 			</Container>
 			<IncreaseSection>
@@ -201,7 +227,15 @@ export const GIVstreamProgress: FC<IGIVstreamProgressProps> = ({
 			<GsPTitleRow justifyContent='space-between'>
 				<GsPTitle alignItems='center' gap='8px'>
 					<H6>GIVstream progress</H6>
-					<IconHelp size={16} />
+					<IconWithTooltip
+						icon={<IconHelp size={16} />}
+						direction={'right'}
+					>
+						<GsPTooltip>
+							The GIVstream progress shows how much time is left
+							for your GIVstream to flow.
+						</GsPTooltip>
+					</IconWithTooltip>
 				</GsPTitle>
 				<P>{remainTime}</P>
 			</GsPTitleRow>

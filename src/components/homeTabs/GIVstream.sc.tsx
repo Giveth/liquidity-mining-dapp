@@ -15,6 +15,7 @@ import {
 	GLink,
 	neutralColors,
 	Title,
+	Subline,
 } from '@giveth/ui-design-system';
 import { TopContainer } from './commons';
 import { RewardCard } from '../RewardCard';
@@ -74,6 +75,11 @@ export const FlowRateRow = styled(Row)`
 	color: ${neutralColors.gray[100]};
 `;
 
+export const FlowRateTooltip = styled(Subline)`
+	color: ${neutralColors.gray[100]};
+	width: 260px;
+`;
+
 export const FlowRateUnit = styled(H4)`
 	color: ${brandColors.giv[200]};
 `;
@@ -89,6 +95,10 @@ export const GsPTitleRow = styled(Row)``;
 
 export const GsPTitle = styled(Row)``;
 
+export const GsPTooltip = styled(Subline)`
+	color: ${neutralColors.gray[100]};
+	width: 240px;
+`;
 interface IBarProps {
 	percentage: number;
 }
@@ -134,9 +144,19 @@ export const IGsDataBox = styled(DataBox)`
 	height: 387px;
 `;
 
+export const HistoryTitleRow = styled(Row)`
+	margin: 110px 0 40px;
+	align-items: center;
+	gap: 16px;
+`;
+
 export const HistoryTitle = styled(H2)`
 	color: ${brandColors.giv[200]};
-	margin: 110px 0 40px;
+`;
+
+export const HistoryTooltip = styled(Subline)`
+	color: ${neutralColors.gray[100]};
+	width: 265px;
 `;
 
 export const HistoryContainer = styled.div`
