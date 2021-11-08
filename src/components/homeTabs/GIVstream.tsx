@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, Fragment } from 'react';
 import { Row } from '../styled-components/Grid';
 import router from 'next/router';
 import {
@@ -17,6 +17,8 @@ import {
 	IconHelp,
 	H6,
 	IconSpark,
+	IconGIVGarden,
+	IconGIVFarm,
 } from '@giveth/ui-design-system';
 import {
 	GIVstreamTopContainer,
@@ -39,6 +41,10 @@ import {
 	IncreaseSection,
 	IncreaseSectionTitle,
 	IGsDataBox,
+	Grid,
+	GsHFrUnit,
+	HistoryTitle,
+	HistoryContainer,
 } from './GIVstream.sc';
 
 export const TabGIVstreamTop = () => {
@@ -123,6 +129,8 @@ export const TabGIVstreamBottom = () => {
 						liquid & flows to our community.
 					</GsDataBlock>
 				</Row>
+				<HistoryTitle>History</HistoryTitle>
+				<GIVstreamHistory />
 			</Container>
 			<IncreaseSection>
 				<Container>
@@ -203,5 +211,100 @@ export const GIVstreamProgress: FC<IGIVstreamProgressProps> = ({
 				<B>100%</B>
 			</PercentageRow>
 		</GIVstreamProgressContainer>
+	);
+};
+
+export enum GIVstreamSources {
+	Back,
+	Farm,
+	Garden,
+}
+
+const streamHistory = [
+	{
+		type: GIVstreamSources.Back,
+		flowRate: 5,
+		date: 'Sep 24',
+		Tx: '0xd41a333d7fe141',
+	},
+	{
+		type: GIVstreamSources.Farm,
+		flowRate: 1,
+		date: 'Sep 24',
+		Tx: '0xd41a333d7fe141',
+	},
+	{
+		type: GIVstreamSources.Back,
+		flowRate: 7,
+		date: 'Sep 24',
+		Tx: '0xd41a333d7fe141',
+	},
+	{
+		type: GIVstreamSources.Garden,
+		flowRate: 12,
+		date: 'Sep 24',
+		Tx: '0xd41a333d7fe141',
+	},
+	{
+		type: GIVstreamSources.Farm,
+		flowRate: 0.5,
+		date: 'Sep 24',
+		Tx: '0xd41a333d7fe141',
+	},
+];
+
+const convetSourceTypeToIcon = (type: GIVstreamSources) => {
+	switch (type) {
+		case GIVstreamSources.Back:
+			return (
+				<Row gap='16px'>
+					<IconGIVBack size={24} color={brandColors.mustard[500]} />
+					<P>{` GIVback`}</P>
+				</Row>
+			);
+		case GIVstreamSources.Farm:
+			return (
+				<Row gap='16px'>
+					<IconGIVFarm size={24} color={brandColors.mustard[500]} />
+					<P>{` GIVfarm`}</P>
+				</Row>
+			);
+		case GIVstreamSources.Garden:
+			return (
+				<Row gap='16px'>
+					<IconGIVGarden size={24} color={brandColors.mustard[500]} />
+					<P>{` GIVgarden`}</P>
+				</Row>
+			);
+		default:
+			break;
+	}
+};
+
+export const GIVstreamHistory: FC = () => {
+	return (
+		<HistoryContainer>
+			<Grid>
+				<B as='span'>GIVstream Source</B>
+				<B as='span'>Flowrate Change</B>
+				<B as='span'>Date</B>
+				<B as='span'>Tx</B>
+			</Grid>
+			<Grid>
+				{streamHistory.map((history, idx) => (
+					<Fragment key={idx}>
+						<P as='span'>{convetSourceTypeToIcon(history.type)}</P>
+						<B as='span'>
+							{`${history.flowRate >= 0 ? '+' : '-'} ${
+								history.flowRate
+							}`}
+							<GsHFrUnit as='span'>{` GIV/week`}</GsHFrUnit>
+						</B>
+						<P as='span'>{history.date}</P>
+						<P as='span'>{history.Tx}</P>
+					</Fragment>
+				))}
+			</Grid>
+		</HistoryContainer>
 	);
 };

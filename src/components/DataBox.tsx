@@ -15,7 +15,7 @@ const DataBoxContainer = styled(Row)`
 	padding: 24px 24px 60px;
 	width: 363px;
 	border-radius: 8px;
-	background-color: ${brandColors.giv[500]};
+	background-color: ${brandColors.giv[600]};
 	background-image: url('/images/backgrounds/GIVGIVGIV.png');
 `;
 

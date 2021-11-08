@@ -70,6 +70,7 @@ export const GsButton = styled(Button)`
 `;
 
 export const FlowRateRow = styled(Row)`
+	margin-top: 48px;
 	color: ${neutralColors.gray[100]};
 `;
 
@@ -81,6 +82,7 @@ export const GIVstreamProgressContainer = styled.div`
 	background: ${brandColors.giv[700]};
 	border-radius: 8px;
 	padding: 28px 33px;
+	margin: 40px 0 64px;
 `;
 
 export const GsPTitleRow = styled(Row)``;
@@ -130,4 +132,30 @@ export const IncreaseSectionTitle = styled(H2)`
 
 export const IGsDataBox = styled(DataBox)`
 	height: 387px;
+`;
+
+export const HistoryTitle = styled(H2)`
+	color: ${brandColors.giv[200]};
+	margin: 110px 0 40px;
+`;
+
+export const HistoryContainer = styled.div`
+	margin-bottom: 64px;
+`;
+
+export const Grid = styled.div`
+	display: grid;
+	grid-template-columns: 1fr 2fr 2fr 1fr;
+	border-bottom: 2px solid ${brandColors.giv[500]};
+	& > span {
+		padding: 8px 4px;
+		// border-left: 1px solid black;
+		// border-bottom: 1px solid black;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
+`;
+
+export const GsHFrUnit = styled(P)`
+	color: ${brandColors.giv[200]};
 `;
