@@ -48,6 +48,8 @@ import {
 	HistoryContainer,
 	FlowRateTooltip,
 	GsPTooltip,
+	HistoryTitleRow,
+	HistoryTooltip,
 } from './GIVstream.sc';
 import { IconWithTooltip } from '../IconWithToolTip';
 
@@ -141,7 +143,19 @@ export const TabGIVstreamBottom = () => {
 						liquid & flows to our community.
 					</GsDataBlock>
 				</Row>
-				<HistoryTitle>History</HistoryTitle>
+				<HistoryTitleRow>
+					<HistoryTitle>History</HistoryTitle>
+					<IconWithTooltip
+						icon={<IconHelp size={16} />}
+						direction={'top'}
+					>
+						<HistoryTooltip>
+							Every time you claim GIV rewards from GIVbacks, the
+							GIVgarden, or the GIVfarm, your GIVstream flowrate
+							increases. Below is a summary.
+						</HistoryTooltip>
+					</IconWithTooltip>
+				</HistoryTitleRow>
 				<GIVstreamHistory />
 			</Container>
 			<IncreaseSection>

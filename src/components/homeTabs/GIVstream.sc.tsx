@@ -144,9 +144,19 @@ export const IGsDataBox = styled(DataBox)`
 	height: 387px;
 `;
 
+export const HistoryTitleRow = styled(Row)`
+	margin: 110px 0 40px;
+	align-items: center;
+	gap: 16px;
+`;
+
 export const HistoryTitle = styled(H2)`
 	color: ${brandColors.giv[200]};
-	margin: 110px 0 40px;
+`;
+
+export const HistoryTooltip = styled(Subline)`
+	color: ${neutralColors.gray[100]};
+	width: 265px;
 `;
 
 export const HistoryContainer = styled.div`
