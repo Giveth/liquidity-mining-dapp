@@ -42,3 +42,7 @@ export const GIVfarmRewardCard = styled(RewardCard)`
 	z-index: 1;
 	bottom: -37px;
 `;
+
+export const PoolRow = styled(Row)`
+	margin-top: 24px;
+`;
