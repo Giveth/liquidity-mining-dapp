@@ -19,6 +19,7 @@ import {
 	IconSpark,
 	IconGIVGarden,
 	IconGIVFarm,
+	Subline,
 } from '@giveth/ui-design-system';
 import {
 	GIVstreamTopContainer,
@@ -45,7 +46,9 @@ import {
 	GsHFrUnit,
 	HistoryTitle,
 	HistoryContainer,
+	FlowRateTooltip,
 } from './GIVstream.sc';
+import { IconWithTooltip } from '../IconWithToolTip';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -93,7 +96,15 @@ export const TabGIVstreamBottom = () => {
 					<IconGIVStream size={64} />
 					<H1>{16.06}</H1>
 					<FlowRateUnit>GIV/week</FlowRateUnit>
-					<IconHelp size={16} />
+					<IconWithTooltip
+						icon={<IconHelp size={16} />}
+						direction={'top'}
+					>
+						<FlowRateTooltip>
+							The GIVstream progress shows how much time is left
+							for your GIVstream to flow.
+						</FlowRateTooltip>
+					</IconWithTooltip>
 				</FlowRateRow>
 				<GIVstreamProgress
 					percentage={20}

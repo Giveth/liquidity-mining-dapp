@@ -15,6 +15,7 @@ import {
 	GLink,
 	neutralColors,
 	Title,
+	Subline,
 } from '@giveth/ui-design-system';
 import { TopContainer } from './commons';
 import { RewardCard } from '../RewardCard';
@@ -72,6 +73,11 @@ export const GsButton = styled(Button)`
 export const FlowRateRow = styled(Row)`
 	margin-top: 48px;
 	color: ${neutralColors.gray[100]};
+`;
+
+export const FlowRateTooltip = styled(Subline)`
+	color: ${neutralColors.gray[100]};
+	width: 260px;
 `;
 
 export const FlowRateUnit = styled(H4)`

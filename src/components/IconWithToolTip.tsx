@@ -20,12 +20,10 @@ const IconWithTooltipContainer = styled.div<IDirection>`
 	}
 	& > span {
 		visibility: hidden;
-		width: 220px;
 		background-color: black;
 		color: #fff;
-		text-align: center;
 		border-radius: 6px;
-		padding: 5px 0;
+		padding: 8px;
 		position: absolute;
 		z-index: 1;
 		${props => {
