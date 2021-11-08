@@ -95,6 +95,10 @@ export const GsPTitleRow = styled(Row)``;
 
 export const GsPTitle = styled(Row)``;
 
+export const GsPTooltip = styled(Subline)`
+	color: ${neutralColors.gray[100]};
+	width: 240px;
+`;
 interface IBarProps {
 	percentage: number;
 }

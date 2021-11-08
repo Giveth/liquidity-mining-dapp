@@ -47,6 +47,7 @@ import {
 	HistoryTitle,
 	HistoryContainer,
 	FlowRateTooltip,
+	GsPTooltip,
 } from './GIVstream.sc';
 import { IconWithTooltip } from '../IconWithToolTip';
 
@@ -212,7 +213,15 @@ export const GIVstreamProgress: FC<IGIVstreamProgressProps> = ({
 			<GsPTitleRow justifyContent='space-between'>
 				<GsPTitle alignItems='center' gap='8px'>
 					<H6>GIVstream progress</H6>
-					<IconHelp size={16} />
+					<IconWithTooltip
+						icon={<IconHelp size={16} />}
+						direction={'right'}
+					>
+						<GsPTooltip>
+							The GIVstream progress shows how much time is left
+							for your GIVstream to flow.
+						</GsPTooltip>
+					</IconWithTooltip>
 				</GsPTitle>
 				<P>{remainTime}</P>
 			</GsPTitleRow>
