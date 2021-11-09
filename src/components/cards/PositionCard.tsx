@@ -14,10 +14,10 @@ import {
 	semanticColors,
 } from '@giveth/ui-design-system';
 
+import { transfer, exit } from '@/lib/stakingNFT';
 import { LiquidityPosition } from '@/types/nfts';
-import { useV3Staking } from '@/hooks/useStakingNFT';
 import { Row } from '@/components/styled-components/Grid';
-
+import { useOnboard, useV3Liquidity } from '@/context';
 interface IV3StakeCardProps {
 	position: LiquidityPosition;
 	isUnstaking?: boolean;
@@ -26,8 +26,8 @@ interface IV3StakeCardProps {
 const STARTS_WITH = 'data:application/json;base64,';
 
 const V3StakingCard: FC<IV3StakeCardProps> = ({ position, isUnstaking }) => {
-	const { transfer, exit } = useV3Staking(position.tokenId?.toNumber());
-
+	const { address, provider } = useOnboard();
+	const { currentIncentive } = useV3Liquidity();
 	const { pool, tickLower, tickUpper } = position._position || {};
 
 	// Check price range
@@ -56,10 +56,22 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({ position, isUnstaking }) => {
 	const { image } = parseUri(position.uri);
 
 	const handleAction = () => {
+		if (!provider) return;
+
 		if (isUnstaking) {
-			return exit();
+			return exit(
+				position.tokenId.toNumber(),
+				address,
+				provider,
+				currentIncentive,
+			);
 		} else {
-			return transfer();
+			return transfer(
+				position.tokenId.toNumber(),
+				address,
+				provider,
+				currentIncentive,
+			);
 		}
 	};
 

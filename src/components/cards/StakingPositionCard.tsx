@@ -1,12 +1,12 @@
-import React, { FC, useEffect } from 'react';
-import { BigNumber } from 'ethers';
+import React, { FC } from 'react';
+import { BigNumber, utils } from 'ethers';
 
 import { Zero } from '@/helpers/number';
 import BaseStakingCard from './BaseStakingCard';
 import { PoolStakingConfig } from '@/types/config';
-import { useV3Liquidity } from '@/context';
-import { useV3Staking } from '@/hooks/useStakingNFT';
-
+import { useOnboard, useV3Liquidity, useContracts } from '@/context';
+import { claimUnstakeStake } from '@/lib/stakingNFT';
+import { useStakingNFT } from '@/hooks/useStakingNFT';
 interface IStakingPositionCardProps {
 	network: number;
 	poolStakingConfig: PoolStakingConfig;
@@ -16,21 +16,34 @@ const StakingPositionCard: FC<IStakingPositionCardProps> = ({
 	network,
 	poolStakingConfig,
 }) => {
-	const { claim } = useV3Staking(undefined);
-	const { stakedPositions, unstakedPositions } = useV3Liquidity();
+	const { rewardBalance } = useStakingNFT();
+	const { address: walletAddress, provider } = useOnboard();
+	const { currentIncentive, unstakedPositions, stakedPositions } =
+		useV3Liquidity();
 
 	const stakeInfo = {
 		apr: Zero,
 		rewardRatePerToken: Zero,
 		userNotStakedAmount: BigNumber.from(unstakedPositions.length),
-		earned: Zero,
+		earned: rewardBalance,
 		stakedLpAmount: BigNumber.from(stakedPositions.length),
+	};
+
+	const handleHarvest = async () => {
+		if (!provider) return;
+
+		await claimUnstakeStake(
+			walletAddress,
+			provider,
+			currentIncentive,
+			stakedPositions,
+		);
 	};
 
 	return (
 		<BaseStakingCard
 			stakeInfo={stakeInfo}
-			onHarvest={claim}
+			onHarvest={handleHarvest}
 			poolStakingConfig={poolStakingConfig}
 		/>
 	);
