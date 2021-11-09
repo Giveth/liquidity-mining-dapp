@@ -9,6 +9,7 @@ export const IconGIV: FC<ICurrencyIconProps> = ({ size = 16 }) => {
 			alt='GIV'
 			width={size}
 			height={size}
+			loading='lazy'
 		/>
 	);
 };
