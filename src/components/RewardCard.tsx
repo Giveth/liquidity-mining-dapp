@@ -1,7 +1,6 @@
 import {
 	brandColors,
 	Caption,
-	IconGiveth,
 	Lead,
 	Overline,
 	Title,
@@ -12,6 +11,8 @@ import {
 } from '@giveth/ui-design-system';
 import React, { FC, MouseEventHandler } from 'react';
 import styled from 'styled-components';
+import { IconGIV } from './Icons/GIV';
+import { IconXDAI } from './Icons/XDAI';
 import { Row } from './styled-components/Grid';
 
 interface IRewardCardProps {
@@ -32,12 +33,12 @@ export const RewardCard: FC<IRewardCardProps> = ({
 			<CardHeader justifyContent='space-between'>
 				<CardTitle>Total Claimable Rewards</CardTitle>
 				<ChainInfo>
-					<IconGiveth size={16} /> {/* it sould change to xdai */}
+					<IconXDAI size={16} />
 					<ChainName styleType='Small'>XDAI</ChainName>
 				</ChainInfo>
 			</CardHeader>
 			<AmountInfo alignItems='center' gap='8px'>
-				<IconGiveth size={32} />
+				<IconGIV size={32} />
 				<Title>{amount}</Title>
 				<AmountUnit>GIV</AmountUnit>
 			</AmountInfo>

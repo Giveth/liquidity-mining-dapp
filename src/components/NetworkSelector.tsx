@@ -2,8 +2,10 @@ import { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { OnboardContext } from '../context/onboard.context';
 import config from '../configuration';
-import { B, brandColors, IconETH } from '@giveth/ui-design-system';
+import { B, brandColors } from '@giveth/ui-design-system';
 import { Row } from './styled-components/Grid';
+import { IconXDAI } from './Icons/XDAI';
+import { IconEthereum } from './Icons/Eth';
 
 declare global {
 	interface Window {
@@ -84,6 +86,7 @@ export const NetworkSelector = () => {
 					handleChangeNetwork(config.XDAI_NETWORK_NUMBER);
 				}}
 			>
+				<IconXDAI size={24} />
 				<B>xDAI</B>
 			</XDaiSelecor>
 			<EthSelector
@@ -92,7 +95,7 @@ export const NetworkSelector = () => {
 					handleChangeNetwork(config.MAINNET_NETWORK_NUMBER);
 				}}
 			>
-				<IconETH size={24} />
+				<IconEthereum size={24} />
 				<B>Ethereum</B>
 			</EthSelector>
 		</NetworkSelectorContainer>
