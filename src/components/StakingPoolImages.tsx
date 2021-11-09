@@ -1,11 +1,9 @@
-import {
-	brandColors,
-	IconGiveth,
-	IconETH,
-	IconHoney,
-} from '@giveth/ui-design-system';
+import { brandColors } from '@giveth/ui-design-system';
 import { FC } from 'react';
 import styled from 'styled-components';
+import { IconEthereum } from './Icons/Eth';
+import { IconGIV } from './Icons/GIV';
+import { IconHoneyswap } from './Icons/Honeyswap';
 
 interface IStakingPoolImagesProps {
 	title: string;
@@ -14,11 +12,11 @@ interface IStakingPoolImagesProps {
 const getCurIconWithName = (currency: string) => {
 	switch (currency) {
 		case 'GIV':
-			return <IconGiveth size={40} />;
+			return <IconGIV size={40} />;
 		case 'ETH':
-			return <IconETH size={40} />;
+			return <IconEthereum size={40} />;
 		case 'HNY':
-			return <IconHoney size={40} />;
+			return <IconHoneyswap size={40} />;
 		default:
 			break;
 	}
