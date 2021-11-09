@@ -9,6 +9,7 @@ export const IconBalancer: FC<ICurrencyIconProps> = ({ size = 16 }) => {
 			alt='balancer'
 			width={size}
 			height={size}
+			loading='lazy'
 		/>
 	);
 };

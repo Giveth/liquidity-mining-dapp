@@ -9,6 +9,7 @@ export const IconUniswap: FC<ICurrencyIconProps> = ({ size = 16 }) => {
 			alt='uniswap'
 			width={size}
 			height={size}
+			loading='lazy'
 		/>
 	);
 };
