@@ -9,6 +9,7 @@ export const IconEthereum: FC<ICurrencyIconProps> = ({ size = 16 }) => {
 			alt='Ethereum'
 			width={size}
 			height={size}
+			loading='lazy'
 		/>
 	);
 };

@@ -9,6 +9,7 @@ export const IconXDAI: FC<ICurrencyIconProps> = ({ size = 16 }) => {
 			alt='xDai'
 			width={size}
 			height={size}
+			loading='lazy'
 		/>
 	);
 };

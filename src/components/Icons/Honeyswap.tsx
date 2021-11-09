@@ -9,6 +9,7 @@ export const IconHoneyswap: FC<ICurrencyIconProps> = ({ size = 16 }) => {
 			alt='Honeyswap'
 			width={size}
 			height={size}
+			loading='lazy'
 		/>
 	);
 };
