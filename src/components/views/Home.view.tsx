@@ -35,7 +35,7 @@ function HomeView() {
 						bottomComponent: <TabGIVbacksBottom />,
 					},
 					{
-						label: 'GIVstrem',
+						label: 'GIVstream',
 						topComponent: <TabGIVstreamTop />,
 						bottomComponent: <TabGIVstreamBottom />,
 					},
