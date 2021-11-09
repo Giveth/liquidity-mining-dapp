@@ -1,18 +1,19 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { ethers, BigNumber } from 'ethers';
+import { useCallback, useEffect, useState } from 'react';
+import { BigNumber } from 'ethers';
 
 import { useOnboard, useContracts, useV3Liquidity } from '@/context';
 import { LiquidityPosition } from '@/types/nfts';
 import config from '@/configuration';
+import { getUniswapV3StakerContract } from '@/lib/contracts';
 
 export const useStakingNFT = () => {
-	const { address: walletAddress, network } = useOnboard();
+	const { stakedPositions, currentIncentive } = useV3Liquidity();
+	const { address: walletAddress, network, provider } = useOnboard();
 	const [rewardBalance, setRewardBalance] = useState<BigNumber>(
 		BigNumber.from(0),
 	);
 
-	const { stakedPositions, currentIncentive } = useV3Liquidity();
-	const { uniswapV3StakerContract } = useContracts();
+	const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
 
 	const checkForRewards = useCallback(() => {
 		if (
