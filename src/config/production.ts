@@ -6,6 +6,30 @@ const config: EnvConfig = {
 	MAINNET_NETWORK_NUMBER: 1,
 	XDAI_NETWORK_NUMBER: 100,
 
+	MAINNET_NETWORK: {
+		chainId: '0x1', // A 0x-prefixed hexadecimal string
+		chainName: 'Ethereum Mainnet',
+		nativeCurrency: {
+			name: 'ETH',
+			symbol: 'ETH', // 2-6 characters long
+			decimals: 18,
+		},
+		rpcUrls: [],
+		blockExplorerUrls: [],
+	},
+
+	XDAI_NETWORK: {
+		chainId: '0x64',
+		chainName: 'xDai',
+		nativeCurrency: {
+			name: 'XDAI',
+			symbol: 'XDAI',
+			decimals: 18,
+		},
+		rpcUrls: ['https://rpc.xdaichain.com'],
+		blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
+	},
+
 	MAINNET_CONFIG: {
 		TOKEN_ADDRESS: '',
 		WETH_TOKEN_ADDRESS: '',
