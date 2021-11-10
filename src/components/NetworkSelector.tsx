@@ -48,7 +48,7 @@ export const NetworkSelector = () => {
 	) => {
 		setTargetNetwork(networkNumber);
 		if (walletNetwork !== networkNumber) {
-			if (typeof (window as any).ethereum == 'undefined') {
+			if (typeof (window as any).ethereum !== 'undefined') {
 				const { ethereum } = window as any;
 				try {
 					await ethereum.request({
