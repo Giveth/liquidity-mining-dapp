@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { H1, Container, IconGIVGarden } from '@giveth/ui-design-system';
 
 import { Row } from '../styled-components/Grid';
@@ -59,6 +58,12 @@ export const TabGardenTop = () => {
 };
 
 export const TabGardenBottom = () => {
+	const goToGarden = () => {
+		const url =
+			'https://honey-pot-o49n5fgrn-1hive.vercel.app/#/garden/0x79c52e1a74d01cf030f3cbbbbf84b01476c9ac93?';
+		window.open(url, '_blank');
+	};
+
 	return (
 		<GardenBottomContainer>
 			<Container>
@@ -73,6 +78,7 @@ export const TabGardenBottom = () => {
 						buttonType='primary'
 						label='OPEN GARDENS'
 						size='large'
+						onClick={goToGarden}
 					/>
 				</Row>
 				<Section2Title weight={500}>
@@ -124,7 +130,11 @@ export const TabGardenBottom = () => {
 						The GIVgarden empowers the Giveth community to
 						coordinate around shared resources from the bottom up.
 					</VoteCardDesc>
-					<VoteCardButton label='OPEN GARDEN' buttonType='primary' />
+					<VoteCardButton
+						label='OPEN GARDEN'
+						buttonType='primary'
+						onClick={goToGarden}
+					/>
 				</VoteCard>
 			</Container>
 		</GardenBottomContainer>
