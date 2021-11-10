@@ -14,15 +14,8 @@ import { OnboardContext } from './onboard.context';
 import { useContracts } from './useContracts';
 // import useTokenInfo from 'hooks/useTokenInfo';
 import { LiquidityPosition } from '../types/nfts';
-import {
-	WETH,
-	GIV,
-	REWARD_TOKEN,
-	INCENTIVE_START_TIME,
-	INCENTIVE_END_TIME,
-	UNISWAP_V3_LP_POOL,
-	INCENTIVE_REFUNDEE_ADDRESS,
-} from '../utils/constants';
+import config from '@/configuration';
+import { UniswapV3PoolStakingConfig } from '@/types/config';
 
 const ERC721NftContext = createContext<{
 	totalNftPositions: LiquidityPosition[];
@@ -41,7 +34,8 @@ export const ERC721NftsProvider: FC<{ children: ReactNode }> = ({
 		uniswapV3StakerContract,
 		givethV3PoolContract,
 	} = useContracts();
-	const { network, address: walletAddress } = useContext(OnboardContext);
+	const network = config.MAINNET_NETWORK_NUMBER;
+	const { address: walletAddress } = useContext(OnboardContext);
 
 	const [totalNftPositions, setTotalNftPositions] = useState<
 		LiquidityPosition[]
@@ -55,16 +49,14 @@ export const ERC721NftsProvider: FC<{ children: ReactNode }> = ({
 
 	const [loadingNftPositions, setLoadingNftPositions] = useState(false);
 
-	const wethAddress = !network ? null : WETH[network];
+	const mainnetConfig = config.MAINNET_CONFIG;
+	const wethAddress = mainnetConfig.WETH_TOKEN_ADDRESS;
+	const givethAddress = mainnetConfig.GIV;
 
-	const givethAddress = !network ? null : GIV[network];
-	const rewardToken = !network ? null : REWARD_TOKEN[network];
-
-	const poolAddress = !network ? null : UNISWAP_V3_LP_POOL[network];
-
-	const incentiveRefundeeAddress = !network
-		? null
-		: INCENTIVE_REFUNDEE_ADDRESS[network];
+	const uniswapConfig = mainnetConfig.pools[0] as UniswapV3PoolStakingConfig;
+	const rewardToken = uniswapConfig.REWARD_TOKEN;
+	const poolAddress = uniswapConfig.UNISWAP_V3_LP_POOL;
+	const incentiveRefundeeAddress = uniswapConfig.INCENTIVE_REFUNDEE_ADDRESS;
 
 	const currentIncentive = useMemo(() => {
 		if (
@@ -75,19 +67,24 @@ export const ERC721NftsProvider: FC<{ children: ReactNode }> = ({
 		)
 			return { key: null };
 
-		const incentiveStartTime = INCENTIVE_START_TIME[network];
-		const incentiveEndTime = INCENTIVE_END_TIME[network];
+		const { INCENTIVE_START_TIME, INCENTIVE_END_TIME } = uniswapConfig;
 
 		return {
 			key: [
 				rewardToken,
 				poolAddress,
-				incentiveStartTime,
-				incentiveEndTime,
+				INCENTIVE_START_TIME,
+				INCENTIVE_END_TIME,
 				incentiveRefundeeAddress,
 			],
 		};
-	}, [rewardToken, poolAddress, incentiveRefundeeAddress, network]);
+	}, [
+		rewardToken,
+		poolAddress,
+		incentiveRefundeeAddress,
+		network,
+		uniswapConfig,
+	]);
 
 	// check for WETH / GIV Pair
 	const checkForGivethLp = useCallback(

@@ -12,7 +12,8 @@ export enum StakingType {
 
 export type PoolStakingConfig =
 	| SimplePoolStakingConfig
-	| BalancerPoolStakingConfig;
+	| BalancerPoolStakingConfig
+	| UniswapV3PoolStakingConfig;
 
 export interface SimplePoolStakingConfig extends BasicStakingConfig {
 	POOL_ADDRESS: string;
@@ -22,6 +23,16 @@ export interface SimplePoolStakingConfig extends BasicStakingConfig {
 	provideLiquidityLink?: string;
 }
 
+export interface UniswapV3PoolStakingConfig extends SimplePoolStakingConfig {
+	INCENTIVE_START_TIME: number;
+	INCENTIVE_END_TIME: number;
+	NFT_POSITIONS_MANAGER_ADDRESS: string;
+	UNISWAP_V3_STAKER: string;
+	STAKING_REWARDS_CONTRACT: string;
+	REWARD_TOKEN: string;
+	UNISWAP_V3_LP_POOL: string;
+	INCENTIVE_REFUNDEE_ADDRESS: string;
+}
 export interface BalancerPoolStakingConfig extends SimplePoolStakingConfig {
 	VAULT_ADDRESS: string;
 	POOL_ID: string;
@@ -32,7 +43,11 @@ export interface BasicNetworkConfig {
 	TOKEN_DISTRO_ADDRESS: string;
 	GIV: BasicStakingConfig;
 	nodeUrl: string;
-	pools: Array<SimplePoolStakingConfig | BalancerPoolStakingConfig>;
+	pools: Array<
+		| SimplePoolStakingConfig
+		| BalancerPoolStakingConfig
+		| UniswapV3PoolStakingConfig
+	>;
 }
 
 interface MainnetNetworkConfig extends BasicNetworkConfig {}

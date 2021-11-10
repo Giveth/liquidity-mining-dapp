@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { BigNumber } from 'ethers';
 
-import { useOnboard, useContracts, useV3Liquidity } from '@/context';
+import { useOnboard, useV3Liquidity } from '@/context';
 import { LiquidityPosition } from '@/types/nfts';
 import config from '@/configuration';
 import { getUniswapV3StakerContract } from '@/lib/contracts';

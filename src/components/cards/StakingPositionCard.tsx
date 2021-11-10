@@ -4,7 +4,7 @@ import { BigNumber, utils } from 'ethers';
 import { Zero } from '@/helpers/number';
 import BaseStakingCard from './BaseStakingCard';
 import { PoolStakingConfig } from '@/types/config';
-import { useOnboard, useV3Liquidity, useContracts } from '@/context';
+import { useOnboard, useV3Liquidity } from '@/context';
 import { claimUnstakeStake } from '@/lib/stakingNFT';
 import { useStakingNFT } from '@/hooks/useStakingNFT';
 interface IStakingPositionCardProps {
