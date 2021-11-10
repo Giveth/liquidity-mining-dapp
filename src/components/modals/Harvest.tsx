@@ -8,7 +8,6 @@ import {
 	neutralColors,
 	Button,
 	Caption,
-	IconGiveth,
 	IconGIVStream,
 	IconHelp,
 	Lead,
@@ -20,6 +19,7 @@ import {
 } from '@giveth/ui-design-system';
 import { Row } from '../styled-components/Grid';
 import styled from 'styled-components';
+import { IconGIV } from '../Icons/GIV';
 interface IHarvesModalProps extends IModal {}
 
 enum States {
@@ -60,7 +60,7 @@ export const HarvestModal: FC<IHarvesModalProps> = ({
 			{state === States.Harvest && (
 				<HarvestModalContainer>
 					<StyledGivethIcon>
-						<IconGiveth size={64} />
+						<IconGIV size={64} />
 					</StyledGivethIcon>
 					<GIVAmount>{257.9055}</GIVAmount>
 					<USDAmount>~${348.74}</USDAmount>

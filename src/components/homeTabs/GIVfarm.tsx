@@ -16,11 +16,13 @@ import {
 	Subtitle,
 	Title,
 	GIVfarmRewardCard,
+	PoolRow,
 } from './GIVfarm.sc';
 import { Container, IconGIVFarm } from '@giveth/ui-design-system';
 import { OnboardContext } from '../../context/onboard.context';
+import { NetworkSelector } from '../NetworkSelector';
 
-const GIVfarmTabContainer = styled(TabContainer)``;
+const GIVfarmTabContainer = styled(Container)``;
 
 export const TabGIVfarmTop = () => {
 	return (
@@ -61,8 +63,9 @@ export const TabGIVfarmBottom = () => {
 
 	return (
 		<GIVfarmTabContainer>
+			<NetworkSelector />
 			{walletNetwork === config.XDAI_NETWORK_NUMBER && (
-				<Row justifyContent='center' gap='24px' wrap={1}>
+				<PoolRow justifyContent='center' gap='24px' wrap={1}>
 					{config.XDAI_CONFIG.pools.map(
 						(poolStakingConfig, index) => {
 							return (
@@ -80,10 +83,10 @@ export const TabGIVfarmBottom = () => {
 							config.XDAI_CONFIG,
 						)}
 					/>
-				</Row>
+				</PoolRow>
 			)}
 			{walletNetwork === config.MAINNET_NETWORK_NUMBER && (
-				<Row justifyContent='center' gap='24px' wrap={1}>
+				<PoolRow justifyContent='center' gap='24px' wrap={1}>
 					{config.MAINNET_CONFIG.pools.map(
 						(poolStakingConfig, index) => {
 							return (
@@ -101,7 +104,7 @@ export const TabGIVfarmBottom = () => {
 							config.MAINNET_CONFIG,
 						)}
 					/>
-				</Row>
+				</PoolRow>
 			)}
 		</GIVfarmTabContainer>
 	);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row } from '../styled-components/Grid';
 import router from 'next/router';
-import { Container, IconGiveth, Button } from '@giveth/ui-design-system';
+import { Container, Button } from '@giveth/ui-design-system';
 import {
 	OverviewTopContainer,
 	PreTitle,
@@ -18,6 +18,7 @@ import {
 	ParticipateDataBlock,
 	ClaimCardQuote,
 } from './Overview.sc';
+import { IconGIV } from '../Icons/GIV';
 
 export const TabOverviewTop = () => {
 	return (
@@ -59,7 +60,7 @@ export const TabOverviewBottom = () => {
 								buttonType='primary'
 							/>
 						}
-						icon={<IconGiveth size={32} />}
+						icon={<IconGIV size={32} />}
 					>
 						GIV fuels and directs the Future of Giving, inspiring
 						people to become Givers and participate in an ecosystem
