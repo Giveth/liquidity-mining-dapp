@@ -43,7 +43,7 @@ export const useStakingNFT = () => {
 			!rewardToken ||
 			!poolAddress ||
 			!incentiveRefundeeAddress ||
-			network === config.MAINNET_NETWORK_NUMBER
+			!(network === config.MAINNET_NETWORK_NUMBER)
 		)
 			return { key: null };
 
