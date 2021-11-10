@@ -51,7 +51,7 @@ export const ERC721NftsProvider: FC<{ children: ReactNode }> = ({
 
 	const mainnetConfig = config.MAINNET_CONFIG;
 	const wethAddress = mainnetConfig.WETH_TOKEN_ADDRESS;
-	const givethAddress = mainnetConfig.GIV;
+	const givethAddress = mainnetConfig.TOKEN_ADDRESS;
 
 	const uniswapConfig = mainnetConfig.pools[0] as UniswapV3PoolStakingConfig;
 	const rewardToken = uniswapConfig.REWARD_TOKEN;
