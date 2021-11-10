@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import { PoolStakingConfig } from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
 import V3StakingCard from '../cards/PositionCard';
-import { useStakingNFT } from '@/hooks/useStakingNFT';
+import { useLiquidityPositions } from '@/context';
 interface IV3StakeModalProps extends IModal {
 	poolStakingConfig: PoolStakingConfig;
 	isUnstakingModal?: boolean;
@@ -25,11 +25,11 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	showModal,
 	setShowModal,
 }) => {
-	const { unstakedPositions, stakedPositions } = useStakingNFT();
+	const { unstakedPositions, stakedPositions } = useLiquidityPositions();
 	console.log(unstakedPositions, stakedPositions);
 	const positions = isUnstakingModal ? stakedPositions : unstakedPositions;
 	console.log(positions);
-	const { type, title } = poolStakingConfig;
+	const { title } = poolStakingConfig;
 
 	return (
 		<Modal showModal={showModal} setShowModal={setShowModal}>
