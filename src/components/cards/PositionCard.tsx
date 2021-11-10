@@ -12,6 +12,7 @@ import {
 	IconGiveth,
 	IconETH,
 	semanticColors,
+	Subline,
 } from '@giveth/ui-design-system';
 
 import { transfer, exit } from '@/lib/stakingNFT';
@@ -19,6 +20,7 @@ import { LiquidityPosition } from '@/types/nfts';
 import { Row } from '@/components/styled-components/Grid';
 import { useOnboard } from '@/context';
 import { useStakingNFT } from '@/hooks/useStakingNFT';
+import { IconWithTooltip } from '../IconWithToolTip';
 interface IV3StakeCardProps {
 	position: LiquidityPosition;
 	isUnstaking?: boolean;
@@ -101,9 +103,28 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({ position, isUnstaking }) => {
 								<GreenDot /> In Range
 							</>
 						) : (
-							<>
-								<YellowDot /> Out of Range
-							</>
+							<IconWithTooltip
+								icon={
+									<>
+										<YellowDot />
+										Out of Range
+									</>
+								}
+								direction={'top'}
+							>
+								<RangeTooltip>
+									Your staked position is out of range and is
+									not earning rewards.{' '}
+									<PositionLink
+										target='_blank'
+										referrerPolicy='no-referrer'
+										href={`https://app.uniswap.org/#/pool/${position.tokenId.toString()}`}
+									>
+										View position
+									</PositionLink>{' '}
+									for more details.
+								</RangeTooltip>
+							</IconWithTooltip>
 						)}
 					</RoundedInfo>
 				</PositionInfoRow>
@@ -212,7 +233,7 @@ export const FullWidthButton = styled(Button)`
 	width: 100%;
 `;
 
-export const SimpleDot = styled.span`
+export const SimpleDot = styled.div`
 	display: inline-block;
 	border-radius: 50%;
 	height: 8px;
@@ -226,6 +247,15 @@ export const GreenDot = styled(SimpleDot)`
 
 export const YellowDot = styled(SimpleDot)`
 	background-color: ${semanticColors.golden[500]};
+`;
+
+export const RangeTooltip = styled(Subline)`
+	color: ${neutralColors.gray[100]};
+	width: 280px;
+`;
+
+export const PositionLink = styled.a`
+	color: ${brandColors.cyan[500]};
 `;
 
 export default V3StakingCard;
