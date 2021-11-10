@@ -4,7 +4,7 @@ import { BigNumber, utils } from 'ethers';
 import { Zero } from '@/helpers/number';
 import BaseStakingCard from './BaseStakingCard';
 import { PoolStakingConfig } from '@/types/config';
-import { useOnboard, useV3Liquidity } from '@/context';
+import { useOnboard } from '@/context';
 import { claimUnstakeStake } from '@/lib/stakingNFT';
 import { useStakingNFT } from '@/hooks/useStakingNFT';
 interface IStakingPositionCardProps {
@@ -16,10 +16,13 @@ const StakingPositionCard: FC<IStakingPositionCardProps> = ({
 	network,
 	poolStakingConfig,
 }) => {
-	const { rewardBalance } = useStakingNFT();
 	const { address: walletAddress, provider } = useOnboard();
-	const { currentIncentive, unstakedPositions, stakedPositions } =
-		useV3Liquidity();
+	const {
+		rewardBalance,
+		currentIncentive,
+		unstakedPositions,
+		stakedPositions,
+	} = useStakingNFT();
 
 	const stakeInfo = {
 		apr: Zero,

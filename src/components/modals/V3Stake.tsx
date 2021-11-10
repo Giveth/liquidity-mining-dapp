@@ -10,10 +10,10 @@ import {
 } from '@giveth/ui-design-system';
 import { Row } from '../styled-components/Grid';
 import styled from 'styled-components';
-import { PoolStakingConfig } from '../../types/config';
+import { PoolStakingConfig } from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
-import { useV3Liquidity } from '../../context/useV3Liquidity';
 import V3StakingCard from '../cards/PositionCard';
+import { useStakingNFT } from '@/hooks/useStakingNFT';
 interface IV3StakeModalProps extends IModal {
 	poolStakingConfig: PoolStakingConfig;
 	isUnstakingModal?: boolean;
@@ -25,7 +25,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	showModal,
 	setShowModal,
 }) => {
-	const { unstakedPositions, stakedPositions } = useV3Liquidity();
+	const { unstakedPositions, stakedPositions } = useStakingNFT();
 	console.log(unstakedPositions, stakedPositions);
 	const positions = isUnstakingModal ? stakedPositions : unstakedPositions;
 	console.log(positions);

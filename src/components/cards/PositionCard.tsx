@@ -17,7 +17,8 @@ import {
 import { transfer, exit } from '@/lib/stakingNFT';
 import { LiquidityPosition } from '@/types/nfts';
 import { Row } from '@/components/styled-components/Grid';
-import { useOnboard, useV3Liquidity } from '@/context';
+import { useOnboard } from '@/context';
+import { useStakingNFT } from '@/hooks/useStakingNFT';
 interface IV3StakeCardProps {
 	position: LiquidityPosition;
 	isUnstaking?: boolean;
@@ -27,7 +28,7 @@ const STARTS_WITH = 'data:application/json;base64,';
 
 const V3StakingCard: FC<IV3StakeCardProps> = ({ position, isUnstaking }) => {
 	const { address, provider } = useOnboard();
-	const { currentIncentive } = useV3Liquidity();
+	const { currentIncentive } = useStakingNFT();
 	const { pool, tickLower, tickUpper } = position._position || {};
 
 	// Check price range
