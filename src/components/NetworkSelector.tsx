@@ -6,12 +6,8 @@ import { B, brandColors } from '@giveth/ui-design-system';
 import { Row } from './styled-components/Grid';
 import { IconXDAI } from './Icons/XDAI';
 import { IconEthereum } from './Icons/Eth';
-
-declare global {
-	interface Window {
-		ethereum: any;
-	}
-}
+import { EthereumChainParameter } from '../types/config';
+import { ChangeNetworkModal } from './modals/ChangeNetwork';
 
 const NetworkSelectorContainer = styled(Row)`
 	width: 270px;
@@ -43,61 +39,77 @@ const EthSelector = styled(Selector)`
 
 export const NetworkSelector = () => {
 	const [showChangeNetworkModal, setShowChangeNetworkModal] = useState(false);
+	const [targetNetwork, setTargetNetwork] = useState(1);
 	const { network: walletNetwork, provider } = useContext(OnboardContext);
 
-	const handleChangeNetwork = async (network: number) => {
-		if (walletNetwork !== network) {
-			if (typeof window.ethereum !== 'undefined') {
-				const { ethereum } = window;
+	const handleChangeNetwork = async (
+		networkNumber: number,
+		network: EthereumChainParameter,
+	) => {
+		setTargetNetwork(networkNumber);
+		if (walletNetwork !== networkNumber) {
+			if (typeof (window as any).ethereum == 'undefined') {
+				const { ethereum } = window as any;
 				try {
 					await ethereum.request({
 						method: 'wallet_switchEthereumChain',
-						params: [{ chainId: '0x' + network.toString(16) }],
+						params: [{ chainId: network.chainId }],
 					});
 				} catch (switchError: any) {
 					// This error code indicates that the chain has not been added to MetaMask.
 					if (switchError.code === 4902) {
-						console.log('chain has not been added to MetaMask');
-						// try {
-						// 	await ethereum.request({
-						// 		method: 'wallet_addEthereumChain',
-						// 		params: [
-						// 			{
-						// 				chainId: '0xf00',
-						// 				rpcUrl: 'https://...' /* ... */,
-						// 			},
-						// 		],
-						// 	});
-						// } catch (addError) {
-						// 	// handle "add" error
-						// }
+						try {
+							await ethereum.request({
+								method: 'wallet_addEthereumChain',
+								params: [network],
+							});
+						} catch (addError) {
+							// handle "add" error
+						}
 					}
 					// handle other "switch" errors
 				}
+			} else {
+				setShowChangeNetworkModal(true);
 			}
 		}
 	};
 
 	return (
-		<NetworkSelectorContainer>
-			<XDaiSelecor
-				isSelected={walletNetwork === config.XDAI_NETWORK_NUMBER}
-				onClick={() => {
-					handleChangeNetwork(config.XDAI_NETWORK_NUMBER);
-				}}
-			>
-				<IconXDAI size={24} />
-				<B>xDAI</B>
-			</XDaiSelecor>
-			<EthSelector
-				isSelected={walletNetwork === config.MAINNET_NETWORK_NUMBER}
-				onClick={() => {
-					handleChangeNetwork(config.MAINNET_NETWORK_NUMBER);
-				}}
-			>
-				<IconEthereum size={24} />
-				<B>Ethereum</B>
-			</EthSelector>
-		</NetworkSelectorContainer>
+		<>
+			<NetworkSelectorContainer>
+				<XDaiSelecor
+					isSelected={walletNetwork === config.XDAI_NETWORK_NUMBER}
+					onClick={() => {
+						handleChangeNetwork(
+							config.XDAI_NETWORK_NUMBER,
+							config.XDAI_NETWORK,
+						);
+					}}
+				>
+					<IconXDAI size={24} />
+					<B>xDAI</B>
+				</XDaiSelecor>
+				<EthSelector
+					isSelected={walletNetwork === config.MAINNET_NETWORK_NUMBER}
+					onClick={() => {
+						handleChangeNetwork(
+							config.MAINNET_NETWORK_NUMBER,
+							config.MAINNET_NETWORK,
+						);
+					}}
+				>
+					<IconEthereum size={24} />
+					<B>Ethereum</B>
+				</EthSelector>
+			</NetworkSelectorContainer>
+			{showChangeNetworkModal && (
+				<ChangeNetworkModal
+					showModal={showChangeNetworkModal}
+					setShowModal={setShowChangeNetworkModal}
+					targetNetwork={targetNetwork}
+				/>
+			)}
+		</>
 	);
 };
