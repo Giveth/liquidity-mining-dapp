@@ -6,7 +6,7 @@ import { networkProviders } from '../helpers/networkProvider';
 import config from '../configuration';
 import { abi as MERKLE_ABI } from '../artifacts/MerkleDrop.json';
 import { abi as TOKEN_DISTRO_ABI } from '../artifacts/TokenDistro.json';
-import { Web3Provider } from '@ethersproject/providers';
+import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers';
 import {
 	showConfirmedClaim,
 	showFailedClaim,
@@ -21,9 +21,15 @@ export const formatAddress = (address: string): string => {
 	}
 };
 
-export const getERC20Contract = (address: string, network: number) => {
+export const getERC20Contract = (
+	address: string,
+	network: number,
+	userProvider: Web3Provider | null,
+) => {
 	const networkConfig = config.NETWORKS_CONFIG[network];
-	const provider = networkProviders[network];
+	const provider: JsonRpcProvider = userProvider
+		? userProvider
+		: networkProviders[network];
 
 	if (!networkConfig || !provider) {
 		return null;
@@ -106,6 +112,7 @@ export const getTokenDistroAmounts = async (
 	address: string,
 	tokenDistroAddress: string,
 	networkNumber: number,
+	userProvider: Web3Provider | null,
 ): Promise<ITokenDistroBalance> => {
 	if (!isAddress(tokenDistroAddress)) {
 		return {
@@ -114,10 +121,14 @@ export const getTokenDistroAmounts = async (
 		};
 	}
 
+	const provider: JsonRpcProvider = userProvider
+		? userProvider
+		: networkProviders[networkNumber];
+
 	const tokenDistro = new Contract(
 		tokenDistroAddress,
 		TOKEN_DISTRO_ABI,
-		networkProviders[networkNumber],
+		provider,
 	);
 
 	const balances = await tokenDistro.balances(address);

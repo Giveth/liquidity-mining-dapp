@@ -1,4 +1,4 @@
-import { createContext, FC, useEffect, useState, useContext } from 'react';
+import { createContext, FC, useContext, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { Zero } from '@ethersproject/constants';
 import { OnboardContext } from './onboard.context';
@@ -35,7 +35,7 @@ export const TokenBalanceContext =
 	createContext<ITokenBalanceContext>(initialValue);
 
 export const TokenBalanceProvider: FC = ({ children }) => {
-	const { address, network } = useContext(OnboardContext);
+	const { address, network, provider } = useContext(OnboardContext);
 	const [tokenBalance, setTokenBalance] = useState<ethers.BigNumber>(Zero);
 	const [mainnetTokenBalance, setMainnetTokenBalance] =
 		useState<ethers.BigNumber>(Zero);
@@ -92,12 +92,16 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 		}
 	}, [mainnetTokenDistroBalance, xDaiTokenDistroBalance, network]);
 
-	const getTokenContract = (network: number) => {
-		const networkConfig = config.NETWORKS_CONFIG[network];
-		return getERC20Contract(networkConfig?.TOKEN_ADDRESS, network);
-	};
-
 	useEffect(() => {
+		const getTokenContract = (_network: number) => {
+			const networkConfig = config.NETWORKS_CONFIG[_network];
+			return getERC20Contract(
+				networkConfig?.TOKEN_ADDRESS,
+				_network,
+				_network === network ? provider : null,
+			);
+		};
+
 		const fetchTokenBalance = async () => {
 			const mainnetTokenContract = getTokenContract(
 				config.MAINNET_NETWORK_NUMBER,
@@ -117,6 +121,22 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 				return;
 			}
 
+			const safeNetworkCall = async <T extends unknown>(
+				promise: Promise<T>,
+				defaultValue: T,
+			): Promise<T> => {
+				try {
+					return await promise;
+				} catch (e) {
+					console.error(e);
+				}
+				return defaultValue;
+			};
+
+			const defaultTokenDistroResult: ITokenDistroBalance = {
+				claimable: Zero,
+				locked: Zero,
+			};
 			try {
 				const [
 					_newMainnetBalance,
@@ -124,17 +144,32 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 					_mainnetTokenDistro,
 					_xDaiTokenDistro,
 				] = await Promise.all([
-					mainnetTokenContract.balanceOf(address),
-					xDaiTokenContract.balanceOf(address),
-					getTokenDistroAmounts(
-						address,
-						config.MAINNET_CONFIG.TOKEN_DISTRO_ADDRESS,
-						config.MAINNET_NETWORK_NUMBER,
+					safeNetworkCall(
+						mainnetTokenContract.balanceOf(address),
+						Zero,
 					),
-					getTokenDistroAmounts(
-						address,
-						config.XDAI_CONFIG.TOKEN_DISTRO_ADDRESS,
-						config.XDAI_NETWORK_NUMBER,
+					safeNetworkCall(xDaiTokenContract.balanceOf(address), Zero),
+					safeNetworkCall(
+						getTokenDistroAmounts(
+							address,
+							config.MAINNET_CONFIG.TOKEN_DISTRO_ADDRESS,
+							config.MAINNET_NETWORK_NUMBER,
+							network === config.MAINNET_NETWORK_NUMBER
+								? provider
+								: null,
+						),
+						defaultTokenDistroResult,
+					),
+					safeNetworkCall(
+						getTokenDistroAmounts(
+							address,
+							config.XDAI_CONFIG.TOKEN_DISTRO_ADDRESS,
+							config.XDAI_NETWORK_NUMBER,
+							network === config.XDAI_NETWORK_NUMBER
+								? provider
+								: null,
+						),
+						defaultTokenDistroResult,
 					),
 				]);
 
@@ -167,7 +202,7 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 				clearInterval(interval);
 			};
 		}
-	}, [address]);
+	}, [address, network, provider]);
 
 	return (
 		<TokenBalanceContext.Provider
