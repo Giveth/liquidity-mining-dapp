@@ -375,18 +375,6 @@ export const wrapToken = async (
 
 	const signer = provider.getSigner();
 
-	const userAddress = await signer.getAddress();
-
-	const isApproved = await approveERC20tokenTransfer(
-		amount,
-		userAddress,
-		gardenAddress,
-		poolAddress,
-		provider,
-	);
-
-	if (!isApproved) return;
-
 	const gardenContract = new Contract(
 		gardenAddress,
 		TOKEN_MANAGER_ABI,
@@ -395,8 +383,6 @@ export const wrapToken = async (
 	const txResponse: TransactionResponse = await gardenContract
 		.connect(signer.connectUnchecked())
 		.wrap(amount);
-
-	const { status } = await txResponse.wait();
 
 	return txResponse;
 };
@@ -462,23 +448,24 @@ export const stakeTokens = async (
 				},
 			);
 
-		const network = provider.network.chainId;
+		// const network = provider.network.chainId;
 
-		stakeToast.showPendingStake(
-			ethers.utils.formatEther(amount),
-			network,
-			txResponse.hash,
-		);
+		// stakeToast.showPendingStake(
+		// 	ethers.utils.formatEther(amount),
+		// 	network,
+		// 	txResponse.hash,
+		// );
 
-		const { status } = await txResponse.wait();
+		// const { status } = await txResponse.wait();
 
-		if (status) {
-			stakeToast.showConfirmedStake(network, txResponse.hash);
-			return txResponse;
-		} else {
-			stakeToast.showFailedStake(network, txResponse.hash);
-			return;
-		}
+		// if (status) {
+		// 	stakeToast.showConfirmedStake(network, txResponse.hash);
+		// 	return txResponse;
+		// } else {
+		// 	stakeToast.showFailedStake(network, txResponse.hash);
+		// 	return;
+		// }
+		return txResponse;
 	} catch (e) {
 		console.error('Error on staking:', e);
 		return;

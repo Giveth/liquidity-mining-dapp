@@ -2,7 +2,6 @@ import config from '../../configuration';
 import { OnboardContext } from '../../context/onboard.context';
 import { PoolStakingConfig } from '../../types/config';
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
-import { H4, P } from '../styled-components/Typography';
 import { Row } from '../styled-components/Grid';
 import {
 	harvestTokens,
@@ -12,7 +11,6 @@ import {
 import { formatEthHelper, formatWeiHelper } from '../../helpers/number';
 import { ethers } from 'ethers';
 import { useStakingPool } from '../../hooks/useStakingPool';
-import { Zero } from '@ethersproject/constants';
 import {
 	StakingPoolContainer,
 	StakingPoolExchangeRow,
@@ -62,7 +60,7 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 	network,
 	poolStakingConfig,
 }) => {
-	const { network: walletNetwork, provider } = useContext(OnboardContext);
+	const { provider } = useContext(OnboardContext);
 
 	const [state, setState] = useState(SwapCardStates.Default);
 	const [amount, setAmount] = useState<string>('0');
@@ -203,6 +201,7 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 							</Details>
 							<ClaimButton
 								disabled={userStakeInfo.earned.isZero()}
+								buttonType='primary'
 								onClick={onHarvest}
 								label='CLAIM Rewards'
 							/>
