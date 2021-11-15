@@ -1,13 +1,12 @@
 import styled from 'styled-components';
 import { Row } from '../styled-components/Grid';
-import { TabContainer } from './commons';
 import StakingPoolCard from '../cards/StakingPoolCard';
 import config from '../../configuration';
 import {
 	BasicNetworkConfig,
 	SimplePoolStakingConfig,
 	StakingType,
-} from '../../types/config';
+} from '@/types/config';
 import React, { useContext } from 'react';
 import {
 	GIVfarmTopContainer,
@@ -19,7 +18,9 @@ import {
 	PoolRow,
 } from './GIVfarm.sc';
 import { Container, IconGIVFarm } from '@giveth/ui-design-system';
-import { OnboardContext } from '../../context/onboard.context';
+import { OnboardContext } from '@/context/onboard.context';
+import { NetworkSelector } from '@/components/NetworkSelector';
+import StakingPositionCard from '@/components/cards/StakingPositionCard';
 
 const GIVfarmTabContainer = styled(Container)``;
 

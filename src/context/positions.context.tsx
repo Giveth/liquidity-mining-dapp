@@ -92,14 +92,11 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				token1.toLowerCase() === givethAddress.toLowerCase()
 			) {
 				return true;
-			} else if (
+			}
+			return (
 				token0.toLowerCase() === givethAddress.toLowerCase() &&
 				token1.toLowerCase() === wethAddress.toLowerCase()
-			) {
-				return true;
-			} else {
-				return false;
-			}
+			);
 		},
 		[wethAddress, givethAddress],
 	);
@@ -184,8 +181,6 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 						),
 					)
 				).filter((p: any) => p);
-
-				console.log('loaoaa', encodedPositions);
 
 				return positions;
 			} catch (err) {
