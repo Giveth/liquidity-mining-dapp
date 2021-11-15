@@ -60,7 +60,7 @@ export const TabGardenTop = () => {
 export const TabGardenBottom = () => {
 	const goToGarden = () => {
 		const url =
-			'https://honey-pot-o49n5fgrn-1hive.vercel.app/#/garden/0x79c52e1a74d01cf030f3cbbbbf84b01476c9ac93?';
+			'https://honey-pot-o49n5fgrn-1hive.vercel.app/#/garden/0x79c52e1a74d01cf030f3cbbbbf84b01476c9ac93';
 		window.open(url, '_blank');
 	};
 
@@ -76,7 +76,7 @@ export const TabGardenBottom = () => {
 					</Section1Subtitle>
 					<OpenGardenButton
 						buttonType='primary'
-						label='OPEN GARDENS'
+						label='OPEN GIVGARDENS'
 						size='large'
 						onClick={goToGarden}
 					/>
@@ -131,7 +131,7 @@ export const TabGardenBottom = () => {
 						coordinate around shared resources from the bottom up.
 					</VoteCardDesc>
 					<VoteCardButton
-						label='OPEN GARDEN'
+						label='OPEN GIVGARDENS'
 						buttonType='primary'
 						onClick={goToGarden}
 					/>
