@@ -24,16 +24,19 @@ import * as harvestToast from './notifications/harvest';
 
 import { Zero } from '@ethersproject/constants';
 import { isAddress } from 'ethers/lib/utils';
-import { TransactionResponse, Web3Provider } from '@ethersproject/providers';
+import {
+	JsonRpcProvider,
+	TransactionResponse,
+	Web3Provider,
+} from '@ethersproject/providers';
 
 const toBigNumber = (eb: ethers.BigNumber): BigNumber =>
 	new BigNumber(eb.toString());
 
 export const fetchGivStakingInfo = async (
 	lmAddress: string,
-	network: number,
+	provider: JsonRpcProvider,
 ): Promise<StakePoolInfo> => {
-	const provider = networkProviders[network];
 	const lmContract = new Contract(lmAddress, LM_ABI, provider);
 
 	let apr: BigNumber | null;
@@ -68,24 +71,26 @@ export const fetchGivStakingInfo = async (
 export const fetchLPStakingInfo = async (
 	poolStakingConfig: PoolStakingConfig,
 	network: number,
+	provider: JsonRpcProvider,
 ): Promise<StakePoolInfo> => {
 	if (poolStakingConfig.type === StakingType.BALANCER) {
 		return fetchBalancerPoolStakingInfo(
 			poolStakingConfig as BalancerPoolStakingConfig,
 			network,
+			provider,
 		);
 	} else {
-		return fetchSimplePoolStakingInfo(poolStakingConfig, network);
+		return fetchSimplePoolStakingInfo(poolStakingConfig, network, provider);
 	}
 };
 
 const fetchBalancerPoolStakingInfo = async (
 	balancerPoolStakingConfig: BalancerPoolStakingConfig,
 	network: number,
+	provider: JsonRpcProvider,
 ): Promise<StakePoolInfo> => {
 	const { LM_ADDRESS, POOL_ADDRESS, VAULT_ADDRESS, POOL_ID } =
 		balancerPoolStakingConfig;
-	const provider = networkProviders[network];
 	const tokenAddress = config.NETWORKS_CONFIG[network].TOKEN_ADDRESS;
 
 	const lmContract = new Contract(LM_ADDRESS, LM_ABI, provider);
@@ -152,10 +157,10 @@ const fetchBalancerPoolStakingInfo = async (
 const fetchSimplePoolStakingInfo = async (
 	simplePoolStakingConfig: SimplePoolStakingConfig,
 	network: number,
+	provider: JsonRpcProvider,
 ): Promise<StakePoolInfo> => {
 	const { LM_ADDRESS, POOL_ADDRESS } = simplePoolStakingConfig;
 	const tokenAddress = config.NETWORKS_CONFIG[network].TOKEN_ADDRESS;
-	const provider = networkProviders[network];
 	const lmContract = new Contract(LM_ADDRESS, LM_ABI, provider);
 
 	let reserves;
@@ -236,9 +241,8 @@ export const fetchUserStakeInfo = async (
 export const fetchUserNotStakedToken = async (
 	address: string,
 	stakingConfig: PoolStakingConfig,
-	network: number,
+	provider: JsonRpcProvider | null,
 ): Promise<ethers.BigNumber> => {
-	const provider = networkProviders[network];
 	if (isAddress(address) && provider) {
 		const { POOL_ADDRESS } = stakingConfig;
 		const poolContract = new Contract(POOL_ADDRESS, UNI_ABI, provider);
