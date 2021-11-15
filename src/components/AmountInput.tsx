@@ -2,7 +2,7 @@ import { GLink, neutralColors, brandColors } from '@giveth/ui-design-system';
 import { ethers } from 'ethers';
 import { FC, useState, useCallback, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
-import config from '../configuration';
+import config from 'src/configuration';
 import { formatEthHelper, formatWeiHelper } from '../helpers/number';
 import { PoolStakingConfig } from '../types/config';
 import { Row } from './styled-components/Grid';
@@ -11,12 +11,14 @@ interface IAmountInput {
 	maxAmount: ethers.BigNumber;
 	setAmount: Dispatch<SetStateAction<string>>;
 	poolStakingConfig: PoolStakingConfig;
+	disabled?: boolean;
 }
 
 export const AmountInput: FC<IAmountInput> = ({
 	maxAmount,
 	setAmount,
 	poolStakingConfig,
+	disabled = false,
 }) => {
 	const [displayAmount, setDisplayAmount] = useState('0');
 
@@ -62,6 +64,7 @@ export const AmountInput: FC<IAmountInput> = ({
 				value={displayAmount}
 				type='number'
 				onChange={e => onChange(+e.target.value || '0')}
+				disabled={disabled}
 			/>
 			<FiltersRow>
 				<Filter
@@ -140,6 +143,7 @@ export const Input = styled.input`
 		-webkit-appearance: none;
 		margin: 0;
 	}
+	${props => (props.disabled ? `color: ${brandColors.giv[300]};` : '')}
 `;
 
 const FiltersRow = styled(Row)`
