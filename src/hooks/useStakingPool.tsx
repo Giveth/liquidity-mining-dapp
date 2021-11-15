@@ -13,7 +13,6 @@ import config from '@/configuration';
 import { useOnboard, useTokenBalance } from '@/context';
 import { PoolStakingConfig, StakingType } from '@/types/config';
 import { StakePoolInfo, StakeUserInfo } from '@/types/poolInfo';
-import { networkProviders } from '@/helpers/networkProvider';
 
 export const useStakingPool = (
 	poolStakingConfig: PoolStakingConfig,
@@ -25,14 +24,7 @@ export const useStakingPool = (
 	rewardRatePerToken: BigNumber | null;
 } => {
 	const { xDaiTokenBalance, mainnetTokenBalance } = useTokenBalance();
-	const {
-		address,
-		provider: userProvider,
-		network: userNetwork,
-	} = useOnboard();
-
-	const provider =
-		userNetwork === network ? userProvider : networkProviders[network];
+	const { address } = useOnboard();
 
 	const [apr, setApr] = useState<BigNumber | null>(null);
 	const [rewardRatePerToken, setRewardRatePerToken] =
@@ -51,11 +43,10 @@ export const useStakingPool = (
 
 	useEffect(() => {
 		const cb = () => {
-			if (!provider) return;
 			const promise: Promise<StakePoolInfo> =
 				type === StakingType.GIV_STREAM
-					? fetchGivStakingInfo(LM_ADDRESS, provider)
-					: fetchLPStakingInfo(poolStakingConfig, network, provider);
+					? fetchGivStakingInfo(LM_ADDRESS, network)
+					: fetchLPStakingInfo(poolStakingConfig, network);
 
 			promise.then(
 				({ apr: _apr, rewardRatePerToken: _rewardRatePerToken }) => {
@@ -67,7 +58,7 @@ export const useStakingPool = (
 
 		cb();
 
-		stakePoolInfoPoll.current = setInterval(cb, 15000); // Every 15 seconds
+		stakePoolInfoPoll.current = setInterval(cb, 60000); // Every 15 seconds
 
 		return () => {
 			if (stakePoolInfoPoll.current) {
@@ -99,7 +90,7 @@ export const useStakingPool = (
 					lpBalancePromise = fetchUserNotStakedToken(
 						address,
 						poolStakingConfig,
-						provider,
+						network,
 					);
 				}
 				Promise.all([
@@ -129,7 +120,6 @@ export const useStakingPool = (
 	}, [
 		address,
 		network,
-		provider,
 		poolStakingConfig,
 		mainnetTokenBalance,
 		xDaiTokenBalance,
