@@ -15,7 +15,7 @@ const config: EnvConfig = {
 			decimals: 18,
 		},
 		rpcUrls: [],
-		blockExplorerUrls: [],
+		blockExplorerUrls: ['https://etherscan.io/'],
 	},
 
 	XDAI_NETWORK: {
