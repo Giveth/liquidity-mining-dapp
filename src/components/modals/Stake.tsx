@@ -200,7 +200,7 @@ export const StakeModal: FC<IStakeModalProps> = ({
 									}
 								/>
 								{stakeState === StakeStates.APPROVE && (
-									<ConfirmButton
+									<ApproveButton
 										label={'APPROVE'}
 										onClick={onApprove}
 										disabled={
@@ -210,7 +210,14 @@ export const StakeModal: FC<IStakeModalProps> = ({
 									/>
 								)}
 								{stakeState === StakeStates.APPROVING && (
-									<Pending>APPROVE PENDING</Pending>
+									<Pending>
+										<Lottie
+											options={loadingAnimationOptions}
+											height={40}
+											width={40}
+										/>
+										&nbsp;APPROVE PENDING
+									</Pending>
 								)}
 								{stakeState === StakeStates.WRAP && (
 									<ConfirmButton
@@ -220,10 +227,18 @@ export const StakeModal: FC<IStakeModalProps> = ({
 											amount == '0' ||
 											maxAmount.lt(amount)
 										}
+										buttonType='primary'
 									/>
 								)}
 								{stakeState === StakeStates.WRAPPING && (
-									<Pending>WRAP PENDING</Pending>
+									<Pending>
+										<Lottie
+											options={loadingAnimationOptions}
+											height={40}
+											width={40}
+										/>
+										&nbsp;WRAP PENDING
+									</Pending>
 								)}
 								{stakeState === StakeStates.STAKE && (
 									<ConfirmButton
@@ -233,10 +248,18 @@ export const StakeModal: FC<IStakeModalProps> = ({
 											amount == '0' ||
 											maxAmount.lt(amount)
 										}
+										buttonType='primary'
 									/>
 								)}
 								{stakeState === StakeStates.STAKING && (
-									<Pending>STAKE PENDING</Pending>
+									<Pending>
+										<Lottie
+											options={loadingAnimationOptions}
+											height={40}
+											width={40}
+										/>
+										&nbsp;STAKE PENDING
+									</Pending>
 								)}
 								<CancelButton
 									buttonType='texty'
@@ -327,17 +350,32 @@ const InnerModal = styled.div`
 	padding: 0 24px;
 `;
 
-const ConfirmButton = styled(OulineButton)`
+const ApproveButton = styled(OulineButton)`
 	width: 100%;
 	margin-top: 32px;
 	margin-bottom: 8px;
 `;
 
-const Pending = styled.div`
+const ConfirmButton = styled(Button)`
+	width: 100%;
 	margin-top: 32px;
 	margin-bottom: 8px;
-	line-height: 50px;
-	height: 50px;
+`;
+
+const Pending = styled(Row)`
+	margin-top: 32px;
+	margin-bottom: 8px;
+	line-height: 46px;
+	height: 46px;
+	border: 2px solid ${neutralColors.gray[100]};
+	border-radius: 48px;
+	color: ${neutralColors.gray[100]};
+	gap: 8px;
+	justify-content: center;
+	align-items: center;
+	& > div {
+		margin: 0 !important;
+	}
 `;
 
 const TxSubmit = styled(H6)`
