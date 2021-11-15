@@ -161,7 +161,7 @@ export const StakeModal: FC<IStakeModalProps> = ({
 					if (txResponse) {
 						txResponse.wait().then(data => {
 							const { status } = data;
-							console.log('data', data);
+							console.log('status', status);
 							setStakeState(StakeStates.CONFIRMED);
 						});
 					}
