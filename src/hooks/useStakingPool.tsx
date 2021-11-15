@@ -78,30 +78,34 @@ export const useStakingPool = (
 
 	useEffect(() => {
 		const cb = () => {
-			let lpBalancePromise: Promise<ethers.BigNumber>;
+			try {
+				let lpBalancePromise: Promise<ethers.BigNumber>;
 
-			if (type === StakingType.GIV_STREAM) {
-				const value =
-					network === config.MAINNET_NETWORK_NUMBER
-						? mainnetTokenBalance
-						: xDaiTokenBalance;
-				lpBalancePromise = Promise.resolve(value);
-			} else {
-				lpBalancePromise = fetchUserNotStakedToken(
-					address,
-					poolStakingConfig,
-					network,
-				);
-			}
-			Promise.all([
-				fetchUserStakeInfo(address, poolStakingConfig, network),
-				lpBalancePromise,
-			]).then(([_userStakeInfo, _lpBalance]) => {
-				if (isMounted.current) {
-					setUserStakeInfo(_userStakeInfo);
-					setNotStakedAmount(_lpBalance);
+				if (type === StakingType.GIV_STREAM) {
+					const value =
+						network === config.MAINNET_NETWORK_NUMBER
+							? mainnetTokenBalance
+							: xDaiTokenBalance;
+					lpBalancePromise = Promise.resolve(value);
+				} else {
+					lpBalancePromise = fetchUserNotStakedToken(
+						address,
+						poolStakingConfig,
+						network,
+					);
 				}
-			});
+				Promise.all([
+					fetchUserStakeInfo(address, poolStakingConfig, network),
+					lpBalancePromise,
+				]).then(([_userStakeInfo, _lpBalance]) => {
+					if (isMounted.current) {
+						setUserStakeInfo(_userStakeInfo);
+						setNotStakedAmount(_lpBalance);
+					}
+				});
+			} catch (error) {
+				console.error('Error in fetching Staking data', error);
+			}
 		};
 
 		cb();
