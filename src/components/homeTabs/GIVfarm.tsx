@@ -1,13 +1,12 @@
 import styled from 'styled-components';
 import { Row } from '../styled-components/Grid';
-import { TabContainer } from './commons';
 import StakingPoolCard from '../cards/StakingPoolCard';
 import config from '../../configuration';
 import {
 	BasicNetworkConfig,
 	SimplePoolStakingConfig,
 	StakingType,
-} from '../../types/config';
+} from '@/types/config';
 import React, { useContext } from 'react';
 import {
 	GIVfarmTopContainer,
@@ -19,8 +18,9 @@ import {
 	PoolRow,
 } from './GIVfarm.sc';
 import { Container, IconGIVFarm } from '@giveth/ui-design-system';
-import { OnboardContext } from '../../context/onboard.context';
-import { NetworkSelector } from '../NetworkSelector';
+import { OnboardContext } from '@/context/onboard.context';
+import { NetworkSelector } from '@/components/NetworkSelector';
+import StakingPositionCard from '@/components/cards/StakingPositionCard';
 
 const GIVfarmTabContainer = styled(Container)``;
 
@@ -89,7 +89,14 @@ export const TabGIVfarmBottom = () => {
 				<PoolRow justifyContent='center' gap='24px' wrap={1}>
 					{config.MAINNET_CONFIG.pools.map(
 						(poolStakingConfig, index) => {
-							return (
+							return poolStakingConfig.type ===
+								StakingType.UNISWAP ? (
+								<StakingPositionCard
+									key={`staking_pool_card_mainnet_${index}`}
+									network={config.MAINNET_NETWORK_NUMBER}
+									poolStakingConfig={poolStakingConfig}
+								/>
+							) : (
 								<StakingPoolCard
 									key={`staking_pool_card_mainnet_${index}`}
 									network={config.MAINNET_NETWORK_NUMBER}

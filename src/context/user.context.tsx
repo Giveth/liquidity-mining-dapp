@@ -1,4 +1,4 @@
-import { createContext, FC, ReactNode, useState } from 'react';
+import { createContext, FC, ReactNode, useState, useContext } from 'react';
 import { fetchAirDropClaimData, hasClaimedAirDrop } from '../lib/claim';
 import { Zero } from '@ethersproject/constants';
 import { BigNumber } from 'ethers';
@@ -55,3 +55,13 @@ export const UserProvider: FC<Props> = ({ children }) => {
 		</UserContext.Provider>
 	);
 };
+
+export default function useUser() {
+	const context = useContext(UserContext);
+
+	if (!context) {
+		throw new Error('User context not found!');
+	}
+
+	return context;
+}
