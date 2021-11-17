@@ -131,7 +131,7 @@ export const TabGardenBottom = () => {
 						coordinate around shared resources from the bottom up.
 					</VoteCardDesc>
 					<VoteCardButton
-						label='OPEN GARDEN'
+						label='OPEN GIVGARDEN'
 						buttonType='primary'
 						onClick={goToGarden}
 					/>

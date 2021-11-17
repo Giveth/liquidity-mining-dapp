@@ -78,7 +78,7 @@ export const Section1Subtitle = styled(QuoteText)`
 
 export const OpenGardenButton = styled(Button)`
 	width: 251px;
-	padding: 24px 55px;
+	padding: 24px;
 `;
 
 export const Section2Title = styled(H1)`
