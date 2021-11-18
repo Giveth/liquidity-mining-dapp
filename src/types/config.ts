@@ -66,6 +66,7 @@ export interface EthereumChainParameter {
 	rpcUrls: string[];
 	blockExplorerUrls?: string[];
 	iconUrls?: string[]; // Currently ignored.
+	subgraphAddress: string;
 }
 
 export interface EnvConfig {
