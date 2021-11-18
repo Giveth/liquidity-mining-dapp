@@ -98,7 +98,7 @@ export const useStakingNFT = () => {
 
 		const interval = setInterval(() => {
 			if (stakedPositions.length > 0) {
-			checkForRewards();
+				checkForRewards();
 			}
 		}, 15000);
 
