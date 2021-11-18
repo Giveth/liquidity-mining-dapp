@@ -59,6 +59,7 @@ import { getHistory, ITokenAllocation } from '@/services/subgraph';
 import { OnboardContext } from '@/context/onboard.context';
 import { formatWeiHelper, Zero } from '@/helpers/number';
 import config from '@/configuration';
+import BigNumber from 'bignumber.js';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -80,7 +81,7 @@ export const TabGIVstreamTop = () => {
 					</Left>
 					<Right>
 						<GIVstreamRewardCard
-							amount={257.9055}
+							amount={new BigNumber('257.9055')}
 							actionLabel='HARVEST'
 							actionCb={() => {
 								setShowModal(true);
