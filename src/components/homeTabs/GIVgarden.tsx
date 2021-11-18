@@ -57,9 +57,15 @@ export const TabGardenTop = () => {
 						<GardenRewardCard
 							title='Your GIVgarden rewards'
 							amount={new BigNumber(earned.toString())}
-							rate={rewardRatePerToken ? new BigNumber(rewardRatePerToken.times(
-								'604800',
-							).toString()) : undefined}
+							rate={
+								rewardRatePerToken
+									? new BigNumber(
+											rewardRatePerToken
+												.times('604800')
+												.toString(),
+									  )
+									: undefined
+							}
 							actionLabel='HARVEST'
 							actionCb={() => {
 								setShowModal(true);
