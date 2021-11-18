@@ -16,6 +16,7 @@ import {
 	neutralColors,
 	Title,
 	Subline,
+	Caption,
 } from '@giveth/ui-design-system';
 import { TopContainer } from './commons';
 import { RewardCard } from '../RewardCard';
@@ -41,6 +42,7 @@ export const GIVstreamTopInnerContainer = styled(Container)`
 
 export const Left = styled.div`
 	width: 708px;
+	z-index: 2;
 `;
 
 export const Right = styled.div`
@@ -178,4 +180,24 @@ export const Grid = styled.div`
 
 export const GsHFrUnit = styled(P)`
 	color: ${brandColors.giv[200]};
+`;
+
+export const TxHash = styled(GLink)`
+	color: ${brandColors.cyan[500]};
+	cursor: pointer;
+`;
+
+interface IPaginationItem {
+	disable: boolean;
+}
+
+export const PaginationRow = styled(Row)`
+	margin-top: 16px;
+`;
+
+export const PaginationItem = styled(Caption)`
+	${props =>
+		props.disable
+			? `color: ${neutralColors.gray[700]}`
+			: `cursor: pointer; color: ${neutralColors.gray[100]}`};
 `;
