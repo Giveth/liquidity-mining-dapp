@@ -21,6 +21,8 @@ import { Container, IconGIVFarm } from '@giveth/ui-design-system';
 import { OnboardContext } from '@/context/onboard.context';
 import { NetworkSelector } from '@/components/NetworkSelector';
 import StakingPositionCard from '@/components/cards/StakingPositionCard';
+import { getGivStakingConfig } from '@/helpers/networkProvider';
+import { BigNumber } from 'bignumber.js';
 
 const GIVfarmTabContainer = styled(Container)``;
 
@@ -39,7 +41,10 @@ export const TabGIVfarmTop = () => {
 						</Subtitle>
 					</Left>
 					<Right>
-						<GIVfarmRewardCard amount={257.9055} />
+						<GIVfarmRewardCard
+							title='Your GIVfarm rewards'
+							amount={new BigNumber('257.9055')}
+						/>
 					</Right>
 				</Row>
 			</Container>
@@ -48,17 +53,6 @@ export const TabGIVfarmTop = () => {
 };
 
 export const TabGIVfarmBottom = () => {
-	const getGivStakingConfig = (
-		networkConfig: BasicNetworkConfig,
-	): SimplePoolStakingConfig => {
-		return {
-			...networkConfig.GIV,
-			POOL_ADDRESS: networkConfig.TOKEN_ADDRESS,
-			type: StakingType.GIV_STREAM,
-			title: 'GIV',
-			description: '100% GIV',
-		};
-	};
 	const { network: walletNetwork } = useContext(OnboardContext);
 
 	return (

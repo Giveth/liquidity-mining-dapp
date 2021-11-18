@@ -22,10 +22,22 @@ import {
 	VoteCardButton,
 } from './GIVgarden.sc';
 import { HarvestModal } from '../modals/Harvest';
+import config from '@/configuration';
+import { useStakingPool } from '@/hooks/useStakingPool';
+import { getGivStakingConfig } from '@/helpers/networkProvider';
+import { BigNumber } from 'bignumber.js';
+
+const poolStakingConfig = getGivStakingConfig(config.XDAI_CONFIG);
 
 export const TabGardenTop = () => {
 	const [showModal, setShowModal] = useState(false);
 
+	const { userStakeInfo, rewardRatePerToken } = useStakingPool(
+		poolStakingConfig,
+		config.XDAI_NETWORK_NUMBER,
+	);
+
+	const { earned } = userStakeInfo;
 	return (
 		<GardenTopContainer>
 			<Container>
@@ -43,7 +55,11 @@ export const TabGardenTop = () => {
 					</Left>
 					<Right>
 						<GardenRewardCard
-							amount={257.9055}
+							title='Your GIVgarden rewards'
+							amount={new BigNumber(earned.toString())}
+							rate={rewardRatePerToken ? new BigNumber(rewardRatePerToken.times(
+								'604800',
+							).toString()) : undefined}
 							actionLabel='HARVEST'
 							actionCb={() => {
 								setShowModal(true);

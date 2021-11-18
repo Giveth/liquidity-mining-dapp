@@ -1,4 +1,4 @@
-import React, { FC, useState, Fragment } from 'react';
+import React, { FC, useState, Fragment, useEffect, useContext } from 'react';
 import { Row } from '../styled-components/Grid';
 import router from 'next/router';
 import {
@@ -50,8 +50,16 @@ import {
 	GsPTooltip,
 	HistoryTitleRow,
 	HistoryTooltip,
+	PaginationRow,
+	PaginationItem,
+	TxHash,
 } from './GIVstream.sc';
 import { IconWithTooltip } from '../IconWithToolTip';
+import { getHistory, ITokenAllocation } from '@/services/subgraph';
+import { OnboardContext } from '@/context/onboard.context';
+import { formatWeiHelper, Zero } from '@/helpers/number';
+import config from '@/configuration';
+import BigNumber from 'bignumber.js';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -73,7 +81,7 @@ export const TabGIVstreamTop = () => {
 					</Left>
 					<Right>
 						<GIVstreamRewardCard
-							amount={257.9055}
+							amount={new BigNumber('257.9055')}
 							actionLabel='HARVEST'
 							actionCb={() => {
 								setShowModal(true);
@@ -87,10 +95,6 @@ export const TabGIVstreamTop = () => {
 };
 
 export const TabGIVstreamBottom = () => {
-	const goToClaim = () => {
-		router.push('/claim');
-	};
-
 	return (
 		<GIVbacksBottomContainer>
 			<Container>
@@ -316,6 +320,28 @@ const convetSourceTypeToIcon = (type: GIVstreamSources) => {
 };
 
 export const GIVstreamHistory: FC = () => {
+	const { network, address } = useContext(OnboardContext);
+	const [tokenAllocations, setTokenAllocations] = useState<
+		ITokenAllocation[]
+	>([]);
+	const [page, setPage] = useState(1);
+	const [hasNext, setHasNext] = useState(false);
+	const count = 6;
+
+	useEffect(() => {
+		getHistory(network, address, page * count, count).then(
+			_tokenAllocations => {
+				console.log(`_tokenAllocations`, _tokenAllocations);
+				setTokenAllocations(_tokenAllocations);
+				if (_tokenAllocations.length === count) {
+					setHasNext(true);
+				} else {
+					setHasNext(false);
+				}
+			},
+		);
+	}, [network, address, page]);
+
 	return (
 		<HistoryContainer>
 			<Grid>
@@ -324,21 +350,58 @@ export const GIVstreamHistory: FC = () => {
 				<B as='span'>Date</B>
 				<B as='span'>Tx</B>
 			</Grid>
-			<Grid>
-				{streamHistory.map((history, idx) => (
-					<Fragment key={idx}>
-						<P as='span'>{convetSourceTypeToIcon(history.type)}</P>
-						<B as='span'>
-							{`${history.flowRate >= 0 ? '+' : '-'} ${
-								history.flowRate
-							}`}
-							<GsHFrUnit as='span'>{` GIV/week`}</GsHFrUnit>
-						</B>
-						<P as='span'>{history.date}</P>
-						<P as='span'>{history.Tx}</P>
-					</Fragment>
-				))}
-			</Grid>
+			{tokenAllocations && tokenAllocations.length > 0 && (
+				<Grid>
+					{tokenAllocations.map((tokenAllocations, idx) => {
+						const d = new Date();
+						const date = d
+							.toDateString()
+							.split(' ')
+							.splice(1, 2)
+							.join(' ');
+						return (
+							// <span key={idx}>1</span>
+							<Fragment key={idx}>
+								<P as='span'>
+									{/* {convetSourceTypeToIcon(history.type)} */}
+									{tokenAllocations.distributor}
+								</P>
+								<B as='span'>
+									+
+									{formatWeiHelper(
+										tokenAllocations.amount,
+										config.TOKEN_PRECISION,
+									)}
+									<GsHFrUnit as='span'>{` GIV/week`}</GsHFrUnit>
+								</B>
+								<P as='span'>{date}</P>
+								<TxHash as='span' size='Big'>
+									{tokenAllocations.txHash}
+								</TxHash>
+							</Fragment>
+						);
+					})}
+				</Grid>
+			)}
+			{!tokenAllocations && <div> NO DATA</div>}
+			<PaginationRow justifyContent={'flex-end'} gap='16px'>
+				<PaginationItem
+					onClick={() => {
+						if (page > 0) setPage(page => page - 1);
+					}}
+					disable={page == 0}
+				>
+					Back
+				</PaginationItem>
+				<PaginationItem
+					onClick={() => {
+						if (hasNext) setPage(page => page + 1);
+					}}
+					disable={!hasNext}
+				>
+					Next
+				</PaginationItem>
+			</PaginationRow>
 		</HistoryContainer>
 	);
 };
