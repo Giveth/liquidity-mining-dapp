@@ -60,3 +60,7 @@ a {
   font-weight: 700;
   src: url('/fonts/texgyreadventor-bold-webfont.woff');
 }
+
+.bn-onboard-custom {
+  z-index: 10000;
+}
