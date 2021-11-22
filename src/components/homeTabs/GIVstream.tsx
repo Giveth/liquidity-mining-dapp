@@ -60,6 +60,8 @@ import { OnboardContext } from '@/context/onboard.context';
 import { formatWeiHelper, Zero } from '@/helpers/number';
 import config from '@/configuration';
 import BigNumber from 'bignumber.js';
+import { fetchStreamProgress, IStreamInfo } from '@/lib/stream';
+import { convertMSToHRD } from '@/lib/helpers';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -95,6 +97,20 @@ export const TabGIVstreamTop = () => {
 };
 
 export const TabGIVstreamBottom = () => {
+	const { network: walletNetwork } = useContext(OnboardContext);
+	const [percent, setPercent] = useState(0);
+	const [remain, setRemain] = useState('');
+
+	useEffect(() => {
+		fetchStreamProgress(walletNetwork).then(_streamInfo => {
+			const _remain = convertMSToHRD(_streamInfo.remain);
+			const _HRremain = `${_remain.y ? _remain.y + 'y' : ''} ${
+				_remain.m ? _remain.m + 'm' : ''
+			} ${_remain.d ? _remain.d + 'd' : ''} `;
+			setPercent(_streamInfo.percent);
+			setRemain(_HRremain);
+		});
+	}, [walletNetwork]);
 	return (
 		<GIVbacksBottomContainer>
 			<Container>
@@ -113,10 +129,7 @@ export const TabGIVstreamBottom = () => {
 						</FlowRateTooltip>
 					</IconWithTooltip>
 				</FlowRateRow>
-				<GIVstreamProgress
-					percentage={20}
-					remainTime='Time remaining: 4 y 23 d 16h'
-				/>
+				<GIVstreamProgress percentage={percent} remainTime={remain} />
 				<Row wrap={1} justifyContent='space-between'>
 					<GsDataBlock
 						title='GIVstream'
@@ -218,13 +231,13 @@ export const TabGIVstreamBottom = () => {
 };
 
 interface IGIVstreamProgressProps {
-	percentage: number;
-	remainTime: string;
+	percentage?: number;
+	remainTime?: string;
 }
 
 export const GIVstreamProgress: FC<IGIVstreamProgressProps> = ({
-	percentage,
-	remainTime,
+	percentage = 0,
+	remainTime = '',
 }) => {
 	return (
 		<GIVstreamProgressContainer>
@@ -241,7 +254,7 @@ export const GIVstreamProgress: FC<IGIVstreamProgressProps> = ({
 						</GsPTooltip>
 					</IconWithTooltip>
 				</GsPTitle>
-				<P>{remainTime}</P>
+				<P>{`Time remaining: ` + remainTime}</P>
 			</GsPTitleRow>
 			<Bar percentage={percentage} />
 			<PercentageRow justifyContent='space-between'>
@@ -324,7 +337,7 @@ export const GIVstreamHistory: FC = () => {
 	const [tokenAllocations, setTokenAllocations] = useState<
 		ITokenAllocation[]
 	>([]);
-	const [page, setPage] = useState(1);
+	const [page, setPage] = useState(0);
 	const [hasNext, setHasNext] = useState(false);
 	const count = 6;
 
