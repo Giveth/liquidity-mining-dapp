@@ -68,8 +68,9 @@ export const useStakingPool = (
 		};
 	}, [type, LM_ADDRESS, network]);
 
-	const isMounted = useRef(true);
+	const isMounted = useRef(false);
 	useEffect(() => {
+		isMounted.current = true;
 		return () => {
 			isMounted.current = false;
 		};
@@ -121,9 +122,9 @@ export const useStakingPool = (
 		address,
 		network,
 		poolStakingConfig,
-		mainnetTokenBalance,
-		xDaiTokenBalance,
-		type,
+		// mainnetTokenBalance,
+		// xDaiTokenBalance,
+		// type,
 	]);
 
 	return {
