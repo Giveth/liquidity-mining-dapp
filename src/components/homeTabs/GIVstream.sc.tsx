@@ -125,6 +125,7 @@ export const Bar = styled.div<IBarProps>`
 		border-radius: 12px;
 		background: ${brandColors.cyan[500]};
 		position: absolute;
+		transition: width 0.3s ease;
 	}
 `;
 
