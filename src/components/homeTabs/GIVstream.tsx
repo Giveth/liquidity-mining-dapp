@@ -62,6 +62,7 @@ import config from '@/configuration';
 import BigNumber from 'bignumber.js';
 import { fetchStreamProgress, IStreamInfo } from '@/lib/stream';
 import { convertMSToHRD } from '@/lib/helpers';
+import { NetworkSelector } from '@/components/NetworkSelector';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -102,6 +103,8 @@ export const TabGIVstreamBottom = () => {
 	const [remain, setRemain] = useState('');
 
 	useEffect(() => {
+		console.log('changed');
+
 		fetchStreamProgress(walletNetwork).then(_streamInfo => {
 			const _remain = convertMSToHRD(_streamInfo.remain);
 			const _HRremain = `${_remain.y ? _remain.y + 'y' : ''} ${
@@ -114,6 +117,7 @@ export const TabGIVstreamBottom = () => {
 	return (
 		<GIVbacksBottomContainer>
 			<Container>
+				<NetworkSelector />
 				<FlowRateRow alignItems='baseline' gap='8px'>
 					<H3 weight={700}>Your Flowrate:</H3>
 					<IconGIVStream size={64} />
