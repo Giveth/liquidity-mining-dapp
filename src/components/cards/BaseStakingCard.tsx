@@ -197,7 +197,11 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 						</StakeContainer>
 					</StakeButtonsRow>
 					<LiquidityButton
-						label='Provide Liquidity'
+						label={
+							title === 'GIV'
+								? 'BUY GIV TOKENS'
+								: 'PROVIDE LIQUIDITY'
+						}
 						onClick={() => window.open(provideLiquidityLink)}
 						buttonType='texty'
 						icon={
