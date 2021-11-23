@@ -37,7 +37,26 @@ import { StakeModal } from '../modals/Stake';
 import { UnStakeModal } from '../modals/UnStake';
 import { StakingPoolImages } from '../StakingPoolImages';
 import { V3StakeModal } from '../modals/V3Stake';
+import { IconEthereum } from '../Icons/Eth';
+import { IconGIV } from '../Icons/GIV';
+import { IconHoneyswap } from '../Icons/Honeyswap';
+import { IconBalancer } from '../Icons/Balancer';
+import { IconUniswap } from '../Icons/Uniswap';
 
+export const getPoolIconWithName = (pool: string) => {
+	switch (pool) {
+		case StakingType.BALANCER:
+			return <IconBalancer size={16} />;
+		case StakingType.GIV_STREAM:
+			return <IconGIV size={16} />;
+		case StakingType.HONEYSWAP:
+			return <IconHoneyswap size={16} />;
+		case StakingType.UNISWAP:
+			return <IconUniswap size={16} />;
+		default:
+			break;
+	}
+};
 interface IBaseStakingCardProps {
 	poolStakingConfig: PoolStakingConfig;
 	onHarvest: () => Promise<void>;
@@ -69,7 +88,8 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	return (
 		<>
 			<StakingPoolContainer>
-				<StakingPoolExchangeRow>
+				<StakingPoolExchangeRow gap='4px'>
+					{getPoolIconWithName(type)}
 					<StakingPoolExchange styleType='Small'>
 						{type}
 					</StakingPoolExchange>

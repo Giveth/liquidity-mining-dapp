@@ -9,7 +9,7 @@ interface IStakingPoolImagesProps {
 	title: string;
 }
 
-const getCurIconWithName = (currency: string) => {
+export const getCurIconWithName = (currency: string) => {
 	switch (currency) {
 		case 'GIV':
 			return <IconGIV size={40} />;
