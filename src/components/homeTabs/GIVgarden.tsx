@@ -10,7 +10,7 @@ import {
 	Subtitle,
 	Right,
 	GardenRewardCard,
-	GovernanceBtn,
+	GovernanceLink,
 	GovernanceDB,
 	OpenGardenButton,
 	Section1Subtitle,
@@ -110,10 +110,9 @@ export const TabGardenBottom = () => {
 					<GovernanceDB
 						title='Covenant'
 						button={
-							<GovernanceBtn
-								label='LEARN MORE'
-								buttonType='texty'
-							/>
+							<GovernanceLink size='Medium'>
+								LEARN MORE
+							</GovernanceLink>
 						}
 					>
 						A decentralized social contract that outlines standards
@@ -122,10 +121,9 @@ export const TabGardenBottom = () => {
 					<GovernanceDB
 						title='Conviction Voting'
 						button={
-							<GovernanceBtn
-								label='LEARN MORE'
-								buttonType='texty'
-							/>
+							<GovernanceLink size='Medium'>
+								LEARN MORE
+							</GovernanceLink>
 						}
 					>
 						A token-weighted decision making tool, used for funds
@@ -135,10 +133,9 @@ export const TabGardenBottom = () => {
 					<GovernanceDB
 						title='Tao Voting'
 						button={
-							<GovernanceBtn
-								label='LEARN MORE'
-								buttonType='texty'
-							/>
+							<GovernanceLink size='Medium'>
+								LEARN MORE
+							</GovernanceLink>
 						}
 					>
 						A token-weighted YES/NO decision making tool, with the

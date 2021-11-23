@@ -10,6 +10,7 @@ import {
 	QuoteText,
 	DataBlock,
 	brandColors,
+	GLink,
 } from '@giveth/ui-design-system';
 import { TopContainer } from './commons';
 import { RewardCard } from '../RewardCard';
@@ -91,9 +92,11 @@ export const GovernanceDB = styled(DataBlock)`
 	width: 343px;
 `;
 
-export const GovernanceBtn = styled(Button)`
+export const GovernanceLink = styled(GLink)`
 	color: ${brandColors.cyan[500]};
 	padding: 16px 0;
+	cursor: pointer;
+	font-weight: bold;
 `;
 
 export const GovernanceRaw = styled(Row)`
