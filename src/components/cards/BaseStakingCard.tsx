@@ -1,6 +1,6 @@
 import config from '../../configuration';
 import { PoolStakingConfig, StakingType } from '../../types/config';
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useState, ReactNode } from 'react';
 import { Row } from '../styled-components/Grid';
 import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
 import {
@@ -61,12 +61,14 @@ interface IBaseStakingCardProps {
 	poolStakingConfig: PoolStakingConfig;
 	onHarvest: () => Promise<void>;
 	stakeInfo: any;
+	notif?: ReactNode;
 }
 
 const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	stakeInfo,
 	onHarvest,
 	poolStakingConfig,
+	notif,
 }) => {
 	const [showAPRModal, setShowAPRModal] = useState(false);
 	const [showStakeModal, setShowStakeModal] = useState(false);
@@ -88,11 +90,13 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	return (
 		<>
 			<StakingPoolContainer>
-				<StakingPoolExchangeRow gap='4px'>
+				<StakingPoolExchangeRow gap='4px' alignItems='center'>
 					{getPoolIconWithName(type)}
 					<StakingPoolExchange styleType='Small'>
 						{type}
 					</StakingPoolExchange>
+					<div style={{ flex: 1 }}></div>
+					{notif && notif}
 				</StakingPoolExchangeRow>
 				<SPTitle alignItems='center' gap='16px'>
 					<StakingPoolImages title={title} />

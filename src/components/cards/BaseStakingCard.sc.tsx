@@ -10,6 +10,7 @@ import {
 	Caption,
 	Button,
 	OulineButton,
+	Subline,
 } from '@giveth/ui-design-system';
 
 export const StakingPoolContainer = styled.div`
@@ -18,7 +19,6 @@ export const StakingPoolContainer = styled.div`
 	background: ${brandColors.giv[600]};
 	color: ${neutralColors.gray[100]};
 	position: relative;
-	overflow: hidden;
 `;
 export const StakingPoolExchangeRow = styled(Row)`
 	margin: 16px;
@@ -111,4 +111,16 @@ export const Return = styled.img`
 	top: 0;
 	right: 0;
 	padding: 16px;
+`;
+
+export const OutOfRangeBadgeContianer = styled(Row)`
+	padding: 3px 7px;
+	background-color: ${brandColors.giv[500]};
+	border-radius: 28px;
+`;
+
+export const OutOfRangeTooltip = styled(Subline)`
+	color: ${neutralColors.gray[100]};
+	width: 233px;
+	text-align: center;
 `;
