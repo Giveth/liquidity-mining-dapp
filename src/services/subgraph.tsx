@@ -1,13 +1,14 @@
 import config from '@/configuration';
 import { Zero } from '@/helpers/number';
 import { BigNumber } from 'bignumber.js';
+import { ethers } from 'ethers';
 
 export const fetchBalance = async (
 	network: number,
 	address: string,
-): Promise<BigNumber> => {
+): Promise<ethers.BigNumber> => {
 	const query = `{
-		balances(first: 1000, where: {id: "${address.toLowerCase()}"}) {
+		balances(where: {id: "${address.toLowerCase()}"}) {
 		id
 		balance
 		}
@@ -20,7 +21,7 @@ export const fetchBalance = async (
 		uri = config.XDAI_NETWORK.subgraphAddress;
 	} else {
 		console.error('Network is not Defined!');
-		return Zero;
+		return ethers.BigNumber.from(0);
 	}
 	try {
 		const res = await fetch(uri, {
@@ -28,13 +29,11 @@ export const fetchBalance = async (
 			body: JSON.stringify(body),
 		});
 		const data = await res.json();
-		// console.log(`dataaaa`, );
-		const balance = new BigNumber(data.data.balances[0]);
-		console.log(`balance`, balance);
+		const balance = ethers.BigNumber.from(data.data.balances[0].balance);
 		return balance;
 	} catch (error) {
 		console.error('Error in getting data from Subgraph', error);
-		return Zero;
+		return ethers.BigNumber.from(0);
 	}
 };
 
