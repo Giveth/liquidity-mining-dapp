@@ -6,6 +6,7 @@ import config from '../configuration';
 import { isAddress } from 'ethers/lib/utils';
 import { getERC20Contract, getTokenDistroAmounts } from '../lib/claim';
 import { ITokenDistroBalance } from '../types/GIV';
+import { fetchBalance } from '@/services/subgraph';
 
 export interface ITokenBalanceContext {
 	tokenBalance: ethers.BigNumber;
@@ -144,11 +145,13 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 					_mainnetTokenDistro,
 					_xDaiTokenDistro,
 				] = await Promise.all([
-					safeNetworkCall(
-						mainnetTokenContract.balanceOf(address),
-						Zero,
-					),
-					safeNetworkCall(xDaiTokenContract.balanceOf(address), Zero),
+					// safeNetworkCall(
+					// 	mainnetTokenContract.balanceOf(address),
+					// 	Zero,
+					// ),
+					fetchBalance(config.MAINNET_NETWORK_NUMBER, address),
+					// safeNetworkCall(xDaiTokenContract.balanceOf(address), Zero),
+					fetchBalance(config.XDAI_NETWORK_NUMBER, address),
 					safeNetworkCall(
 						getTokenDistroAmounts(
 							address,
@@ -179,7 +182,10 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 				setMainnetTokenDistroBalance(_mainnetTokenDistro);
 				setXDaiTokenDistroBalance(_xDaiTokenDistro);
 			} catch (e) {
-				console.error('Error in fetching token and streaming balances');
+				console.error(
+					'Error in fetching token and streaming balances',
+					e,
+				);
 			}
 		};
 
