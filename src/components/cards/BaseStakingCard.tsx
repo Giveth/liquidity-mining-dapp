@@ -74,7 +74,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	const [showStakeModal, setShowStakeModal] = useState(false);
 	const [showUnStakeModal, setShowUnStakeModal] = useState(false);
 
-	const { type, title, description, provideLiquidityLink, LM_ADDRESS } =
+	const { type, title, description, provideLiquidityLink, LM_ADDRESS, unit } =
 		poolStakingConfig;
 
 	const isV3Staking = type === StakingType.UNISWAP;
@@ -172,11 +172,11 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 							/>
 							<StakeAmount>
 								{isV3Staking
-									? `${userNotStakedAmount.toNumber()} NFT`
+									? `${userNotStakedAmount.toNumber()} ${unit}`
 									: `${formatWeiHelper(
 											userNotStakedAmount,
 											config.TOKEN_PRECISION,
-									  )} LP`}
+									  )} ${unit}`}
 							</StakeAmount>
 						</StakeContainer>
 						<StakeContainer flexDirection='column'>
@@ -188,11 +188,11 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 							/>
 							<StakeAmount>
 								{isV3Staking
-									? `${stakedLpAmount.toNumber()} NFT`
+									? `${stakedLpAmount.toNumber()} ${unit}`
 									: `${formatWeiHelper(
 											stakedLpAmount,
 											config.TOKEN_PRECISION,
-									  )} LP`}
+									  )} ${unit}`}
 							</StakeAmount>
 						</StakeContainer>
 					</StakeButtonsRow>
