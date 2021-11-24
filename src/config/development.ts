@@ -65,6 +65,7 @@ const config: EnvConfig = {
 				type: StakingType.UNISWAP,
 				title: 'GIV / ETH',
 				provideLiquidityLink: `https://app.uniswap.org/#/add/ETH/0x03472537CB64652Aa1224E4aaF6f33a34e73E877/3000`,
+				unit: 'NFT',
 			},
 			{
 				POOL_ADDRESS: '0x1ee71e1ed744ae6d4058f5c7797c2e583dbfb095',
@@ -77,6 +78,7 @@ const config: EnvConfig = {
 				description: '80% GIV, 20% ETH',
 				provideLiquidityLink:
 					'https://kovan.app.balancer.fi/#/pool/0x1ee71e1ed744ae6d4058f5c7797c2e583dbfb095000200000000000000000260',
+				unit: 'LP',
 			},
 		],
 	},
@@ -101,6 +103,7 @@ const config: EnvConfig = {
 				description: '50% GIV, 50% HNY',
 				provideLiquidityLink:
 					'https://app.honeyswap.org/#/add/0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3/0x69F79C9eA174d4659B18c7993c7EFbBbB58cF068',
+				unit: 'LP',
 			},
 			{
 				POOL_ADDRESS: '0x9Eb16810488760580232fBdd8D3f41994AB0e51D',
@@ -110,6 +113,7 @@ const config: EnvConfig = {
 				description: '50% ETH, 50% GIV',
 				provideLiquidityLink:
 					'https://app.honeyswap.org/#/add/0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3/0x736a98655049433f79dCcF5e54b887E8890b63D1',
+				unit: 'LP',
 			},
 		],
 	},
