@@ -43,7 +43,7 @@ export const TabGIVfarmTop = () => {
 					<Right>
 						<GIVfarmRewardCard
 							title='Your GIVfarm rewards'
-							amount={new BigNumber('257.9055')}
+							amount={new BigNumber('257000000000000000000')}
 						/>
 					</Right>
 				</Row>

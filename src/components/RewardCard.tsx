@@ -1,5 +1,6 @@
 import config from '@/configuration';
 import { formatEthHelper, formatWeiHelper, Zero } from '@/helpers/number';
+import { getGIVPrice } from '@/services/subgraph';
 import {
 	brandColors,
 	Caption,
@@ -12,11 +13,18 @@ import {
 	Button,
 } from '@giveth/ui-design-system';
 import BigNumber from 'bignumber.js';
-import React, { FC, MouseEventHandler } from 'react';
+import React, {
+	FC,
+	MouseEventHandler,
+	useEffect,
+	useContext,
+	useState,
+} from 'react';
 import styled from 'styled-components';
 import { IconGIV } from './Icons/GIV';
 import { IconXDAI } from './Icons/XDAI';
 import { Row } from './styled-components/Grid';
+import { OnboardContext } from '@/context/onboard.context';
 
 interface IRewardCardProps {
 	title?: string;
@@ -35,6 +43,15 @@ export const RewardCard: FC<IRewardCardProps> = ({
 	actionCb,
 	className,
 }) => {
+	const { network: walletNetwork } = useContext(OnboardContext);
+	const [usdAmount, setUSDAmount] = useState('0');
+	useEffect(() => {
+		getGIVPrice(walletNetwork).then(rate => {
+			const usd = (+amount.div(10 ** 18).toString() * rate).toFixed(2);
+			setUSDAmount(usd);
+		});
+	}, [amount, walletNetwork]);
+
 	return (
 		<RewadCardContainer className={className}>
 			<CardHeader justifyContent='space-between'>
@@ -49,7 +66,7 @@ export const RewardCard: FC<IRewardCardProps> = ({
 				<Title>{formatWeiHelper(amount, config.TOKEN_PRECISION)}</Title>
 				<AmountUnit>GIV</AmountUnit>
 			</AmountInfo>
-			<Converted>~$348.74</Converted>
+			<Converted>~${usdAmount}</Converted>
 			<RateInfo alignItems='center' gap='8px'>
 				<IconGIVStream size={24} />
 				<P>{formatEthHelper(rate, config.TOKEN_PRECISION)}</P>
