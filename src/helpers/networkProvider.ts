@@ -34,5 +34,6 @@ export const getGivStakingConfig = (
 		type: StakingType.GIV_STREAM,
 		title: 'GIV',
 		description: '100% GIV',
+		unit: 'GIV',
 	};
 };
