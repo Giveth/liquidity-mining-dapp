@@ -50,7 +50,7 @@ export const HarvestModal: FC<IHarvesModalProps> = ({
 	showModal,
 	setShowModal,
 }) => {
-	const [state, setState] = useState(States.Confirmed);
+	const [state, setState] = useState(States.Harvest);
 	return (
 		<Modal
 			showModal={showModal}
