@@ -119,3 +119,95 @@ export const getGIVPrice = async (network: number): Promise<number> => {
 		return 0;
 	}
 };
+
+export interface ITokenDistroInfo {
+	initialAmount: BigNumber;
+	lockedAmount: BigNumber;
+	totalTokens: BigNumber;
+	startTime: Date;
+	cliffTime: Date;
+	endTime: Date;
+	duration: number;
+	progress: number;
+	remain: number;
+	percent: number;
+}
+
+export const getTokenDistroInfo = async (
+	network: number,
+): Promise<ITokenDistroInfo | undefined> => {
+	const query = `{
+		tokenDistroContractInfos(first:1){
+		  id
+		  initialAmount
+		  duration
+		  startTime
+		  cliffTime
+		  lockedAmount
+		  totalTokens
+		}
+	  }`;
+	const body = { query };
+	let uri;
+	if (network === config.MAINNET_NETWORK_NUMBER) {
+		uri = config.MAINNET_NETWORK.subgraphAddress;
+	} else if (network === config.XDAI_NETWORK_NUMBER) {
+		uri = config.XDAI_NETWORK.subgraphAddress;
+	} else {
+		console.error('Network is not Defined!');
+		return;
+	}
+	try {
+		const res = await fetch(uri, {
+			method: 'POST',
+			body: JSON.stringify(body),
+		});
+		const data = await res.json();
+		const info = data.data.tokenDistroContractInfos[0];
+
+		const _startTime = info.startTime;
+		const _cliffTime = info.cliffTime;
+		const _duration = await info.duration;
+
+		const startTime = new Date(+(_startTime.toString() + '000'));
+		const cliffTime = new Date(+(_cliffTime.toString() + '000'));
+		const duration = +(_duration.toString() + '000');
+
+		const progress = Date.now() - startTime.getTime();
+		// console.log(`progress`, convertMSToHRD(progress));
+
+		const endTime = new Date(startTime.getTime() + duration);
+		// console.log(`endTime`, endTime);
+
+		const remain = endTime.getTime() - Date.now();
+		// console.log(`remain`, convertMSToHRD(remain));
+
+		const percent = Math.floor((progress / duration) * 100);
+		// console.log(`percent`, percent);
+
+		const initialAmount = new BigNumber(info.initialAmount);
+		// console.log(`initialAmount`, initialAmount.toString());
+
+		const lockedAmount = new BigNumber(info.lockedAmount);
+		// console.log(`lockedAmount`, lockedAmount.toString());
+
+		const totalTokens = new BigNumber(info.totalTokens);
+		// console.log(`totalTokens`, totalTokens.toString());
+
+		return {
+			initialAmount,
+			lockedAmount,
+			totalTokens,
+			startTime,
+			cliffTime,
+			endTime,
+			duration,
+			progress,
+			remain,
+			percent,
+		};
+	} catch (error) {
+		console.error('Error in getGIVPrice from Subgraph', error);
+		return;
+	}
+};
