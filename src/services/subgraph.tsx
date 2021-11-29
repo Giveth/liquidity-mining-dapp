@@ -96,8 +96,6 @@ export const getGIVPrice = async (network: number): Promise<number> => {
 		uri = config.MAINNET_NETWORK.subgraphAddress;
 	} else if (network === config.XDAI_NETWORK_NUMBER) {
 		uri = config.XDAI_NETWORK.subgraphAddress;
-		// temp
-		return 1; //until it implements :D
 	} else {
 		console.error('Network is not Defined!');
 		return 0;
