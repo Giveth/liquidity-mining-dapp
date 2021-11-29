@@ -9,8 +9,15 @@ export const fetchBalance = async (
 ): Promise<ethers.BigNumber> => {
 	const query = `{
 		balances(where: {id: "${address.toLowerCase()}"}) {
-		id
-		balance
+			id
+			balance
+			allocatedTokens
+			claimed
+			rewardPerTokenStoredGivLm
+			rewardsGivLm
+			rewardPerTokenStoredUniswap
+			rewardsUniswap
+			givback
 		}
 	}`;
 	const body = { query };
