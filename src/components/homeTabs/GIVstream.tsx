@@ -55,12 +55,15 @@ import {
 	TxHash,
 } from './GIVstream.sc';
 import { IconWithTooltip } from '../IconWithToolTip';
-import { getHistory, ITokenAllocation } from '@/services/subgraph';
+import {
+	getHistory,
+	getTokenDistroInfo,
+	ITokenAllocation,
+} from '@/services/subgraph';
 import { OnboardContext } from '@/context/onboard.context';
 import { formatWeiHelper, Zero } from '@/helpers/number';
 import config from '@/configuration';
 import BigNumber from 'bignumber.js';
-import { fetchStreamProgress, IStreamInfo } from '@/lib/stream';
 import { convertMSToHRD } from '@/lib/helpers';
 import { NetworkSelector } from '@/components/NetworkSelector';
 
@@ -104,14 +107,15 @@ export const TabGIVstreamBottom = () => {
 
 	useEffect(() => {
 		console.log('changed');
-
-		fetchStreamProgress(walletNetwork).then(_streamInfo => {
-			const _remain = convertMSToHRD(_streamInfo.remain);
-			const _HRremain = `${_remain.y ? _remain.y + 'y' : ''} ${
-				_remain.m ? _remain.m + 'm' : ''
-			} ${_remain.d ? _remain.d + 'd' : ''} `;
-			setPercent(_streamInfo.percent);
-			setRemain(_HRremain);
+		getTokenDistroInfo(walletNetwork).then(_streamInfo => {
+			if (_streamInfo) {
+				const _remain = convertMSToHRD(_streamInfo.remain);
+				const _HRremain = `${_remain.y ? _remain.y + 'y' : ''} ${
+					_remain.m ? _remain.m + 'm' : ''
+				} ${_remain.d ? _remain.d + 'd' : ''} `;
+				setPercent(_streamInfo.percent);
+				setRemain(_HRremain);
+			}
 		});
 	}, [walletNetwork]);
 	return (
