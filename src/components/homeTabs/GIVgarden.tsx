@@ -21,7 +21,7 @@ import {
 	VoteCardDesc,
 	VoteCardButton,
 } from './GIVgarden.sc';
-import { HarvestModal } from '../modals/Harvest';
+import { HarvestAllModal } from '../modals/HarvestAll';
 import config from '@/configuration';
 import { useStakingPool } from '@/hooks/useStakingPool';
 import { getGivStakingConfig } from '@/helpers/networkProvider';
@@ -30,7 +30,7 @@ import { BigNumber } from 'bignumber.js';
 const poolStakingConfig = getGivStakingConfig(config.XDAI_CONFIG);
 
 export const TabGardenTop = () => {
-	const [showModal, setShowModal] = useState(false);
+	const [showModal, setShowModal] = useState(true);
 
 	const { userStakeInfo, rewardRatePerToken } = useStakingPool(
 		poolStakingConfig,
@@ -74,7 +74,10 @@ export const TabGardenTop = () => {
 					</Right>
 				</Row>
 			</Container>
-			<HarvestModal showModal={showModal} setShowModal={setShowModal} />
+			<HarvestAllModal
+				showModal={showModal}
+				setShowModal={setShowModal}
+			/>
 		</GardenTopContainer>
 	);
 };
