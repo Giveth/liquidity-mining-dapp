@@ -89,7 +89,7 @@ const config: EnvConfig = {
 		nodeUrl: 'https://rpc.xdaichain.com/',
 		GIV: {
 			LM_ADDRESS: '0x26F033515ce926658def0939A8D9a0592D0F5cc9',
-			GARDEN_ADDRESS: '0x0bbec1F6bf78955ade32E7A927058aD6044B1Da5',
+			GARDEN_ADDRESS: '0xF07eaBb35aFFB171D13435a12dbDCE728915D8A1',
 		},
 
 		pools: [
@@ -109,7 +109,7 @@ const config: EnvConfig = {
 				title: 'ETH / GIV',
 				description: '50% ETH, 50% GIV',
 				provideLiquidityLink:
-					'https://app.honeyswap.org/#/add/0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3/0x736a98655049433f79dCcF5e54b887E8890b63D1',
+					'https://app.sushi.com/add/0x736a98655049433f79dCcF5e54b887E8890b63D1/0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3',
 			},
 		],
 	},
