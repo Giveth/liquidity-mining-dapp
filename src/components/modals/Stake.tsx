@@ -17,7 +17,7 @@ import { Row } from '../styled-components/Grid';
 import styled from 'styled-components';
 import { PoolStakingConfig } from '../../types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
-import { ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { AmountInput } from '../AmountInput';
 import {
 	approveERC20tokenTransfer,
@@ -32,7 +32,7 @@ import config from 'src/configuration';
 
 interface IStakeModalProps extends IModal {
 	poolStakingConfig: PoolStakingConfig;
-	maxAmount: ethers.BigNumber;
+	maxAmount: BigNumber;
 }
 
 enum StakeStates {

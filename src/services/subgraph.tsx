@@ -1,6 +1,4 @@
 import config from '@/configuration';
-import { Zero } from '@/helpers/number';
-import { BigNumber } from 'bignumber.js';
 import { ethers } from 'ethers';
 
 export const fetchBalance = async (
@@ -45,7 +43,7 @@ export const fetchBalance = async (
 };
 
 export interface ITokenAllocation {
-	amount: BigNumber;
+	amount: ethers.BigNumber;
 	distributor: string;
 	recipient: string;
 	timestamp: string;
@@ -128,9 +126,9 @@ export const getGIVPrice = async (network: number): Promise<number> => {
 };
 
 export interface ITokenDistroInfo {
-	initialAmount: BigNumber;
-	lockedAmount: BigNumber;
-	totalTokens: BigNumber;
+	initialAmount: ethers.BigNumber;
+	lockedAmount: ethers.BigNumber;
+	totalTokens: ethers.BigNumber;
 	startTime: Date;
 	cliffTime: Date;
 	endTime: Date;
@@ -144,7 +142,7 @@ export const getTokenDistroInfo = async (
 	network: number,
 ): Promise<ITokenDistroInfo | undefined> => {
 	const query = `{
-		tokenDistroContractInfos(first:1){
+		tokenDistroContractInfos(first:10){
 		  id
 		  initialAmount
 		  duration
@@ -192,13 +190,13 @@ export const getTokenDistroInfo = async (
 		const percent = Math.floor((progress / duration) * 100);
 		// console.log(`percent`, percent);
 
-		const initialAmount = new BigNumber(info.initialAmount);
+		const initialAmount = ethers.BigNumber.from(info.initialAmount);
 		// console.log(`initialAmount`, initialAmount.toString());
 
-		const lockedAmount = new BigNumber(info.lockedAmount);
+		const lockedAmount = ethers.BigNumber.from(info.lockedAmount);
 		// console.log(`lockedAmount`, lockedAmount.toString());
 
-		const totalTokens = new BigNumber(info.totalTokens);
+		const totalTokens = ethers.BigNumber.from(info.totalTokens);
 		// console.log(`totalTokens`, totalTokens.toString());
 
 		return {

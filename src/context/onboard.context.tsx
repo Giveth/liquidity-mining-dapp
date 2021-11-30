@@ -10,7 +10,7 @@ import {
 	useState,
 } from 'react';
 import { API, Wallet } from 'bnc-onboard/dist/src/interfaces';
-import { ethers } from 'ethers';
+import { providers } from 'ethers';
 
 const networkId = config.XDAI_NETWORK_NUMBER;
 const dappId = config.BLOCKNATIVE_DAPP_ID;
@@ -49,7 +49,7 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 	const updateProvider = () => {
 		const ethersProvider =
 			wallet && wallet.provider
-				? new ethers.providers.Web3Provider(wallet.provider)
+				? new providers.Web3Provider(wallet.provider)
 				: null;
 		setProvider(ethersProvider);
 	};

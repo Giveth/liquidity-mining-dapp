@@ -1,5 +1,5 @@
 import { createContext, FC, useContext, useEffect, useState } from 'react';
-import { ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { Zero } from '@ethersproject/constants';
 import { OnboardContext } from './onboard.context';
 import config from '../configuration';
@@ -9,11 +9,11 @@ import { ITokenDistroBalance } from '../types/GIV';
 import { fetchBalance } from '@/services/subgraph';
 
 export interface ITokenBalanceContext {
-	tokenBalance: ethers.BigNumber;
+	tokenBalance: BigNumber;
 	tokenDistroBalance: ITokenDistroBalance;
 
-	mainnetTokenBalance: ethers.BigNumber;
-	xDaiTokenBalance: ethers.BigNumber;
+	mainnetTokenBalance: BigNumber;
+	xDaiTokenBalance: BigNumber;
 
 	mainnetTokenDistroBalance: ITokenDistroBalance;
 	xDaiTokenDistroBalance: ITokenDistroBalance;
@@ -37,11 +37,11 @@ export const TokenBalanceContext =
 
 export const TokenBalanceProvider: FC = ({ children }) => {
 	const { address, network, provider } = useContext(OnboardContext);
-	const [tokenBalance, setTokenBalance] = useState<ethers.BigNumber>(Zero);
+	const [tokenBalance, setTokenBalance] = useState<BigNumber>(Zero);
 	const [mainnetTokenBalance, setMainnetTokenBalance] =
-		useState<ethers.BigNumber>(Zero);
+		useState<BigNumber>(Zero);
 	const [xDaiTokenBalance, setXDaiTokenBalance] =
-		useState<ethers.BigNumber>(Zero);
+		useState<BigNumber>(Zero);
 
 	const [tokenDistroBalance, setTokenDistroBalance] =
 		useState<ITokenDistroBalance>(initialTokenDistroBalance);
@@ -51,9 +51,9 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 		useState<ITokenDistroBalance>(initialTokenDistroBalance);
 
 	const [newMainnetTokenBalance, setNewMainnetTokenBalance] =
-		useState<ethers.BigNumber>(Zero);
+		useState<BigNumber>(Zero);
 	const [newXDaiTokenBalance, setNewXDaiTokenBalance] =
-		useState<ethers.BigNumber>(Zero);
+		useState<BigNumber>(Zero);
 
 	useEffect(() => {
 		if (!newMainnetTokenBalance.eq(mainnetTokenBalance))

@@ -3,7 +3,7 @@ import { Button } from '../styled-components/Button';
 import { H2, P } from '../styled-components/Typography';
 import { useContext } from 'react';
 import { UserContext } from '../../context/user.context';
-import { ethers } from 'ethers';
+import { utils } from 'ethers';
 
 const CongratulationsView = styled.div`
 	min-height: 100vh;
@@ -65,8 +65,7 @@ export const CongratulationsCard = () => {
 					<Description>
 						<P>
 							You have successfully claimed{' '}
-							{ethers.utils.formatEther(claimableAmount)} GIV
-							tokens.
+							{utils.formatEther(claimableAmount)} GIV tokens.
 						</P>
 						<P>Add GIV to Metamask</P>
 					</Description>
