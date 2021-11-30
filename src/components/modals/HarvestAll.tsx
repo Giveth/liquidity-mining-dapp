@@ -56,7 +56,9 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	setShowModal,
 }) => {
 	const [state, setState] = useState(States.Harvest);
-	const [givBackAmount, setGivBackAmount] = useState();
+	const [givBackAmount, setGivBackAmount] = useState<BigNumber>(
+		BigNumber.from('10'),
+	);
 	const [price, setPrice] = useState(0);
 	const { network: walletNetwork } = useContext(OnboardContext);
 
@@ -66,8 +68,10 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		});
 	}, [walletNetwork]);
 
-	const calcUSD = (amount: BigNumber) =>
-		(+amount.div(10 ** 18).toString() * price).toFixed(2);
+	const calcUSD = (amount: BigNumber) => {
+		const usd = (parseInt(amount.toString()) * price).toFixed(2);
+		return usd;
+	};
 
 	return (
 		<Modal
@@ -83,7 +87,10 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 						</HarvestAllModalTitle>
 						<TitleIcon size={24} />
 					</HarvestAllModalTitleRow>
-					<GIVBoxWithPrice amount={givBackAmount} />
+					<GIVBoxWithPrice
+						amount={givBackAmount}
+						price={calcUSD(givBackAmount)}
+					/>
 					<StyledGivethIcon>
 						<IconGIV size={64} />
 					</StyledGivethIcon>
@@ -186,23 +193,41 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 
 interface IGIVBoxWithPriceProps {
 	amount: BigNumber;
-	price: number;
+	price: string;
 }
 
-const GIVBoxWithPrice: FC<IGIVBoxWithPriceProps> = () => {
+const GIVBoxWithPrice: FC<IGIVBoxWithPriceProps> = ({ amount, price }) => {
 	return (
-		<GIVBoxWithPriceContainer>
-			<GIVBoxWithPriceIcon />
-		</GIVBoxWithPriceContainer>
+		<>
+			<GIVBoxWithPriceContainer alignItems='center'>
+				<GIVBoxWithPriceIcon size={40} />
+				<GIVBoxWithPriceAmount>
+					{amount.toString()}
+				</GIVBoxWithPriceAmount>
+				<GIVBoxWithPriceUSD>~{price}</GIVBoxWithPriceUSD>
+			</GIVBoxWithPriceContainer>
+		</>
 	);
 };
 
 const GIVBoxWithPriceContainer = styled(Row)`
+	background-color: ${brandColors.giv[500]}66;
+	margin: 16px 0;
+	border-radius: 8px;
 	padding: 24px;
 	gap: 8px;
 `;
 
 const GIVBoxWithPriceIcon = styled(IconGIV)``;
+
+const GIVBoxWithPriceAmount = styled(Title)`
+	margin-left: 8px;
+	color: ${neutralColors.gray[100]};
+`;
+
+const GIVBoxWithPriceUSD = styled(P)`
+	color: ${brandColors.deep[200]};
+`;
 
 const HarvestAllModalContainer = styled.div`
 	width: 686px;
