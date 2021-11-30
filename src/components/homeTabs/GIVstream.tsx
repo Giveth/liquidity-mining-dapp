@@ -106,7 +106,6 @@ export const TabGIVstreamBottom = () => {
 	const [remain, setRemain] = useState('');
 
 	useEffect(() => {
-		console.log('changed');
 		getTokenDistroInfo(walletNetwork).then(_streamInfo => {
 			if (_streamInfo) {
 				const _remain = convertMSToHRD(_streamInfo.remain);
@@ -352,7 +351,6 @@ export const GIVstreamHistory: FC = () => {
 	useEffect(() => {
 		getHistory(network, address, page * count, count).then(
 			_tokenAllocations => {
-				console.log(`_tokenAllocations`, _tokenAllocations);
 				setTokenAllocations(_tokenAllocations);
 				if (_tokenAllocations.length === count) {
 					setHasNext(true);
