@@ -12,6 +12,7 @@ import {
 	IconHelp,
 	Lead,
 	P,
+	B,
 	Title,
 	H6,
 	GLink,
@@ -204,7 +205,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 					{givBackInfo && givBackInfo.releasedReward.gt(0) && (
 						<>
 							<HelpRow alignItems='center'>
-								<Caption>Claimable from GIVbacks</Caption>
+								<B>Claimable from GIVbacks</B>
 								<IconHelp
 									size={16}
 									color={brandColors.deep[100]}
