@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { Modal, IModal } from './Modal';
 import Lottie from 'react-lottie';
 import LoadingAnimation from '../../animations/loading.json';
@@ -17,15 +17,27 @@ import {
 	GLink,
 	OulineButton,
 	IconGIVGarden,
+	H5,
 } from '@giveth/ui-design-system';
 import { Row } from '../styled-components/Grid';
 import styled from 'styled-components';
 import { IconGIV } from '../Icons/GIV';
 import { BigNumber } from '@ethersproject/bignumber';
 import { OnboardContext } from '@/context/onboard.context';
-import { getGIVPrice } from '@/services/subgraph';
+import { getGIVPrice, getTokenDistroInfo } from '@/services/subgraph';
 import { Zero } from '@/helpers/number';
-interface IHarvestAllModalProps extends IModal {}
+import { PoolStakingConfig } from '@/types/config';
+import { StakingPoolImages } from '../StakingPoolImages';
+import { calcTokenInfo, ITokenInfo } from '@/lib/helpers';
+import { formatWeiHelper } from '@/helpers/number';
+import config from '@/configuration';
+
+interface IHarvestAllModalProps extends IModal {
+	poolStakingConfig: PoolStakingConfig;
+	onHarvest: () => Promise<void>;
+	claimable: BigNumber;
+	givBackAmount?: BigNumber;
+}
 
 enum States {
 	Harvest,
@@ -54,11 +66,15 @@ const checkAnimationOptions = {
 export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	showModal,
 	setShowModal,
+	poolStakingConfig,
+	claimable,
+	givBackAmount,
+	onHarvest,
 }) => {
 	const [state, setState] = useState(States.Harvest);
-	const [givBackAmount, setGivBackAmount] = useState<BigNumber>(
-		BigNumber.from('10'),
-	);
+	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
+	const [givBackInfo, setGivBackInfo] = useState<ITokenInfo>();
+
 	const [price, setPrice] = useState(0);
 	const { network: walletNetwork } = useContext(OnboardContext);
 
@@ -68,7 +84,41 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		});
 	}, [walletNetwork]);
 
-	const calcUSD = (amount: BigNumber) => {
+	useEffect(() => {
+		getTokenDistroInfo(walletNetwork).then(distroInfo => {
+			if (distroInfo) {
+				const {
+					initialAmount,
+					totalTokens,
+					startTime,
+					cliffTime,
+					duration,
+				} = distroInfo;
+				const _tokenInfo = calcTokenInfo(
+					initialAmount,
+					totalTokens,
+					claimable,
+					duration,
+					cliffTime,
+					startTime,
+				);
+				setTokenInfo(_tokenInfo);
+				if (givBackAmount) {
+					const _givBackInfo = calcTokenInfo(
+						initialAmount,
+						totalTokens,
+						claimable,
+						duration,
+						cliffTime,
+						startTime,
+					);
+					setGivBackInfo(_givBackInfo);
+				}
+			}
+		});
+	}, [claimable, walletNetwork]);
+
+	const calcUSD = (amount: string) => {
 		const usd = (parseInt(amount.toString()) * price).toFixed(2);
 		return usd;
 	};
@@ -87,36 +137,91 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 						</HarvestAllModalTitle>
 						<TitleIcon size={24} />
 					</HarvestAllModalTitleRow>
-					<GIVBoxWithPrice
-						amount={givBackAmount}
-						price={calcUSD(givBackAmount)}
-					/>
-					<StyledGivethIcon>
+					<SPTitle alignItems='center' gap='16px'>
+						<StakingPoolImages title={poolStakingConfig.title} />
+						<div>
+							<StakingPoolLabel weight={900}>
+								{poolStakingConfig.title}
+							</StakingPoolLabel>
+							<StakingPoolSubtitle>
+								{poolStakingConfig.description}
+							</StakingPoolSubtitle>
+						</div>
+					</SPTitle>
+					{tokenInfo && (
+						<>
+							<GIVBoxWithPrice
+								amount={tokenInfo.releasedReward}
+								price={calcUSD(
+									formatWeiHelper(
+										tokenInfo.releasedReward,
+										config.TOKEN_PRECISION,
+									),
+								)}
+							/>
+							<HelpRow alignItems='center'>
+								<Caption>
+									Added to your GIVstream flowrate
+								</Caption>
+								<IconHelp
+									size={16}
+									color={brandColors.deep[100]}
+								/>
+							</HelpRow>
+							<RateRow alignItems='center'>
+								<IconGIVStream size={24} />
+								<GIVRate>
+									{formatWeiHelper(
+										tokenInfo.flowratePerWeek,
+										config.TOKEN_PRECISION,
+									)}
+								</GIVRate>
+								<Lead>GIV/week</Lead>
+							</RateRow>
+						</>
+					)}
+					{givBackInfo && givBackInfo.releasedReward.gt(0) && (
+						<>
+							<GIVBoxWithPrice
+								amount={givBackInfo.releasedReward}
+								price={calcUSD(
+									formatWeiHelper(
+										givBackInfo.releasedReward,
+										config.TOKEN_PRECISION,
+									),
+								)}
+							/>
+							<HelpRow alignItems='center'>
+								<Caption>
+									Added to your GIVstream flowrate
+								</Caption>
+								<IconHelp
+									size={16}
+									color={brandColors.deep[100]}
+								/>
+							</HelpRow>
+							<RateRow alignItems='center'>
+								<IconGIVStream size={24} />
+								<GIVRate>
+									{formatWeiHelper(
+										givBackInfo.flowratePerWeek,
+										config.TOKEN_PRECISION,
+									)}
+								</GIVRate>
+								<Lead>GIV/week</Lead>
+							</RateRow>
+						</>
+					)}
+					{/* <StyledGivethIcon>
 						<IconGIV size={64} />
 					</StyledGivethIcon>
 					<GIVAmount>{257.9055}</GIVAmount>
-					<USDAmount>~${348.74}</USDAmount>
-					<HelpRow
-						alignItems='center'
-						justifyContent='center'
-						gap='8px'
-					>
-						<Caption>Your additional GIVstream flowrate</Caption>
-						<IconHelp size={16} color={brandColors.deep[100]} />
-					</HelpRow>
-					<RateRow
-						alignItems='center'
-						justifyContent='center'
-						gap='4px'
-					>
-						<IconGIVStream size={24} />
-						<GIVRate>{9.588}</GIVRate>
-						<Lead>GIV/week</Lead>
-					</RateRow>
+					<USDAmount>~${348.74}</USDAmount> */}
 					<HarvestButton
 						label='HARVEST'
 						size='medium'
 						buttonType='primary'
+						onClick={onHarvest}
 					/>
 					<CancelButton
 						label='CANCEL'
@@ -202,9 +307,9 @@ const GIVBoxWithPrice: FC<IGIVBoxWithPriceProps> = ({ amount, price }) => {
 			<GIVBoxWithPriceContainer alignItems='center'>
 				<GIVBoxWithPriceIcon size={40} />
 				<GIVBoxWithPriceAmount>
-					{amount.toString()}
+					{formatWeiHelper(amount, config.TOKEN_PRECISION)}
 				</GIVBoxWithPriceAmount>
-				<GIVBoxWithPriceUSD>~{price}</GIVBoxWithPriceUSD>
+				<GIVBoxWithPriceUSD>~${price}</GIVBoxWithPriceUSD>
 			</GIVBoxWithPriceContainer>
 		</>
 	);
@@ -259,10 +364,12 @@ const USDAmount = styled(P)`
 `;
 
 const HelpRow = styled(Row)`
-	margin-bottom: 16px;
+	gap: 8px;
+	margin-bottom: 4px;
 `;
 
 const RateRow = styled(Row)`
+	gap: 4px;
 	margin-bottom: 36px;
 `;
 
@@ -336,4 +443,19 @@ const CDLink = styled(GLink)`
 const DoneButton = styled(OulineButton)`
 	padding: 16px 135px;
 	margin-top: 32px;
+`;
+
+export const SPTitle = styled(Row)`
+	margin-top: 12px;
+	margin-bottom: 24px;
+	color: ${neutralColors.gray[100]};
+	margin-left: -24px;
+`;
+
+export const StakingPoolLabel = styled(H5)``;
+
+export const StakingPoolSubtitle = styled(Caption)``;
+
+export const StakePoolInfoContainer = styled.div`
+	padding: 0 24px;
 `;
