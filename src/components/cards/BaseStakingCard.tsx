@@ -44,6 +44,8 @@ import { IconBalancer } from '../Icons/Balancer';
 import { IconUniswap } from '../Icons/Uniswap';
 import { HarvestAllModal } from '../modals/HarvestAll';
 import { OnboardContext } from '@/context/onboard.context';
+import { ITokenInfo, calcTokenInfo } from '@/lib/helpers';
+import { getTokenDistroInfo } from '@/services/subgraph';
 
 export const getPoolIconWithName = (pool: string) => {
 	switch (pool) {
@@ -72,6 +74,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	poolStakingConfig,
 	notif,
 }) => {
+	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
 	const [showAPRModal, setShowAPRModal] = useState(false);
 	const [showStakeModal, setShowStakeModal] = useState(false);
 	const [showUnStakeModal, setShowUnStakeModal] = useState(false);
@@ -90,6 +93,29 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 		rewardRatePerToken,
 		userNotStakedAmount,
 	} = stakeInfo;
+
+	useEffect(() => {
+		getTokenDistroInfo(walletNetwork).then(distroInfo => {
+			if (distroInfo) {
+				const {
+					initialAmount,
+					totalTokens,
+					startTime,
+					cliffTime,
+					duration,
+				} = distroInfo;
+				const _tokenInfo = calcTokenInfo(
+					initialAmount,
+					totalTokens,
+					earned,
+					duration,
+					cliffTime,
+					startTime,
+				);
+				setTokenInfo(_tokenInfo);
+			}
+		});
+	}, [earned, walletNetwork]);
 
 	return (
 		<>
@@ -148,14 +174,11 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 							</Row>
 							<Row gap='4px' alignItems='center'>
 								<DetailValue>
-									{rewardRatePerToken
-										? formatEthHelper(
-												rewardRatePerToken?.times(
-													'604800',
-												),
-												2,
-										  )
-										: 0}
+									{tokenInfo &&
+										formatWeiHelper(
+											tokenInfo.flowratePerWeek,
+											config.TOKEN_PRECISION,
+										)}
 								</DetailValue>
 								<DetailUnit>GIV/week</DetailUnit>
 							</Row>
