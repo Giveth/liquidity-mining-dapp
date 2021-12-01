@@ -83,7 +83,7 @@ export const fetchBalances = async (
 			givback,
 		};
 	} catch (error) {
-		console.error('Error in getting data from Subgraph', error);
+		console.error('Error in fetching Balances', error);
 		return zeroBalances;
 	}
 };
@@ -130,7 +130,7 @@ export const getHistory = async (
 		const { tokenAllocations } = data.data;
 		return tokenAllocations;
 	} catch (error) {
-		console.error('Error in getting data from Subgraph', error);
+		console.error('Error in getting History from Subgraph', error);
 		return [];
 	}
 };
