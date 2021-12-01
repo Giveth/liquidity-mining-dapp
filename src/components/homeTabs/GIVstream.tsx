@@ -63,9 +63,10 @@ import {
 import { OnboardContext } from '@/context/onboard.context';
 import { formatWeiHelper, Zero } from '@/helpers/number';
 import config from '@/configuration';
-import BigNumber from 'bignumber.js';
-import { convertMSToHRD } from '@/lib/helpers';
+import { calcTokenInfo, convertMSToHRD, ITokenInfo } from '@/lib/helpers';
 import { NetworkSelector } from '@/components/NetworkSelector';
+import { TokenBalanceContext } from '@/context/tokenBalance.context';
+import { BigNumber } from 'ethers';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -87,7 +88,7 @@ export const TabGIVstreamTop = () => {
 					</Left>
 					<Right>
 						<GIVstreamRewardCard
-							amount={new BigNumber('257.9055')}
+							amount={BigNumber.from('257000000000000000000')}
 							actionLabel='HARVEST'
 							actionCb={() => {
 								setShowModal(true);
@@ -104,6 +105,32 @@ export const TabGIVstreamBottom = () => {
 	const { network: walletNetwork } = useContext(OnboardContext);
 	const [percent, setPercent] = useState(0);
 	const [remain, setRemain] = useState('');
+	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
+	const { tokenDistroBalance } = useContext(TokenBalanceContext);
+	const { allocatedAmount } = tokenDistroBalance;
+
+	useEffect(() => {
+		getTokenDistroInfo(walletNetwork).then(distroInfo => {
+			if (distroInfo) {
+				const {
+					initialAmount,
+					totalTokens,
+					startTime,
+					cliffTime,
+					duration,
+				} = distroInfo;
+				const _tokenInfo = calcTokenInfo(
+					initialAmount,
+					totalTokens,
+					allocatedAmount,
+					duration,
+					cliffTime,
+					startTime,
+				);
+				setTokenInfo(_tokenInfo);
+			}
+		});
+	}, [allocatedAmount, walletNetwork]);
 
 	useEffect(() => {
 		getTokenDistroInfo(walletNetwork).then(_streamInfo => {
@@ -124,7 +151,13 @@ export const TabGIVstreamBottom = () => {
 				<FlowRateRow alignItems='baseline' gap='8px'>
 					<H3 weight={700}>Your Flowrate:</H3>
 					<IconGIVStream size={64} />
-					<H1>{16.06}</H1>
+					<H1>
+						{tokenInfo &&
+							formatWeiHelper(
+								tokenInfo?.flowratePerWeek,
+								config.TOKEN_PRECISION,
+							)}
+					</H1>
 					<FlowRateUnit>GIV/week</FlowRateUnit>
 					<IconWithTooltip
 						icon={<IconHelp size={16} />}
