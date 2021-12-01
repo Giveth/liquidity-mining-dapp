@@ -1,10 +1,30 @@
 import config from '@/configuration';
 import { ethers } from 'ethers';
+export interface IBalances {
+	balance: ethers.BigNumber;
+	allocatedTokens: ethers.BigNumber;
+	claimed: ethers.BigNumber;
+	rewardPerTokenStoredGivLm: ethers.BigNumber;
+	rewardsGivLm: ethers.BigNumber;
+	rewardPerTokenStoredUniswap: ethers.BigNumber;
+	rewardsUniswap: ethers.BigNumber;
+	givback: ethers.BigNumber;
+}
+export const zeroBalances = {
+	balance: ethers.BigNumber.from(0),
+	allocatedTokens: ethers.BigNumber.from(0),
+	claimed: ethers.BigNumber.from(0),
+	rewardPerTokenStoredGivLm: ethers.BigNumber.from(0),
+	rewardsGivLm: ethers.BigNumber.from(0),
+	rewardPerTokenStoredUniswap: ethers.BigNumber.from(0),
+	rewardsUniswap: ethers.BigNumber.from(0),
+	givback: ethers.BigNumber.from(0),
+};
 
-export const fetchBalance = async (
+export const fetchBalances = async (
 	network: number,
 	address: string,
-): Promise<ethers.BigNumber> => {
+): Promise<IBalances> => {
 	const query = `{
 		balances(where: {id: "${address.toLowerCase()}"}) {
 			id
@@ -26,7 +46,7 @@ export const fetchBalance = async (
 		uri = config.XDAI_NETWORK.subgraphAddress;
 	} else {
 		console.error('Network is not Defined!');
-		return ethers.BigNumber.from(0);
+		return zeroBalances;
 	}
 	try {
 		const res = await fetch(uri, {
@@ -35,10 +55,36 @@ export const fetchBalance = async (
 		});
 		const data = await res.json();
 		const balance = ethers.BigNumber.from(data.data.balances[0].balance);
-		return balance;
+		const allocatedTokens = ethers.BigNumber.from(
+			data.data.balances[0].allocatedTokens,
+		);
+		const claimed = ethers.BigNumber.from(data.data.balances[0].claimed);
+		const rewardPerTokenStoredGivLm = ethers.BigNumber.from(
+			data.data.balances[0].rewardPerTokenStoredGivLm,
+		);
+		const rewardsGivLm = ethers.BigNumber.from(
+			data.data.balances[0].rewardsGivLm,
+		);
+		const rewardPerTokenStoredUniswap = ethers.BigNumber.from(
+			data.data.balances[0].rewardPerTokenStoredUniswap,
+		);
+		const rewardsUniswap = ethers.BigNumber.from(
+			data.data.balances[0].rewardsUniswap,
+		);
+		const givback = ethers.BigNumber.from(data.data.balances[0].givback);
+		return {
+			balance,
+			allocatedTokens,
+			claimed,
+			rewardPerTokenStoredGivLm,
+			rewardsGivLm,
+			rewardPerTokenStoredUniswap,
+			rewardsUniswap,
+			givback,
+		};
 	} catch (error) {
 		console.error('Error in getting data from Subgraph', error);
-		return ethers.BigNumber.from(0);
+		return zeroBalances;
 	}
 };
 

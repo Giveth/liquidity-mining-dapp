@@ -24,7 +24,11 @@ import styled from 'styled-components';
 import { IconGIV } from '../Icons/GIV';
 import { BigNumber } from '@ethersproject/bignumber';
 import { OnboardContext } from '@/context/onboard.context';
-import { getGIVPrice, getTokenDistroInfo } from '@/services/subgraph';
+import {
+	fetchBalances,
+	getGIVPrice,
+	getTokenDistroInfo,
+} from '@/services/subgraph';
 import { Zero } from '@/helpers/number';
 import { PoolStakingConfig } from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
@@ -36,7 +40,6 @@ interface IHarvestAllModalProps extends IModal {
 	poolStakingConfig: PoolStakingConfig;
 	onHarvest: () => Promise<void>;
 	claimable: BigNumber;
-	givBackAmount?: BigNumber;
 	network: number;
 }
 
@@ -69,15 +72,43 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	setShowModal,
 	poolStakingConfig,
 	claimable,
-	givBackAmount,
 	network,
 	onHarvest,
 }) => {
 	const [state, setState] = useState(States.Harvest);
 	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
 	const [givBackInfo, setGivBackInfo] = useState<ITokenInfo>();
+	const { address } = useContext(OnboardContext);
 
 	const [price, setPrice] = useState(0);
+
+	useEffect(() => {
+		const getTokensInfo = async () => {
+			const distroInfo = await getTokenDistroInfo(network);
+			const balances = await fetchBalances(network, address);
+			if (distroInfo) {
+				const {
+					initialAmount,
+					totalTokens,
+					startTime,
+					cliffTime,
+					duration,
+				} = distroInfo;
+				const _givBackInfo = calcTokenInfo(
+					initialAmount,
+					totalTokens,
+					balances.givback,
+					duration,
+					cliffTime,
+					startTime,
+				);
+				setGivBackInfo(_givBackInfo);
+			}
+		};
+		if (network === config.XDAI_NETWORK_NUMBER) {
+			getTokensInfo();
+		}
+	}, [network]);
 
 	useEffect(() => {
 		getGIVPrice(network).then(price => {
@@ -104,17 +135,6 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 					startTime,
 				);
 				setTokenInfo(_tokenInfo);
-				if (givBackAmount) {
-					const _givBackInfo = calcTokenInfo(
-						initialAmount,
-						totalTokens,
-						claimable,
-						duration,
-						cliffTime,
-						startTime,
-					);
-					setGivBackInfo(_givBackInfo);
-				}
 			}
 		});
 	}, [claimable, network]);
@@ -183,6 +203,13 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 					)}
 					{givBackInfo && givBackInfo.releasedReward.gt(0) && (
 						<>
+							<HelpRow alignItems='center'>
+								<Caption>Claimable from GIVbacks</Caption>
+								<IconHelp
+									size={16}
+									color={brandColors.deep[100]}
+								/>
+							</HelpRow>
 							<GIVBoxWithPrice
 								amount={givBackInfo.releasedReward}
 								price={calcUSD(

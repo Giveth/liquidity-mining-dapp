@@ -6,7 +6,7 @@ import config from '../configuration';
 import { isAddress } from 'ethers/lib/utils';
 import { getERC20Contract, getTokenDistroAmounts } from '../lib/claim';
 import { ITokenDistroBalance } from '../types/GIV';
-import { fetchBalance } from '@/services/subgraph';
+import { fetchBalances } from '@/services/subgraph';
 
 export interface ITokenBalanceContext {
 	tokenBalance: BigNumber;
@@ -40,8 +40,7 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 	const [tokenBalance, setTokenBalance] = useState<BigNumber>(Zero);
 	const [mainnetTokenBalance, setMainnetTokenBalance] =
 		useState<BigNumber>(Zero);
-	const [xDaiTokenBalance, setXDaiTokenBalance] =
-		useState<BigNumber>(Zero);
+	const [xDaiTokenBalance, setXDaiTokenBalance] = useState<BigNumber>(Zero);
 
 	const [tokenDistroBalance, setTokenDistroBalance] =
 		useState<ITokenDistroBalance>(initialTokenDistroBalance);
@@ -140,8 +139,8 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 			};
 			try {
 				const [
-					_newMainnetBalance,
-					_newXDaiBalance,
+					_newMainnetBalances,
+					_newXDaiBalances,
 					_mainnetTokenDistro,
 					_xDaiTokenDistro,
 				] = await Promise.all([
@@ -149,9 +148,9 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 					// 	mainnetTokenContract.balanceOf(address),
 					// 	Zero,
 					// ),
-					fetchBalance(config.MAINNET_NETWORK_NUMBER, address),
+					fetchBalances(config.MAINNET_NETWORK_NUMBER, address),
 					// safeNetworkCall(xDaiTokenContract.balanceOf(address), Zero),
-					fetchBalance(config.XDAI_NETWORK_NUMBER, address),
+					fetchBalances(config.XDAI_NETWORK_NUMBER, address),
 					safeNetworkCall(
 						getTokenDistroAmounts(
 							address,
@@ -176,8 +175,8 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 					),
 				]);
 
-				setNewMainnetTokenBalance(_newMainnetBalance);
-				setNewXDaiTokenBalance(_newXDaiBalance);
+				setNewMainnetTokenBalance(_newMainnetBalances.balance);
+				setNewXDaiTokenBalance(_newXDaiBalances.balance);
 
 				setMainnetTokenDistroBalance(_mainnetTokenDistro);
 				setXDaiTokenDistroBalance(_xDaiTokenDistro);
