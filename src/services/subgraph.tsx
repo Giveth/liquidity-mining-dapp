@@ -1,24 +1,36 @@
 import config from '@/configuration';
-import { ethers } from 'ethers';
+import { constants, ethers } from 'ethers';
 export interface IBalances {
 	balance: ethers.BigNumber;
 	allocatedTokens: ethers.BigNumber;
 	claimed: ethers.BigNumber;
-	rewardPerTokenStoredGivLm: ethers.BigNumber;
+	rewardPerTokenPaidGivLm: ethers.BigNumber;
 	rewardsGivLm: ethers.BigNumber;
-	rewardPerTokenStoredUniswap: ethers.BigNumber;
+	rewardPerTokenPaidGivEth: ethers.BigNumber;
+	rewardsGivEth: ethers.BigNumber;
+	rewardPerTokenPaidGivHny: ethers.BigNumber;
+	rewardsGivHny: ethers.BigNumber;
+	rewardPerTokenPaidUniswap: ethers.BigNumber;
 	rewardsUniswap: ethers.BigNumber;
+	rewardPerTokenPaidBalancerLiquidity: ethers.BigNumber;
+	rewardsBalancerLiquidity: ethers.BigNumber;
 	givback: ethers.BigNumber;
 }
 export const zeroBalances = {
-	balance: ethers.BigNumber.from(0),
-	allocatedTokens: ethers.BigNumber.from(0),
-	claimed: ethers.BigNumber.from(0),
-	rewardPerTokenStoredGivLm: ethers.BigNumber.from(0),
-	rewardsGivLm: ethers.BigNumber.from(0),
-	rewardPerTokenStoredUniswap: ethers.BigNumber.from(0),
-	rewardsUniswap: ethers.BigNumber.from(0),
-	givback: ethers.BigNumber.from(0),
+	balance: constants.Zero,
+	allocatedTokens: constants.Zero,
+	claimed: constants.Zero,
+	rewardPerTokenPaidGivLm: constants.Zero,
+	rewardsGivLm: constants.Zero,
+	rewardPerTokenPaidGivEth: constants.Zero,
+	rewardsGivEth: constants.Zero,
+	rewardPerTokenPaidGivHny: constants.Zero,
+	rewardsGivHny: constants.Zero,
+	rewardPerTokenPaidUniswap: constants.Zero,
+	rewardsUniswap: constants.Zero,
+	rewardPerTokenPaidBalancerLiquidity: constants.Zero,
+	rewardsBalancerLiquidity: constants.Zero,
+	givback: constants.Zero,
 };
 
 export const fetchBalances = async (
@@ -27,14 +39,19 @@ export const fetchBalances = async (
 ): Promise<IBalances> => {
 	const query = `{
 		balances(where: {id: "${address.toLowerCase()}"}) {
-			id
 			balance
 			allocatedTokens
 			claimed
-			rewardPerTokenStoredGivLm
+			rewardPerTokenPaidGivLm
 			rewardsGivLm
-			rewardPerTokenStoredUniswap
+			rewardPerTokenPaidGivEth
+			rewardsGivEth
+			rewardPerTokenPaidGivHny
+			rewardsGivHny
+			rewardPerTokenPaidUniswap
 			rewardsUniswap
+			rewardPerTokenPaidBalancerLiquidity
+			rewardsBalancerLiquidity
 			givback
 		}
 	}`;
@@ -61,17 +78,35 @@ export const fetchBalances = async (
 			data.data.balances[0].allocatedTokens || 0,
 		);
 		const claimed = ethers.BigNumber.from(data.data.balances[0].claimed);
-		const rewardPerTokenStoredGivLm = ethers.BigNumber.from(
-			data.data.balances[0].rewardPerTokenStoredGivLm || 0,
+		const rewardPerTokenPaidGivLm = ethers.BigNumber.from(
+			data.data.balances[0].rewardPerTokenPaidGivLm || 0,
 		);
 		const rewardsGivLm = ethers.BigNumber.from(
 			data.data.balances[0].rewardsGivLm || 0,
 		);
-		const rewardPerTokenStoredUniswap = ethers.BigNumber.from(
-			data.data.balances[0].rewardPerTokenStoredUniswap || 0,
+		const rewardPerTokenPaidGivEth = ethers.BigNumber.from(
+			data.data.balances[0].rewardPerTokenPaidGivEth || 0,
+		);
+		const rewardsGivEth = ethers.BigNumber.from(
+			data.data.balances[0].rewardsGivEth || 0,
+		);
+		const rewardPerTokenPaidGivHny = ethers.BigNumber.from(
+			data.data.balances[0].rewardPerTokenPaidGivHny || 0,
+		);
+		const rewardsGivHny = ethers.BigNumber.from(
+			data.data.balances[0].rewardsGivHny || 0,
+		);
+		const rewardPerTokenPaidUniswap = ethers.BigNumber.from(
+			data.data.balances[0].rewardPerTokenPaidUniswap || 0,
 		);
 		const rewardsUniswap = ethers.BigNumber.from(
 			data.data.balances[0].rewardsUniswap || 0,
+		);
+		const rewardPerTokenPaidBalancerLiquidity = ethers.BigNumber.from(
+			data.data.balances[0].rewardPerTokenPaidBalancerLiquidity || 0,
+		);
+		const rewardsBalancerLiquidity = ethers.BigNumber.from(
+			data.data.balances[0].rewardsBalancerLiquidity || 0,
 		);
 		const givback = ethers.BigNumber.from(
 			data.data.balances[0].givback || 0,
@@ -80,10 +115,16 @@ export const fetchBalances = async (
 			balance,
 			allocatedTokens,
 			claimed,
-			rewardPerTokenStoredGivLm,
+			rewardPerTokenPaidGivLm,
 			rewardsGivLm,
-			rewardPerTokenStoredUniswap,
+			rewardPerTokenPaidGivEth,
+			rewardsGivEth,
+			rewardPerTokenPaidGivHny,
+			rewardsGivHny,
+			rewardPerTokenPaidUniswap,
 			rewardsUniswap,
+			rewardPerTokenPaidBalancerLiquidity,
+			rewardsBalancerLiquidity,
 			givback,
 		};
 	} catch (error) {
