@@ -117,7 +117,8 @@ export const getTokenDistroAmounts = async (
 	if (!isAddress(tokenDistroAddress)) {
 		return {
 			claimable: constants.Zero,
-			locked: constants.Zero,
+			allocatedAmount: constants.Zero,
+			claimedAmount: constants.Zero,
 		};
 	}
 
@@ -133,10 +134,9 @@ export const getTokenDistroAmounts = async (
 
 	const balances = await tokenDistro.balances(address);
 	const claimable = await tokenDistro.claimableNow(address);
+	const [allocatedAmount, claimedAmount] = balances;
 
-	const locked = balances[0].sub(balances[1]);
-
-	return { claimable, locked };
+	return { claimable, allocatedAmount, claimedAmount };
 };
 
 export const claimReward = async (

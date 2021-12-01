@@ -7,7 +7,7 @@ import { H2, P } from '../styled-components/Typography';
 import { ArrowButton, Card, Header } from './common';
 import { OnboardContext } from '../../context/onboard.context';
 import { UserContext } from '../../context/user.context';
-import { ethers } from 'ethers';
+import { utils } from 'ethers';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
@@ -96,10 +96,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	useEffect(() => {
 		if (addressSubmitted) {
-			console.log(
-				'claimableAmount:',
-				ethers.utils.formatEther(claimableAmount),
-			);
+			console.log('claimableAmount:', utils.formatEther(claimableAmount));
 
 			setGiveDropState(
 				claimableAmount.isZero()
@@ -143,7 +140,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			};
 			break;
 		case GiveDropStateType.Success:
-			title = `You have ${ethers.utils.formatEther(
+			title = `You have ${utils.formatEther(
 				claimableAmount,
 			)} GIV to claim.`;
 			desc = 'Congrats, your GIVdrop awaits. Go claim it!';

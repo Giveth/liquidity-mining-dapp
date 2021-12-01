@@ -8,9 +8,8 @@ import {
 	ClaimViewContext,
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
-import { ethers } from 'ethers';
+import { utils } from 'ethers';
 import { UserContext } from '../../context/user.context';
-import { resourceGone } from '@hapi/boom';
 
 const GovernCardContainer = styled(Card)`
 	::before {
@@ -89,7 +88,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 							<GovernLabel>
 								Amount staked on proposals
 							</GovernLabel>
-							<MaxGIV>{`Max ${ethers.utils.formatEther(
+							<MaxGIV>{`Max ${utils.formatEther(
 								claimableAmount,
 							)} GIV`}</MaxGIV>
 						</Row>

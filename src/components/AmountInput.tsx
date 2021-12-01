@@ -1,5 +1,5 @@
 import { GLink, neutralColors, brandColors } from '@giveth/ui-design-system';
-import { ethers } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { FC, useState, useCallback, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import config from 'src/configuration';
@@ -8,7 +8,7 @@ import { PoolStakingConfig } from '../types/config';
 import { Row } from './styled-components/Grid';
 
 interface IAmountInput {
-	maxAmount: ethers.BigNumber;
+	maxAmount: BigNumber;
 	setAmount: Dispatch<SetStateAction<string>>;
 	poolStakingConfig: PoolStakingConfig;
 	disabled?: boolean;
@@ -24,7 +24,7 @@ export const AmountInput: FC<IAmountInput> = ({
 
 	const setAmountPercentage = useCallback(
 		(percentage: number): void => {
-			const newAmount = ethers.BigNumber.from(maxAmount)
+			const newAmount = BigNumber.from(maxAmount)
 				.mul(percentage)
 				.div(100)
 				.toString();
@@ -36,7 +36,7 @@ export const AmountInput: FC<IAmountInput> = ({
 
 	const onChange = useCallback(value => {
 		setDisplayAmount(formatEthHelper(value, 6, false));
-		setAmount(ethers.utils.parseUnits('' + value).toString());
+		setAmount(utils.parseUnits('' + value).toString());
 	}, []);
 
 	return (

@@ -16,7 +16,7 @@ import {
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
 import { UserContext } from '../../context/user.context';
-import { ethers } from 'ethers';
+import { utils } from 'ethers';
 import { fetchGivStakingInfo } from '../../lib/stakingPool';
 import config from '../../configuration';
 import { APR } from '../../types/poolInfo';
@@ -93,7 +93,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		} else if (isNaN(+e.target.value)) {
 			setDeposit(deposit);
 		} else {
-			if (claimableAmount.gte(ethers.utils.parseEther(e.target.value)))
+			if (claimableAmount.gte(utils.parseEther(e.target.value)))
 				setDeposit(+e.target.value);
 		}
 	};
@@ -144,7 +144,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 							justifyContent={'space-between'}
 						>
 							<DepositeLable>Your deposit</DepositeLable>
-							<MaxGIV>{`Max ${ethers.utils.formatEther(
+							<MaxGIV>{`Max ${utils.formatEther(
 								claimableAmount,
 							)} GIV`}</MaxGIV>
 						</Row>

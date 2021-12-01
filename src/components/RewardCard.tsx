@@ -1,5 +1,5 @@
 import config from '@/configuration';
-import { formatEthHelper, formatWeiHelper, Zero } from '@/helpers/number';
+import { formatWeiHelper, Zero } from '@/helpers/number';
 import { getGIVPrice } from '@/services/subgraph';
 import {
 	brandColors,
@@ -12,7 +12,6 @@ import {
 	IconHelp,
 	Button,
 } from '@giveth/ui-design-system';
-import BigNumber from 'bignumber.js';
 import React, {
 	FC,
 	MouseEventHandler,
@@ -25,6 +24,7 @@ import { IconGIV } from './Icons/GIV';
 import { IconXDAI } from './Icons/XDAI';
 import { Row } from './styled-components/Grid';
 import { OnboardContext } from '@/context/onboard.context';
+import { BigNumber } from 'ethers';
 
 interface IRewardCardProps {
 	title?: string;
@@ -46,8 +46,10 @@ export const RewardCard: FC<IRewardCardProps> = ({
 	const { network: walletNetwork } = useContext(OnboardContext);
 	const [usdAmount, setUSDAmount] = useState('0');
 	useEffect(() => {
-		getGIVPrice(walletNetwork).then(rate => {
-			const usd = (+amount.div(10 ** 18).toString() * rate).toFixed(2);
+		getGIVPrice(walletNetwork).then(price => {
+			const usd = (
+				+formatWeiHelper(amount, config.TOKEN_PRECISION) * price
+			).toFixed(2);
 			setUSDAmount(usd);
 		});
 	}, [amount, walletNetwork]);
@@ -56,7 +58,7 @@ export const RewardCard: FC<IRewardCardProps> = ({
 		<RewadCardContainer className={className}>
 			<CardHeader justifyContent='space-between'>
 				<CardTitle>{title}</CardTitle>
-				<ChainInfo>
+				<ChainInfo alignItems='center'>
 					<IconXDAI size={16} />
 					<ChainName styleType='Small'>XDAI</ChainName>
 				</ChainInfo>
@@ -69,7 +71,7 @@ export const RewardCard: FC<IRewardCardProps> = ({
 			<Converted>~${usdAmount}</Converted>
 			<RateInfo alignItems='center' gap='8px'>
 				<IconGIVStream size={24} />
-				<P>{formatEthHelper(rate, config.TOKEN_PRECISION)}</P>
+				<P>{formatWeiHelper(rate, config.TOKEN_PRECISION)}</P>
 				<RateUnit>GIV/week</RateUnit>
 				<IconHelp size={24} color={brandColors.deep[200]} />
 			</RateInfo>
@@ -97,7 +99,9 @@ const CardHeader = styled(Row)`
 	margin-bottom: 16px;
 `;
 
-const ChainInfo = styled(Row)``;
+const ChainInfo = styled(Row)`
+	gap: 4px;
+`;
 
 const ChainName = styled(Overline)``;
 

@@ -9,7 +9,7 @@ import {
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
 import { UserContext } from '../../context/user.context';
-import { ethers } from 'ethers';
+import { utils } from 'ethers';
 
 const DonateCardContainer = styled(Card)`
 	::before {
@@ -100,7 +100,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 							justifyContent={'space-between'}
 						>
 							<DonateLabel>Your donation</DonateLabel>
-							<MaxGIV>{`Max ${ethers.utils.formatEther(
+							<MaxGIV>{`Max ${utils.formatEther(
 								claimableAmount,
 							)} GIV`}</MaxGIV>
 						</Row>

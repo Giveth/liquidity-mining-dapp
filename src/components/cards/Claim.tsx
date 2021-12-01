@@ -8,14 +8,12 @@ import {
 	ClaimViewContext,
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
-import { Contract, ethers } from 'ethers';
+import { utils } from 'ethers';
 import { UserContext } from '../../context/user.context';
 import { toast } from 'react-hot-toast';
 import { networksParams } from '../../helpers/blockchain';
 import { OnboardContext } from '../../context/onboard.context';
-import { isAddress } from 'ethers/lib/utils';
 import config from '../../configuration';
-import { abi as TOKEN_DISTRO_ABI } from '../../artifacts/TokenDistro.json';
 import { claimAirDrop } from '../../lib/claim';
 
 const ClaimCardContainer = styled(Card)`
@@ -92,7 +90,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 			</ClaimHeader>
 			<Row alignItems={'center'} justifyContent={'center'}>
 				<ClaimButton secondary onClick={onClaim}>
-					CLAIM {ethers.utils.formatEther(claimableAmount)} GIV Tokens
+					CLAIM {utils.formatEther(claimableAmount)} GIV Tokens
 				</ClaimButton>
 			</Row>
 		</ClaimCardContainer>

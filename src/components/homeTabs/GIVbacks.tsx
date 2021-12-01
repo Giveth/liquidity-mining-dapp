@@ -34,7 +34,7 @@ import {
 	GivAllocated,
 	InfoReadMore,
 } from './GIVbacks.sc';
-import BigNumber from 'bignumber.js';
+import { constants } from 'ethers';
 
 export const TabGIVbacksTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -55,7 +55,7 @@ export const TabGIVbacksTop = () => {
 					</Left>
 					<Right>
 						<GIVbackRewardCard
-							amount={new BigNumber('257.9055')}
+							amount={constants.Zero}
 							actionLabel='HARVEST'
 							actionCb={() => {
 								setShowModal(true);

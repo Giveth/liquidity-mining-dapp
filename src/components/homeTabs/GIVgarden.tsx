@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { H1, Container, IconGIVGarden } from '@giveth/ui-design-system';
 
 import { Row } from '../styled-components/Grid';
@@ -21,23 +21,55 @@ import {
 	VoteCardDesc,
 	VoteCardButton,
 } from './GIVgarden.sc';
-import { HarvestModal } from '../modals/Harvest';
+import { HarvestAllModal } from '../modals/HarvestAll';
 import config from '@/configuration';
 import { useStakingPool } from '@/hooks/useStakingPool';
 import { getGivStakingConfig } from '@/helpers/networkProvider';
-import { BigNumber } from 'bignumber.js';
+import { harvestTokens } from '@/lib/stakingPool';
+import { OnboardContext } from '@/context/onboard.context';
+import { calcTokenInfo, ITokenInfo } from '@/lib/helpers';
+import { getTokenDistroInfo } from '@/services/subgraph';
 
 const poolStakingConfig = getGivStakingConfig(config.XDAI_CONFIG);
 
 export const TabGardenTop = () => {
 	const [showModal, setShowModal] = useState(false);
+	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
 
 	const { userStakeInfo, rewardRatePerToken } = useStakingPool(
 		poolStakingConfig,
 		config.XDAI_NETWORK_NUMBER,
 	);
 
+	const { provider } = useContext(OnboardContext);
 	const { earned } = userStakeInfo;
+
+	useEffect(() => {
+		getTokenDistroInfo(config.XDAI_NETWORK_NUMBER).then(distroInfo => {
+			if (distroInfo) {
+				const {
+					initialAmount,
+					totalTokens,
+					startTime,
+					cliffTime,
+					duration,
+				} = distroInfo;
+				const _tokenInfo = calcTokenInfo(
+					initialAmount,
+					totalTokens,
+					earned,
+					duration,
+					cliffTime,
+					startTime,
+				);
+				setTokenInfo(_tokenInfo);
+			}
+		});
+	}, [earned]);
+
+	const onHarvest = () =>
+		harvestTokens(poolStakingConfig.LM_ADDRESS, provider);
+
 	return (
 		<GardenTopContainer>
 			<Container>
@@ -56,16 +88,8 @@ export const TabGardenTop = () => {
 					<Right>
 						<GardenRewardCard
 							title='Your GIVgarden rewards'
-							amount={new BigNumber(earned.toString())}
-							rate={
-								rewardRatePerToken
-									? new BigNumber(
-											rewardRatePerToken
-												.times('604800')
-												.toString(),
-									  )
-									: undefined
-							}
+							amount={tokenInfo?.releasedReward}
+							rate={tokenInfo?.flowratePerWeek}
 							actionLabel='HARVEST'
 							actionCb={() => {
 								setShowModal(true);
@@ -74,7 +98,16 @@ export const TabGardenTop = () => {
 					</Right>
 				</Row>
 			</Container>
-			<HarvestModal showModal={showModal} setShowModal={setShowModal} />
+			{showModal && (
+				<HarvestAllModal
+					showModal={showModal}
+					setShowModal={setShowModal}
+					poolStakingConfig={poolStakingConfig}
+					onHarvest={onHarvest}
+					claimable={earned}
+					network={config.XDAI_NETWORK_NUMBER}
+				/>
+			)}
 		</GardenTopContainer>
 	);
 };

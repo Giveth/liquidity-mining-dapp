@@ -1,16 +1,41 @@
 import config from '@/configuration';
-import { Zero } from '@/helpers/number';
-import { BigNumber } from 'bignumber.js';
 import { ethers } from 'ethers';
+export interface IBalances {
+	balance: ethers.BigNumber;
+	allocatedTokens: ethers.BigNumber;
+	claimed: ethers.BigNumber;
+	rewardPerTokenStoredGivLm: ethers.BigNumber;
+	rewardsGivLm: ethers.BigNumber;
+	rewardPerTokenStoredUniswap: ethers.BigNumber;
+	rewardsUniswap: ethers.BigNumber;
+	givback: ethers.BigNumber;
+}
+export const zeroBalances = {
+	balance: ethers.BigNumber.from(0),
+	allocatedTokens: ethers.BigNumber.from(0),
+	claimed: ethers.BigNumber.from(0),
+	rewardPerTokenStoredGivLm: ethers.BigNumber.from(0),
+	rewardsGivLm: ethers.BigNumber.from(0),
+	rewardPerTokenStoredUniswap: ethers.BigNumber.from(0),
+	rewardsUniswap: ethers.BigNumber.from(0),
+	givback: ethers.BigNumber.from(0),
+};
 
-export const fetchBalance = async (
+export const fetchBalances = async (
 	network: number,
 	address: string,
-): Promise<ethers.BigNumber> => {
+): Promise<IBalances> => {
 	const query = `{
 		balances(where: {id: "${address.toLowerCase()}"}) {
-		id
-		balance
+			id
+			balance
+			allocatedTokens
+			claimed
+			rewardPerTokenStoredGivLm
+			rewardsGivLm
+			rewardPerTokenStoredUniswap
+			rewardsUniswap
+			givback
 		}
 	}`;
 	const body = { query };
@@ -21,7 +46,7 @@ export const fetchBalance = async (
 		uri = config.XDAI_NETWORK.subgraphAddress;
 	} else {
 		console.error('Network is not Defined!');
-		return ethers.BigNumber.from(0);
+		return zeroBalances;
 	}
 	try {
 		const res = await fetch(uri, {
@@ -29,16 +54,46 @@ export const fetchBalance = async (
 			body: JSON.stringify(body),
 		});
 		const data = await res.json();
-		const balance = ethers.BigNumber.from(data.data.balances[0].balance);
-		return balance;
+		const balance = ethers.BigNumber.from(
+			data.data.balances[0].balance || 0,
+		);
+		const allocatedTokens = ethers.BigNumber.from(
+			data.data.balances[0].allocatedTokens || 0,
+		);
+		const claimed = ethers.BigNumber.from(data.data.balances[0].claimed);
+		const rewardPerTokenStoredGivLm = ethers.BigNumber.from(
+			data.data.balances[0].rewardPerTokenStoredGivLm || 0,
+		);
+		const rewardsGivLm = ethers.BigNumber.from(
+			data.data.balances[0].rewardsGivLm || 0,
+		);
+		const rewardPerTokenStoredUniswap = ethers.BigNumber.from(
+			data.data.balances[0].rewardPerTokenStoredUniswap || 0,
+		);
+		const rewardsUniswap = ethers.BigNumber.from(
+			data.data.balances[0].rewardsUniswap || 0,
+		);
+		const givback = ethers.BigNumber.from(
+			data.data.balances[0].givback || 0,
+		);
+		return {
+			balance,
+			allocatedTokens,
+			claimed,
+			rewardPerTokenStoredGivLm,
+			rewardsGivLm,
+			rewardPerTokenStoredUniswap,
+			rewardsUniswap,
+			givback,
+		};
 	} catch (error) {
-		console.error('Error in getting data from Subgraph', error);
-		return ethers.BigNumber.from(0);
+		console.error('Error in fetching Balances', error);
+		return zeroBalances;
 	}
 };
 
 export interface ITokenAllocation {
-	amount: BigNumber;
+	amount: ethers.BigNumber;
 	distributor: string;
 	recipient: string;
 	timestamp: string;
@@ -79,7 +134,7 @@ export const getHistory = async (
 		const { tokenAllocations } = data.data;
 		return tokenAllocations;
 	} catch (error) {
-		console.error('Error in getting data from Subgraph', error);
+		console.error('Error in getting History from Subgraph', error);
 		return [];
 	}
 };
@@ -121,9 +176,9 @@ export const getGIVPrice = async (network: number): Promise<number> => {
 };
 
 export interface ITokenDistroInfo {
-	initialAmount: BigNumber;
-	lockedAmount: BigNumber;
-	totalTokens: BigNumber;
+	initialAmount: ethers.BigNumber;
+	lockedAmount: ethers.BigNumber;
+	totalTokens: ethers.BigNumber;
 	startTime: Date;
 	cliffTime: Date;
 	endTime: Date;
@@ -137,7 +192,7 @@ export const getTokenDistroInfo = async (
 	network: number,
 ): Promise<ITokenDistroInfo | undefined> => {
 	const query = `{
-		tokenDistroContractInfos(first:1){
+		tokenDistroContractInfos(first:10){
 		  id
 		  initialAmount
 		  duration
@@ -185,13 +240,13 @@ export const getTokenDistroInfo = async (
 		const percent = Math.floor((progress / duration) * 100);
 		// console.log(`percent`, percent);
 
-		const initialAmount = new BigNumber(info.initialAmount);
+		const initialAmount = ethers.BigNumber.from(info.initialAmount);
 		// console.log(`initialAmount`, initialAmount.toString());
 
-		const lockedAmount = new BigNumber(info.lockedAmount);
+		const lockedAmount = ethers.BigNumber.from(info.lockedAmount);
 		// console.log(`lockedAmount`, lockedAmount.toString());
 
-		const totalTokens = new BigNumber(info.totalTokens);
+		const totalTokens = ethers.BigNumber.from(info.totalTokens);
 		// console.log(`totalTokens`, totalTokens.toString());
 
 		return {

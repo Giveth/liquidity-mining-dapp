@@ -11,5 +11,6 @@ export interface ClaimData {
 
 export interface ITokenDistroBalance {
 	claimable: ethers.BigNumber;
-	locked: ethers.BigNumber;
+	allocatedAmount: ethers.BigNumber;
+	claimedAmount: ethers.BigNumber;
 }

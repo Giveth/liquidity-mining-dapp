@@ -5,14 +5,14 @@ import { Row } from '../styled-components/Grid';
 import styled from 'styled-components';
 import { PoolStakingConfig } from '../../types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
-import { ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { AmountInput } from '../AmountInput';
 import { unwrapToken, withdrawTokens } from '../../lib/stakingPool';
 import { OnboardContext } from '../../context/onboard.context';
 
 interface IUnStakeModalProps extends IModal {
 	poolStakingConfig: PoolStakingConfig;
-	maxAmount: ethers.BigNumber;
+	maxAmount: BigNumber;
 }
 
 export const UnStakeModal: FC<IUnStakeModalProps> = ({
