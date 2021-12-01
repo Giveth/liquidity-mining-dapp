@@ -36,6 +36,7 @@ import { StakingPoolImages } from '../StakingPoolImages';
 import { calcTokenInfo, ITokenInfo } from '@/lib/helpers';
 import { formatWeiHelper } from '@/helpers/number';
 import config from '@/configuration';
+import { TokenBalanceContext } from '@/context/tokenBalance.context';
 
 interface IHarvestAllModalProps extends IModal {
 	poolStakingConfig: PoolStakingConfig;
@@ -79,7 +80,9 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	const [state, setState] = useState(States.Harvest);
 	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
 	const [givBackInfo, setGivBackInfo] = useState<ITokenInfo>();
+	const [balanceInfo, setBalanceInfo] = useState<ITokenInfo>();
 	const { address } = useContext(OnboardContext);
+	const { tokenBalance } = useContext(TokenBalanceContext);
 
 	const [price, setPrice] = useState(0);
 
@@ -139,6 +142,29 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 			}
 		});
 	}, [claimable, network]);
+
+	useEffect(() => {
+		getTokenDistroInfo(network).then(distroInfo => {
+			if (distroInfo) {
+				const {
+					initialAmount,
+					totalTokens,
+					startTime,
+					cliffTime,
+					duration,
+				} = distroInfo;
+				const _balanceInfo = calcTokenInfo(
+					initialAmount,
+					totalTokens,
+					tokenBalance,
+					duration,
+					cliffTime,
+					startTime,
+				);
+				setBalanceInfo(_balanceInfo);
+			}
+		});
+	}, [tokenBalance, network]);
 
 	const calcUSD = (amount: string) => {
 		const usd = (parseInt(amount.toString()) * price).toFixed(2);
@@ -239,6 +265,38 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 								</GIVRate>
 								<Lead>GIV/week</Lead>
 							</RateRow>
+						</>
+					)}
+					{balanceInfo && (
+						<>
+							<GIVBoxWithPrice
+								amount={balanceInfo.releasedReward}
+								price={calcUSD(
+									formatWeiHelper(
+										balanceInfo.releasedReward,
+										config.TOKEN_PRECISION,
+									),
+								)}
+							/>
+							<HelpRow alignItems='center'>
+								<Caption>
+									Added to your GIVstream flowrate
+								</Caption>
+								<IconHelp
+									size={16}
+									color={brandColors.deep[100]}
+								/>
+							</HelpRow>
+							{/* <RateRow alignItems='center'>
+								<IconGIVStream size={24} />
+								<GIVRate>
+									{formatWeiHelper(
+										balanceInfo.flowratePerWeek,
+										config.TOKEN_PRECISION,
+									)}
+								</GIVRate>
+								<Lead>GIV/week</Lead>
+							</RateRow> */}
 						</>
 					)}
 					{/* <StyledGivethIcon>
