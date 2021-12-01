@@ -25,6 +25,13 @@ export const convertMSToHRD = (ms: number) => {
 	return { y, m, d };
 };
 
+export interface ITokenInfo {
+	releasedReward: BigNumber;
+	lockedReward: BigNumber;
+	flowratePerMS: BigNumber;
+	flowratePerWeek: BigNumber;
+}
+
 export const calcTokenInfo = (
 	initialAmount: BigNumber,
 	totalTokens: BigNumber,
@@ -33,7 +40,7 @@ export const calcTokenInfo = (
 	cliffTime: Date,
 	startTime: Date,
 	targetTime: Date = new Date(),
-) => {
+): ITokenInfo => {
 	const zeroResp = {
 		releasedReward: BigNumber.from('0'),
 		lockedReward: BigNumber.from('0'),
