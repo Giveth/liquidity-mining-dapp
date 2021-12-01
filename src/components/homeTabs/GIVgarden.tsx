@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { H1, Container, IconGIVGarden } from '@giveth/ui-design-system';
 
 import { Row } from '../styled-components/Grid';
@@ -26,16 +26,23 @@ import config from '@/configuration';
 import { useStakingPool } from '@/hooks/useStakingPool';
 import { getGivStakingConfig } from '@/helpers/networkProvider';
 import { BigNumber } from 'bignumber.js';
+import { harvestTokens } from '@/lib/stakingPool';
+import { OnboardContext } from '@/context/onboard.context';
 
 const poolStakingConfig = getGivStakingConfig(config.XDAI_CONFIG);
 
 export const TabGardenTop = () => {
-	const [showModal, setShowModal] = useState(true);
+	const [showModal, setShowModal] = useState(false);
 
 	const { userStakeInfo, rewardRatePerToken } = useStakingPool(
 		poolStakingConfig,
 		config.XDAI_NETWORK_NUMBER,
 	);
+
+	const { provider } = useContext(OnboardContext);
+
+	const onHarvest = () =>
+		harvestTokens(poolStakingConfig.LM_ADDRESS, provider);
 
 	const { earned } = userStakeInfo;
 	return (
@@ -74,10 +81,16 @@ export const TabGardenTop = () => {
 					</Right>
 				</Row>
 			</Container>
-			<HarvestAllModal
-				showModal={showModal}
-				setShowModal={setShowModal}
-			/>
+			{showModal && (
+				<HarvestAllModal
+					showModal={showModal}
+					setShowModal={setShowModal}
+					poolStakingConfig={poolStakingConfig}
+					onHarvest={onHarvest}
+					claimable={earned}
+					network={config.XDAI_NETWORK_NUMBER}
+				/>
+			)}
 		</GardenTopContainer>
 	);
 };

@@ -37,6 +37,7 @@ interface IHarvestAllModalProps extends IModal {
 	onHarvest: () => Promise<void>;
 	claimable: BigNumber;
 	givBackAmount?: BigNumber;
+	network: number;
 }
 
 enum States {
@@ -69,6 +70,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	poolStakingConfig,
 	claimable,
 	givBackAmount,
+	network,
 	onHarvest,
 }) => {
 	const [state, setState] = useState(States.Harvest);
@@ -76,16 +78,15 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	const [givBackInfo, setGivBackInfo] = useState<ITokenInfo>();
 
 	const [price, setPrice] = useState(0);
-	const { network: walletNetwork } = useContext(OnboardContext);
 
 	useEffect(() => {
-		getGIVPrice(walletNetwork).then(price => {
+		getGIVPrice(network).then(price => {
 			setPrice(price);
 		});
-	}, [walletNetwork]);
+	}, [network]);
 
 	useEffect(() => {
-		getTokenDistroInfo(walletNetwork).then(distroInfo => {
+		getTokenDistroInfo(network).then(distroInfo => {
 			if (distroInfo) {
 				const {
 					initialAmount,
@@ -116,7 +117,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 				}
 			}
 		});
-	}, [claimable, walletNetwork]);
+	}, [claimable, network]);
 
 	const calcUSD = (amount: string) => {
 		const usd = (parseInt(amount.toString()) * price).toFixed(2);

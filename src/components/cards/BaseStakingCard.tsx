@@ -43,6 +43,7 @@ import { IconHoneyswap } from '../Icons/Honeyswap';
 import { IconBalancer } from '../Icons/Balancer';
 import { IconUniswap } from '../Icons/Uniswap';
 import { HarvestAllModal } from '../modals/HarvestAll';
+import { OnboardContext } from '@/context/onboard.context';
 
 export const getPoolIconWithName = (pool: string) => {
 	switch (pool) {
@@ -75,6 +76,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	const [showStakeModal, setShowStakeModal] = useState(false);
 	const [showUnStakeModal, setShowUnStakeModal] = useState(false);
 	const [showHarvestModal, setShowHarvestModal] = useState(false);
+	const { network: walletNetwork } = useContext(OnboardContext);
 
 	const { type, title, description, provideLiquidityLink, LM_ADDRESS, unit } =
 		poolStakingConfig;
@@ -254,6 +256,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 					poolStakingConfig={poolStakingConfig}
 					claimable={earned}
 					onHarvest={onHarvest}
+					network={walletNetwork}
 				/>
 			)}
 		</>
