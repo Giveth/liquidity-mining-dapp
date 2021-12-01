@@ -23,6 +23,7 @@ import { NetworkSelector } from '@/components/NetworkSelector';
 import StakingPositionCard from '@/components/cards/StakingPositionCard';
 import { getGivStakingConfig } from '@/helpers/networkProvider';
 import { BigNumber } from 'bignumber.js';
+import { constants } from 'ethers';
 
 const GIVfarmTabContainer = styled(Container)``;
 
@@ -43,7 +44,7 @@ export const TabGIVfarmTop = () => {
 					<Right>
 						<GIVfarmRewardCard
 							title='Your GIVfarm rewards'
-							amount={new BigNumber('257000000000000000000')}
+							amount={constants.Zero}
 						/>
 					</Right>
 				</Row>
