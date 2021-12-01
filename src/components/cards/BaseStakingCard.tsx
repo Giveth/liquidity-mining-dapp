@@ -42,6 +42,7 @@ import { IconGIV } from '../Icons/GIV';
 import { IconHoneyswap } from '../Icons/Honeyswap';
 import { IconBalancer } from '../Icons/Balancer';
 import { IconUniswap } from '../Icons/Uniswap';
+import { HarvestAllModal } from '../modals/HarvestAll';
 
 export const getPoolIconWithName = (pool: string) => {
 	switch (pool) {
@@ -73,6 +74,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	const [showAPRModal, setShowAPRModal] = useState(false);
 	const [showStakeModal, setShowStakeModal] = useState(false);
 	const [showUnStakeModal, setShowUnStakeModal] = useState(false);
+	const [showHarvestModal, setShowHarvestModal] = useState(false);
 
 	const { type, title, description, provideLiquidityLink, LM_ADDRESS, unit } =
 		poolStakingConfig;
@@ -159,7 +161,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 					</Details>
 					<ClaimButton
 						disabled={earned.isZero()}
-						onClick={onHarvest}
+						onClick={() => setShowHarvestModal(true)}
 						label='CLAIM Rewards'
 					/>
 					<StakeButtonsRow>
@@ -245,6 +247,15 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 						maxAmount={stakedLpAmount}
 					/>
 				))}
+			{showHarvestModal && (
+				<HarvestAllModal
+					showModal={showHarvestModal}
+					setShowModal={setShowHarvestModal}
+					poolStakingConfig={poolStakingConfig}
+					claimable={earned}
+					onHarvest={onHarvest}
+				/>
+			)}
 		</>
 	);
 };
