@@ -54,24 +54,28 @@ export const fetchBalances = async (
 			body: JSON.stringify(body),
 		});
 		const data = await res.json();
-		const balance = ethers.BigNumber.from(data.data.balances[0].balance);
+		const balance = ethers.BigNumber.from(
+			data.data.balances[0].balance || 0,
+		);
 		const allocatedTokens = ethers.BigNumber.from(
-			data.data.balances[0].allocatedTokens,
+			data.data.balances[0].allocatedTokens || 0,
 		);
 		const claimed = ethers.BigNumber.from(data.data.balances[0].claimed);
 		const rewardPerTokenStoredGivLm = ethers.BigNumber.from(
-			data.data.balances[0].rewardPerTokenStoredGivLm,
+			data.data.balances[0].rewardPerTokenStoredGivLm || 0,
 		);
 		const rewardsGivLm = ethers.BigNumber.from(
-			data.data.balances[0].rewardsGivLm,
+			data.data.balances[0].rewardsGivLm || 0,
 		);
 		const rewardPerTokenStoredUniswap = ethers.BigNumber.from(
-			data.data.balances[0].rewardPerTokenStoredUniswap,
+			data.data.balances[0].rewardPerTokenStoredUniswap || 0,
 		);
 		const rewardsUniswap = ethers.BigNumber.from(
-			data.data.balances[0].rewardsUniswap,
+			data.data.balances[0].rewardsUniswap || 0,
 		);
-		const givback = ethers.BigNumber.from(data.data.balances[0].givback);
+		const givback = ethers.BigNumber.from(
+			data.data.balances[0].givback || 0,
+		);
 		return {
 			balance,
 			allocatedTokens,
