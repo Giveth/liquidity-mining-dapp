@@ -108,7 +108,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		if (network === config.XDAI_NETWORK_NUMBER) {
 			getTokensInfo();
 		}
-	}, [network]);
+	}, [address, network]);
 
 	useEffect(() => {
 		getGIVPrice(network).then(price => {
