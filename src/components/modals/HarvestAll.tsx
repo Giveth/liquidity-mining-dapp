@@ -278,7 +278,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 									),
 								)}
 							/>
-							<HelpRow alignItems='center'>
+							{/* <HelpRow alignItems='center'>
 								<Caption>
 									Added to your GIVstream flowrate
 								</Caption>
@@ -286,7 +286,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 									size={16}
 									color={brandColors.deep[100]}
 								/>
-							</HelpRow>
+							</HelpRow> */}
 							{/* <RateRow alignItems='center'>
 								<IconGIVStream size={24} />
 								<GIVRate>
@@ -304,6 +304,10 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 					</StyledGivethIcon>
 					<GIVAmount>{257.9055}</GIVAmount>
 					<USDAmount>~${348.74}</USDAmount> */}
+					<HarvestAllDesc>
+						When you claim rewards from GIVbacks, you also claim any
+						other liquid GIV allocated to you in the token distro.
+					</HarvestAllDesc>
 					<HarvestButton
 						label='HARVEST'
 						size='medium'
@@ -545,4 +549,10 @@ export const StakingPoolSubtitle = styled(Caption)``;
 
 export const StakePoolInfoContainer = styled.div`
 	padding: 0 24px;
+`;
+
+export const HarvestAllDesc = styled(P)`
+	text-align: justify;
+	color: ${neutralColors.gray[100]};
+	margin-bottom: 32px;
 `;
