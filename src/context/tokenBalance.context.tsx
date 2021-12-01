@@ -21,7 +21,8 @@ export interface ITokenBalanceContext {
 
 const initialTokenDistroBalance: ITokenDistroBalance = {
 	claimable: Zero,
-	locked: Zero,
+	allocatedAmount: Zero,
+	claimedAmount: Zero,
 };
 const initialValue = {
 	tokenBalance: Zero,
@@ -135,7 +136,8 @@ export const TokenBalanceProvider: FC = ({ children }) => {
 
 			const defaultTokenDistroResult: ITokenDistroBalance = {
 				claimable: Zero,
-				locked: Zero,
+				allocatedAmount: Zero,
+				claimedAmount: Zero,
 			};
 			try {
 				const [
