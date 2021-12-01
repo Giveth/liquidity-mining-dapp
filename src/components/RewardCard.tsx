@@ -58,7 +58,7 @@ export const RewardCard: FC<IRewardCardProps> = ({
 		<RewadCardContainer className={className}>
 			<CardHeader justifyContent='space-between'>
 				<CardTitle>{title}</CardTitle>
-				<ChainInfo>
+				<ChainInfo alignItems='center'>
 					<IconXDAI size={16} />
 					<ChainName styleType='Small'>XDAI</ChainName>
 				</ChainInfo>
@@ -99,7 +99,9 @@ const CardHeader = styled(Row)`
 	margin-bottom: 16px;
 `;
 
-const ChainInfo = styled(Row)``;
+const ChainInfo = styled(Row)`
+	gap: 4px;
+`;
 
 const ChainName = styled(Overline)``;
 
