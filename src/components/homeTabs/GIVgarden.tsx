@@ -41,7 +41,6 @@ export const TabGardenTop = () => {
 		config.XDAI_NETWORK_NUMBER,
 	);
 
-	const { provider } = useContext(OnboardContext);
 	const { earned } = userStakeInfo;
 
 	useEffect(() => {
@@ -66,9 +65,6 @@ export const TabGardenTop = () => {
 			}
 		});
 	}, [earned]);
-
-	const onHarvest = () =>
-		harvestTokens(poolStakingConfig.LM_ADDRESS, provider);
 
 	return (
 		<GardenTopContainer>
@@ -103,7 +99,6 @@ export const TabGardenTop = () => {
 					showModal={showModal}
 					setShowModal={setShowModal}
 					poolStakingConfig={poolStakingConfig}
-					onHarvest={onHarvest}
 					claimable={earned}
 					network={config.XDAI_NETWORK_NUMBER}
 				/>

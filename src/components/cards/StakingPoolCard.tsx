@@ -14,10 +14,6 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 	network,
 	poolStakingConfig,
 }) => {
-	const { provider } = useContext(OnboardContext);
-
-	const { LM_ADDRESS } = poolStakingConfig;
-
 	const { apr, rewardRatePerToken, userNotStakedAmount, userStakeInfo } =
 		useStakingPool(poolStakingConfig, network);
 
@@ -29,12 +25,9 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 		stakedLpAmount: userStakeInfo.stakedLpAmount,
 	};
 
-	const onHarvest = () => harvestTokens(LM_ADDRESS, provider);
-
 	return (
 		<BaseStakingCard
 			stakeInfo={stakeInfo}
-			onHarvest={onHarvest}
 			poolStakingConfig={poolStakingConfig}
 		/>
 	);

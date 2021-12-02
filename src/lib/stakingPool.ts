@@ -475,7 +475,7 @@ export const stakeTokens = async (
 export const harvestTokens = async (
 	lmAddress: string,
 	provider: Web3Provider | null,
-) => {
+): Promise<TransactionResponse | undefined> => {
 	if (!provider) {
 		console.error('Provider is null');
 		return;
@@ -488,18 +488,9 @@ export const harvestTokens = async (
 		signer.connectUnchecked(),
 	);
 
-	const tx = await lmContract.getReward();
+	const txResponse = await lmContract.getReward();
 
-	const network = provider.network.chainId;
-	harvestToast.showPendingHarvest(network, tx.hash);
-
-	const { status } = await tx.wait();
-
-	if (status) {
-		harvestToast.showConfirmedHarvest(network, tx.hash);
-	} else {
-		harvestToast.showFailedHarvest(network, tx.hash);
-	}
+	return txResponse;
 };
 
 export const withdrawTokens = async (
