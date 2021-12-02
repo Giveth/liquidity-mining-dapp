@@ -59,7 +59,6 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({ position, isUnstaking }) => {
 
 	const handleAction = () => {
 		if (!provider) return;
-
 		if (isUnstaking) {
 			return exit(
 				position.tokenId.toNumber(),

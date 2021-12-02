@@ -5,24 +5,12 @@ import LoadingAnimation from '../../animations/loading.json';
 import CheckAnimation from '../../animations/check.json';
 import {
 	brandColors,
-	neutralColors,
-	Button,
 	Caption,
 	IconGIVStream,
 	IconHelp,
 	Lead,
-	P,
 	B,
-	Title,
-	H6,
-	GLink,
-	OulineButton,
-	IconGIVGarden,
-	H5,
 } from '@giveth/ui-design-system';
-import { Row } from '../styled-components/Grid';
-import styled from 'styled-components';
-import { IconGIV } from '../Icons/GIV';
 import { BigNumber } from '@ethersproject/bignumber';
 import { OnboardContext } from '@/context/onboard.context';
 import {
@@ -30,25 +18,42 @@ import {
 	getGIVPrice,
 	getTokenDistroInfo,
 } from '@/services/subgraph';
-import { Zero } from '@/helpers/number';
 import { PoolStakingConfig } from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
 import { calcTokenInfo, ITokenInfo } from '@/lib/helpers';
 import { formatWeiHelper } from '@/helpers/number';
 import config from '@/configuration';
 import { TokenBalanceContext } from '@/context/tokenBalance.context';
+import { harvestTokens } from '@/lib/stakingPool';
+import { claimUnstakeStake } from '@/lib/stakingNFT';
+import { useLiquidityPositions } from '@/context';
+import { SubmittedInnerModal, ConfirmedInnerModal } from './ConfirmSubmit';
+import {
+	HarvestAllModalContainer,
+	HarvestAllModalTitleRow,
+	HarvestAllModalTitle,
+	TitleIcon,
+	SPTitle,
+	StakingPoolLabel,
+	StakingPoolSubtitle,
+	HelpRow,
+	RateRow,
+	GIVRate,
+	HarvestAllDesc,
+	HarvestButton,
+	Pending,
+	CancelButton,
+	GIVBoxWithPriceContainer,
+	GIVBoxWithPriceIcon,
+	GIVBoxWithPriceAmount,
+	GIVBoxWithPriceUSD,
+} from './HarvestAll.sc';
 
 interface IHarvestAllModalProps extends IModal {
+	title: string;
 	poolStakingConfig: PoolStakingConfig;
-	onHarvest: () => Promise<void>;
 	claimable: BigNumber;
 	network: number;
-}
-
-enum States {
-	Harvest,
-	Waiting,
-	Confirmed,
 }
 
 const loadingAnimationOptions = {
@@ -69,20 +74,29 @@ const checkAnimationOptions = {
 	},
 };
 
+enum HarvestStates {
+	HARVEST = 'HARVEST',
+	HARVESTING = 'HARVESTING',
+	SUBMITTED = 'SUBMITTED',
+	CONFIRMED = 'CONFIRMED',
+}
+
 export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
+	title,
 	showModal,
 	setShowModal,
 	poolStakingConfig,
 	claimable,
 	network,
-	onHarvest,
 }) => {
-	const [state, setState] = useState(States.Harvest);
+	const [state, setState] = useState(HarvestStates.HARVEST);
 	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
 	const [givBackInfo, setGivBackInfo] = useState<ITokenInfo>();
 	const [balanceInfo, setBalanceInfo] = useState<ITokenInfo>();
-	const { address } = useContext(OnboardContext);
 	const { tokenBalance } = useContext(TokenBalanceContext);
+	const { address, provider } = useContext(OnboardContext);
+	const { currentIncentive, stakedPositions } = useLiquidityPositions();
+	const [txHash, setTxHash] = useState('');
 
 	const [price, setPrice] = useState(0);
 
@@ -166,10 +180,47 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		});
 	}, [tokenBalance, network]);
 
+	const onHarvest = () => {
+		if (!provider) return;
+		setState(HarvestStates.HARVESTING);
+		if (poolStakingConfig.hasOwnProperty('NFT_POSITIONS_MANAGER_ADDRESS')) {
+			//NFT Harvest
+			claimUnstakeStake(
+				address,
+				provider,
+				currentIncentive,
+				stakedPositions,
+			).then(res => {
+				setState(HarvestStates.CONFIRMED);
+			});
+		} else {
+			// LP Harvest
+			harvestTokens(poolStakingConfig.LM_ADDRESS, provider)
+				.then(txResponse => {
+					if (txResponse) {
+						setState(HarvestStates.SUBMITTED);
+						setTxHash(txResponse.hash);
+						txResponse.wait().then(data => {
+							const { status } = data;
+							console.log('status', status);
+							setState(HarvestStates.CONFIRMED);
+						});
+					} else {
+						setState(HarvestStates.HARVEST);
+					}
+				})
+				.catch(err => {
+					setState(HarvestStates.HARVEST);
+				});
+		}
+	};
+
 	const calcUSD = (amount: string) => {
 		const usd = (parseInt(amount.toString()) * price).toFixed(2);
 		return usd;
 	};
+
+	console.log(`state`, state);
 
 	return (
 		<Modal
@@ -177,11 +228,12 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 			setShowModal={setShowModal}
 			// title='Your GIVgardens Rewards'
 		>
-			{state === States.Harvest && (
+			{(state === HarvestStates.HARVEST ||
+				state === HarvestStates.HARVESTING) && (
 				<HarvestAllModalContainer>
 					<HarvestAllModalTitleRow alignItems='center'>
 						<HarvestAllModalTitle weight={700}>
-							Your GIVgarden Rewards
+							{title}
 						</HarvestAllModalTitle>
 						<TitleIcon size={24} />
 					</HarvestAllModalTitleRow>
@@ -308,13 +360,26 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 						When you claim rewards from GIVbacks, you also claim any
 						other liquid GIV allocated to you in the token distro.
 					</HarvestAllDesc>
-					<HarvestButton
-						label='HARVEST'
-						size='medium'
-						buttonType='primary'
-						onClick={onHarvest}
-					/>
+					{state === HarvestStates.HARVEST && (
+						<HarvestButton
+							label='HARVEST'
+							size='medium'
+							buttonType='primary'
+							onClick={onHarvest}
+						/>
+					)}
+					{state === HarvestStates.HARVESTING && (
+						<Pending>
+							<Lottie
+								options={loadingAnimationOptions}
+								height={40}
+								width={40}
+							/>
+							&nbsp;HARVEST PENDING
+						</Pending>
+					)}
 					<CancelButton
+						disabled={state !== HarvestStates.HARVEST}
 						label='CANCEL'
 						size='medium'
 						buttonType='texty'
@@ -324,64 +389,23 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 					/>
 				</HarvestAllModalContainer>
 			)}
-			{state === States.Waiting && (
-				<WitingModalContainer>
-					<Lottie
-						options={loadingAnimationOptions}
-						height={100}
-						width={100}
+			{state === HarvestStates.SUBMITTED && (
+				<HarvestAllModalContainer>
+					<SubmittedInnerModal
+						title={title}
+						walletNetwork={network}
+						txHash={txHash}
 					/>
-					<WaitinMessage weight={700}>
-						Please confirm transaction in your wallet
-					</WaitinMessage>
-					<CancelButton
-						label='CANCEL'
-						size='medium'
-						buttonType='texty'
-						onClick={() => {
-							setShowModal(false);
-						}}
-					/>
-				</WitingModalContainer>
+				</HarvestAllModalContainer>
 			)}
-			{state === States.Confirmed && (
-				<ConfirmedModalContainer>
-					<Lottie
-						options={checkAnimationOptions}
-						height={152}
-						width={152}
+			{state === HarvestStates.CONFIRMED && (
+				<HarvestAllModalContainer>
+					<ConfirmedInnerModal
+						title={title}
+						walletNetwork={network}
+						txHash={txHash}
 					/>
-					<ConfirmedMessage weight={700}>
-						Transaction confirmed!
-					</ConfirmedMessage>
-					<ConfirmedData>
-						<CDFirst>Claimed</CDFirst>
-						<CDSecond>
-							<CDInfo gap='4px'>
-								<Lead>{257.9055}</Lead>
-								<Lead>GIV</Lead>
-							</CDInfo>
-							<CDLink>View on Blockscout</CDLink>
-						</CDSecond>
-					</ConfirmedData>
-					<ConfirmedData>
-						<CDFirst>Added to GIVsteram</CDFirst>
-						<CDSecond>
-							<CDInfo gap='4px'>
-								<Lead>{9.588}</Lead>
-								<Lead>GIV/week</Lead>
-							</CDInfo>
-							<CDLink>View your GIVstream</CDLink>
-						</CDSecond>
-					</ConfirmedData>
-					<DoneButton
-						label='Done'
-						size='medium'
-						onClick={() => {
-							setShowModal(false);
-						}}
-					/>
-				</ConfirmedModalContainer>
+				</HarvestAllModalContainer>
 			)}
 		</Modal>
 	);
@@ -405,154 +429,3 @@ const GIVBoxWithPrice: FC<IGIVBoxWithPriceProps> = ({ amount, price }) => {
 		</>
 	);
 };
-
-const GIVBoxWithPriceContainer = styled(Row)`
-	background-color: ${brandColors.giv[500]}66;
-	margin: 16px 0;
-	border-radius: 8px;
-	padding: 24px;
-	gap: 8px;
-`;
-
-const GIVBoxWithPriceIcon = styled(IconGIV)``;
-
-const GIVBoxWithPriceAmount = styled(Title)`
-	margin-left: 8px;
-	color: ${neutralColors.gray[100]};
-`;
-
-const GIVBoxWithPriceUSD = styled(P)`
-	color: ${brandColors.deep[200]};
-`;
-
-const HarvestAllModalContainer = styled.div`
-	width: 686px;
-	padding: 24px;
-`;
-
-const HarvestAllModalTitleRow = styled(Row)`
-	gap: 14px;
-`;
-
-const HarvestAllModalTitle = styled(H6)`
-	color: ${neutralColors.gray[100]};
-`;
-
-const TitleIcon = styled(IconGIVGarden)``;
-
-const StyledGivethIcon = styled.div`
-	margin-top: 48px;
-	margin-bottom: 23px;
-`;
-
-const GIVAmount = styled(Title)`
-	color: ${neutralColors.gray[100]};
-`;
-
-const USDAmount = styled(P)`
-	margin-bottom: 22px;
-	color: ${brandColors.deep[200]};
-`;
-
-const HelpRow = styled(Row)`
-	gap: 8px;
-	margin-bottom: 4px;
-`;
-
-const RateRow = styled(Row)`
-	gap: 4px;
-	margin-bottom: 36px;
-`;
-
-const GIVRate = styled(Lead)`
-	color: ${neutralColors.gray[100]};
-`;
-
-const HarvestButton = styled(Button)`
-	display: block;
-	width: 316px;
-	margin: 0 auto 16px;
-`;
-
-const CancelButton = styled(Button)`
-	width: 316px;
-	margin: 0 auto 8px;
-`;
-
-const WitingModalContainer = styled.div`
-	width: 546px;
-	padding: 24px;
-`;
-
-const WaitinMessage = styled(H6)`
-	color: ${neutralColors.gray[100]};
-	padding: 24px;
-	margin-top: 18px;
-	margin-bottom: 40px;
-`;
-
-const ConfirmedModalContainer = styled.div`
-	width: 522px;
-	padding: 24px 86px;
-`;
-
-const ConfirmedMessage = styled(H6)`
-	color: ${neutralColors.gray[100]};
-	margin-top: 16px;
-`;
-
-const ConfirmedData = styled(Row)`
-	margin-top: 32px;
-`;
-
-const CDFirst = styled(P)`
-	color: ${neutralColors.gray[100]};
-	text-align: left;
-	flex: 1;
-`;
-
-const CDSecond = styled(P)`
-	color: ${neutralColors.gray[100]};
-	flex: 1;
-`;
-
-const CDInfo = styled(Row)`
-	div:first-child {
-		color: ${neutralColors.gray[100]};
-	}
-	div:last-child {
-		color: ${brandColors.giv[300]};
-	}
-`;
-
-const CDLink = styled(GLink)`
-	text-align: left;
-	display: block;
-	color: ${brandColors.cyan[500]};
-`;
-
-const DoneButton = styled(OulineButton)`
-	padding: 16px 135px;
-	margin-top: 32px;
-`;
-
-export const SPTitle = styled(Row)`
-	margin-top: 12px;
-	margin-bottom: 24px;
-	color: ${neutralColors.gray[100]};
-	margin-left: -24px;
-`;
-
-export const StakingPoolLabel = styled(H5)``;
-
-export const StakingPoolSubtitle = styled(Caption)``;
-
-export const StakePoolInfoContainer = styled.div`
-	padding: 0 24px;
-`;
-
-export const HarvestAllDesc = styled(P)`
-	text-align: justify;
-	color: ${neutralColors.gray[100]};
-	margin-bottom: 32px;
-`;

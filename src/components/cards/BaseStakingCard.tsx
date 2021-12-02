@@ -63,14 +63,12 @@ export const getPoolIconWithName = (pool: string) => {
 };
 interface IBaseStakingCardProps {
 	poolStakingConfig: PoolStakingConfig;
-	onHarvest: () => Promise<void>;
 	stakeInfo: any;
 	notif?: ReactNode;
 }
 
 const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	stakeInfo,
-	onHarvest,
 	poolStakingConfig,
 	notif,
 }) => {
@@ -274,11 +272,11 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 				))}
 			{showHarvestModal && (
 				<HarvestAllModal
+					title='Your Reward'
 					showModal={showHarvestModal}
 					setShowModal={setShowHarvestModal}
 					poolStakingConfig={poolStakingConfig}
 					claimable={earned}
-					onHarvest={onHarvest}
 					network={walletNetwork}
 				/>
 			)}

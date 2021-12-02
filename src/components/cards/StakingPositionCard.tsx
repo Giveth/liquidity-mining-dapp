@@ -5,7 +5,6 @@ import { Zero } from '@/helpers/number';
 import BaseStakingCard from './BaseStakingCard';
 import { PoolStakingConfig } from '@/types/config';
 import { useLiquidityPositions, useOnboard } from '@/context';
-import { claimUnstakeStake } from '@/lib/stakingNFT';
 import { useStakingNFT } from '@/hooks/useStakingNFT';
 import { YellowDot } from './PositionCard';
 import {
@@ -45,17 +44,6 @@ const StakingPositionCard: FC<IStakingPositionCardProps> = ({
 		stakedLpAmount: BigNumber.from(stakedPositions.length),
 	};
 
-	const handleHarvest = async () => {
-		if (!provider) return;
-
-		await claimUnstakeStake(
-			walletAddress,
-			provider,
-			currentIncentive,
-			stakedPositions,
-		);
-	};
-
 	useEffect(() => {
 		const _oneOfPositionsOutOfRange = stakedPositions.some(
 			stakedPosition => {
@@ -79,7 +67,6 @@ const StakingPositionCard: FC<IStakingPositionCardProps> = ({
 	return (
 		<BaseStakingCard
 			stakeInfo={stakeInfo}
-			onHarvest={handleHarvest}
 			poolStakingConfig={poolStakingConfig}
 			notif={
 				oneOfPositionsOutOfRange && (

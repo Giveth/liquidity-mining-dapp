@@ -10,7 +10,7 @@ import {
 	fetchUserStakeInfo,
 } from '@/lib/stakingPool';
 import config from '@/configuration';
-import { useOnboard, useTokenBalance } from '@/context';
+import { useOnboard } from '@/context';
 import { PoolStakingConfig, StakingType } from '@/types/config';
 import { StakePoolInfo, StakeUserInfo } from '@/types/poolInfo';
 
@@ -23,7 +23,6 @@ export const useStakingPool = (
 	userNotStakedAmount: ethers.BigNumber;
 	rewardRatePerToken: BigNumber | null;
 } => {
-	const { xDaiTokenBalance, mainnetTokenBalance } = useTokenBalance();
 	const { address } = useOnboard();
 
 	const [apr, setApr] = useState<BigNumber | null>(null);
@@ -79,20 +78,11 @@ export const useStakingPool = (
 		const cb = () => {
 			try {
 				let lpBalancePromise: Promise<ethers.BigNumber>;
-
-				if (type === StakingType.GIV_STREAM) {
-					const value =
-						network === config.MAINNET_NETWORK_NUMBER
-							? mainnetTokenBalance
-							: xDaiTokenBalance;
-					lpBalancePromise = Promise.resolve(value);
-				} else {
-					lpBalancePromise = fetchUserNotStakedToken(
-						address,
-						poolStakingConfig,
-						network,
-					);
-				}
+				lpBalancePromise = fetchUserNotStakedToken(
+					address,
+					poolStakingConfig,
+					network,
+				);
 				Promise.all([
 					fetchUserStakeInfo(address, poolStakingConfig, network),
 					lpBalancePromise,
@@ -117,14 +107,7 @@ export const useStakingPool = (
 				userStakeInfoPoll.current = null;
 			}
 		};
-	}, [
-		address,
-		network,
-		poolStakingConfig,
-		mainnetTokenBalance,
-		xDaiTokenBalance,
-		type,
-	]);
+	}, [address, network, poolStakingConfig, type]);
 
 	return {
 		apr,
