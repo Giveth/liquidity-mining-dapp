@@ -1,17 +1,10 @@
-import { FC, useState, useContext, useEffect } from 'react';
+import React, { FC, useState, useContext, useEffect } from 'react';
 import { Modal, IModal } from './Modal';
 import {
 	neutralColors,
 	Button,
 	OulineButton,
-	B,
 	H4,
-	H5,
-	H6,
-	Caption,
-	GLink,
-	IconExternalLink,
-	brandColors,
 } from '@giveth/ui-design-system';
 import { Row } from '../styled-components/Grid';
 import styled from 'styled-components';
@@ -27,8 +20,7 @@ import {
 import { OnboardContext } from '../../context/onboard.context';
 import Lottie from 'react-lottie';
 import LoadingAnimation from '../../animations/loading.json';
-import TikAnimation from '../../animations/tik.json';
-import config from 'src/configuration';
+import { SubmittedInnerModal, ConfirmedInnerModal } from './ConfirmSubmit';
 
 interface IStakeModalProps extends IModal {
 	poolStakingConfig: PoolStakingConfig;
@@ -51,15 +43,6 @@ const loadingAnimationOptions = {
 	loop: true,
 	autoplay: true,
 	animationData: LoadingAnimation,
-	rendererSettings: {
-		preserveAspectRatio: 'xMidYMid slice',
-	},
-};
-
-const tikAnimationOptions = {
-	loop: false,
-	autoplay: true,
-	animationData: TikAnimation,
 	rendererSettings: {
 		preserveAspectRatio: 'xMidYMid slice',
 	},
@@ -272,60 +255,18 @@ export const StakeModal: FC<IStakeModalProps> = ({
 						</>
 					)}
 				{stakeState === StakeStates.SUBMITTED && (
-					<>
-						<Caption>{title}</Caption>
-						<Lottie
-							options={loadingAnimationOptions}
-							height={100}
-							width={100}
-						/>
-						<TxSubmit weight={700}>Transaction submitted</TxSubmit>
-						<BlockExplorerLink
-							href={`${
-								walletNetwork === config.MAINNET_NETWORK_NUMBER
-									? config.MAINNET_NETWORK.blockExplorerUrls
-									: config.XDAI_NETWORK.blockExplorerUrls
-							}
-							/tx/${txHash}`}
-							target='_blank'
-							size='Big'
-						>
-							View on Blockscout&nbsp;
-							<IconExternalLink
-								size={16}
-								color={'currentColor'}
-							/>
-						</BlockExplorerLink>
-					</>
+					<SubmittedInnerModal
+						title={title}
+						walletNetwork={walletNetwork}
+						txHash={txHash}
+					/>
 				)}
 				{stakeState === StakeStates.CONFIRMED && (
-					<>
-						<B>{title}</B>
-						<Lottie
-							options={tikAnimationOptions}
-							height={100}
-							width={100}
-						/>
-						<TxConfirm weight={700}>
-							Transaction confirmed!
-						</TxConfirm>
-						<BlockExplorerLink
-							href={`${
-								walletNetwork === config.MAINNET_NETWORK_NUMBER
-									? config.MAINNET_NETWORK.blockExplorerUrls
-									: config.XDAI_NETWORK.blockExplorerUrls
-							}
-							/tx/${txHash}`}
-							target='_blank'
-							size='Big'
-						>
-							View on Blockscout&nbsp;
-							<IconExternalLink
-								size={16}
-								color={'currentColor'}
-							/>
-						</BlockExplorerLink>
-					</>
+					<ConfirmedInnerModal
+						title={title}
+						walletNetwork={walletNetwork}
+						txHash={txHash}
+					/>
 				)}
 			</StakeModalContainer>
 		</Modal>
@@ -375,26 +316,6 @@ const Pending = styled(Row)`
 	align-items: center;
 	& > div {
 		margin: 0 !important;
-	}
-`;
-
-const TxSubmit = styled(H6)`
-	color: ${neutralColors.gray[100]};
-	margin-top: 18px;
-	margin-bottom: 16px;
-`;
-
-const TxConfirm = styled(H5)`
-	color: ${neutralColors.gray[100]};
-	margin-top: 18px;
-	margin-bottom: 16px;
-`;
-
-const BlockExplorerLink = styled(GLink)`
-	width: 100%;
-	color: ${brandColors.cyan[500]};
-	&:hover {
-		color: ${brandColors.cyan[300]};
 	}
 `;
 
