@@ -448,23 +448,7 @@ export const stakeTokens = async (
 				},
 			);
 
-		// const network = provider.network.chainId;
-
-		// stakeToast.showPendingStake(
-		// 	ethers.utils.formatEther(amount),
-		// 	network,
-		// 	txResponse.hash,
-		// );
-
 		// const { status } = await txResponse.wait();
-
-		// if (status) {
-		// 	stakeToast.showConfirmedStake(network, txResponse.hash);
-		// 	return txResponse;
-		// } else {
-		// 	stakeToast.showFailedStake(network, txResponse.hash);
-		// 	return;
-		// }
 		return txResponse;
 	} catch (e) {
 		console.error('Error on staking:', e);

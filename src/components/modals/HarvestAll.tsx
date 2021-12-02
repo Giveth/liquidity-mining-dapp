@@ -390,18 +390,22 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 				</HarvestAllModalContainer>
 			)}
 			{state === HarvestStates.SUBMITTED && (
-				<SubmittedInnerModal
-					title={title}
-					walletNetwork={network}
-					txHash={txHash}
-				/>
+				<HarvestAllModalContainer>
+					<SubmittedInnerModal
+						title={title}
+						walletNetwork={network}
+						txHash={txHash}
+					/>
+				</HarvestAllModalContainer>
 			)}
 			{state === HarvestStates.CONFIRMED && (
-				<ConfirmedInnerModal
-					title={title}
-					walletNetwork={network}
-					txHash={txHash}
-				/>
+				<HarvestAllModalContainer>
+					<ConfirmedInnerModal
+						title={title}
+						walletNetwork={network}
+						txHash={txHash}
+					/>
+				</HarvestAllModalContainer>
 			)}
 		</Modal>
 	);
