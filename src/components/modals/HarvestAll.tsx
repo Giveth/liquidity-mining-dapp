@@ -220,12 +220,6 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		return usd;
 	};
 
-	console.log(`state`, state);
-	console.log(
-		`tokenDistroBalance.claimable`,
-		tokenDistroBalance.claimable.toString(),
-	);
-
 	return (
 		<Modal
 			showModal={showModal}
