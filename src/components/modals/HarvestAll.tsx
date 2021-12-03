@@ -93,7 +93,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
 	const [givBackInfo, setGivBackInfo] = useState<ITokenInfo>();
 	const [balanceInfo, setBalanceInfo] = useState<ITokenInfo>();
-	const { tokenBalance } = useContext(TokenBalanceContext);
+	const { tokenDistroBalance } = useContext(TokenBalanceContext);
 	const { address, provider } = useContext(OnboardContext);
 	const { currentIncentive, stakedPositions } = useLiquidityPositions();
 	const [txHash, setTxHash] = useState('');
@@ -157,28 +157,28 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		});
 	}, [claimable, network]);
 
-	useEffect(() => {
-		getTokenDistroInfo(network).then(distroInfo => {
-			if (distroInfo) {
-				const {
-					initialAmount,
-					totalTokens,
-					startTime,
-					cliffTime,
-					duration,
-				} = distroInfo;
-				const _balanceInfo = calcTokenInfo(
-					initialAmount,
-					totalTokens,
-					tokenBalance,
-					duration,
-					cliffTime,
-					startTime,
-				);
-				setBalanceInfo(_balanceInfo);
-			}
-		});
-	}, [tokenBalance, network]);
+	// useEffect(() => {
+	// 	getTokenDistroInfo(network).then(distroInfo => {
+	// 		if (distroInfo) {
+	// 			const {
+	// 				initialAmount,
+	// 				totalTokens,
+	// 				startTime,
+	// 				cliffTime,
+	// 				duration,
+	// 			} = distroInfo;
+	// 			const _balanceInfo = calcTokenInfo(
+	// 				initialAmount,
+	// 				totalTokens,
+	// 				tokenDistroBalance.claimable,
+	// 				duration,
+	// 				cliffTime,
+	// 				startTime,
+	// 			);
+	// 			setBalanceInfo(_balanceInfo);
+	// 		}
+	// 	});
+	// }, [tokenDistroBalance, network]);
 
 	const onHarvest = () => {
 		if (!provider) return;
@@ -221,6 +221,10 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	};
 
 	console.log(`state`, state);
+	console.log(
+		`tokenDistroBalance.claimable`,
+		tokenDistroBalance.claimable.toString(),
+	);
 
 	return (
 		<Modal
@@ -319,13 +323,15 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 							</RateRow>
 						</>
 					)}
-					{balanceInfo && (
+					{tokenDistroBalance && (
 						<>
 							<GIVBoxWithPrice
-								amount={balanceInfo.releasedReward}
+								amount={tokenDistroBalance.claimable.sub(
+									givBackInfo?.releasedReward || 0,
+								)}
 								price={calcUSD(
 									formatWeiHelper(
-										balanceInfo.releasedReward,
+										tokenDistroBalance.claimable,
 										config.TOKEN_PRECISION,
 									),
 								)}

@@ -1,4 +1,11 @@
-import React, { FC, useState, Fragment, useEffect, useContext } from 'react';
+import React, {
+	FC,
+	useState,
+	Fragment,
+	useEffect,
+	useContext,
+	useRef,
+} from 'react';
 import { Row } from '../styled-components/Grid';
 import router from 'next/router';
 import {
@@ -108,6 +115,7 @@ export const TabGIVstreamBottom = () => {
 	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
 	const { tokenDistroBalance } = useContext(TokenBalanceContext);
 	const { allocatedAmount } = tokenDistroBalance;
+	const increaseSecRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		getTokenDistroInfo(walletNetwork).then(distroInfo => {
@@ -175,7 +183,7 @@ export const TabGIVstreamBottom = () => {
 						title='GIVstream'
 						button={
 							<GsButton
-								label='DONATE TO EARN GIV'
+								label='LEARN MORE'
 								buttonType='secondary'
 								size='large'
 							/>
@@ -189,9 +197,12 @@ export const TabGIVstreamBottom = () => {
 						title='Expanding GIViverse'
 						button={
 							<GsButton
-								label='VERIFY YOUR PROJECT'
+								label='INCREASE YOUR GIVSTREAM'
 								buttonType='secondary'
 								size='large'
+								onClick={() => {
+									console.log('clicked');
+								}}
 							/>
 						}
 					>
@@ -215,7 +226,8 @@ export const TabGIVstreamBottom = () => {
 				</HistoryTitleRow>
 				<GIVstreamHistory />
 			</Container>
-			<IncreaseSection>
+			{/* //unipooldis */}
+			<IncreaseSection ref={increaseSecRef}>
 				<Container>
 					<IncreaseSectionTitle>
 						Increase your GIVstream
