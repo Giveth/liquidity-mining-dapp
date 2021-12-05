@@ -6,14 +6,14 @@ export interface IBalances {
 	claimed: ethers.BigNumber;
 	rewardPerTokenPaidGivLm: ethers.BigNumber;
 	rewardsGivLm: ethers.BigNumber;
-	rewardPerTokenPaidGivEth: ethers.BigNumber;
-	rewardsGivEth: ethers.BigNumber;
-	rewardPerTokenPaidGivHny: ethers.BigNumber;
-	rewardsGivHny: ethers.BigNumber;
+	rewardPerTokenPaidSushiSwap: ethers.BigNumber;
+	rewardsSushiSwap: ethers.BigNumber;
+	rewardPerTokenPaidHoneyswap: ethers.BigNumber;
+	rewardsHoneyswap: ethers.BigNumber;
 	rewardPerTokenPaidUniswap: ethers.BigNumber;
 	rewardsUniswap: ethers.BigNumber;
-	rewardPerTokenPaidBalancerLiquidity: ethers.BigNumber;
-	rewardsBalancerLiquidity: ethers.BigNumber;
+	rewardPerTokenPaidBalancer: ethers.BigNumber;
+	rewardsBalancer: ethers.BigNumber;
 	givback: ethers.BigNumber;
 }
 export const zeroBalances = {
@@ -22,14 +22,14 @@ export const zeroBalances = {
 	claimed: constants.Zero,
 	rewardPerTokenPaidGivLm: constants.Zero,
 	rewardsGivLm: constants.Zero,
-	rewardPerTokenPaidGivEth: constants.Zero,
-	rewardsGivEth: constants.Zero,
-	rewardPerTokenPaidGivHny: constants.Zero,
-	rewardsGivHny: constants.Zero,
+	rewardPerTokenPaidSushiSwap: constants.Zero,
+	rewardsSushiSwap: constants.Zero,
+	rewardPerTokenPaidHoneyswap: constants.Zero,
+	rewardsHoneyswap: constants.Zero,
 	rewardPerTokenPaidUniswap: constants.Zero,
 	rewardsUniswap: constants.Zero,
-	rewardPerTokenPaidBalancerLiquidity: constants.Zero,
-	rewardsBalancerLiquidity: constants.Zero,
+	rewardPerTokenPaidBalancer: constants.Zero,
+	rewardsBalancer: constants.Zero,
 	givback: constants.Zero,
 };
 
@@ -38,24 +38,24 @@ export const fetchBalances = async (
 	address: string,
 ): Promise<IBalances> => {
 	const query = `{
-		balances(where: {id: "${address.toLowerCase()}"}) {
+		balance(id: "${address.toLowerCase()}") {
 			balance
 			allocatedTokens
 			claimed
 			rewardPerTokenPaidGivLm
 			rewardsGivLm
-			rewardPerTokenPaidGivEth
-			rewardsGivEth
-			rewardPerTokenPaidGivHny
-			rewardsGivHny
+			rewardPerTokenPaidSushiSwap
+			rewardsSushiSwap
+			rewardPerTokenPaidHoneyswap
+			rewardsHoneyswap
 			rewardPerTokenPaidUniswap
 			rewardsUniswap
-			rewardPerTokenPaidBalancerLiquidity
-			rewardsBalancerLiquidity
+			rewardPerTokenPaidBalancer
+			rewardsBalancer
 			givback
 		}
 	}`;
-	const body = { query };
+	const reqBody = { query };
 	let uri;
 	if (network === config.MAINNET_NETWORK_NUMBER) {
 		uri = config.MAINNET_NETWORK.subgraphAddress;
@@ -68,63 +68,57 @@ export const fetchBalances = async (
 	try {
 		const res = await fetch(uri, {
 			method: 'POST',
-			body: JSON.stringify(body),
+			body: JSON.stringify(reqBody),
 		});
-		const data = await res.json();
-		const balance = ethers.BigNumber.from(
-			data.data.balances[0].balance || 0,
-		);
+		const resJson = await res.json();
+		const data = resJson.data.balance;
+		console.log('balance response data:', data);
+		const balance = ethers.BigNumber.from(data.balance || 0);
 		const allocatedTokens = ethers.BigNumber.from(
-			data.data.balances[0].allocatedTokens || 0,
+			data.allocatedTokens || 0,
 		);
-		const claimed = ethers.BigNumber.from(data.data.balances[0].claimed);
+		const claimed = ethers.BigNumber.from(data.claimed || 0);
 		const rewardPerTokenPaidGivLm = ethers.BigNumber.from(
-			data.data.balances[0].rewardPerTokenPaidGivLm || 0,
+			data.rewardPerTokenPaidGivLm || 0,
 		);
-		const rewardsGivLm = ethers.BigNumber.from(
-			data.data.balances[0].rewardsGivLm || 0,
+		const rewardsGivLm = ethers.BigNumber.from(data.rewardsGivLm || 0);
+		const rewardPerTokenPaidSushiSwap = ethers.BigNumber.from(
+			data.rewardPerTokenPaidSushiSwap || 0,
 		);
-		const rewardPerTokenPaidGivEth = ethers.BigNumber.from(
-			data.data.balances[0].rewardPerTokenPaidGivEth || 0,
+		const rewardsSushiSwap = ethers.BigNumber.from(
+			data.rewardsSushiSwap || 0,
 		);
-		const rewardsGivEth = ethers.BigNumber.from(
-			data.data.balances[0].rewardsGivEth || 0,
+		const rewardPerTokenPaidHoneyswap = ethers.BigNumber.from(
+			data.rewardPerTokenPaidHoneyswap || 0,
 		);
-		const rewardPerTokenPaidGivHny = ethers.BigNumber.from(
-			data.data.balances[0].rewardPerTokenPaidGivHny || 0,
-		);
-		const rewardsGivHny = ethers.BigNumber.from(
-			data.data.balances[0].rewardsGivHny || 0,
+		const rewardsHoneyswap = ethers.BigNumber.from(
+			data.rewardsHoneyswap || 0,
 		);
 		const rewardPerTokenPaidUniswap = ethers.BigNumber.from(
-			data.data.balances[0].rewardPerTokenPaidUniswap || 0,
+			data.rewardPerTokenPaidUniswap || 0,
 		);
-		const rewardsUniswap = ethers.BigNumber.from(
-			data.data.balances[0].rewardsUniswap || 0,
+		const rewardsUniswap = ethers.BigNumber.from(data.rewardsUniswap || 0);
+		const rewardPerTokenPaidBalancer = ethers.BigNumber.from(
+			data.rewardPerTokenPaidBalancer || 0,
 		);
-		const rewardPerTokenPaidBalancerLiquidity = ethers.BigNumber.from(
-			data.data.balances[0].rewardPerTokenPaidBalancerLiquidity || 0,
+		const rewardsBalancer = ethers.BigNumber.from(
+			data.rewardsBalancer || 0,
 		);
-		const rewardsBalancerLiquidity = ethers.BigNumber.from(
-			data.data.balances[0].rewardsBalancerLiquidity || 0,
-		);
-		const givback = ethers.BigNumber.from(
-			data.data.balances[0].givback || 0,
-		);
+		const givback = ethers.BigNumber.from(data.givback || 0);
 		return {
 			balance,
 			allocatedTokens,
 			claimed,
 			rewardPerTokenPaidGivLm,
 			rewardsGivLm,
-			rewardPerTokenPaidGivEth,
-			rewardsGivEth,
-			rewardPerTokenPaidGivHny,
-			rewardsGivHny,
+			rewardPerTokenPaidSushiSwap,
+			rewardsSushiSwap,
+			rewardPerTokenPaidHoneyswap,
+			rewardsHoneyswap,
 			rewardPerTokenPaidUniswap,
 			rewardsUniswap,
-			rewardPerTokenPaidBalancerLiquidity,
-			rewardsBalancerLiquidity,
+			rewardPerTokenPaidBalancer,
+			rewardsBalancer,
 			givback,
 		};
 	} catch (error) {
