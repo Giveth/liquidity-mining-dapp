@@ -25,6 +25,7 @@ import * as harvestToast from './notifications/harvest';
 import { Zero } from '@ethersproject/constants';
 import { isAddress } from 'ethers/lib/utils';
 import { TransactionResponse, Web3Provider } from '@ethersproject/providers';
+import { getUnipoolInfo, IUnipool } from '@/services/subgraph';
 
 const toBigNumber = (eb: ethers.BigNumber): BigNumber =>
 	new BigNumber(eb.toString());
@@ -33,25 +34,33 @@ export const fetchGivStakingInfo = async (
 	lmAddress: string,
 	network: number,
 ): Promise<StakePoolInfo> => {
-	const provider = networkProviders[network];
-	const lmContract = new Contract(lmAddress, LM_ABI, provider);
-
 	let apr: BigNumber | null;
-	let totalSupply;
+	let totalSupply: BigNumber;
+	let rewardRate;
 
-	const [_totalSupply, _rewardRate, _rewardPerToken]: [
-		ethers.BigNumber,
-		ethers.BigNumber,
-		ethers.BigNumber,
-	] = await Promise.all([
-		lmContract.totalSupply(),
-		lmContract.rewardRate(),
-		lmContract.rewardPerToken(),
-	]);
-	totalSupply = new BigNumber(_totalSupply.toString());
+	const subGraphInfo = await getUnipoolInfo(network, lmAddress);
+	if (subGraphInfo) {
+		totalSupply = new BigNumber(subGraphInfo.totalSupply.toString());
+		rewardRate = subGraphInfo.rewardRate;
+	} else {
+		console.log(`subGraph info was ${subGraphInfo}!`);
+		const provider = networkProviders[network];
+		const lmContract = new Contract(lmAddress, LM_ABI, provider);
 
-	const rewardRatePerToken = toBigNumber(_rewardRate).div(
-		_totalSupply.toString(),
+		const [_totalSupply, _rewardRate]: [
+			ethers.BigNumber,
+			ethers.BigNumber,
+		] = await Promise.all([
+			lmContract.totalSupply(),
+			lmContract.rewardRate(),
+		]);
+
+		totalSupply = new BigNumber(_totalSupply.toString());
+		rewardRate = _rewardRate;
+	}
+
+	const rewardRatePerToken = toBigNumber(rewardRate).div(
+		totalSupply.toString(),
 	);
 
 	apr = totalSupply.isZero()
@@ -101,28 +110,30 @@ const fetchBalancerPoolStakingInfo = async (
 		tokens: Array<string>;
 	}
 
-	const [
-		_poolTokens,
-		_poolTotalSupply,
-		_poolNormalizedWeights,
-		_totalSupply,
-		_rewardRate,
-		_rewardPerToken,
-	]: [
+	const [_poolTokens, _poolTotalSupply, _poolNormalizedWeights, lmInfo]: [
 		PoolTokens,
 		ethers.BigNumber,
 		Array<ethers.BigNumber>,
-		ethers.BigNumber,
-		ethers.BigNumber,
-		ethers.BigNumber,
+		IUnipool | undefined,
 	] = await Promise.all([
 		vaultContract.getPoolTokens(POOL_ID),
 		poolContract.totalSupply(),
 		poolContract.getNormalizedWeights(),
-		lmContract.totalSupply(),
-		lmContract.rewardRate(),
-		lmContract.rewardPerToken(),
+		getUnipoolInfo(network, LM_ADDRESS),
 	]);
+
+	let totalSupply: ethers.BigNumber;
+	let rewardRate: ethers.BigNumber;
+
+	if (lmInfo) {
+		totalSupply = lmInfo.totalSupply;
+		rewardRate = lmInfo.rewardRate;
+	} else {
+		[totalSupply, rewardRate] = await Promise.all([
+			lmContract.totalSupply(),
+			lmContract.rewardRate(),
+		]);
+	}
 
 	const weights = _poolNormalizedWeights.map(toBigNumber);
 	const balances = _poolTokens.balances.map(toBigNumber);
@@ -136,11 +147,11 @@ const fetchBalancerPoolStakingInfo = async (
 		.div(BigNumber.sum(...weights).div(weights[0]))
 		.div(balances[0]);
 
-	const rewardRatePerToken = toBigNumber(_rewardRate).div(
-		_totalSupply.toString(),
+	const rewardRatePerToken = toBigNumber(rewardRate).div(
+		totalSupply.toString(),
 	);
 
-	const apr = _totalSupply.isZero()
+	const apr = totalSupply.isZero()
 		? null
 		: rewardRatePerToken.times('31536000').times('100').times(lp);
 
@@ -159,30 +170,30 @@ const fetchSimplePoolStakingInfo = async (
 	const lmContract = new Contract(LM_ADDRESS, LM_ABI, provider);
 
 	let reserves;
+	let totalSupply: ethers.BigNumber;
+	let rewardRate: ethers.BigNumber;
 
 	const poolContract = new Contract(POOL_ADDRESS, UNI_ABI, provider);
-	const [
-		_reserves,
-		_token0,
-		_poolTotalSupply,
-		_totalSupply,
-		_rewardRate,
-		_rewardPerToken,
-	]: [
+	const [_reserves, _token0, _poolTotalSupply, lmInfo]: [
 		Array<ethers.BigNumber>,
 		string,
 		ethers.BigNumber,
-		ethers.BigNumber,
-		ethers.BigNumber,
-		ethers.BigNumber,
+		IUnipool | undefined,
 	] = await Promise.all([
 		poolContract.getReserves(),
 		poolContract.token0(),
 		poolContract.totalSupply(),
-		lmContract.totalSupply(),
-		lmContract.rewardRate(),
-		lmContract.rewardPerToken(),
+		getUnipoolInfo(network, LM_ADDRESS),
 	]);
+	if (lmInfo) {
+		totalSupply = lmInfo.totalSupply;
+		rewardRate = lmInfo.rewardRate;
+	} else {
+		[totalSupply, rewardRate] = await Promise.all([
+			lmContract.totalSupply(),
+			lmContract.rewardRate(),
+		]);
+	}
 	reserves = _reserves.map(toBigNumber);
 	if (_token0.toLowerCase() !== tokenAddress.toLowerCase())
 		reserves.reverse();
@@ -190,10 +201,10 @@ const fetchSimplePoolStakingInfo = async (
 		.times(10 ** 18)
 		.div(2)
 		.div(reserves[0]);
-	const rewardRatePerToken = toBigNumber(_rewardRate).div(
-		_totalSupply.toString(),
+	const rewardRatePerToken = toBigNumber(rewardRate).div(
+		totalSupply.toString(),
 	);
-	const apr = _totalSupply.isZero()
+	const apr = totalSupply.isZero()
 		? null
 		: rewardRatePerToken
 				.times('31536000')

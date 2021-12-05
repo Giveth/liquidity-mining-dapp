@@ -4,8 +4,8 @@ import { Zero } from '@ethersproject/constants';
 import { OnboardContext } from './onboard.context';
 import config from '../configuration';
 import { isAddress } from 'ethers/lib/utils';
-import { getERC20Contract, getTokenDistroAmounts } from '../lib/claim';
-import { ITokenDistroBalance } from '../types/GIV';
+import { getERC20Contract, getTokenDistroAmounts } from '@/lib/claim';
+import { ITokenDistroBalance } from '@/types/GIV';
 import { fetchBalances } from '@/services/subgraph';
 
 export interface ITokenBalanceContext {
