@@ -1,5 +1,8 @@
 import config from '@/configuration';
 import { constants, ethers } from 'ethers';
+
+const BN = ethers.BigNumber.from;
+
 export interface IBalances {
 	balance: ethers.BigNumber;
 	allocatedTokens: ethers.BigNumber;
@@ -70,41 +73,31 @@ export const fetchBalances = async (
 			method: 'POST',
 			body: JSON.stringify(reqBody),
 		});
-		const resJson = await res.json();
-		const data = resJson.data.balance;
-		console.log('balance response data:', data);
-		const balance = ethers.BigNumber.from(data.balance || 0);
-		const allocatedTokens = ethers.BigNumber.from(
-			data.allocatedTokens || 0,
+		const data = await res.json();
+		const info = data.data.balance;
+
+		const balance = BN(info.balance || 0);
+		const allocatedTokens = BN(info.allocatedTokens || 0);
+		const claimed = BN(info.claimed || 0);
+		const rewardPerTokenPaidGivLm = BN(info.rewardPerTokenPaidGivLm || 0);
+		const rewardsGivLm = BN(info.rewardsGivLm || 0);
+		const rewardPerTokenPaidSushiSwap = BN(
+			info.rewardPerTokenPaidSushiSwap || 0,
 		);
-		const claimed = ethers.BigNumber.from(data.claimed || 0);
-		const rewardPerTokenPaidGivLm = ethers.BigNumber.from(
-			data.rewardPerTokenPaidGivLm || 0,
+		const rewardsSushiSwap = BN(info.rewardsSushiSwap || 0);
+		const rewardPerTokenPaidHoneyswap = BN(
+			info.rewardPerTokenPaidHoneyswap || 0,
 		);
-		const rewardsGivLm = ethers.BigNumber.from(data.rewardsGivLm || 0);
-		const rewardPerTokenPaidSushiSwap = ethers.BigNumber.from(
-			data.rewardPerTokenPaidSushiSwap || 0,
+		const rewardsHoneyswap = BN(info.rewardsHoneyswap || 0);
+		const rewardPerTokenPaidUniswap = BN(
+			info.rewardPerTokenPaidUniswap || 0,
 		);
-		const rewardsSushiSwap = ethers.BigNumber.from(
-			data.rewardsSushiSwap || 0,
+		const rewardsUniswap = BN(info.rewardsUniswap || 0);
+		const rewardPerTokenPaidBalancer = BN(
+			info.rewardPerTokenPaidBalancer || 0,
 		);
-		const rewardPerTokenPaidHoneyswap = ethers.BigNumber.from(
-			data.rewardPerTokenPaidHoneyswap || 0,
-		);
-		const rewardsHoneyswap = ethers.BigNumber.from(
-			data.rewardsHoneyswap || 0,
-		);
-		const rewardPerTokenPaidUniswap = ethers.BigNumber.from(
-			data.rewardPerTokenPaidUniswap || 0,
-		);
-		const rewardsUniswap = ethers.BigNumber.from(data.rewardsUniswap || 0);
-		const rewardPerTokenPaidBalancer = ethers.BigNumber.from(
-			data.rewardPerTokenPaidBalancer || 0,
-		);
-		const rewardsBalancer = ethers.BigNumber.from(
-			data.rewardsBalancer || 0,
-		);
-		const givback = ethers.BigNumber.from(data.givback || 0);
+		const rewardsBalancer = BN(info.rewardsBalancer || 0);
+		const givback = BN(info.givback || 0);
 		return {
 			balance,
 			allocatedTokens,
@@ -275,13 +268,13 @@ export const getTokenDistroInfo = async (
 		const percent = Math.floor((progress / duration) * 100);
 		// console.log(`percent`, percent);
 
-		const initialAmount = ethers.BigNumber.from(info.initialAmount);
+		const initialAmount = BN(info.initialAmount);
 		// console.log(`initialAmount`, initialAmount.toString());
 
-		const lockedAmount = ethers.BigNumber.from(info.lockedAmount);
+		const lockedAmount = BN(info.lockedAmount);
 		// console.log(`lockedAmount`, lockedAmount.toString());
 
-		const totalTokens = ethers.BigNumber.from(info.totalTokens);
+		const totalTokens = BN(info.totalTokens);
 		// console.log(`totalTokens`, totalTokens.toString());
 
 		return {
@@ -295,6 +288,66 @@ export const getTokenDistroInfo = async (
 			progress,
 			remain,
 			percent,
+		};
+	} catch (error) {
+		console.error('Error in getGIVPrice from Subgraph', error);
+		return;
+	}
+};
+
+export interface IUnipool {
+	totalSupply: ethers.BigNumber;
+	lastUpdateTime: Date;
+	periodFinish: Date;
+	rewardPerTokenStored: ethers.BigNumber;
+	rewardRate: ethers.BigNumber;
+}
+export const getUnipoolInfo = async (
+	network: number,
+	unipoolAddress: string,
+): Promise<IUnipool | undefined> => {
+	const query = `{
+		 unipoolContractInfo(id: "${unipoolAddress.toLowerCase()}"){
+			totalSupply
+			lastUpdateTime
+			periodFinish
+			rewardPerTokenStored
+			rewardRate
+		}
+	  }`;
+	const body = { query };
+	let uri;
+	if (network === config.MAINNET_NETWORK_NUMBER) {
+		uri = config.MAINNET_NETWORK.subgraphAddress;
+	} else if (network === config.XDAI_NETWORK_NUMBER) {
+		uri = config.XDAI_NETWORK.subgraphAddress;
+	} else {
+		console.error('Network is not Defined!');
+		return;
+	}
+	try {
+		const res = await fetch(uri, {
+			method: 'POST',
+			body: JSON.stringify(body),
+		});
+		const data = await res.json();
+		const info = data?.data?.unipoolContractInfo;
+
+		const _lastUpdateTime = info?.lastUpdateTime || '0';
+		const _periodFinish = info?.periodFinish || '0';
+
+		const totalSupply = BN(info?.totalSupply || 0);
+		const rewardPerTokenStored = BN(info?.rewardPerTokenStored || 0);
+		const rewardRate = BN(info?.rewardRate || 0);
+		const lastUpdateTime = new Date(+(_lastUpdateTime.toString() + '000'));
+		const periodFinish = new Date(+(_periodFinish.toString() + '000'));
+
+		return {
+			totalSupply,
+			rewardPerTokenStored,
+			rewardRate,
+			lastUpdateTime,
+			periodFinish,
 		};
 	} catch (error) {
 		console.error('Error in getGIVPrice from Subgraph', error);
