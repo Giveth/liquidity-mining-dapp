@@ -37,7 +37,6 @@ import { StakeModal } from '../modals/Stake';
 import { UnStakeModal } from '../modals/UnStake';
 import { StakingPoolImages } from '../StakingPoolImages';
 import { V3StakeModal } from '../modals/V3Stake';
-import { IconEthereum } from '../Icons/Eth';
 import { IconGIV } from '../Icons/GIV';
 import { IconHoneyswap } from '../Icons/Honeyswap';
 import { IconBalancer } from '../Icons/Balancer';
@@ -46,6 +45,7 @@ import { HarvestAllModal } from '../modals/HarvestAll';
 import { OnboardContext } from '@/context/onboard.context';
 import { ITokenInfo, calcTokenInfo } from '@/lib/helpers';
 import { getTokenDistroInfo } from '@/services/subgraph';
+import { useFarms } from '@/context/farm.context';
 
 export const getPoolIconWithName = (pool: string) => {
 	switch (pool) {
@@ -78,6 +78,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	const [showUnStakeModal, setShowUnStakeModal] = useState(false);
 	const [showHarvestModal, setShowHarvestModal] = useState(false);
 	const { network: walletNetwork } = useContext(OnboardContext);
+	const { setInfo } = useFarms();
 
 	const { type, title, description, provideLiquidityLink, LM_ADDRESS, unit } =
 		poolStakingConfig;
@@ -108,6 +109,10 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 			}
 		});
 	}, [earned, walletNetwork]);
+
+	useEffect(() => {
+		setInfo(walletNetwork, type, earned);
+	}, [walletNetwork, earned, type]);
 
 	return (
 		<>
