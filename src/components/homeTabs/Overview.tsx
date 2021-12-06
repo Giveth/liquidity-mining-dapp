@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { Row } from '../styled-components/Grid';
 import router from 'next/router';
 import { Container, Button } from '@giveth/ui-design-system';
@@ -111,10 +112,12 @@ export const TabOverviewBottom = () => {
 						Connect your wallet or check an ethereum address to see
 						your rewards.
 					</ClaimCardQuote>
-					<ClaimCardButton
-						label='CLAIM YOUR GIV'
-						buttonType='primary'
-					></ClaimCardButton>
+					<Link href='/claim' passHref>
+						<ClaimCardButton
+							label='CLAIM YOUR GIV'
+							buttonType='primary'
+						></ClaimCardButton>
+					</Link>
 				</ClaimCard>
 			</Container>
 		</OverviewBottomContainer>
