@@ -45,6 +45,7 @@ export const TabGIVfarmTop = () => {
 						<GIVfarmRewardCard
 							title='Your GIVfarm rewards'
 							amount={constants.Zero}
+							rate={new BigNumber(0)}
 						/>
 					</Right>
 				</Row>

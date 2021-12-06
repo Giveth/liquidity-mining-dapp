@@ -27,6 +27,7 @@ import { useStakingPool } from '@/hooks/useStakingPool';
 import { getGivStakingConfig } from '@/helpers/networkProvider';
 import { calcTokenInfo, ITokenInfo } from '@/lib/helpers';
 import { getTokenDistroInfo } from '@/services/subgraph';
+import BigNumber from 'bignumber.js';
 
 const poolStakingConfig = getGivStakingConfig(config.XDAI_CONFIG);
 
@@ -81,7 +82,9 @@ export const TabGardenTop = () => {
 						<GardenRewardCard
 							title='Your GIVgarden rewards'
 							amount={tokenInfo?.releasedReward}
-							rate={tokenInfo?.flowratePerWeek}
+							rate={new BigNumber(
+								tokenInfo?.flowratePerWeek.toString() || 0,
+							).valueOf()}
 							actionLabel='HARVEST'
 							actionCb={() => {
 								setShowModal(true);
