@@ -45,16 +45,16 @@ export const TabGIVbacksTop = () => {
 	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
 	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
 	const { tokenDistroHelper } = useTokenDistro();
-	const { currentBalance } = useBalances();
+	const { xDaiBalance } = useBalances();
 
 	useEffect(() => {
 		setGivBackLiquidPart(
-			tokenDistroHelper.getLiquidPart(currentBalance.givback),
+			tokenDistroHelper.getLiquidPart(xDaiBalance.givback),
 		);
 		setGivBackStream(
-			tokenDistroHelper.getStreamPartTokenPerWeek(currentBalance.givback),
+			tokenDistroHelper.getStreamPartTokenPerWeek(xDaiBalance.givback),
 		);
-	}, [currentBalance, tokenDistroHelper]);
+	}, [xDaiBalance, tokenDistroHelper]);
 
 	return (
 		<GIVbacksTopContainer>
