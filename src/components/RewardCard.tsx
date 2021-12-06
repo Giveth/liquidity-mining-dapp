@@ -24,12 +24,13 @@ import { IconGIV } from './Icons/GIV';
 import { IconXDAI } from './Icons/XDAI';
 import { Row } from './styled-components/Grid';
 import { OnboardContext } from '@/context/onboard.context';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
+import BigNumber from 'bignumber.js';
 
 interface IRewardCardProps {
 	title?: string;
-	amount?: BigNumber;
-	rate?: BigNumber;
+	amount?: ethers.BigNumber;
+	rate: BigNumber.Value;
 	actionLabel?: string;
 	actionCb?: MouseEventHandler<HTMLButtonElement>;
 	className?: string;
@@ -37,8 +38,8 @@ interface IRewardCardProps {
 
 export const RewardCard: FC<IRewardCardProps> = ({
 	title = 'Your Rewards',
-	amount = ethers.constants.Zero,
-	rate = ethers.constants.Zero,
+	amount = ethers.constants.Zero, //TODO: should change to liquid
+	rate = Zero, //TODO: should change to stream
 	actionLabel,
 	actionCb,
 	className,
