@@ -1,4 +1,5 @@
 import { FC, useContext } from 'react';
+import Image from 'next/image';
 import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
 import { Row } from '../styled-components/Grid';
@@ -30,6 +31,12 @@ const ClaimCardContainer = styled(Card)`
 	}
 `;
 
+const Title = styled(H2)``;
+
+const Desc = styled(P)`
+	margin-top: 22px;
+`;
+
 const ClaimHeader = styled(Header)`
 	margin: 116px auto 48px auto;
 	text-align: center;
@@ -37,6 +44,15 @@ const ClaimHeader = styled(Header)`
 
 const ClaimButton = styled(Button)`
 	width: 356px;
+	text-transform: uppercase;
+`;
+
+const MetamaskButton = styled.a`
+	width: 215px;
+	heigh: 32px;
+	margin-top: 12px;
+	background: transparent;
+	cursor: pointer;
 `;
 
 const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
@@ -83,15 +99,25 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 	return (
 		<ClaimCardContainer activeIndex={activeIndex} index={index}>
 			<ClaimHeader>
-				<H2 as='h1'>Claim your GIVdrop</H2>
-				<P size='small' color={'#CABAFF'}>
-					Claim your tokens and put them to good use.
-				</P>
+				<Title as='h1'>Claim your GIV tokens now!</Title>
+				<Desc size='small' color={'#CABAFF'}>
+					Join the giving economy.
+				</Desc>
 			</ClaimHeader>
 			<Row alignItems={'center'} justifyContent={'center'}>
 				<ClaimButton secondary onClick={onClaim}>
 					CLAIM {utils.formatEther(claimableAmount)} GIV Tokens
 				</ClaimButton>
+			</Row>
+			<Row alignItems={'center'} justifyContent={'center'}>
+				<MetamaskButton>
+					<Image
+						src='/images/metamask.png'
+						height='32'
+						width='215'
+						alt='Metamask button'
+					/>
+				</MetamaskButton>
 			</Row>
 		</ClaimCardContainer>
 	);
