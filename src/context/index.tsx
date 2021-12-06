@@ -1,5 +1,5 @@
 import { useOnboard } from './onboard.context';
-import { useTokenBalance } from './tokenBalance.context';
+import { useBalances } from './balance.context';
 import { useLiquidityPositions } from './positions.context';
 
-export { useOnboard, useTokenBalance, useLiquidityPositions };
+export { useOnboard, useBalances, useLiquidityPositions };

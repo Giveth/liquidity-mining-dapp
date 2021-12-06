@@ -1,64 +1,58 @@
 import React, {
 	FC,
-	useState,
 	Fragment,
-	useEffect,
 	useContext,
+	useEffect,
 	useRef,
+	useState,
 } from 'react';
 import { Row } from '../styled-components/Grid';
-import router from 'next/router';
 import {
-	Button,
-	Container,
-	IconExternalLink,
-	IconGIVBack,
-	P,
 	B,
-	Title,
 	brandColors,
-	IconGIVStream,
-	H3,
+	Container,
 	H1,
-	H4,
-	IconHelp,
+	H3,
 	H6,
-	IconSpark,
-	IconGIVGarden,
+	IconGIVBack,
 	IconGIVFarm,
-	Subline,
+	IconGIVGarden,
+	IconGIVStream,
+	IconHelp,
+	IconSpark,
+	P,
 } from '@giveth/ui-design-system';
 import {
+	Bar,
+	FlowRateRow,
+	FlowRateTooltip,
+	FlowRateUnit,
+	GIVbacksBottomContainer,
+	GIVstreamProgressContainer,
+	GIVstreamRewardCard,
 	GIVstreamTopContainer,
 	GIVstreamTopInnerContainer,
-	GIVbacksBottomContainer,
-	GIVstreamRewardCard,
-	Left,
-	Right,
+	Grid,
+	GsButton,
+	GsDataBlock,
+	GsHFrUnit,
+	GsPTitle,
+	GsPTitleRow,
+	GsPTooltip,
 	GSSubtitle,
 	GSTitle,
-	GsDataBlock,
-	GsButton,
-	FlowRateRow,
-	FlowRateUnit,
-	GIVstreamProgressContainer,
-	GsPTitleRow,
-	GsPTitle,
-	Bar,
-	PercentageRow,
-	IncreaseSection,
-	IncreaseSectionTitle,
-	IGsDataBox,
-	Grid,
-	GsHFrUnit,
-	HistoryTitle,
 	HistoryContainer,
-	FlowRateTooltip,
-	GsPTooltip,
+	HistoryTitle,
 	HistoryTitleRow,
 	HistoryTooltip,
-	PaginationRow,
+	IGsDataBox,
+	IncreaseSection,
+	IncreaseSectionTitle,
+	Left,
 	PaginationItem,
+	PaginationRow,
+	PercentageRow,
+	Right,
 	TxHash,
 } from './GIVstream.sc';
 import { IconWithTooltip } from '../IconWithToolTip';
@@ -68,11 +62,11 @@ import {
 	ITokenAllocation,
 } from '@/services/subgraph';
 import { OnboardContext } from '@/context/onboard.context';
-import { formatWeiHelper, Zero } from '@/helpers/number';
+import { formatWeiHelper } from '@/helpers/number';
 import config from '@/configuration';
 import { calcTokenInfo, convertMSToHRD, ITokenInfo } from '@/lib/helpers';
 import { NetworkSelector } from '@/components/NetworkSelector';
-import { TokenBalanceContext } from '@/context/tokenBalance.context';
+import { useBalances } from '@/context/balance.context';
 import { BigNumber } from 'ethers';
 
 export const TabGIVstreamTop = () => {
@@ -113,8 +107,7 @@ export const TabGIVstreamBottom = () => {
 	const [percent, setPercent] = useState(0);
 	const [remain, setRemain] = useState('');
 	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
-	const { tokenDistroBalance } = useContext(TokenBalanceContext);
-	const { allocatedAmount } = tokenDistroBalance;
+	const { currentBalance } = useBalances();
 	const increaseSecRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -130,7 +123,7 @@ export const TabGIVstreamBottom = () => {
 				const _tokenInfo = calcTokenInfo(
 					initialAmount,
 					totalTokens,
-					allocatedAmount,
+					currentBalance.allocatedTokens,
 					duration,
 					cliffTime,
 					startTime,
@@ -138,7 +131,7 @@ export const TabGIVstreamBottom = () => {
 				setTokenInfo(_tokenInfo);
 			}
 		});
-	}, [allocatedAmount, walletNetwork]);
+	}, [currentBalance.allocatedTokens, walletNetwork]);
 
 	useEffect(() => {
 		getTokenDistroInfo(walletNetwork).then(_streamInfo => {

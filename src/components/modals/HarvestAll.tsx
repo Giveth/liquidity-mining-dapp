@@ -23,7 +23,8 @@ import { StakingPoolImages } from '../StakingPoolImages';
 import { calcTokenInfo, ITokenInfo } from '@/lib/helpers';
 import { formatWeiHelper } from '@/helpers/number';
 import config from '@/configuration';
-import { TokenBalanceContext } from '@/context/tokenBalance.context';
+import { useBalances } from '@/context/balance.context';
+import { useTokenDistro } from '@/context/tokenDistro.context';
 import { harvestTokens } from '@/lib/stakingPool';
 import { claimUnstakeStake } from '@/lib/stakingNFT';
 import { useLiquidityPositions } from '@/context';
@@ -48,6 +49,7 @@ import {
 	GIVBoxWithPriceAmount,
 	GIVBoxWithPriceUSD,
 } from './HarvestAll.sc';
+import { Zero } from '@ethersproject/constants';
 
 interface IHarvestAllModalProps extends IModal {
 	title: string;
@@ -93,12 +95,18 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
 	const [givBackInfo, setGivBackInfo] = useState<ITokenInfo>();
 	const [balanceInfo, setBalanceInfo] = useState<ITokenInfo>();
-	const { tokenDistroBalance } = useContext(TokenBalanceContext);
+	const { currentBalance } = useBalances();
+	const { tokenDistroMock } = useTokenDistro();
 	const { address, provider } = useContext(OnboardContext);
 	const { currentIncentive, stakedPositions } = useLiquidityPositions();
 	const [txHash, setTxHash] = useState('');
 
 	const [price, setPrice] = useState(0);
+	const [claimableNow, setClaimableNow] = useState(Zero);
+
+	useEffect(() => {
+		setClaimableNow(tokenDistroMock.getUserClaimableNow(currentBalance));
+	}, [currentBalance, tokenDistroMock]);
 
 	useEffect(() => {
 		const getTokensInfo = async () => {
@@ -220,6 +228,8 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		return usd;
 	};
 
+	console.log(`state`, state);
+
 	return (
 		<Modal
 			showModal={showModal}
@@ -317,15 +327,15 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 							</RateRow>
 						</>
 					)}
-					{tokenDistroBalance && (
+					{!claimableNow.isZero() && (
 						<>
 							<GIVBoxWithPrice
-								amount={tokenDistroBalance.claimable.sub(
+								amount={claimableNow.sub(
 									givBackInfo?.releasedReward || 0,
 								)}
 								price={calcUSD(
 									formatWeiHelper(
-										tokenDistroBalance.claimable,
+										claimableNow,
 										config.TOKEN_PRECISION,
 									),
 								)}
