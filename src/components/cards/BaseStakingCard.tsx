@@ -84,13 +84,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 
 	const isV3Staking = type === StakingType.UNISWAP;
 
-	const {
-		apr,
-		earned,
-		stakedLpAmount,
-		rewardRatePerToken,
-		userNotStakedAmount,
-	} = stakeInfo;
+	const { apr, earned, stakedLpAmount, userNotStakedAmount } = stakeInfo;
 
 	useEffect(() => {
 		getTokenDistroInfo(walletNetwork).then(distroInfo => {
@@ -159,10 +153,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 						<Detail justifyContent='space-between'>
 							<DetailLabel>Claimable</DetailLabel>
 							<DetailValue>
-								{`${formatWeiHelper(
-									earned,
-									config.TOKEN_PRECISION,
-								)} GIV`}
+								{`${formatWeiHelper(earned)} GIV`}
 							</DetailValue>
 						</Detail>
 						<Detail justifyContent='space-between'>
@@ -175,7 +166,6 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 									{tokenInfo &&
 										formatWeiHelper(
 											tokenInfo.flowratePerWeek,
-											config.TOKEN_PRECISION,
 										)}
 								</DetailValue>
 								<DetailUnit>GIV/week</DetailUnit>
@@ -200,7 +190,6 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 									? `${userNotStakedAmount.toNumber()} ${unit}`
 									: `${formatWeiHelper(
 											userNotStakedAmount,
-											config.TOKEN_PRECISION,
 									  )} ${unit}`}
 							</StakeAmount>
 						</StakeContainer>
@@ -216,7 +205,6 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 									? `${stakedLpAmount.toNumber()} ${unit}`
 									: `${formatWeiHelper(
 											stakedLpAmount,
-											config.TOKEN_PRECISION,
 									  )} ${unit}`}
 							</StakeAmount>
 						</StakeContainer>
