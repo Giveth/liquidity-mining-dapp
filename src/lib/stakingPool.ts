@@ -256,8 +256,8 @@ export const getUserStakeInfo = (
 			console.log("it's uniswap");
 			rewards = balance.rewardsGivLm;
 			rewardPerTokenPaid = balance.rewardPerTokenPaidGivLm;
-			stakedAmount = balance.balance;
-			notStakedAmount = balance.givStaked;
+			stakedAmount = balance.givStaked;
+			notStakedAmount = balance.balance;
 			break;
 		default:
 	}
