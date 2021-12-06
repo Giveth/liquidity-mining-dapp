@@ -31,7 +31,6 @@ export const useStakingPool = (
 	const [apr, setApr] = useState<BigNumber | null>(null);
 	const [rewardRatePerToken, setRewardRatePerToken] =
 		useState<BigNumber | null>(null);
-	const [unipoolHelper, setUnipoolHelper] = useState<UnipoolHelper>();
 	const [userStakeInfo, setUserStakeInfo] = useState<UserStakeInfo>({
 		earned: Zero,
 		notStakedAmount: Zero,
@@ -52,7 +51,7 @@ export const useStakingPool = (
 	useEffect(() => {
 		const cb = () => {
 			const promise: Promise<StakePoolInfo> =
-				type === StakingType.GIV_STREAM
+				type === StakingType.GIV_LM
 					? fetchGivStakingInfo(LM_ADDRESS, network)
 					: fetchLPStakingInfo(poolStakingConfig, network);
 
@@ -87,8 +86,8 @@ export const useStakingPool = (
 		const cb = async () => {
 			try {
 				const unipoolInfo = await getUnipoolInfo(network, LM_ADDRESS);
-				if (unipoolInfo)
-					setUnipoolHelper(new UnipoolHelper(unipoolInfo));
+				let unipoolHelper;
+				if (unipoolInfo) unipoolHelper = new UnipoolHelper(unipoolInfo);
 
 				setUserStakeInfo(
 					getUserStakeInfo(
