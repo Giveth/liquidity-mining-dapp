@@ -266,7 +266,7 @@ export const getUserStakeInfo = (
 		earned = unipoolHelper.earned(
 			rewards,
 			rewardPerTokenPaid,
-			notStakedAmount,
+			stakedAmount,
 		);
 	}
 

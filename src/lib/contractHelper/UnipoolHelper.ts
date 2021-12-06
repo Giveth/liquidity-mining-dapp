@@ -1,5 +1,6 @@
 import { IBalances, IUnipool } from '@/services/subgraph';
 import { ethers } from 'ethers';
+import { parseEther } from 'ethers/lib/utils';
 
 export class UnipoolHelper {
 	private readonly totalSupply: ethers.BigNumber;
@@ -45,12 +46,14 @@ export class UnipoolHelper {
 
 	earned = (
 		rewards: ethers.BigNumber,
-		rewardPerTokenPaid: ethers.BigNumber,
-		balanceInFarm: ethers.BigNumber,
+		userRewardPerTokenPaid: ethers.BigNumber,
+		stakedAmount: ethers.BigNumber,
 	): ethers.BigNumber => {
-		return balanceInFarm
-			.mul(this.rewardPerToken.sub(rewardPerTokenPaid))
-			.div(1e18)
-			.add(rewards);
+		return (
+			stakedAmount
+				.mul(this.rewardPerToken.sub(userRewardPerTokenPaid))
+				// .div(1e18)
+				.add(rewards)
+		);
 	};
 }
