@@ -61,10 +61,11 @@ const StreamValue = styled.div`
 	line-height: 66px;
 `;
 
-const StreamPlaceholder = styled.div`
+const StreamPlaceholder = styled(Row)`
 	font-size: 32px;
 	color: #b9a7ff;
 	align-self: flex-end;
+	gap: 6px;
 `;
 
 const StreamLabel = styled.span`
@@ -133,7 +134,15 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 						alt='Thunder image'
 					/>
 					<StreamValue>16.06</StreamValue>
-					<StreamPlaceholder>GIV/week</StreamPlaceholder>
+					<StreamPlaceholder>
+						GIV/week
+						<Image
+							src='/images/icons/questionMark.svg'
+							height='16'
+							width='16'
+							alt='Question mark icon'
+						/>
+					</StreamPlaceholder>
 				</StreamValueContainer>
 			</StreamRow>
 			<Row>
