@@ -51,7 +51,7 @@ export const getPoolIconWithName = (pool: string) => {
 	switch (pool) {
 		case StakingType.BALANCER:
 			return <IconBalancer size={16} />;
-		case StakingType.GIV_STREAM:
+		case StakingType.GIV_LM:
 			return <IconGIV size={16} />;
 		case StakingType.HONEYSWAP:
 			return <IconHoneyswap size={16} />;

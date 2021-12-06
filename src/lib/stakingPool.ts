@@ -239,12 +239,36 @@ export const getUserStakeInfo = (
 			stakedAmount = balance.sushiSwapLpStaked;
 			notStakedAmount = balance.sushiswapLp;
 			break;
+		case StakingType.HONEYSWAP:
+			console.log("it's honeyswap");
+			rewards = balance.rewardsHoneyswap;
+			rewardPerTokenPaid = balance.rewardPerTokenPaidHoneyswap;
+			stakedAmount = balance.honeyswapLpStaked;
+			notStakedAmount = balance.honeyswapLp;
+			break;
+		case StakingType.BALANCER:
+			console.log("it's balancer");
+			rewards = balance.rewardsBalancer;
+			rewardPerTokenPaid = balance.rewardPerTokenPaidBalancer;
+			stakedAmount = balance.balancerLpStaked;
+			notStakedAmount = balance.balancerLp;
+			break;
+		case StakingType.GIV_LM:
+			console.log("it's uniswap");
+			rewards = balance.rewardsGivLm;
+			rewardPerTokenPaid = balance.rewardPerTokenPaidGivLm;
+			stakedAmount = balance.balance;
+			notStakedAmount = balance.givStaked;
+			break;
 		default:
 	}
 
 	if (unipoolHelper) {
-		// TODO: do the computation
-		earned = unipoolHelper.earned(rewards, rewardPerTokenPaid);
+		earned = unipoolHelper.earned(
+			rewards,
+			rewardPerTokenPaid,
+			notStakedAmount,
+		);
 	}
 
 	return {

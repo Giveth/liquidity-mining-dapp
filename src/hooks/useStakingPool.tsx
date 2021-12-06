@@ -52,7 +52,7 @@ export const useStakingPool = (
 	useEffect(() => {
 		const cb = () => {
 			const promise: Promise<StakePoolInfo> =
-				type === StakingType.GIV_STREAM
+				type === StakingType.GIV_LM
 					? fetchGivStakingInfo(LM_ADDRESS, network)
 					: fetchLPStakingInfo(poolStakingConfig, network);
 

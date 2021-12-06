@@ -46,7 +46,11 @@ export class UnipoolHelper {
 	earned = (
 		rewards: ethers.BigNumber,
 		rewardPerTokenPaid: ethers.BigNumber,
+		balanceInFarm: ethers.BigNumber,
 	): ethers.BigNumber => {
-		return ethers.utils.parseEther('3');
+		return balanceInFarm
+			.mul(this.rewardPerToken.sub(rewardPerTokenPaid))
+			.div(1e18)
+			.add(rewards);
 	};
 }

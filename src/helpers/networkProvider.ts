@@ -31,7 +31,7 @@ export const getGivStakingConfig = (
 	return {
 		...networkConfig.GIV,
 		POOL_ADDRESS: networkConfig.TOKEN_ADDRESS,
-		type: StakingType.GIV_STREAM,
+		type: StakingType.GIV_LM,
 		title: 'GIV',
 		description: '100% GIV',
 		unit: 'GIV',
