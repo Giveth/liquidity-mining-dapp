@@ -160,7 +160,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 							<DetailLabel>Claimable</DetailLabel>
 							<DetailValue>
 								{`${formatWeiHelper(
-									earned,
+									tokenInfo?.releasedReward || 0,
 									config.TOKEN_PRECISION,
 								)} GIV`}
 							</DetailValue>
