@@ -154,10 +154,7 @@ export const TabGIVstreamBottom = () => {
 					<IconGIVStream size={64} />
 					<H1>
 						{tokenInfo &&
-							formatWeiHelper(
-								tokenInfo?.flowratePerWeek,
-								config.TOKEN_PRECISION,
-							)}
+							formatWeiHelper(tokenInfo?.flowratePerWeek)}
 					</H1>
 					<FlowRateUnit>GIV/week</FlowRateUnit>
 					<IconWithTooltip
@@ -424,11 +421,7 @@ export const GIVstreamHistory: FC = () => {
 									{tokenAllocations.distributor}
 								</P>
 								<B as='span'>
-									+
-									{formatWeiHelper(
-										tokenAllocations.amount,
-										config.TOKEN_PRECISION,
-									)}
+									+{formatWeiHelper(tokenAllocations.amount)}
 									<GsHFrUnit as='span'>{` GIV/week`}</GsHFrUnit>
 								</B>
 								<P as='span'>{date}</P>

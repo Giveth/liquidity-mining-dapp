@@ -46,7 +46,7 @@ export const AmountInput: FC<IAmountInput> = ({
 					<InputLabelText>Available: </InputLabelText>
 					<InputLabelValue>
 						&nbsp;
-						{formatWeiHelper(maxAmount, config.TOKEN_PRECISION)}
+						{formatWeiHelper(maxAmount)}
 						&nbsp;
 						{poolStakingConfig.title}
 						&nbsp;LP

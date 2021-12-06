@@ -124,8 +124,6 @@ const Header: FC<IHeader> = () => {
 									<HBContent>
 										{formatWeiHelper(
 											currentBalance.balance,
-											// tokenDistroBalance.claimable,
-											config.TOKEN_PRECISION,
 										)}
 									</HBContent>
 								</HBContainer>
