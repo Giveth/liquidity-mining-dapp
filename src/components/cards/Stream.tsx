@@ -1,9 +1,10 @@
 import { useState, ChangeEvent, FC, useContext } from 'react';
+import Image from 'next/image';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
 import { H2, H4, P } from '../styled-components/Typography';
-import { ArrowButton, Card, Header, ICardProps, MaxGIV } from './common';
+import { ArrowButton, Card, ICardProps, MaxGIV } from './common';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
@@ -22,17 +23,48 @@ const StreamCardContainer = styled(Card)`
 	}
 `;
 
-const Title = styled(H2)`
-	width: 577px;
+const Header = styled.div`
+	margin-bottom: 60px;
 `;
 
-const Description = styled(P)`
-	width: 577px;
+const Title = styled(H2)`
+	width: 700px;
+`;
+
+const Desc = styled(P)`
+	width: 760px;
+	margin-top: 22px;
 `;
 
 const StreamRow = styled(Row)`
 	padding: 20px 0;
 	height: 208px;
+`;
+
+const StreamSubtitle = styled.div`
+	margin-top: 16px;
+	font-size: 16px;
+`;
+
+const StreamContainer = styled(Row)`
+	padding: 20px 0px;
+`;
+
+const StreamValueContainer = styled(Row)`
+	padding: 20px 60px;
+	gap: 12px;
+`;
+
+const StreamValue = styled.div`
+	font-size: 66px;
+	font-weight: 500;
+	line-height: 66px;
+`;
+
+const StreamPlaceholder = styled.div`
+	font-size: 32px;
+	color: #b9a7ff;
+	align-self: flex-end;
 `;
 
 const StreamLabel = styled.span`
@@ -57,8 +89,10 @@ const StreamGIVEarn = styled.div`
 	text-align: left;
 `;
 
-const StreamHeader = styled(Header)`
-	margin-bottom: 16px;
+const StreamFooter = styled.div`
+	max-width: 500px;
+	font-size: 12px;
+	line-height: 18px;
 `;
 
 export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
@@ -78,14 +112,38 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	return (
 		<StreamCardContainer activeIndex={activeIndex} index={index}>
-			<StreamHeader>
-				<Title as='h1'>Give GIV to get GIVbacks!</Title>
-				<Description size='small' color={'#CABAFF'}>
-					Welcome to ever-expanding GIViverse. A GIVstream of 16.4
-					GIV/day will be streamed continuously until September 21,
-					2026. Increase your flowrate by earning more GIV!
-				</Description>
-			</StreamHeader>
+			<Header>
+				<Title as='h1'>How to use your GIV</Title>
+				<Desc size='small' color={'#CABAFF'}>
+					Welcome to the expanding GIViverse! The GIVstream aligns
+					community members with the long-term success of Giveth and
+					the GIVeconomy.
+				</Desc>
+			</Header>
+			<StreamRow alignItems={'center'}>
+				<StreamContainer flexDirection='column'>
+					<H4 as='h2'>Your flowrate</H4>
+					<StreamSubtitle>Time remaining: 4y 23d 16h</StreamSubtitle>
+				</StreamContainer>
+				<StreamValueContainer alignItems={'center'}>
+					<Image
+						src='/images/icons/thunder.svg'
+						height='56'
+						width='32'
+						alt='Thunder image'
+					/>
+					<StreamValue>16.06</StreamValue>
+					<StreamPlaceholder>GIV/week</StreamPlaceholder>
+				</StreamValueContainer>
+			</StreamRow>
+			<Row>
+				<StreamFooter>
+					The following calculators demonstrate how you can use GIV to
+					participate in the GIVeconomy!{' '}
+					<b>These are just simulations.</b> To participate for real,
+					claim your GIV.
+				</StreamFooter>
+			</Row>
 			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
 		</StreamCardContainer>
 	);
