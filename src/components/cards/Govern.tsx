@@ -1,9 +1,10 @@
 import { useState, ChangeEvent, FC, useContext } from 'react';
+import Image from 'next/image';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
 import { H2, H4, P } from '../styled-components/Typography';
-import { ArrowButton, Card, Header, ICardProps, MaxGIV } from './common';
+import { ArrowButton, Card, ICardProps, MaxGIV } from './common';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
@@ -24,8 +25,23 @@ const GovernCardContainer = styled(Card)`
 	}
 `;
 
+const Header = styled.div`
+	margin-bottom: 60px;
+`;
+
+const Title = styled(H2)`
+	width: 750px;
+	margin-left: 15%;
+`;
+
+const Desc = styled(P)`
+	max-width: 650px;
+	margin-top: 22px;
+	margin-left: 15%;
+`;
+
 const GovernGIVToken = styled.div`
-	padding: 20px 38px;
+	padding: 20px 30px;
 	height: 208px;
 	display: flex;
 	flex-direction: column;
@@ -34,13 +50,18 @@ const GovernGIVToken = styled.div`
 
 const GovernLabel = styled.span`
 	color: #cabaff;
+	display: flex;
+	gap: 6px;
 `;
 
 const GovernInput = styled.div`
 	width: 392px;
 `;
 
-const YouCanEarn = styled(GovernGIVToken)``;
+const YouCanEarn = styled(GovernGIVToken)`
+	padding: 20px 5px;
+	max-width: 380px;
+`;
 
 const GovernGIVEarn = styled.div`
 	font-family: Red Hat Text;
@@ -50,6 +71,13 @@ const GovernGIVEarn = styled.div`
 	line-height: 80px;
 	letter-spacing: 0em;
 	text-align: left;
+`;
+
+const GovernFooter = styled.div`
+	max-width: 500px;
+	font-size: 12px;
+	line-height: 18px;
+	margin-left: 20%;
 `;
 
 const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
@@ -70,12 +98,27 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	return (
 		<GovernCardContainer activeIndex={activeIndex} index={index}>
+			<div
+				style={{
+					position: 'relative',
+					height: 0,
+					top: '15%',
+					left: '-6%',
+				}}
+			>
+				<Image
+					src='/images/bee1.svg'
+					height='81'
+					width='112'
+					alt='Image of a happy bee'
+				/>
+			</div>
 			<Header>
-				<H2 as='h1'>Govern in the GIVgarden</H2>
-				<P size='small' color={'#CABAFF'}>
+				<Title as='h1'>How to use your GIV</Title>
+				<Desc size='small' color={'#CABAFF'}>
 					Participate in Giveth governance using the GIVgarden. Govern
 					on proposals with GIV and earn rewards.
-				</P>
+				</Desc>
 			</Header>
 			<Row alignItems={'center'} justifyContent={'flex-end'}>
 				<GovernGIVToken>
@@ -85,9 +128,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 							alignItems={'center'}
 							justifyContent={'space-between'}
 						>
-							<GovernLabel>
-								Amount staked on proposals
-							</GovernLabel>
+							<GovernLabel>Amount of GIV wrapped</GovernLabel>
 							<MaxGIV>{`Max ${utils.formatEther(
 								claimableAmount,
 							)} GIV`}</MaxGIV>
@@ -102,12 +143,28 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 					</div>
 				</GovernGIVToken>
 				<YouCanEarn>
-					<H4 as='h2'>You can earn</H4>
-					<div>
-						<GovernLabel>GIV Token</GovernLabel>
+					<H4 as='h2'>You will earn an estimated</H4>
+					<Row alignItems={'center'} justifyContent={'space-between'}>
 						<GovernGIVEarn>{stacked}</GovernGIVEarn>
-					</div>
+						<GovernLabel>
+							GIV/month{' '}
+							<Image
+								src='/images/icons/questionMark.svg'
+								height='16'
+								width='16'
+								alt='Operations icon'
+							/>
+						</GovernLabel>
+					</Row>
 				</YouCanEarn>
+			</Row>
+			<Row>
+				<GovernFooter>
+					The following calculators demonstrate how you can use GIV to
+					participate in the GIVeconomy!{' '}
+					<b>These are just simulations.</b> To participate for real,
+					claim your GIV.
+				</GovernFooter>
 			</Row>
 			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
 		</GovernCardContainer>
