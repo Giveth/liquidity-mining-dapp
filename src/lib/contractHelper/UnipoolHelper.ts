@@ -52,7 +52,7 @@ export class UnipoolHelper {
 		return (
 			stakedAmount
 				.mul(this.rewardPerToken.sub(userRewardPerTokenPaid))
-				// .div(1e18)
+				.div(1e18)
 				.add(rewards)
 		);
 	};
