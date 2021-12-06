@@ -226,7 +226,6 @@ export const getUserStakeInfo = (
 } => {
 	let rewards = Zero;
 	let rewardPerTokenPaid = Zero;
-	let lpAmount = Zero;
 	let stakedAmount = Zero;
 	let notStakedAmount = Zero;
 	let earned = Zero;
