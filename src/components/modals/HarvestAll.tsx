@@ -1,58 +1,55 @@
 import React, { FC, useContext, useEffect, useState } from 'react';
-import { Modal, IModal } from './Modal';
+import { IModal, Modal } from './Modal';
 import Lottie from 'react-lottie';
 import LoadingAnimation from '../../animations/loading.json';
 import CheckAnimation from '../../animations/check.json';
 import {
+	B,
 	brandColors,
 	Caption,
 	IconGIVStream,
 	IconHelp,
 	Lead,
-	B,
 } from '@giveth/ui-design-system';
-import { BigNumber } from '@ethersproject/bignumber';
 import { OnboardContext } from '@/context/onboard.context';
-import {
-	fetchBalances,
-	getGIVPrice,
-	getTokenDistroInfo,
-} from '@/services/subgraph';
+import { getGIVPrice } from '@/services/subgraph';
 import { PoolStakingConfig } from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
-import { calcTokenInfo, ITokenInfo } from '@/lib/helpers';
 import { formatWeiHelper } from '@/helpers/number';
-import config from '@/configuration';
-import { TokenBalanceContext } from '@/context/tokenBalance.context';
+import { useBalances } from '@/context/balance.context';
+import { useTokenDistro } from '@/context/tokenDistro.context';
 import { harvestTokens } from '@/lib/stakingPool';
 import { claimUnstakeStake } from '@/lib/stakingNFT';
 import { useLiquidityPositions } from '@/context';
-import { SubmittedInnerModal, ConfirmedInnerModal } from './ConfirmSubmit';
+import { ConfirmedInnerModal, SubmittedInnerModal } from './ConfirmSubmit';
 import {
+	CancelButton,
+	GIVBoxWithPriceAmount,
+	GIVBoxWithPriceContainer,
+	GIVBoxWithPriceIcon,
+	GIVBoxWithPriceUSD,
+	GIVRate,
+	HarvestAllDesc,
 	HarvestAllModalContainer,
-	HarvestAllModalTitleRow,
 	HarvestAllModalTitle,
-	TitleIcon,
+	HarvestAllModalTitleRow,
+	HarvestButton,
+	HelpRow,
+	Pending,
+	RateRow,
 	SPTitle,
 	StakingPoolLabel,
 	StakingPoolSubtitle,
-	HelpRow,
-	RateRow,
-	GIVRate,
-	HarvestAllDesc,
-	HarvestButton,
-	Pending,
-	CancelButton,
-	GIVBoxWithPriceContainer,
-	GIVBoxWithPriceIcon,
-	GIVBoxWithPriceAmount,
-	GIVBoxWithPriceUSD,
+	TitleIcon,
 } from './HarvestAll.sc';
+import { Zero } from '@ethersproject/constants';
+import { ethers } from 'ethers';
+import BigNumber from 'bignumber.js';
 
 interface IHarvestAllModalProps extends IModal {
 	title: string;
 	poolStakingConfig: PoolStakingConfig;
-	claimable: BigNumber;
+	claimable: ethers.BigNumber;
 	network: number;
 }
 
@@ -90,95 +87,36 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	network,
 }) => {
 	const [state, setState] = useState(HarvestStates.HARVEST);
-	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
-	const [givBackInfo, setGivBackInfo] = useState<ITokenInfo>();
-	const [balanceInfo, setBalanceInfo] = useState<ITokenInfo>();
-	const { tokenDistroBalance } = useContext(TokenBalanceContext);
+	const { currentBalance } = useBalances();
+	const { tokenDistroMock } = useTokenDistro();
 	const { address, provider } = useContext(OnboardContext);
 	const { currentIncentive, stakedPositions } = useLiquidityPositions();
 	const [txHash, setTxHash] = useState('');
 
 	const [price, setPrice] = useState(0);
+	const [rewardLiquidPart, setRewardLiquidPart] = useState(Zero);
+	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
+	const [claimableNow, setClaimableNow] = useState(Zero);
+	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
+	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
 
 	useEffect(() => {
-		const getTokensInfo = async () => {
-			const distroInfo = await getTokenDistroInfo(network);
-			const balances = await fetchBalances(network, address);
-			if (distroInfo) {
-				const {
-					initialAmount,
-					totalTokens,
-					startTime,
-					cliffTime,
-					duration,
-				} = distroInfo;
-				const _givBackInfo = calcTokenInfo(
-					initialAmount,
-					totalTokens,
-					balances.givback,
-					duration,
-					cliffTime,
-					startTime,
-				);
-				setGivBackInfo(_givBackInfo);
-			}
-		};
-		if (network === config.XDAI_NETWORK_NUMBER) {
-			getTokensInfo();
-		}
-	}, [address, network]);
+		setRewardLiquidPart(tokenDistroMock.getLiquidPart(claimable));
+		setRewardStream(tokenDistroMock.getStreamPartTokenPerWeek(claimable));
+		setClaimableNow(tokenDistroMock.getUserClaimableNow(currentBalance));
+		setGivBackLiquidPart(
+			tokenDistroMock.getLiquidPart(currentBalance.givback),
+		);
+		setGivBackStream(
+			tokenDistroMock.getStreamPartTokenPerWeek(currentBalance.givback),
+		);
+	}, [claimable, currentBalance, tokenDistroMock]);
 
 	useEffect(() => {
 		getGIVPrice(network).then(price => {
 			setPrice(price);
 		});
 	}, [network]);
-
-	useEffect(() => {
-		getTokenDistroInfo(network).then(distroInfo => {
-			if (distroInfo) {
-				const {
-					initialAmount,
-					totalTokens,
-					startTime,
-					cliffTime,
-					duration,
-				} = distroInfo;
-				const _tokenInfo = calcTokenInfo(
-					initialAmount,
-					totalTokens,
-					claimable,
-					duration,
-					cliffTime,
-					startTime,
-				);
-				setTokenInfo(_tokenInfo);
-			}
-		});
-	}, [claimable, network]);
-
-	// useEffect(() => {
-	// 	getTokenDistroInfo(network).then(distroInfo => {
-	// 		if (distroInfo) {
-	// 			const {
-	// 				initialAmount,
-	// 				totalTokens,
-	// 				startTime,
-	// 				cliffTime,
-	// 				duration,
-	// 			} = distroInfo;
-	// 			const _balanceInfo = calcTokenInfo(
-	// 				initialAmount,
-	// 				totalTokens,
-	// 				tokenDistroBalance.claimable,
-	// 				duration,
-	// 				cliffTime,
-	// 				startTime,
-	// 			);
-	// 			setBalanceInfo(_balanceInfo);
-	// 		}
-	// 	});
-	// }, [tokenDistroBalance, network]);
 
 	const onHarvest = () => {
 		if (!provider) return;
@@ -220,6 +158,8 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		return usd;
 	};
 
+	console.log(`state`, state);
+
 	return (
 		<Modal
 			showModal={showModal}
@@ -246,15 +186,12 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 							</StakingPoolSubtitle>
 						</div>
 					</SPTitle>
-					{tokenInfo && (
+					{claimable.gt(0) && (
 						<>
 							<GIVBoxWithPrice
-								amount={tokenInfo.releasedReward}
+								amount={rewardLiquidPart}
 								price={calcUSD(
-									formatWeiHelper(
-										tokenInfo.releasedReward,
-										config.TOKEN_PRECISION,
-									),
+									formatWeiHelper(rewardLiquidPart),
 								)}
 							/>
 							<HelpRow alignItems='center'>
@@ -269,16 +206,13 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 							<RateRow alignItems='center'>
 								<IconGIVStream size={24} />
 								<GIVRate>
-									{formatWeiHelper(
-										tokenInfo.flowratePerWeek,
-										config.TOKEN_PRECISION,
-									)}
+									{formatWeiHelper(rewardStream)}
 								</GIVRate>
 								<Lead>GIV/week</Lead>
 							</RateRow>
 						</>
 					)}
-					{givBackInfo && givBackInfo.releasedReward.gt(0) && (
+					{currentBalance.givback.gt(0) && (
 						<>
 							<HelpRow alignItems='center'>
 								<B>Claimable from GIVbacks</B>
@@ -288,12 +222,9 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 								/>
 							</HelpRow>
 							<GIVBoxWithPrice
-								amount={givBackInfo.releasedReward}
+								amount={givBackLiquidPart}
 								price={calcUSD(
-									formatWeiHelper(
-										givBackInfo.releasedReward,
-										config.TOKEN_PRECISION,
-									),
+									formatWeiHelper(givBackLiquidPart),
 								)}
 							/>
 							<HelpRow alignItems='center'>
@@ -308,27 +239,17 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 							<RateRow alignItems='center'>
 								<IconGIVStream size={24} />
 								<GIVRate>
-									{formatWeiHelper(
-										givBackInfo.flowratePerWeek,
-										config.TOKEN_PRECISION,
-									)}
+									{formatWeiHelper(givBackStream)}
 								</GIVRate>
 								<Lead>GIV/week</Lead>
 							</RateRow>
 						</>
 					)}
-					{tokenDistroBalance && (
+					{!claimableNow.isZero() && (
 						<>
 							<GIVBoxWithPrice
-								amount={tokenDistroBalance.claimable.sub(
-									givBackInfo?.releasedReward || 0,
-								)}
-								price={calcUSD(
-									formatWeiHelper(
-										tokenDistroBalance.claimable,
-										config.TOKEN_PRECISION,
-									),
-								)}
+								amount={claimableNow.sub(givBackLiquidPart)}
+								price={calcUSD(formatWeiHelper(claimableNow))}
 							/>
 							{/* <HelpRow alignItems='center'>
 								<Caption>
@@ -344,7 +265,6 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 								<GIVRate>
 									{formatWeiHelper(
 										balanceInfo.flowratePerWeek,
-										config.TOKEN_PRECISION,
 									)}
 								</GIVRate>
 								<Lead>GIV/week</Lead>
@@ -412,7 +332,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 };
 
 interface IGIVBoxWithPriceProps {
-	amount: BigNumber;
+	amount: ethers.BigNumber;
 	price: string;
 }
 
@@ -422,7 +342,7 @@ const GIVBoxWithPrice: FC<IGIVBoxWithPriceProps> = ({ amount, price }) => {
 			<GIVBoxWithPriceContainer alignItems='center'>
 				<GIVBoxWithPriceIcon size={40} />
 				<GIVBoxWithPriceAmount>
-					{formatWeiHelper(amount, config.TOKEN_PRECISION)}
+					{formatWeiHelper(amount)}
 				</GIVBoxWithPriceAmount>
 				<GIVBoxWithPriceUSD>~${price}</GIVBoxWithPriceUSD>
 			</GIVBoxWithPriceContainer>

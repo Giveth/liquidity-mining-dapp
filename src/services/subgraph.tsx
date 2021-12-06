@@ -97,6 +97,8 @@ export const fetchBalances = async (
 		const data = await res.json();
 		const info = data.data.balance;
 
+		if (!info) return zeroBalances;
+
 		const balance = BN(info.balance || 0);
 		const allocatedTokens = BN(info.allocatedTokens || 0);
 		const claimed = BN(info.claimed || 0);

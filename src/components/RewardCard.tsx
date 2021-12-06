@@ -24,7 +24,7 @@ import { IconGIV } from './Icons/GIV';
 import { IconXDAI } from './Icons/XDAI';
 import { Row } from './styled-components/Grid';
 import { OnboardContext } from '@/context/onboard.context';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 
 interface IRewardCardProps {
 	title?: string;
@@ -37,8 +37,8 @@ interface IRewardCardProps {
 
 export const RewardCard: FC<IRewardCardProps> = ({
 	title = 'Your Rewards',
-	amount = Zero,
-	rate = Zero,
+	amount = ethers.constants.Zero,
+	rate = ethers.constants.Zero,
 	actionLabel,
 	actionCb,
 	className,
@@ -47,9 +47,7 @@ export const RewardCard: FC<IRewardCardProps> = ({
 	const [usdAmount, setUSDAmount] = useState('0');
 	useEffect(() => {
 		getGIVPrice(walletNetwork).then(price => {
-			const usd = (
-				+formatWeiHelper(amount, config.TOKEN_PRECISION) * price
-			).toFixed(2);
+			const usd = (+ethers.utils.formatEther(amount) * price).toFixed(2);
 			setUSDAmount(usd);
 		});
 	}, [amount, walletNetwork]);
@@ -65,13 +63,13 @@ export const RewardCard: FC<IRewardCardProps> = ({
 			</CardHeader>
 			<AmountInfo alignItems='center' gap='8px'>
 				<IconGIV size={32} />
-				<Title>{formatWeiHelper(amount, config.TOKEN_PRECISION)}</Title>
+				<Title>{formatWeiHelper(amount)}</Title>
 				<AmountUnit>GIV</AmountUnit>
 			</AmountInfo>
 			<Converted>~${usdAmount}</Converted>
 			<RateInfo alignItems='center' gap='8px'>
 				<IconGIVStream size={24} />
-				<P>{formatWeiHelper(rate, config.TOKEN_PRECISION)}</P>
+				<P>{formatWeiHelper(rate)}</P>
 				<RateUnit>GIV/week</RateUnit>
 				<IconHelp size={24} color={brandColors.deep[200]} />
 			</RateInfo>

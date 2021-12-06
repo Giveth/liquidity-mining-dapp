@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
+import config from '@/configuration';
 
 export const Zero = new BigNumber(0);
 
@@ -27,7 +28,7 @@ export const formatEthHelper = (
 
 export const formatWeiHelper = (
 	amountWei: ethers.BigNumber | BigNumber.Value,
-	decimals: number,
+	decimals: number = config.TOKEN_PRECISION,
 	format = true,
 ): string => {
 	let amountEth: BigNumber.Value;

@@ -6,7 +6,7 @@ import { Button } from './styled-components/Button';
 import React, { FC, useContext, useRef, useEffect, useState } from 'react';
 import { ThemeContext, ThemeType } from '../context/theme.context';
 import { OnboardContext } from '../context/onboard.context';
-import { TokenBalanceContext } from '../context/tokenBalance.context';
+import { useBalances } from '../context/balance.context';
 import { formatWeiHelper } from '../helpers/number';
 import config from '../configuration';
 import { claimReward } from '../lib/claim';
@@ -37,8 +37,7 @@ const Header: FC<IHeader> = () => {
 
 	const { theme } = useContext(ThemeContext);
 	const placeholderRef = useRef<HTMLDivElement>(null);
-	const { tokenBalance, tokenDistroBalance } =
-		useContext(TokenBalanceContext);
+	const { currentBalance } = useBalances();
 	const { network, connect, address, provider } = useContext(OnboardContext);
 	const goToClaim = () => {
 		router.push('/claim');
@@ -124,9 +123,7 @@ const Header: FC<IHeader> = () => {
 									/>
 									<HBContent>
 										{formatWeiHelper(
-											tokenBalance,
-											// tokenDistroBalance.claimable,
-											config.TOKEN_PRECISION,
+											currentBalance.balance,
 										)}
 									</HBContent>
 								</HBContainer>
