@@ -1,23 +1,17 @@
 import { createContext, FC, useContext, useEffect, useState } from 'react';
-import { isAddress } from 'ethers/lib/utils';
-import {
-	fetchBalances,
-	getTokenDistroInfo,
-	IBalances,
-	zeroBalances,
-} from '@/services/subgraph';
+import { getTokenDistroInfo } from '@/services/subgraph';
 import { OnboardContext } from '@/context/onboard.context';
 import config from '@/configuration';
-import { TokenDistroMock } from '@/lib/contractMock/TokenDistroMock';
+import { TokenDistroHelper } from '@/lib/contractHelper/TokenDistroHelper';
 import { Zero } from '@ethersproject/constants';
 
 export interface ITokenDistroContext {
-	tokenDistroMock: TokenDistroMock;
-	mainnetTokenDistro: TokenDistroMock;
-	xDaiTokenDistro: TokenDistroMock;
+	tokenDistroHelper: TokenDistroHelper;
+	mainnetTokenDistro: TokenDistroHelper;
+	xDaiTokenDistro: TokenDistroHelper;
 }
 
-const defaultTokenDistroMock = new TokenDistroMock({
+const defaultTokenDistroHelper = new TokenDistroHelper({
 	initialAmount: Zero,
 	lockedAmount: Zero,
 	totalTokens: Zero,
@@ -31,20 +25,20 @@ const defaultTokenDistroMock = new TokenDistroMock({
 });
 
 export const BalanceContext = createContext<ITokenDistroContext>({
-	tokenDistroMock: defaultTokenDistroMock,
-	mainnetTokenDistro: defaultTokenDistroMock,
-	xDaiTokenDistro: defaultTokenDistroMock,
+	tokenDistroHelper: defaultTokenDistroHelper,
+	mainnetTokenDistro: defaultTokenDistroHelper,
+	xDaiTokenDistro: defaultTokenDistroHelper,
 });
 
 export const TokenDistroProvider: FC = ({ children }) => {
 	const { address, network, provider } = useContext(OnboardContext);
 
 	const [currentTokenDistroInfo, setCurrentTokenDistroInfo] =
-		useState<TokenDistroMock>(defaultTokenDistroMock);
+		useState<TokenDistroHelper>(defaultTokenDistroHelper);
 	const [mainnetTokenDistro, setMainnetTokenDistro] =
-		useState<TokenDistroMock>(defaultTokenDistroMock);
-	const [xDaiTokenDistro, setXDaiTokenDistro] = useState<TokenDistroMock>(
-		defaultTokenDistroMock,
+		useState<TokenDistroHelper>(defaultTokenDistroHelper);
+	const [xDaiTokenDistro, setXDaiTokenDistro] = useState<TokenDistroHelper>(
+		defaultTokenDistroHelper,
 	);
 
 	useEffect(() => {
@@ -72,10 +66,10 @@ export const TokenDistroProvider: FC = ({ children }) => {
 
 				if (_mainnetTokenDistro)
 					setMainnetTokenDistro(
-						new TokenDistroMock(_mainnetTokenDistro),
+						new TokenDistroHelper(_mainnetTokenDistro),
 					);
 				if (_xDaiTokenDistro)
-					setXDaiTokenDistro(new TokenDistroMock(_xDaiTokenDistro));
+					setXDaiTokenDistro(new TokenDistroHelper(_xDaiTokenDistro));
 			} catch (e) {
 				console.error(
 					'Error in fetching token and streaming balances',
@@ -97,7 +91,7 @@ export const TokenDistroProvider: FC = ({ children }) => {
 	return (
 		<BalanceContext.Provider
 			value={{
-				tokenDistroMock: currentTokenDistroInfo,
+				tokenDistroHelper: currentTokenDistroInfo,
 				mainnetTokenDistro,
 				xDaiTokenDistro,
 			}}

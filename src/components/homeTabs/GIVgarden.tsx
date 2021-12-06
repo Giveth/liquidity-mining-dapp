@@ -25,8 +25,6 @@ import { HarvestAllModal } from '../modals/HarvestAll';
 import config from '@/configuration';
 import { useStakingPool } from '@/hooks/useStakingPool';
 import { getGivStakingConfig } from '@/helpers/networkProvider';
-import { harvestTokens } from '@/lib/stakingPool';
-import { OnboardContext } from '@/context/onboard.context';
 import { calcTokenInfo, ITokenInfo } from '@/lib/helpers';
 import { getTokenDistroInfo } from '@/services/subgraph';
 
@@ -36,12 +34,10 @@ export const TabGardenTop = () => {
 	const [showModal, setShowModal] = useState(false);
 	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
 
-	const { userStakeInfo, rewardRatePerToken } = useStakingPool(
+	const { earned } = useStakingPool(
 		poolStakingConfig,
 		config.XDAI_NETWORK_NUMBER,
 	);
-
-	const { earned } = userStakeInfo;
 
 	useEffect(() => {
 		getTokenDistroInfo(config.XDAI_NETWORK_NUMBER).then(distroInfo => {

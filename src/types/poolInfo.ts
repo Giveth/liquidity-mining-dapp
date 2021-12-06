@@ -1,8 +1,9 @@
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
 
-export interface StakeUserInfo {
-	stakedLpAmount: ethers.BigNumber;
+export interface UserStakeInfo {
+	stakedAmount: ethers.BigNumber;
+	notStakedAmount: ethers.BigNumber;
 	earned: ethers.BigNumber;
 }
 

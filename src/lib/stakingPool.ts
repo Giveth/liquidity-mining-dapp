@@ -1,4 +1,4 @@
-import { Contract, ethers, utils } from 'ethers';
+import { Contract, ethers } from 'ethers';
 
 import { abi as LM_ABI } from '../artifacts/UnipoolTokenDistributor.json';
 import { abi as UNI_ABI } from '../artifacts/UNI.json';
@@ -7,7 +7,7 @@ import { abi as BAL_VAULT_ABI } from '../artifacts/BalancerVault.json';
 import { abi as TOKEN_MANAGER_ABI } from '../artifacts/HookedTokenManager.json';
 import { abi as ERC20_ABI } from '../artifacts/ERC20.json';
 
-import { StakePoolInfo, StakeUserInfo } from '../types/poolInfo';
+import { StakePoolInfo } from '../types/poolInfo';
 import { networkProviders } from '../helpers/networkProvider';
 import BigNumber from 'bignumber.js';
 import config from '../configuration';
@@ -18,14 +18,12 @@ import {
 	SimplePoolStakingConfig,
 	StakingType,
 } from '../types/config';
-import * as stakeToast from './notifications/stake';
 import * as withdrawToast from './notifications/withdraw';
-import * as harvestToast from './notifications/harvest';
 
 import { Zero } from '@ethersproject/constants';
-import { isAddress } from 'ethers/lib/utils';
 import { TransactionResponse, Web3Provider } from '@ethersproject/providers';
-import { getUnipoolInfo, IUnipool } from '@/services/subgraph';
+import { getUnipoolInfo, IBalances, IUnipool } from '@/services/subgraph';
+import { UnipoolHelper } from '@/lib/contractHelper/UnipoolHelper';
 
 const toBigNumber = (eb: ethers.BigNumber): BigNumber =>
 	new BigNumber(eb.toString());
@@ -217,46 +215,43 @@ const fetchSimplePoolStakingInfo = async (
 	};
 };
 
-export const fetchUserStakeInfo = async (
-	address: string,
-	stakingConfig: BasicStakingConfig,
-	network: number,
-): Promise<StakeUserInfo> => {
-	const provider = networkProviders[network];
-	if (isAddress(address) && provider) {
-		const { LM_ADDRESS } = stakingConfig;
+export const getUserStakeInfo = (
+	type: StakingType,
+	balance: IBalances,
+	unipoolHelper: UnipoolHelper | undefined,
+): {
+	stakedAmount: ethers.BigNumber;
+	notStakedAmount: ethers.BigNumber;
+	earned: ethers.BigNumber;
+} => {
+	let rewards = Zero;
+	let rewardPerTokenPaid = Zero;
+	let lpAmount = Zero;
+	let stakedAmount = Zero;
+	let notStakedAmount = Zero;
+	let earned = Zero;
 
-		const lmContract = new Contract(LM_ADDRESS, LM_ABI, provider);
-
-		const [stakedLpAmount, earned] = await Promise.all([
-			lmContract.balanceOf(address),
-			lmContract.earned(address),
-		]);
-
-		return {
-			stakedLpAmount,
-			earned,
-		};
+	switch (type) {
+		case StakingType.SUSHISWAP:
+			console.log("it's sushi");
+			rewards = balance.rewardsSushiSwap;
+			rewardPerTokenPaid = balance.rewardPerTokenPaidSushiSwap;
+			stakedAmount = balance.sushiSwapLpStaked;
+			notStakedAmount = balance.sushiswapLp;
+			break;
+		default:
 	}
+
+	if (unipoolHelper) {
+		// TODO: do the computation
+		earned = unipoolHelper.earned(rewards, rewardPerTokenPaid);
+	}
+
 	return {
-		earned: Zero,
-		stakedLpAmount: Zero,
+		stakedAmount,
+		notStakedAmount,
+		earned,
 	};
-};
-
-export const fetchUserNotStakedToken = async (
-	address: string,
-	stakingConfig: PoolStakingConfig,
-	network: number,
-): Promise<ethers.BigNumber> => {
-	const provider = networkProviders[network];
-	if (isAddress(address) && provider) {
-		const { POOL_ADDRESS } = stakingConfig;
-		const poolContract = new Contract(POOL_ADDRESS, UNI_ABI, provider);
-
-		return poolContract.balanceOf(address);
-	}
-	return Zero;
 };
 
 const permitTokens = async (

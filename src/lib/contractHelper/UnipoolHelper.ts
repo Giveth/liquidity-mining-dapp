@@ -1,7 +1,7 @@
-import { IUnipool } from '@/services/subgraph';
+import { IBalances, IUnipool } from '@/services/subgraph';
 import { ethers } from 'ethers';
 
-export class UnipoolMock {
+export class UnipoolHelper {
 	private readonly totalSupply: ethers.BigNumber;
 	private readonly lastUpdateTime: Date;
 	private readonly periodFinish: Date;
@@ -29,6 +29,7 @@ export class UnipoolMock {
 		);
 		return ethers.BigNumber.from(lastTimeRewardApplicableMS).div(1000);
 	}
+
 	get rewardPerToken(): ethers.BigNumber {
 		if (this.totalSupply.isZero()) {
 			return this.rewardPerTokenStored;
@@ -41,4 +42,11 @@ export class UnipoolMock {
 				.div(this.totalSupply),
 		);
 	}
+
+	earned = (
+		rewards: ethers.BigNumber,
+		rewardPerTokenPaid: ethers.BigNumber,
+	): ethers.BigNumber => {
+		return ethers.utils.parseEther('3');
+	};
 }

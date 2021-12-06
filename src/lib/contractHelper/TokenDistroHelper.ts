@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { Zero } from '@ethersproject/constants';
 
-export class TokenDistroMock {
+export class TokenDistroHelper {
 	public readonly initialAmount: ethers.BigNumber;
 	public readonly lockedAmount: ethers.BigNumber;
 	public readonly totalTokens: ethers.BigNumber;
