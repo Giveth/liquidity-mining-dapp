@@ -49,11 +49,9 @@ export class UnipoolHelper {
 		userRewardPerTokenPaid: ethers.BigNumber,
 		stakedAmount: ethers.BigNumber,
 	): ethers.BigNumber => {
-		return (
-			stakedAmount
-				.mul(this.rewardPerToken.sub(userRewardPerTokenPaid))
-				.div(1e18)
-				.add(rewards)
-		);
+		return stakedAmount
+			.mul(this.rewardPerToken.sub(userRewardPerTokenPaid))
+			.div(1e18)
+			.add(rewards);
 	};
 }
