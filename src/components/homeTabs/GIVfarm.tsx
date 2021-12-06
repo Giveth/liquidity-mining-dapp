@@ -24,10 +24,13 @@ import StakingPositionCard from '@/components/cards/StakingPositionCard';
 import { getGivStakingConfig } from '@/helpers/networkProvider';
 import { BigNumber } from 'bignumber.js';
 import { constants } from 'ethers';
+import { useFarms } from '@/context/farm.context';
 
 const GIVfarmTabContainer = styled(Container)``;
 
 export const TabGIVfarmTop = () => {
+	const { totalLiquidity } = useFarms();
+
 	return (
 		<GIVfarmTopContainer>
 			<Container>
@@ -44,7 +47,7 @@ export const TabGIVfarmTop = () => {
 					<Right>
 						<GIVfarmRewardCard
 							title='Your GIVfarm rewards'
-							amount={constants.Zero}
+							amount={totalLiquidity}
 							rate={new BigNumber(0)}
 						/>
 					</Right>
