@@ -18,6 +18,13 @@ export interface IBalances {
 	rewardPerTokenPaidBalancer: ethers.BigNumber;
 	rewardsBalancer: ethers.BigNumber;
 	givback: ethers.BigNumber;
+	balancerLp: ethers.BigNumber;
+	balancerLpStaked: ethers.BigNumber;
+	sushiswapLp: ethers.BigNumber;
+	sushiSwapLpStaked: ethers.BigNumber;
+	honeyswapLp: ethers.BigNumber;
+	honeyswapLpStaked: ethers.BigNumber;
+	givStaked: ethers.BigNumber;
 }
 export const zeroBalances = {
 	balance: constants.Zero,
@@ -34,6 +41,13 @@ export const zeroBalances = {
 	rewardPerTokenPaidBalancer: constants.Zero,
 	rewardsBalancer: constants.Zero,
 	givback: constants.Zero,
+	balancerLp: constants.Zero,
+	balancerLpStaked: constants.Zero,
+	sushiswapLp: constants.Zero,
+	sushiSwapLpStaked: constants.Zero,
+	honeyswapLp: constants.Zero,
+	honeyswapLpStaked: constants.Zero,
+	givStaked: constants.Zero,
 };
 
 export const fetchBalances = async (
@@ -56,6 +70,13 @@ export const fetchBalances = async (
 			rewardPerTokenPaidBalancer
 			rewardsBalancer
 			givback
+			balancerLp
+			balancerLpStaked
+			sushiswapLp
+			sushiSwapLpStaked
+			honeyswapLp 
+			honeyswapLpStaked 
+			givStaked
 		}
 	}`;
 	const reqBody = { query };
@@ -98,6 +119,14 @@ export const fetchBalances = async (
 		);
 		const rewardsBalancer = BN(info.rewardsBalancer || 0);
 		const givback = BN(info.givback || 0);
+		const balancerLp = BN(info.balancerLp || 0);
+		const balancerLpStaked = BN(info.balancerLpStaked || 0);
+		const sushiswapLp = BN(info.sushiswapLp || 0);
+		const sushiSwapLpStaked = BN(info.sushiSwapLpStaked || 0);
+		const honeyswapLp = BN(info.honeyswapLp || 0);
+		const honeyswapLpStaked = BN(info.honeyswapLpStaked || 0);
+		const givStaked = BN(info.givStaked || 0);
+
 		return {
 			balance,
 			allocatedTokens,
@@ -113,6 +142,13 @@ export const fetchBalances = async (
 			rewardPerTokenPaidBalancer,
 			rewardsBalancer,
 			givback,
+			balancerLp,
+			balancerLpStaked,
+			sushiswapLp,
+			sushiSwapLpStaked,
+			honeyswapLp,
+			honeyswapLpStaked,
+			givStaked,
 		};
 	} catch (error) {
 		console.error('Error in fetching Balances', error);
