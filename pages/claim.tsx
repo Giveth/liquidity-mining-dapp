@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import ClaimView from '../src/components/views/claim/Claim.view';
+import ClaimView from '@/components/views/claim/Claim.view';
 
 export default function HomeRoute() {
 	return (

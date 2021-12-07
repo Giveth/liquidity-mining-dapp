@@ -28,6 +28,7 @@ import { getGivStakingConfig } from '@/helpers/networkProvider';
 import { calcTokenInfo, ITokenInfo } from '@/lib/helpers';
 import { getTokenDistroInfo } from '@/services/subgraph';
 import BigNumber from 'bignumber.js';
+import { Zero } from '@ethersproject/constants';
 
 const poolStakingConfig = getGivStakingConfig(config.XDAI_CONFIG);
 
@@ -81,8 +82,8 @@ export const TabGardenTop = () => {
 					<Right>
 						<GardenRewardCard
 							title='Your GIVgarden rewards'
-							amount={tokenInfo?.releasedReward}
-							rate={new BigNumber(
+							liquidAmount={tokenInfo?.releasedReward || Zero}
+							stream={new BigNumber(
 								tokenInfo?.flowratePerWeek.toString() || 0,
 							).valueOf()}
 							actionLabel='HARVEST'

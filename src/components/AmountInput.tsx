@@ -2,7 +2,6 @@ import { GLink, neutralColors, brandColors } from '@giveth/ui-design-system';
 import { BigNumber, utils } from 'ethers';
 import { FC, useState, useCallback, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
-import config from 'src/configuration';
 import { formatEthHelper, formatWeiHelper } from '../helpers/number';
 import { PoolStakingConfig } from '../types/config';
 import { Row } from './styled-components/Grid';

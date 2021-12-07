@@ -7,17 +7,16 @@ import { abi as BAL_VAULT_ABI } from '../artifacts/BalancerVault.json';
 import { abi as TOKEN_MANAGER_ABI } from '../artifacts/HookedTokenManager.json';
 import { abi as ERC20_ABI } from '../artifacts/ERC20.json';
 
-import { StakePoolInfo } from '../types/poolInfo';
-import { networkProviders } from '../helpers/networkProvider';
+import { StakePoolInfo } from '@/types/poolInfo';
+import { networkProviders } from '@/helpers/networkProvider';
 import BigNumber from 'bignumber.js';
 import config from '../configuration';
 import {
 	BalancerPoolStakingConfig,
-	BasicStakingConfig,
 	PoolStakingConfig,
 	SimplePoolStakingConfig,
 	StakingType,
-} from '../types/config';
+} from '@/types/config';
 import * as withdrawToast from './notifications/withdraw';
 
 import { Zero } from '@ethersproject/constants';

@@ -1,12 +1,8 @@
 import styled from 'styled-components';
-import { Row } from '../styled-components/Grid';
-import StakingPoolCard from '../cards/StakingPoolCard';
-import config from '../../configuration';
-import {
-	BasicNetworkConfig,
-	SimplePoolStakingConfig,
-	StakingType,
-} from '@/types/config';
+import { Row } from '@/components/styled-components/Grid';
+import StakingPoolCard from '@/components/cards/StakingPoolCard';
+import config from '@/configuration';
+import { StakingType } from '@/types/config';
 import React, { useContext, useEffect, useState } from 'react';
 import {
 	GIVfarmTopContainer,
@@ -24,8 +20,8 @@ import StakingPositionCard from '@/components/cards/StakingPositionCard';
 import { getGivStakingConfig } from '@/helpers/networkProvider';
 import { BigNumber } from 'bignumber.js';
 import { constants } from 'ethers';
-import { useFarms } from '@/context/farm.context';
 import { useTokenDistro } from '@/context/tokenDistro.context';
+import { useFarms } from '@/context/farm.context';
 
 const GIVfarmTabContainer = styled(Container)``;
 
