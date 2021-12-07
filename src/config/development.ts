@@ -6,6 +6,9 @@ const config: EnvConfig = {
 	MAINNET_NETWORK_NUMBER: 42, // Kovan
 	XDAI_NETWORK_NUMBER: 100, // xDAI
 
+	GARDEN_LINK:
+		'https://gardens-staging.1hive.org/#/xdai/garden/0x2050eabe84409e480ad1062001fdb6dfbc836192',
+
 	MAINNET_NETWORK: {
 		chainId: '0x2a', // A 0x-prefixed hexadecimal string
 		chainName: 'Kovan',

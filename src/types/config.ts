@@ -78,6 +78,7 @@ export interface EnvConfig {
 	XDAI_NETWORK: EthereumChainParameter;
 	MAINNET_CONFIG: MainnetNetworkConfig;
 	XDAI_CONFIG: XDaiNetworkConfig;
+	GARDEN_LINK: string;
 }
 
 export interface GlobalConfig extends EnvConfig {

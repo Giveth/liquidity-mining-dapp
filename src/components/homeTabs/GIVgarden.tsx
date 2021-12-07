@@ -110,8 +110,7 @@ export const TabGardenTop = () => {
 
 export const TabGardenBottom = () => {
 	const goToGarden = () => {
-		const url =
-			'https://honey-pot-o49n5fgrn-1hive.vercel.app/#/garden/0x79c52e1a74d01cf030f3cbbbbf84b01476c9ac93';
+		const url = config.GARDEN_LINK;
 		window.open(url, '_blank');
 	};
 
