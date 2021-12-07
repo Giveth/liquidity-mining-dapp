@@ -67,8 +67,9 @@ import config from '@/configuration';
 import { calcTokenInfo, convertMSToHRD, ITokenInfo } from '@/lib/helpers';
 import { NetworkSelector } from '@/components/NetworkSelector';
 import { useBalances } from '@/context/balance.context';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { Zero } from '@ethersproject/constants';
+import { useTokenDistro } from '@/context/tokenDistro.context';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -386,6 +387,14 @@ export const GIVstreamHistory: FC = () => {
 	const [page, setPage] = useState(0);
 	const [hasNext, setHasNext] = useState(false);
 	const count = 6;
+	const { currentBalance } = useBalances();
+	const { allocationCount } = currentBalance;
+
+	const { tokenDistroHelper } = useTokenDistro();
+
+	useEffect(() => {
+		setPage(0);
+	}, [network]);
 
 	useEffect(() => {
 		getHistory(network, address, page * count, count).then(
@@ -410,7 +419,7 @@ export const GIVstreamHistory: FC = () => {
 			</Grid>
 			{tokenAllocations && tokenAllocations.length > 0 && (
 				<Grid>
-					{tokenAllocations.map((tokenAllocations, idx) => {
+					{tokenAllocations.map((tokenAllocation, idx) => {
 						const d = new Date();
 						const date = d
 							.toDateString()
@@ -422,15 +431,22 @@ export const GIVstreamHistory: FC = () => {
 							<Fragment key={idx}>
 								<P as='span'>
 									{/* {convetSourceTypeToIcon(history.type)} */}
-									{tokenAllocations.distributor}
+									{tokenAllocation.distributor}
 								</P>
 								<B as='span'>
-									+{formatWeiHelper(tokenAllocations.amount)}
+									+
+									{formatWeiHelper(
+										tokenDistroHelper.getStreamPartTokenPerWeek(
+											ethers.BigNumber.from(
+												tokenAllocation.amount,
+											),
+										),
+									)}
 									<GsHFrUnit as='span'>{` GIV/week`}</GsHFrUnit>
 								</B>
 								<P as='span'>{date}</P>
 								<TxHash as='span' size='Big'>
-									{tokenAllocations.txHash}
+									{tokenAllocation.txHash}
 								</TxHash>
 							</Fragment>
 						);

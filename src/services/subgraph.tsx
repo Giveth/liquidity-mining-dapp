@@ -25,8 +25,9 @@ export interface IBalances {
 	honeyswapLp: ethers.BigNumber;
 	honeyswapLpStaked: ethers.BigNumber;
 	givStaked: ethers.BigNumber;
+	allocationCount: number;
 }
-export const zeroBalances = {
+export const zeroBalances: IBalances = {
 	balance: constants.Zero,
 	allocatedTokens: constants.Zero,
 	claimed: constants.Zero,
@@ -48,6 +49,7 @@ export const zeroBalances = {
 	honeyswapLp: constants.Zero,
 	honeyswapLpStaked: constants.Zero,
 	givStaked: constants.Zero,
+	allocationCount: 0,
 };
 
 export const fetchBalances = async (
@@ -128,6 +130,7 @@ export const fetchBalances = async (
 		const honeyswapLp = BN(info.honeyswapLp || 0);
 		const honeyswapLpStaked = BN(info.honeyswapLpStaked || 0);
 		const givStaked = BN(info.givStaked || 0);
+		const allocationCount = Number(info.allocationCount || 0);
 
 		return {
 			balance,
@@ -151,6 +154,7 @@ export const fetchBalances = async (
 			honeyswapLp,
 			honeyswapLpStaked,
 			givStaked,
+			allocationCount,
 		};
 	} catch (error) {
 		console.error('Error in fetching Balances', error);
