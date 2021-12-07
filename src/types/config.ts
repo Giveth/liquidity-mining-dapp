@@ -6,8 +6,9 @@ export interface BasicStakingConfig {
 export enum StakingType {
 	UNISWAP = 'UNISWAP',
 	BALANCER = 'BALANCER',
+	SUSHISWAP = 'SUSHI SWAP',
 	HONEYSWAP = 'HONEY SWAP',
-	GIV_STREAM = 'GIV STREAM',
+	GIV_LM = 'GIV LM',
 }
 
 export type PoolStakingConfig =

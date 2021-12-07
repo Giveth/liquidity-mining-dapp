@@ -88,7 +88,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 }) => {
 	const [state, setState] = useState(HarvestStates.HARVEST);
 	const { currentBalance } = useBalances();
-	const { tokenDistroMock } = useTokenDistro();
+	const { tokenDistroHelper } = useTokenDistro();
 	const { address, provider } = useContext(OnboardContext);
 	const { currentIncentive, stakedPositions } = useLiquidityPositions();
 	const [txHash, setTxHash] = useState('');
@@ -101,16 +101,16 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
 
 	useEffect(() => {
-		setRewardLiquidPart(tokenDistroMock.getLiquidPart(claimable));
-		setRewardStream(tokenDistroMock.getStreamPartTokenPerWeek(claimable));
-		setClaimableNow(tokenDistroMock.getUserClaimableNow(currentBalance));
+		setRewardLiquidPart(tokenDistroHelper.getLiquidPart(claimable));
+		setRewardStream(tokenDistroHelper.getStreamPartTokenPerWeek(claimable));
+		setClaimableNow(tokenDistroHelper.getUserClaimableNow(currentBalance));
 		setGivBackLiquidPart(
-			tokenDistroMock.getLiquidPart(currentBalance.givback),
+			tokenDistroHelper.getLiquidPart(currentBalance.givback),
 		);
 		setGivBackStream(
-			tokenDistroMock.getStreamPartTokenPerWeek(currentBalance.givback),
+			tokenDistroHelper.getStreamPartTokenPerWeek(currentBalance.givback),
 		);
-	}, [claimable, currentBalance, tokenDistroMock]);
+	}, [claimable, currentBalance, tokenDistroHelper]);
 
 	useEffect(() => {
 		getGIVPrice(network).then(price => {

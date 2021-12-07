@@ -68,6 +68,7 @@ import { calcTokenInfo, convertMSToHRD, ITokenInfo } from '@/lib/helpers';
 import { NetworkSelector } from '@/components/NetworkSelector';
 import { useBalances } from '@/context/balance.context';
 import { BigNumber } from 'ethers';
+import { Zero } from '@ethersproject/constants';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -89,7 +90,10 @@ export const TabGIVstreamTop = () => {
 					</Left>
 					<Right>
 						<GIVstreamRewardCard
-							amount={BigNumber.from('257000000000000000000')}
+							liquidAmount={BigNumber.from(
+								'257000000000000000000',
+							)}
+							stream={0}
 							actionLabel='HARVEST'
 							actionCb={() => {
 								setShowModal(true);

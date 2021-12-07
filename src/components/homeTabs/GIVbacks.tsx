@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Row } from '../styled-components/Grid';
 import router from 'next/router';
 import {
@@ -35,9 +35,26 @@ import {
 	InfoReadMore,
 } from './GIVbacks.sc';
 import { constants } from 'ethers';
+import { useTokenDistro } from '@/context/tokenDistro.context';
+import { Zero } from '@ethersproject/constants';
+import BigNumber from 'bignumber.js';
+import { useBalances } from '@/context/balance.context';
 
 export const TabGIVbacksTop = () => {
 	const [showModal, setShowModal] = useState(false);
+	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
+	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
+	const { tokenDistroHelper } = useTokenDistro();
+	const { xDaiBalance } = useBalances();
+
+	useEffect(() => {
+		setGivBackLiquidPart(
+			tokenDistroHelper.getLiquidPart(xDaiBalance.givback),
+		);
+		setGivBackStream(
+			tokenDistroHelper.getStreamPartTokenPerWeek(xDaiBalance.givback),
+		);
+	}, [xDaiBalance, tokenDistroHelper]);
 
 	return (
 		<GIVbacksTopContainer>
@@ -55,7 +72,9 @@ export const TabGIVbacksTop = () => {
 					</Left>
 					<Right>
 						<GIVbackRewardCard
-							amount={constants.Zero}
+							title='Your GIVback rewards'
+							liquidAmount={givBackLiquidPart}
+							stream={givBackStream}
 							actionLabel='HARVEST'
 							actionCb={() => {
 								setShowModal(true);

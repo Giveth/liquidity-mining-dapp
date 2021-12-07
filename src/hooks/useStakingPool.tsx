@@ -1,39 +1,47 @@
 import { useEffect, useRef, useState } from 'react';
 import BigNumber from 'bignumber.js';
-import { Zero } from '@ethersproject/constants';
 import { ethers } from 'ethers';
 
 import {
 	fetchGivStakingInfo,
 	fetchLPStakingInfo,
-	fetchUserNotStakedToken,
-	fetchUserStakeInfo,
+	getUserStakeInfo,
 } from '@/lib/stakingPool';
 import config from '@/configuration';
-import { useOnboard } from '@/context';
+import { useBalances, useOnboard } from '@/context';
 import { PoolStakingConfig, StakingType } from '@/types/config';
-import { StakePoolInfo, StakeUserInfo } from '@/types/poolInfo';
+import { StakePoolInfo, UserStakeInfo } from '@/types/poolInfo';
+import { getUnipoolInfo } from '@/services/subgraph';
+import { UnipoolHelper } from '@/lib/contractHelper/UnipoolHelper';
+import { Zero } from '@ethersproject/constants';
 
 export const useStakingPool = (
 	poolStakingConfig: PoolStakingConfig,
 	network: number,
 ): {
 	apr: BigNumber | null;
-	userStakeInfo: StakeUserInfo;
-	userNotStakedAmount: ethers.BigNumber;
+	earned: ethers.BigNumber;
+	stakedAmount: ethers.BigNumber;
+	notStakedAmount: ethers.BigNumber;
 	rewardRatePerToken: BigNumber | null;
 } => {
 	const { address } = useOnboard();
+	const { mainnetBalance, xDaiBalance } = useBalances();
 
 	const [apr, setApr] = useState<BigNumber | null>(null);
 	const [rewardRatePerToken, setRewardRatePerToken] =
 		useState<BigNumber | null>(null);
-	const [userStakeInfo, setUserStakeInfo] = useState<StakeUserInfo>({
+	const [userStakeInfo, setUserStakeInfo] = useState<UserStakeInfo>({
 		earned: Zero,
-		stakedLpAmount: Zero,
+		notStakedAmount: Zero,
+		stakedAmount: Zero,
 	});
-	const [userNotStakedAmount, setNotStakedAmount] =
-		useState<ethers.BigNumber>(Zero);
+
+	const [balance, setBalance] = useState(
+		network === config.MAINNET_NETWORK_NUMBER
+			? mainnetBalance
+			: xDaiBalance,
+	);
 
 	const stakePoolInfoPoll = useRef<NodeJS.Timer | null>(null);
 	const userStakeInfoPoll = useRef<NodeJS.Timer | null>(null);
@@ -43,7 +51,7 @@ export const useStakingPool = (
 	useEffect(() => {
 		const cb = () => {
 			const promise: Promise<StakePoolInfo> =
-				type === StakingType.GIV_STREAM
+				type === StakingType.GIV_LM
 					? fetchGivStakingInfo(LM_ADDRESS, network)
 					: fetchLPStakingInfo(poolStakingConfig, network);
 
@@ -75,23 +83,19 @@ export const useStakingPool = (
 	}, []);
 
 	useEffect(() => {
-		const cb = () => {
+		const cb = async () => {
 			try {
-				let lpBalancePromise: Promise<ethers.BigNumber>;
-				lpBalancePromise = fetchUserNotStakedToken(
-					address,
-					poolStakingConfig,
-					network,
+				const unipoolInfo = await getUnipoolInfo(network, LM_ADDRESS);
+				let unipoolHelper;
+				if (unipoolInfo) unipoolHelper = new UnipoolHelper(unipoolInfo);
+
+				setUserStakeInfo(
+					getUserStakeInfo(
+						poolStakingConfig.type,
+						balance,
+						unipoolHelper,
+					),
 				);
-				Promise.all([
-					fetchUserStakeInfo(address, poolStakingConfig, network),
-					lpBalancePromise,
-				]).then(([_userStakeInfo, _lpBalance]) => {
-					if (isMounted.current) {
-						setUserStakeInfo(_userStakeInfo);
-						setNotStakedAmount(_lpBalance);
-					}
-				});
 			} catch (error) {
 				console.error('Error in fetching Staking data', error);
 			}
@@ -107,12 +111,11 @@ export const useStakingPool = (
 				userStakeInfoPoll.current = null;
 			}
 		};
-	}, [address, network, poolStakingConfig, type]);
+	}, [address, poolStakingConfig, balance]);
 
 	return {
 		apr,
-		userStakeInfo,
-		userNotStakedAmount,
+		...userStakeInfo,
 		rewardRatePerToken,
 	};
 };

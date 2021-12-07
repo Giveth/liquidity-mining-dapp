@@ -108,7 +108,7 @@ const config: EnvConfig = {
 			{
 				POOL_ADDRESS: '0x8c77ba1d90c57d584aeed57bc9b55258b8be3438',
 				LM_ADDRESS: '0x579869ADcB3a3203D7876be889D58C5cbe089F05',
-				type: StakingType.HONEYSWAP,
+				type: StakingType.SUSHISWAP,
 				title: 'ETH / GIV',
 				description: '50% ETH, 50% GIV',
 				provideLiquidityLink:

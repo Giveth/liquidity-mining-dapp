@@ -6,7 +6,7 @@ import { OnboardProvider } from '@/context/onboard.context';
 import { UserProvider } from '@/context/user.context';
 import { ThemeProvider } from '@/context/theme.context';
 import { BalanceProvider } from '@/context/balance.context';
-import { PoolsProvider } from '@/context/pools.context';
+import { FarmProvider } from '@/context/farm.context';
 import { NftsProvider } from '@/context/positions.context';
 import { TokenDistroProvider } from '@/context/tokenDistro.context';
 
@@ -16,13 +16,13 @@ function MyApp({ Component, pageProps }: AppProps) {
 			<OnboardProvider>
 				<BalanceProvider>
 					<TokenDistroProvider>
-						<PoolsProvider>
-							<NftsProvider>
+						<NftsProvider>
+							<FarmProvider>
 								<ThemeProvider>
 									<Component {...pageProps} />
 								</ThemeProvider>
-							</NftsProvider>
-						</PoolsProvider>
+							</FarmProvider>
+						</NftsProvider>
 					</TokenDistroProvider>
 				</BalanceProvider>
 			</OnboardProvider>
