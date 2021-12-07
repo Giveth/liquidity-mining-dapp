@@ -116,8 +116,6 @@ export const StakeModal: FC<IStakeModalProps> = ({
 					setStakeState(StakeStates.SUBMITTED);
 					if (txResponse) {
 						txResponse.wait().then(data => {
-							const { status } = data;
-							console.log('status', status);
 							setStakeState(StakeStates.CONFIRMED);
 						});
 					}
@@ -143,8 +141,6 @@ export const StakeModal: FC<IStakeModalProps> = ({
 					setStakeState(StakeStates.SUBMITTED);
 					if (txResponse) {
 						txResponse.wait().then(data => {
-							const { status } = data;
-							console.log('status', status);
 							setStakeState(StakeStates.CONFIRMED);
 						});
 					}

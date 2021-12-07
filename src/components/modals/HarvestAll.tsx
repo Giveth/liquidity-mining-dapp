@@ -139,8 +139,6 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 						setState(HarvestStates.SUBMITTED);
 						setTxHash(txResponse.hash);
 						txResponse.wait().then(data => {
-							const { status } = data;
-							console.log('status', status);
 							setState(HarvestStates.CONFIRMED);
 						});
 					} else {
@@ -157,8 +155,6 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		const usd = (parseInt(amount.toString()) * price).toFixed(2);
 		return usd;
 	};
-
-	console.log(`state`, state);
 
 	return (
 		<Modal
