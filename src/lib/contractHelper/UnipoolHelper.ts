@@ -45,7 +45,8 @@ export class UnipoolHelper {
 				.minus(this.lastUpdateTime.getTime() / 1000)
 				.times(this.rewardRate)
 				.times(1e18)
-				.div(this.totalSupply),
+				.div(this.totalSupply)
+				.toFixed(0),
 		);
 	}
 
@@ -57,7 +58,9 @@ export class UnipoolHelper {
 		// const rewardPerToken = this.rewardPerToken;
 		// console.log('rewardPerToken:', rewardPerToken.toFixed());
 		// console.log(
-		// 	this.rewardPerToken.minus('15152522943740975229').toFixed(0),
+		// 	this.rewardPerToken
+		// 		.minus(userRewardPerTokenPaid.toString())
+		// 		.toFixed(0),
 		// );
 		// console.log('stakedAmount:', stakedAmount.toString());
 		// console.log(
