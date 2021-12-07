@@ -11,12 +11,12 @@ import { ethers } from 'ethers';
 import config from '@/configuration';
 
 export interface FarmContext {
-	totalLiquidity: ethers.BigNumber;
+	totalEarned: ethers.BigNumber;
 	setInfo: (network: number, key: string, value: ethers.BigNumber) => void;
 }
 
 export const FarmContext = createContext<FarmContext>({
-	totalLiquidity: ethers.constants.Zero,
+	totalEarned: ethers.constants.Zero,
 	setInfo: (network: number, key: string, value: ethers.BigNumber) => {
 		console.log('Not implemented!');
 	},
@@ -28,11 +28,11 @@ interface IInfos {
 
 export const FarmProvider: FC = ({ children }) => {
 	const [xDaiInfos, setxDaiInfos] = useState<IInfos>({});
-	const [xDaiTotalLiquidity, setxDaiTotalLiquidity] = useState(
+	const [xDaiTotalEarned, setxDaiTotalEarned] = useState(
 		ethers.constants.Zero,
 	);
 	const [mainnetInfos, setMainnetInfos] = useState<IInfos>({});
-	const [mainnetTotalLiquidity, setMainnetTotalLiquidity] = useState(
+	const [mainnetTotalEarned, setMainnetTotalEarned] = useState(
 		ethers.constants.Zero,
 	);
 	const { network, address } = useContext(OnboardContext);
@@ -57,7 +57,7 @@ export const FarmProvider: FC = ({ children }) => {
 				sum = sum.add(value);
 			}
 		}
-		setxDaiTotalLiquidity(sum);
+		setxDaiTotalEarned(sum);
 	}, [xDaiInfos]);
 
 	useEffect(() => {
@@ -69,33 +69,33 @@ export const FarmProvider: FC = ({ children }) => {
 				sum = sum.add(value);
 			}
 		}
-		setMainnetTotalLiquidity(sum);
+		setMainnetTotalEarned(sum);
 	}, [mainnetInfos]);
 
 	useEffect(() => {
 		setxDaiInfos({});
-		setxDaiTotalLiquidity(ethers.constants.Zero);
+		setxDaiTotalEarned(ethers.constants.Zero);
 		setMainnetInfos({});
-		setMainnetTotalLiquidity(ethers.constants.Zero);
+		setMainnetTotalEarned(ethers.constants.Zero);
 	}, [address]);
 
 	useEffect(() => {
 		if (network === config.MAINNET_NETWORK_NUMBER) {
 			setxDaiInfos({});
-			setxDaiTotalLiquidity(ethers.constants.Zero);
+			setxDaiTotalEarned(ethers.constants.Zero);
 		} else if (network === config.XDAI_NETWORK_NUMBER) {
 			setMainnetInfos({});
-			setMainnetTotalLiquidity(ethers.constants.Zero);
+			setMainnetTotalEarned(ethers.constants.Zero);
 		}
 	}, [network]);
 
 	return (
 		<FarmContext.Provider
 			value={{
-				totalLiquidity:
+				totalEarned:
 					network === config.MAINNET_NETWORK_NUMBER
-						? mainnetTotalLiquidity
-						: xDaiTotalLiquidity,
+						? mainnetTotalEarned
+						: xDaiTotalEarned,
 				setInfo,
 			}}
 		>

@@ -7,7 +7,7 @@ import {
 	SimplePoolStakingConfig,
 	StakingType,
 } from '@/types/config';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
 	GIVfarmTopContainer,
 	Left,
@@ -25,11 +25,22 @@ import { getGivStakingConfig } from '@/helpers/networkProvider';
 import { BigNumber } from 'bignumber.js';
 import { constants } from 'ethers';
 import { useFarms } from '@/context/farm.context';
+import { useTokenDistro } from '@/context/tokenDistro.context';
 
 const GIVfarmTabContainer = styled(Container)``;
 
 export const TabGIVfarmTop = () => {
-	const { totalLiquidity } = useFarms();
+	const [rewardLiquidPart, setRewardLiquidPart] = useState(constants.Zero);
+	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
+	const { tokenDistroHelper } = useTokenDistro();
+	const { totalEarned } = useFarms();
+
+	useEffect(() => {
+		setRewardLiquidPart(tokenDistroHelper.getLiquidPart(totalEarned));
+		setRewardStream(
+			tokenDistroHelper.getStreamPartTokenPerWeek(totalEarned),
+		);
+	}, [totalEarned, tokenDistroHelper]);
 
 	return (
 		<GIVfarmTopContainer>
@@ -47,8 +58,8 @@ export const TabGIVfarmTop = () => {
 					<Right>
 						<GIVfarmRewardCard
 							title='Your GIVfarm rewards'
-							amount={totalLiquidity}
-							rate={new BigNumber(0)}
+							liquidAmount={rewardLiquidPart}
+							stream={rewardStream}
 						/>
 					</Right>
 				</Row>
