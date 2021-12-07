@@ -73,8 +73,8 @@ export const TabGIVbacksTop = () => {
 					<Right>
 						<GIVbackRewardCard
 							title='Your GIVback rewards'
-							amount={givBackLiquidPart}
-							rate={givBackStream}
+							liquidAmount={givBackLiquidPart}
+							stream={givBackStream}
 							actionLabel='HARVEST'
 							actionCb={() => {
 								setShowModal(true);
