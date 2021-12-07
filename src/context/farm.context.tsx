@@ -53,7 +53,6 @@ export const FarmProvider: FC = ({ children }) => {
 		for (const key in xDaiInfos) {
 			if (Object.prototype.hasOwnProperty.call(xDaiInfos, key)) {
 				const value = xDaiInfos[key];
-				console.log(key, value.toString());
 				sum = sum.add(value);
 			}
 		}
@@ -65,7 +64,6 @@ export const FarmProvider: FC = ({ children }) => {
 		for (const key in mainnetInfos) {
 			if (Object.prototype.hasOwnProperty.call(mainnetInfos, key)) {
 				const value = mainnetInfos[key];
-				console.log(key, value.toString());
 				sum = sum.add(value);
 			}
 		}

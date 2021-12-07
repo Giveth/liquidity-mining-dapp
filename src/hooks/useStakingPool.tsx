@@ -26,7 +26,8 @@ export const useStakingPool = (
 	rewardRatePerToken: BigNumber | null;
 } => {
 	const { address } = useOnboard();
-	const { mainnetBalance, xDaiBalance } = useBalances();
+	const { currentBalance } = useBalances();
+	// const { mainnetBalance, xDaiBalance } = useBalances();
 
 	const [apr, setApr] = useState<BigNumber | null>(null);
 	const [rewardRatePerToken, setRewardRatePerToken] =
@@ -37,16 +38,20 @@ export const useStakingPool = (
 		stakedAmount: Zero,
 	});
 
-	const [balance, setBalance] = useState(
-		network === config.MAINNET_NETWORK_NUMBER
-			? mainnetBalance
-			: xDaiBalance,
-	);
+	// const [balance, setBalance] = useState(zeroBalances);
 
 	const stakePoolInfoPoll = useRef<NodeJS.Timer | null>(null);
 	const userStakeInfoPoll = useRef<NodeJS.Timer | null>(null);
 
 	const { type, LM_ADDRESS } = poolStakingConfig;
+
+	// useEffect(() => {
+	// 	setBalance(
+	// 		network === config.MAINNET_NETWORK_NUMBER
+	// 			? mainnetBalance
+	// 			: xDaiBalance,
+	// 	);
+	// }, [mainnetBalance, xDaiBalance]);
 
 	useEffect(() => {
 		const cb = () => {
@@ -73,7 +78,7 @@ export const useStakingPool = (
 				stakePoolInfoPoll.current = null;
 			}
 		};
-	}, [type, LM_ADDRESS, network]);
+	}, []);
 
 	const isMounted = useRef(true);
 	useEffect(() => {
@@ -92,7 +97,7 @@ export const useStakingPool = (
 				setUserStakeInfo(
 					getUserStakeInfo(
 						poolStakingConfig.type,
-						balance,
+						currentBalance,
 						unipoolHelper,
 					),
 				);
@@ -111,7 +116,7 @@ export const useStakingPool = (
 				userStakeInfoPoll.current = null;
 			}
 		};
-	}, [address, poolStakingConfig, balance]);
+	}, [address, poolStakingConfig, currentBalance]);
 
 	return {
 		apr,
