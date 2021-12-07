@@ -394,7 +394,7 @@ export const GIVstreamHistory: FC = () => {
 
 	useEffect(() => {
 		setPage(0);
-	}, [network]);
+	}, [network, address]);
 
 	useEffect(() => {
 		getHistory(network, address, page * count, count).then(
