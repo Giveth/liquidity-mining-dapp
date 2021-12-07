@@ -6,6 +6,8 @@ const config: EnvConfig = {
 	MAINNET_NETWORK_NUMBER: 1,
 	XDAI_NETWORK_NUMBER: 100,
 
+	GARDEN_LINK: '',
+
 	MAINNET_NETWORK: {
 		chainId: '0x1', // A 0x-prefixed hexadecimal string
 		chainName: 'Ethereum Mainnet',

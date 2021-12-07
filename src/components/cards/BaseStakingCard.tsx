@@ -43,8 +43,6 @@ import { IconBalancer } from '../Icons/Balancer';
 import { IconUniswap } from '../Icons/Uniswap';
 import { HarvestAllModal } from '../modals/HarvestAll';
 import { OnboardContext } from '@/context/onboard.context';
-import { ITokenInfo, calcTokenInfo } from '@/lib/helpers';
-import { getTokenDistroInfo } from '@/services/subgraph';
 import { useFarms } from '@/context/farm.context';
 import { constants } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
@@ -75,7 +73,6 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	poolStakingConfig,
 	notif,
 }) => {
-	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
 	const [showAPRModal, setShowAPRModal] = useState(false);
 	const [showStakeModal, setShowStakeModal] = useState(false);
 	const [showUnStakeModal, setShowUnStakeModal] = useState(false);
