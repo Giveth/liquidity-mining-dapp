@@ -46,6 +46,9 @@ import { OnboardContext } from '@/context/onboard.context';
 import { ITokenInfo, calcTokenInfo } from '@/lib/helpers';
 import { getTokenDistroInfo } from '@/services/subgraph';
 import { useFarms } from '@/context/farm.context';
+import { constants } from 'ethers';
+import { useTokenDistro } from '@/context/tokenDistro.context';
+import BigNumber from 'bignumber.js';
 
 export const getPoolIconWithName = (pool: string) => {
 	switch (pool) {
@@ -78,6 +81,9 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	const [showUnStakeModal, setShowUnStakeModal] = useState(false);
 	const [showHarvestModal, setShowHarvestModal] = useState(false);
 	const { network: walletNetwork } = useContext(OnboardContext);
+	const [rewardLiquidPart, setRewardLiquidPart] = useState(constants.Zero);
+	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
+	const { tokenDistroHelper } = useTokenDistro();
 	const { setInfo } = useFarms();
 
 	const { type, title, description, provideLiquidityLink, LM_ADDRESS, unit } =
@@ -88,27 +94,9 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	const { apr, earned, stakedLpAmount, userNotStakedAmount } = stakeInfo;
 
 	useEffect(() => {
-		getTokenDistroInfo(walletNetwork).then(distroInfo => {
-			if (distroInfo) {
-				const {
-					initialAmount,
-					totalTokens,
-					startTime,
-					cliffTime,
-					duration,
-				} = distroInfo;
-				const _tokenInfo = calcTokenInfo(
-					initialAmount,
-					totalTokens,
-					earned,
-					duration,
-					cliffTime,
-					startTime,
-				);
-				setTokenInfo(_tokenInfo);
-			}
-		});
-	}, [earned, walletNetwork]);
+		setRewardLiquidPart(tokenDistroHelper.getLiquidPart(earned));
+		setRewardStream(tokenDistroHelper.getStreamPartTokenPerWeek(earned));
+	}, [earned, tokenDistroHelper]);
 
 	useEffect(() => {
 		setInfo(walletNetwork, type, earned);
@@ -158,7 +146,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 						<Detail justifyContent='space-between'>
 							<DetailLabel>Claimable</DetailLabel>
 							<DetailValue>
-								{`${formatWeiHelper(earned)} GIV`}
+								{`${formatWeiHelper(rewardLiquidPart)} GIV`}
 							</DetailValue>
 						</Detail>
 						<Detail justifyContent='space-between'>
@@ -168,10 +156,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 							</Row>
 							<Row gap='4px' alignItems='center'>
 								<DetailValue>
-									{tokenInfo &&
-										formatWeiHelper(
-											tokenInfo.flowratePerWeek,
-										)}
+									{formatWeiHelper(rewardStream)}
 								</DetailValue>
 								<DetailUnit>GIV/week</DetailUnit>
 							</Row>
