@@ -337,39 +337,39 @@ export const GIVstreamProgress: FC<IGIVstreamProgressProps> = ({
 	);
 };
 
-export enum GIVstreamSources {
+export enum GIVstreamDistributor {
 	Back,
 	Farm,
 	Garden,
 }
 
-const convetSourceTypeToIcon = (type: GIVstreamSources) => {
-	switch (type) {
-		case GIVstreamSources.Back:
-			return (
-				<Row gap='16px'>
-					<IconGIVBack size={24} color={brandColors.mustard[500]} />
-					<P>{` GIVback`}</P>
-				</Row>
-			);
-		case GIVstreamSources.Farm:
-			return (
-				<Row gap='16px'>
-					<IconGIVFarm size={24} color={brandColors.mustard[500]} />
-					<P>{` GIVfarm`}</P>
-				</Row>
-			);
-		case GIVstreamSources.Garden:
-			return (
-				<Row gap='16px'>
-					<IconGIVGarden size={24} color={brandColors.mustard[500]} />
-					<P>{` GIVgarden`}</P>
-				</Row>
-			);
-		default:
-			break;
-	}
-};
+// const convetSourceTypeToIcon = (type: string) => {
+// 	switch (type) {
+// 		case GIVstreamSources.Back:
+// 			return (
+// 				<Row gap='16px'>
+// 					<IconGIVBack size={24} color={brandColors.mustard[500]} />
+// 					<P>{` GIVback`}</P>
+// 				</Row>
+// 			);
+// 		case GIVstreamSources.Farm:
+// 			return (
+// 				<Row gap='16px'>
+// 					<IconGIVFarm size={24} color={brandColors.mustard[500]} />
+// 					<P>{` GIVfarm`}</P>
+// 				</Row>
+// 			);
+// 		case GIVstreamSources.Garden:
+// 			return (
+// 				<Row gap='16px'>
+// 					<IconGIVGarden size={24} color={brandColors.mustard[500]} />
+// 					<P>{` GIVgarden`}</P>
+// 				</Row>
+// 			);
+// 		default:
+// 			break;
+// 	}
+// };
 
 export const GIVstreamHistory: FC = () => {
 	const { network, address } = useContext(OnboardContext);
@@ -377,12 +377,10 @@ export const GIVstreamHistory: FC = () => {
 		ITokenAllocation[]
 	>([]);
 	const [page, setPage] = useState(0);
-	const [hasNext, setHasNext] = useState(false);
+	const [pages, setPages] = useState<any[]>([]);
 	const count = 6;
 	const { currentBalance } = useBalances();
 	const { allocationCount } = currentBalance;
-
-	console.log(`allocationCount`, allocationCount);
 
 	const { tokenDistroHelper } = useTokenDistro();
 
@@ -394,14 +392,22 @@ export const GIVstreamHistory: FC = () => {
 		getHistory(network, address, page * count, count).then(
 			_tokenAllocations => {
 				setTokenAllocations(_tokenAllocations);
-				if (_tokenAllocations.length === count) {
-					setHasNext(true);
-				} else {
-					setHasNext(false);
-				}
 			},
 		);
 	}, [network, address, page]);
+
+	useEffect(() => {
+		const nop = Math.floor(allocationCount / count) + 1;
+		if (nop > 4) {
+			setPages([1, 2, '...', nop - 1, nop]);
+		} else {
+			const _pages = [];
+			for (let i = 1; i < nop + 1; i++) {
+				_pages.push(i);
+			}
+			setPages(_pages);
+		}
+	}, [allocationCount]);
 
 	return (
 		<HistoryContainer>
@@ -424,8 +430,8 @@ export const GIVstreamHistory: FC = () => {
 							// <span key={idx}>1</span>
 							<Fragment key={idx}>
 								<P as='span'>
-									{/* {convetSourceTypeToIcon(history.type)} */}
-									{tokenAllocation.distributor}
+									{/* {convetSourceTypeToIcon(tokenAllocation.distributor)} */}
+									{tokenAllocation.distributor || 'Unknown'}
 								</P>
 								<B as='span'>
 									+
@@ -471,15 +477,29 @@ export const GIVstreamHistory: FC = () => {
 					}}
 					disable={page == 0}
 				>
-					Back
+					{'<  Back'}
 				</PaginationItem>
+				{pages.map((p, id) => {
+					return (
+						<PaginationItem
+							key={id}
+							onClick={() => {
+								if (!isNaN(+p)) setPage(+p - 1);
+							}}
+							isActive={+p - 1 === page}
+						>
+							{p}
+						</PaginationItem>
+					);
+				})}
 				<PaginationItem
 					onClick={() => {
-						if (hasNext) setPage(page => page + 1);
+						if (page < Math.floor(allocationCount / count))
+							setPage(page => page + 1);
 					}}
-					disable={!hasNext}
+					disable={page >= Math.floor(allocationCount / count)}
 				>
-					Next
+					{'Next  >'}
 				</PaginationItem>
 			</PaginationRow>
 		</HistoryContainer>

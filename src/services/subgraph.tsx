@@ -79,6 +79,7 @@ export const fetchBalances = async (
 			honeyswapLp 
 			honeyswapLpStaked 
 			givStaked
+			allocationCount
 		}
 	}`;
 	const reqBody = { query };

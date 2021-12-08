@@ -190,6 +190,7 @@ export const TxHash = styled(GLink)`
 
 interface IPaginationItem {
 	disable: boolean;
+	isActive?: boolean;
 }
 
 export const PaginationRow = styled(Row)`
@@ -201,4 +202,5 @@ export const PaginationItem = styled(Caption)`
 		props.disable
 			? `color: ${neutralColors.gray[700]}`
 			: `cursor: pointer; color: ${neutralColors.gray[100]}`};
+	${props => (props.isActive ? `font-weight: bold;` : '')};
 `;
