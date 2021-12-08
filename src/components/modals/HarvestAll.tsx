@@ -45,11 +45,13 @@ import {
 import { Zero } from '@ethersproject/constants';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
+import { claimReward } from '@/lib/claim';
+import config from '@/configuration';
 
 interface IHarvestAllModalProps extends IModal {
 	title: string;
-	poolStakingConfig: PoolStakingConfig;
-	claimable: ethers.BigNumber;
+	poolStakingConfig?: PoolStakingConfig;
+	claimable?: ethers.BigNumber;
 	network: number;
 }
 
@@ -101,8 +103,12 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
 
 	useEffect(() => {
-		setRewardLiquidPart(tokenDistroHelper.getLiquidPart(claimable));
-		setRewardStream(tokenDistroHelper.getStreamPartTokenPerWeek(claimable));
+		if (claimable) {
+			setRewardLiquidPart(tokenDistroHelper.getLiquidPart(claimable));
+			setRewardStream(
+				tokenDistroHelper.getStreamPartTokenPerWeek(claimable),
+			);
+		}
 		setClaimableNow(tokenDistroHelper.getUserClaimableNow(currentBalance));
 		setGivBackLiquidPart(
 			tokenDistroHelper.getLiquidPart(currentBalance.givback),
@@ -121,19 +127,44 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	const onHarvest = () => {
 		if (!provider) return;
 		setState(HarvestStates.HARVESTING);
-		if (poolStakingConfig.hasOwnProperty('NFT_POSITIONS_MANAGER_ADDRESS')) {
-			//NFT Harvest
-			claimUnstakeStake(
-				address,
-				provider,
-				currentIncentive,
-				stakedPositions,
-			).then(res => {
-				setState(HarvestStates.CONFIRMED);
-			});
+		if (poolStakingConfig) {
+			if (
+				poolStakingConfig.hasOwnProperty(
+					'NFT_POSITIONS_MANAGER_ADDRESS',
+				)
+			) {
+				//NFT Harvest
+				claimUnstakeStake(
+					address,
+					provider,
+					currentIncentive,
+					stakedPositions,
+				).then(res => {
+					setState(HarvestStates.CONFIRMED);
+				});
+			} else {
+				// LP Harvest
+				harvestTokens(poolStakingConfig.LM_ADDRESS, provider)
+					.then(txResponse => {
+						if (txResponse) {
+							setState(HarvestStates.SUBMITTED);
+							setTxHash(txResponse.hash);
+							txResponse.wait().then(data => {
+								setState(HarvestStates.CONFIRMED);
+							});
+						} else {
+							setState(HarvestStates.HARVEST);
+						}
+					})
+					.catch(err => {
+						setState(HarvestStates.HARVEST);
+					});
+			}
 		} else {
-			// LP Harvest
-			harvestTokens(poolStakingConfig.LM_ADDRESS, provider)
+			claimReward(
+				config.NETWORKS_CONFIG[network]?.TOKEN_DISTRO_ADDRESS,
+				provider,
+			)
 				.then(txResponse => {
 					if (txResponse) {
 						setState(HarvestStates.SUBMITTED);
@@ -171,18 +202,22 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 						</HarvestAllModalTitle>
 						<TitleIcon size={24} />
 					</HarvestAllModalTitleRow>
-					<SPTitle alignItems='center' gap='16px'>
-						<StakingPoolImages title={poolStakingConfig.title} />
-						<div>
-							<StakingPoolLabel weight={900}>
-								{poolStakingConfig.title}
-							</StakingPoolLabel>
-							<StakingPoolSubtitle>
-								{poolStakingConfig.description}
-							</StakingPoolSubtitle>
-						</div>
-					</SPTitle>
-					{claimable.gt(0) && (
+					{poolStakingConfig && (
+						<SPTitle alignItems='center' gap='16px'>
+							<StakingPoolImages
+								title={poolStakingConfig.title}
+							/>
+							<div>
+								<StakingPoolLabel weight={900}>
+									{poolStakingConfig.title}
+								</StakingPoolLabel>
+								<StakingPoolSubtitle>
+									{poolStakingConfig.description}
+								</StakingPoolSubtitle>
+							</div>
+						</SPTitle>
+					)}
+					{claimable && claimable.gt(0) && (
 						<>
 							<GIVBoxWithPrice
 								amount={rewardLiquidPart}
@@ -225,7 +260,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 							/>
 							<HelpRow alignItems='center'>
 								<Caption>
-									Added to your GIVstream flowrate
+									Added to your GIVstream flowrate2
 								</Caption>
 								<IconHelp
 									size={16}
@@ -248,9 +283,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 								price={calcUSD(formatWeiHelper(claimableNow))}
 							/>
 							{/* <HelpRow alignItems='center'>
-								<Caption>
-									Added to your GIVstream flowrate
-								</Caption>
+								<Caption></Caption>
 								<IconHelp
 									size={16}
 									color={brandColors.deep[100]}

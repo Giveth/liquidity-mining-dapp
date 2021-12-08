@@ -26,6 +26,7 @@ import { Row } from './styled-components/Grid';
 import { OnboardContext } from '@/context/onboard.context';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
+import { IconEthereum } from './Icons/Eth';
 
 interface IRewardCardProps {
 	title?: string;
@@ -33,6 +34,7 @@ interface IRewardCardProps {
 	stream: BigNumber.Value;
 	actionLabel?: string;
 	actionCb?: MouseEventHandler<HTMLButtonElement>;
+	network: number;
 	className?: string;
 }
 
@@ -42,26 +44,35 @@ export const RewardCard: FC<IRewardCardProps> = ({
 	stream = Zero,
 	actionLabel,
 	actionCb,
+	network,
 	className,
 }) => {
-	const { network: walletNetwork } = useContext(OnboardContext);
 	const [usdAmount, setUSDAmount] = useState('0');
 	useEffect(() => {
-		getGIVPrice(walletNetwork).then(price => {
+		getGIVPrice(network).then(price => {
 			const usd = (
 				+ethers.utils.formatEther(liquidAmount) * price
 			).toFixed(2);
 			setUSDAmount(usd);
 		});
-	}, [liquidAmount, walletNetwork]);
+	}, [liquidAmount, network]);
 
 	return (
 		<RewadCardContainer className={className}>
 			<CardHeader justifyContent='space-between'>
 				<CardTitle>{title}</CardTitle>
 				<ChainInfo alignItems='center'>
-					<IconXDAI size={16} />
-					<ChainName styleType='Small'>XDAI</ChainName>
+					{network === config.MAINNET_NETWORK_NUMBER && (
+						<IconEthereum size={16} />
+					)}
+					{network === config.XDAI_NETWORK_NUMBER && (
+						<IconXDAI size={16} />
+					)}
+					<ChainName styleType='Small'>
+						{network === config.MAINNET_NETWORK_NUMBER
+							? 'ETH'
+							: 'XDAI'}
+					</ChainName>
 				</ChainInfo>
 			</CardHeader>
 			<AmountInfo alignItems='center' gap='8px'>

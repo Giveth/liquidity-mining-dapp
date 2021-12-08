@@ -39,6 +39,8 @@ import { useTokenDistro } from '@/context/tokenDistro.context';
 import { Zero } from '@ethersproject/constants';
 import BigNumber from 'bignumber.js';
 import { useBalances } from '@/context/balance.context';
+import config from '@/configuration';
+import { HarvestAllModal } from '../modals/HarvestAll';
 
 export const TabGIVbacksTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -57,33 +59,44 @@ export const TabGIVbacksTop = () => {
 	}, [xDaiBalance, tokenDistroHelper]);
 
 	return (
-		<GIVbacksTopContainer>
-			<Container>
-				<Row justifyContent='space-between'>
-					<Left>
-						<Row alignItems='baseline' gap='16px'>
-							<GBTitle>GIVbacks</GBTitle>
-							<IconGIVBack size={64} />
-						</Row>
-						<GBSubtitle size='medium'>
-							GIVbacks is a revolutionary concept that rewards
-							donors to verified projects with GIV tokens.
-						</GBSubtitle>
-					</Left>
-					<Right>
-						<GIVbackRewardCard
-							title='Your GIVback rewards'
-							liquidAmount={givBackLiquidPart}
-							stream={givBackStream}
-							actionLabel='HARVEST'
-							actionCb={() => {
-								setShowModal(true);
-							}}
-						/>
-					</Right>
-				</Row>
-			</Container>
-		</GIVbacksTopContainer>
+		<>
+			<GIVbacksTopContainer>
+				<Container>
+					<Row justifyContent='space-between'>
+						<Left>
+							<Row alignItems='baseline' gap='16px'>
+								<GBTitle>GIVbacks</GBTitle>
+								<IconGIVBack size={64} />
+							</Row>
+							<GBSubtitle size='medium'>
+								GIVbacks is a revolutionary concept that rewards
+								donors to verified projects with GIV tokens.
+							</GBSubtitle>
+						</Left>
+						<Right>
+							<GIVbackRewardCard
+								title='Your GIVback rewards'
+								liquidAmount={givBackLiquidPart}
+								stream={givBackStream}
+								actionLabel='HARVEST'
+								actionCb={() => {
+									setShowModal(true);
+								}}
+								network={config.XDAI_NETWORK_NUMBER}
+							/>
+						</Right>
+					</Row>
+				</Container>
+			</GIVbacksTopContainer>
+			{showModal && (
+				<HarvestAllModal
+					title='GIVback Rewards'
+					showModal={showModal}
+					setShowModal={setShowModal}
+					network={config.XDAI_NETWORK_NUMBER}
+				/>
+			)}
+		</>
 	);
 };
 
