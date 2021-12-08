@@ -244,7 +244,7 @@ export const TabGIVstreamBottom = () => {
 						</HistoryTooltip>
 					</IconWithTooltip>
 				</HistoryTitleRow>
-				<GIVstreamHistory />
+				{/* <GIVstreamHistory /> */}
 			</Container>
 			{/* //unipooldis */}
 			<IncreaseSection ref={increaseSecRef}>
