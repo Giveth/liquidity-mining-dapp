@@ -343,33 +343,35 @@ export enum GIVstreamDistributor {
 	Garden,
 }
 
-// const convetSourceTypeToIcon = (type: string) => {
-// 	switch (type) {
-// 		case GIVstreamSources.Back:
-// 			return (
-// 				<Row gap='16px'>
-// 					<IconGIVBack size={24} color={brandColors.mustard[500]} />
-// 					<P>{` GIVback`}</P>
-// 				</Row>
-// 			);
-// 		case GIVstreamSources.Farm:
-// 			return (
-// 				<Row gap='16px'>
-// 					<IconGIVFarm size={24} color={brandColors.mustard[500]} />
-// 					<P>{` GIVfarm`}</P>
-// 				</Row>
-// 			);
-// 		case GIVstreamSources.Garden:
-// 			return (
-// 				<Row gap='16px'>
-// 					<IconGIVGarden size={24} color={brandColors.mustard[500]} />
-// 					<P>{` GIVgarden`}</P>
-// 				</Row>
-// 			);
-// 		default:
-// 			break;
-// 	}
-// };
+const convetSourceTypeToIcon = (distributor: string) => {
+	switch (distributor.toLowerCase()) {
+		case 'givback':
+			return (
+				<Row gap='16px'>
+					<IconGIVBack size={24} color={brandColors.mustard[500]} />
+					<P>{` GIVback`}</P>
+				</Row>
+			);
+		case 'giveth':
+		case 'givlm':
+			return (
+				<Row gap='16px'>
+					<IconGIVFarm size={24} color={brandColors.mustard[500]} />
+					<P>{` GIVfarm`}</P>
+				</Row>
+			);
+		// case GIVstreamSources.Garden:
+		// 	return (
+		// 		<Row gap='16px'>
+		// 			<IconGIVGarden size={24} color={brandColors.mustard[500]} />
+		// 			<P>{` GIVgarden`}</P>
+		// 		</Row>
+		// 	);
+		default:
+			return distributor; //'Unknown'
+			break;
+	}
+};
 
 export const GIVstreamHistory: FC = () => {
 	const { network, address } = useContext(OnboardContext);
@@ -430,8 +432,11 @@ export const GIVstreamHistory: FC = () => {
 							// <span key={idx}>1</span>
 							<Fragment key={idx}>
 								<P as='span'>
-									{/* {convetSourceTypeToIcon(tokenAllocation.distributor)} */}
-									{tokenAllocation.distributor || 'Unknown'}
+									{convetSourceTypeToIcon(
+										tokenAllocation.distributor ||
+											'Unknown',
+									)}
+									{/* {tokenAllocation.distributor || 'Unknown'} */}
 								</P>
 								<B as='span'>
 									+
