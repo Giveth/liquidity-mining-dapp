@@ -343,39 +343,6 @@ export enum GIVstreamSources {
 	Garden,
 }
 
-const streamHistory = [
-	{
-		type: GIVstreamSources.Back,
-		flowRate: 5,
-		date: 'Sep 24',
-		Tx: '0xd41a333d7fe141',
-	},
-	{
-		type: GIVstreamSources.Farm,
-		flowRate: 1,
-		date: 'Sep 24',
-		Tx: '0xd41a333d7fe141',
-	},
-	{
-		type: GIVstreamSources.Back,
-		flowRate: 7,
-		date: 'Sep 24',
-		Tx: '0xd41a333d7fe141',
-	},
-	{
-		type: GIVstreamSources.Garden,
-		flowRate: 12,
-		date: 'Sep 24',
-		Tx: '0xd41a333d7fe141',
-	},
-	{
-		type: GIVstreamSources.Farm,
-		flowRate: 0.5,
-		date: 'Sep 24',
-		Tx: '0xd41a333d7fe141',
-	},
-];
-
 const convetSourceTypeToIcon = (type: GIVstreamSources) => {
 	switch (type) {
 		case GIVstreamSources.Back:
@@ -447,7 +414,7 @@ export const GIVstreamHistory: FC = () => {
 			{tokenAllocations && tokenAllocations.length > 0 && (
 				<Grid>
 					{tokenAllocations.map((tokenAllocation, idx) => {
-						const d = new Date();
+						const d = new Date(+`${tokenAllocation.timestamp}000`);
 						const date = d
 							.toDateString()
 							.split(' ')
