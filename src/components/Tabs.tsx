@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import { FC } from 'react';
 import {
 	brandColors,
 	Container,
@@ -7,24 +7,65 @@ import {
 	neutralColors,
 } from '@giveth/ui-design-system';
 import { Row } from './styled-components/Grid';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+
+const tabs = [
+	{
+		label: 'Overview',
+		href: '/',
+	},
+	{
+		label: 'GIVgarden',
+		href: '/garden',
+	},
+	{
+		label: 'GIVfarm',
+		href: '/farm',
+	},
+	{
+		label: 'GIVbacks',
+		href: '/back',
+	},
+	{
+		label: 'GIVstream',
+		href: '/stream',
+	},
+];
+
+const Tabs: FC = () => {
+	const { asPath } = useRouter();
+	console.log(`asPath`, asPath);
+
+	return (
+		<>
+			<LabelsContainer>
+				<Container>
+					<Row gap='16px'>
+						{tabs.map((tab, idx) => (
+							<Link key={idx} href={tab.href} passHref>
+								<Label
+									size='Big'
+									isActive={asPath === tab.href}
+								>
+									{tab.label}
+								</Label>
+							</Link>
+						))}
+					</Row>
+				</Container>
+			</LabelsContainer>
+		</>
+	);
+};
 
 const labelsContainer = styled(Row)``;
-
-interface ITabs {
-	label: string;
-	topComponent: ReactNode;
-	bottomComponent: ReactNode;
-}
-
-interface ITabsProps {
-	tabs: ITabs[];
-}
 
 interface ILabelProps {
 	isActive: boolean;
 }
 
-const Label = styled.div<ILabelProps>`
+const Label = styled(GLink)<ILabelProps>`
 	width: 176px;
 	padding: 12px;
 	text-align: center;
@@ -42,40 +83,5 @@ const Label = styled.div<ILabelProps>`
 const LabelsContainer = styled.div`
 	padding: 42px 0;
 `;
-
-const Tabs: FC<ITabsProps> = ({ tabs }) => {
-	const [index, setIndex] = useState(0);
-	const TabRef = useRef<HTMLDivElement>(null);
-
-	// useEffect(() => {
-	// 	if (TabRef && TabRef.current) {
-	// 		TabRef.current.scrollIntoView({ behavior: 'smooth' });
-	// 	}
-	// }, [index]);
-
-	return (
-		<>
-			<div>{tabs[index].topComponent}</div>
-			<LabelsContainer ref={TabRef}>
-				<Container>
-					<Row gap='16px'>
-						{tabs.map((tab, idx) => (
-							<Label
-								key={idx}
-								isActive={idx === index}
-								onClick={() => {
-									setIndex(idx);
-								}}
-							>
-								<GLink size='Big'>{tab.label}</GLink>
-							</Label>
-						))}
-					</Row>
-				</Container>
-			</LabelsContainer>
-			<div>{tabs[index].bottomComponent}</div>
-		</>
-	);
-};
 
 export default Tabs;
