@@ -439,7 +439,23 @@ export const GIVstreamHistory: FC = () => {
 									<GsHFrUnit as='span'>{` GIV/week`}</GsHFrUnit>
 								</B>
 								<P as='span'>{date}</P>
-								<TxHash as='span' size='Big'>
+								<TxHash
+									as='span'
+									size='Big'
+									onClick={() => {
+										const url =
+											network ===
+											config.MAINNET_NETWORK_NUMBER
+												? config.MAINNET_NETWORK
+														.blockExplorerUrls
+												: config.XDAI_NETWORK
+														.blockExplorerUrls;
+										window.open(
+											`${url}/tx/${tokenAllocation.txHash}`,
+											'_blank',
+										);
+									}}
+								>
 									{tokenAllocation.txHash}
 								</TxHash>
 							</Fragment>
