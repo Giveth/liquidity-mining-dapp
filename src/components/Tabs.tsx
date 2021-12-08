@@ -35,7 +35,6 @@ const tabs = [
 
 const Tabs: FC = () => {
 	const { asPath } = useRouter();
-	console.log(`asPath`, asPath);
 
 	return (
 		<>
