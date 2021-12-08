@@ -78,6 +78,7 @@ export const TabGIVstreamTop = () => {
 	const { tokenDistroHelper } = useTokenDistro();
 	const { currentBalance } = useBalances();
 	const { allocatedTokens } = currentBalance;
+	const { network: walletNetwork } = useContext(OnboardContext);
 
 	useEffect(() => {
 		setRewardLiquidPart(tokenDistroHelper.getLiquidPart(allocatedTokens));
@@ -109,6 +110,7 @@ export const TabGIVstreamTop = () => {
 							actionCb={() => {
 								setShowModal(true);
 							}}
+							network={walletNetwork}
 						/>
 					</Right>
 				</Row>

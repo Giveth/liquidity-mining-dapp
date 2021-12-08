@@ -39,6 +39,7 @@ import { useTokenDistro } from '@/context/tokenDistro.context';
 import { Zero } from '@ethersproject/constants';
 import BigNumber from 'bignumber.js';
 import { useBalances } from '@/context/balance.context';
+import config from '@/configuration';
 
 export const TabGIVbacksTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -79,6 +80,7 @@ export const TabGIVbacksTop = () => {
 							actionCb={() => {
 								setShowModal(true);
 							}}
+							network={config.XDAI_NETWORK_NUMBER}
 						/>
 					</Right>
 				</Row>

@@ -30,6 +30,7 @@ export const TabGIVfarmTop = () => {
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
 	const { tokenDistroHelper } = useTokenDistro();
 	const { totalEarned } = useFarms();
+	const { network: walletNetwork } = useContext(OnboardContext);
 
 	useEffect(() => {
 		setRewardLiquidPart(tokenDistroHelper.getLiquidPart(totalEarned));
@@ -56,6 +57,7 @@ export const TabGIVfarmTop = () => {
 							title='Your GIVfarm rewards'
 							liquidAmount={rewardLiquidPart}
 							stream={rewardStream}
+							network={walletNetwork}
 						/>
 					</Right>
 				</Row>

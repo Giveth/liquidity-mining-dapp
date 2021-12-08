@@ -90,6 +90,7 @@ export const TabGardenTop = () => {
 							actionCb={() => {
 								setShowModal(true);
 							}}
+							network={config.XDAI_NETWORK_NUMBER}
 						/>
 					</Right>
 				</Row>
