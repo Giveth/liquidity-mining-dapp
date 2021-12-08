@@ -63,7 +63,11 @@ export const SubmittedInnerModal: FC<IConfirmSubmitProps> = ({
 				target='_blank'
 				size='Big'
 			>
-				View on Blockscout&nbsp;
+				View on{' '}
+				{walletNetwork === config.MAINNET_NETWORK_NUMBER
+					? config.MAINNET_NETWORK.blockExplorerName
+					: config.XDAI_NETWORK.blockExplorerName}
+				&nbsp;
 				<IconExternalLink size={16} color={'currentColor'} />
 			</BlockExplorerLink>
 		</>
@@ -90,7 +94,11 @@ export const ConfirmedInnerModal: FC<IConfirmSubmitProps> = ({
 				target='_blank'
 				size='Big'
 			>
-				View on Blockscout&nbsp;
+				View on{' '}
+				{walletNetwork === config.MAINNET_NETWORK_NUMBER
+					? config.MAINNET_NETWORK.blockExplorerName
+					: config.XDAI_NETWORK.blockExplorerName}
+				&nbsp;
 				<IconExternalLink size={16} color={'currentColor'} />
 			</BlockExplorerLink>
 		</>
