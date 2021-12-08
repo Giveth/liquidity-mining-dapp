@@ -58,6 +58,7 @@ export const TabOverviewBottom = () => {
 							<Button
 								label='CLAIM YOUR GIV'
 								buttonType='primary'
+								onClick={goToClaim}
 							/>
 						}
 						icon={<IconGIV size={32} />}
@@ -114,6 +115,7 @@ export const TabOverviewBottom = () => {
 					<ClaimCardButton
 						label='CLAIM YOUR GIV'
 						buttonType='primary'
+						onClick={goToClaim}
 					></ClaimCardButton>
 				</ClaimCard>
 			</Container>
