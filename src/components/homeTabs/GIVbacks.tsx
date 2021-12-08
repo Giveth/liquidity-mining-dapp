@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Row } from '../styled-components/Grid';
 import router from 'next/router';
 import {
@@ -34,13 +34,14 @@ import {
 	GivAllocated,
 	InfoReadMore,
 } from './GIVbacks.sc';
-import { constants } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { Zero } from '@ethersproject/constants';
 import BigNumber from 'bignumber.js';
 import { useBalances } from '@/context/balance.context';
 import config from '@/configuration';
 import { HarvestAllModal } from '../modals/HarvestAll';
+import { getTokenDistroInfo, ITokenDistroInfo } from '@/services/subgraph';
+import { OnboardContext } from '@/context/onboard.context';
 
 export const TabGIVbacksTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -101,6 +102,23 @@ export const TabGIVbacksTop = () => {
 };
 
 export const TabGIVbacksBottom = () => {
+	const [tokenDistroInfo, setTokenDistroInfo] = useState<ITokenDistroInfo>();
+	const [round, setRound] = useState(0);
+	const { network: walletNetwork } = useContext(OnboardContext);
+
+	useEffect(() => {
+		getTokenDistroInfo(walletNetwork).then(distroInfo => {
+			if (distroInfo) {
+				setTokenDistroInfo(distroInfo);
+				console.log('distroInfo', distroInfo);
+				const deltaT = Date.now() - distroInfo.startTime.getTime();
+				const TwoWeek = 1209600000;
+				const _round = Math.floor(deltaT / TwoWeek) + 1;
+				setRound(_round);
+			}
+		});
+	}, [walletNetwork]);
+
 	const goToClaim = () => {
 		router.push('/claim');
 	};
@@ -141,22 +159,30 @@ export const TabGIVbacksBottom = () => {
 				<GIVBackCard>
 					<Row justifyContent='space-between' alignItems='center'>
 						<RoundSection>
-							<RoundTitle>GIVback Round 8</RoundTitle>
+							<RoundTitle>GIVback Round {round}</RoundTitle>
 							<RoundInfo>
 								<RoundInfoRow justifyContent='space-between'>
 									<P>Start Date</P>
-									<P>October 31, 2021</P>
+									<P>
+										{tokenDistroInfo
+											? tokenDistroInfo.startTime.toDateString()
+											: '-'}
+									</P>
 								</RoundInfoRow>
 								<RoundInfoRow justifyContent='space-between'>
 									<P>End Date</P>
-									<P>November 14, 2021 </P>
+									<P>
+										{tokenDistroInfo
+											? tokenDistroInfo.endTime.toDateString()
+											: '-'}
+									</P>
 								</RoundInfoRow>
 								<RoundInfoTallRow
 									justifyContent='space-between'
 									alignItems='center'
 								>
 									<P>GIV Allocated to Round</P>
-									<GivAllocated>133,291</GivAllocated>
+									<GivAllocated>1 M</GivAllocated>
 								</RoundInfoTallRow>
 								<RoundButton
 									size='small'
