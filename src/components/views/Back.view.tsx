@@ -7,15 +7,15 @@ import { TabOverviewTop, TabOverviewBottom } from '../homeTabs/Overview';
 
 import Tabs from '../Tabs';
 
-function HomeView() {
+function GIVbackView() {
 	return (
 		<>
 			<Header />
-			<TabOverviewTop />
+			<TabGIVbacksTop />
 			<Tabs />
-			<TabOverviewBottom />,
+			<TabGIVbacksBottom />,
 		</>
 	);
 }
 
-export default HomeView;
+export default GIVbackView;
