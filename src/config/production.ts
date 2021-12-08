@@ -17,6 +17,7 @@ const config: EnvConfig = {
 			decimals: 18,
 		},
 		rpcUrls: [],
+		blockExplorerName: ['etherscan'],
 		blockExplorerUrls: ['https://etherscan.io/'],
 		subgraphAddress:
 			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-kovan',
@@ -31,6 +32,7 @@ const config: EnvConfig = {
 			decimals: 18,
 		},
 		rpcUrls: ['https://rpc.xdaichain.com'],
+		blockExplorerName: ['blockscout'],
 		blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
 		subgraphAddress:
 			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-xdai',
