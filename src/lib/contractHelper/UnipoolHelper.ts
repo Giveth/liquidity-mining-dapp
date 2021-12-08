@@ -28,20 +28,20 @@ export class UnipoolHelper {
 		this.periodFinish = periodFinish;
 	}
 
-	get lastTimeRewardApplicable(): BigNumber {
+	lastTimeRewardApplicable(date: Date): BigNumber {
 		const lastTimeRewardApplicableMS: number = Math.min(
-			new Date().getTime(),
+			date.getTime(),
 			this.periodFinish.getTime(),
 		);
 		return toBN(Math.floor(lastTimeRewardApplicableMS / 1000));
 	}
 
-	get rewardPerToken(): BigNumber {
+	rewardPerToken(date: Date): BigNumber {
 		if (this.totalSupply.isZero()) {
 			return this.rewardPerTokenStored;
 		}
 		return this.rewardPerTokenStored.plus(
-			this.lastTimeRewardApplicable
+			this.lastTimeRewardApplicable(date)
 				.minus(this.lastUpdateTime.getTime() / 1000)
 				.times(this.rewardRate)
 				.times(1e18)
@@ -54,22 +54,12 @@ export class UnipoolHelper {
 		rewards: ethers.BigNumber,
 		userRewardPerTokenPaid: ethers.BigNumber,
 		stakedAmount: ethers.BigNumber,
+		date: Date,
 	): ethers.BigNumber => {
-		// const rewardPerToken = this.rewardPerToken;
-		// console.log('rewardPerToken:', rewardPerToken.toFixed());
-		// console.log(
-		// 	this.rewardPerToken
-		// 		.minus(userRewardPerTokenPaid.toString())
-		// 		.toFixed(0),
-		// );
-		// console.log('stakedAmount:', stakedAmount.toString());
-		// console.log(
-		// 	'userRewardPerTokenPaid:',
-		// 	userRewardPerTokenPaid.toString(),
-		// );
-		// console.log('rewards:', rewards.toString());
 		const earndBN = toBN(stakedAmount)
-			.times(this.rewardPerToken.minus(toBN(userRewardPerTokenPaid)))
+			.times(
+				this.rewardPerToken(date).minus(toBN(userRewardPerTokenPaid)),
+			)
 			.div(1e18)
 			.plus(rewards.toString());
 		// console.log('earned:', earndBN.toFixed(0));

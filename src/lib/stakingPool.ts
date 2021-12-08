@@ -218,6 +218,7 @@ export const getUserStakeInfo = (
 	type: StakingType,
 	balance: IBalances,
 	unipoolHelper: UnipoolHelper | undefined,
+	date: Date,
 ): {
 	stakedAmount: ethers.BigNumber;
 	notStakedAmount: ethers.BigNumber;
@@ -262,6 +263,7 @@ export const getUserStakeInfo = (
 			rewards,
 			rewardPerTokenPaid,
 			stakedAmount,
+			date,
 		);
 	}
 

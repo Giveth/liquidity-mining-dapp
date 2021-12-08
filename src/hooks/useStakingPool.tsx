@@ -25,7 +25,7 @@ export const useStakingPool = (
 	notStakedAmount: ethers.BigNumber;
 	rewardRatePerToken: BigNumber | null;
 } => {
-	const { address } = useOnboard();
+	const { address, lastBlockDate } = useOnboard();
 	const { currentBalance } = useBalances();
 	// const { mainnetBalance, xDaiBalance } = useBalances();
 
@@ -99,6 +99,7 @@ export const useStakingPool = (
 						poolStakingConfig.type,
 						currentBalance,
 						unipoolHelper,
+						lastBlockDate,
 					),
 				);
 			} catch (error) {

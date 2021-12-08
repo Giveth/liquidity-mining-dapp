@@ -8,6 +8,7 @@ import {
 	ReactNode,
 	useEffect,
 	useState,
+	useRef,
 } from 'react';
 import { API, Wallet } from 'bnc-onboard/dist/src/interfaces';
 import { providers } from 'ethers';
@@ -23,6 +24,7 @@ export interface IOnboardContext {
 	walletCheck: () => Promise<void>;
 	isReady: boolean;
 	provider: Web3Provider | null;
+	lastBlockDate: Date;
 }
 const initialValue = {
 	address: '',
@@ -32,6 +34,7 @@ const initialValue = {
 	walletCheck: () => Promise.resolve(),
 	isReady: false,
 	provider: null,
+	lastBlockDate: new Date(),
 };
 export const OnboardContext = createContext<IOnboardContext>(initialValue);
 
@@ -45,6 +48,34 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 	const [isReady, setIsReady] = useState(initialValue.isReady);
 	const [provider, setProvider] = useState<Web3Provider | null>(null);
 	const [wallet, setWallet] = useState<Wallet | null>(null);
+	const [date, setDate] = useState<Date>(new Date());
+
+	const datePoll = useRef<NodeJS.Timer | null>(null);
+
+	const clearDatePoll = () => {
+		if (datePoll.current) {
+			clearInterval(datePoll.current);
+			datePoll.current = null;
+		}
+	};
+
+	useEffect(() => {
+		if (provider) {
+			const fetchBlockDate = async () => {
+				try {
+					const block = await provider.getBlock('latest');
+					const { timestamp } = block;
+					setDate(new Date(timestamp * 1000 + 30000));
+				} catch (e) {}
+			};
+
+			fetchBlockDate();
+
+			datePoll.current = setInterval(fetchBlockDate, 60000);
+		}
+
+		return clearDatePoll;
+	}, [provider]);
 
 	const updateProvider = () => {
 		const ethersProvider =
@@ -168,6 +199,7 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 				connect,
 				provider,
 				walletCheck,
+				lastBlockDate: date,
 			}}
 		>
 			{children}
