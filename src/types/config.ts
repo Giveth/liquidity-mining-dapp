@@ -68,14 +68,18 @@ export interface EthereumChainParameter {
 	rpcUrls: string[];
 	blockExplorerUrls?: string[];
 	iconUrls?: string[]; // Currently ignored.
+}
+
+export interface ExtremeEthereumChainParameter extends EthereumChainParameter {
+	blockExplorerName: string[];
 	subgraphAddress: string;
 }
 
 export interface EnvConfig {
 	MAINNET_NETWORK_NUMBER: number;
 	XDAI_NETWORK_NUMBER: number;
-	MAINNET_NETWORK: EthereumChainParameter;
-	XDAI_NETWORK: EthereumChainParameter;
+	MAINNET_NETWORK: ExtremeEthereumChainParameter;
+	XDAI_NETWORK: ExtremeEthereumChainParameter;
 	MAINNET_CONFIG: MainnetNetworkConfig;
 	XDAI_CONFIG: XDaiNetworkConfig;
 	GARDEN_LINK: string;

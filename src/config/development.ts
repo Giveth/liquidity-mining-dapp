@@ -20,6 +20,7 @@ const config: EnvConfig = {
 		rpcUrls: [
 			'https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
 		],
+		blockExplorerName: ['etherscan'],
 		blockExplorerUrls: ['https://kovan.etherscan.io'],
 		subgraphAddress:
 			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-kovan',
@@ -34,6 +35,7 @@ const config: EnvConfig = {
 			decimals: 18,
 		},
 		rpcUrls: ['https://rpc.xdaichain.com'],
+		blockExplorerName: ['blockscout'],
 		blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
 		subgraphAddress:
 			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-xdai',
