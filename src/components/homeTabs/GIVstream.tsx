@@ -70,6 +70,7 @@ import { useBalances } from '@/context/balance.context';
 import { constants, ethers } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import BigNumber from 'bignumber.js';
+import { HarvestAllModal } from '../modals/HarvestAll';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -77,45 +78,57 @@ export const TabGIVstreamTop = () => {
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
 	const { tokenDistroHelper } = useTokenDistro();
 	const { currentBalance } = useBalances();
-	const { allocatedTokens } = currentBalance;
+	const { allocatedTokens, claimed } = currentBalance;
 	const { network: walletNetwork } = useContext(OnboardContext);
 
 	useEffect(() => {
-		setRewardLiquidPart(tokenDistroHelper.getLiquidPart(allocatedTokens));
+		setRewardLiquidPart(
+			tokenDistroHelper.getLiquidPart(allocatedTokens).sub(claimed),
+		);
 		setRewardStream(
 			tokenDistroHelper.getStreamPartTokenPerWeek(allocatedTokens),
 		);
 	}, [allocatedTokens, tokenDistroHelper]);
 
 	return (
-		<GIVstreamTopContainer>
-			<GIVstreamTopInnerContainer>
-				<Row justifyContent='space-between'>
-					<Left>
-						<Row alignItems='baseline' gap='16px'>
-							<GSTitle>GIVstream</GSTitle>
-							<IconGIVStream size={64} />
-						</Row>
-						<GSSubtitle size='medium'>
-							Welcome to the expanding GIViverse! The GIVstream
-							aligns community members with the long term success
-							of Giveth and the GIVeconomy.
-						</GSSubtitle>
-					</Left>
-					<Right>
-						<GIVstreamRewardCard
-							liquidAmount={rewardLiquidPart}
-							stream={rewardStream}
-							actionLabel='HARVEST'
-							actionCb={() => {
-								setShowModal(true);
-							}}
-							network={walletNetwork}
-						/>
-					</Right>
-				</Row>
-			</GIVstreamTopInnerContainer>
-		</GIVstreamTopContainer>
+		<>
+			<GIVstreamTopContainer>
+				<GIVstreamTopInnerContainer>
+					<Row justifyContent='space-between'>
+						<Left>
+							<Row alignItems='baseline' gap='16px'>
+								<GSTitle>GIVstream</GSTitle>
+								<IconGIVStream size={64} />
+							</Row>
+							<GSSubtitle size='medium'>
+								Welcome to the expanding GIViverse! The
+								GIVstream aligns community members with the long
+								term success of Giveth and the GIVeconomy.
+							</GSSubtitle>
+						</Left>
+						<Right>
+							<GIVstreamRewardCard
+								liquidAmount={rewardLiquidPart}
+								stream={rewardStream}
+								actionLabel='HARVEST'
+								actionCb={() => {
+									setShowModal(true);
+								}}
+								network={walletNetwork}
+							/>
+						</Right>
+					</Row>
+				</GIVstreamTopInnerContainer>
+			</GIVstreamTopContainer>
+			{showModal && (
+				<HarvestAllModal
+					title='GIVstream Rewards'
+					showModal={showModal}
+					setShowModal={setShowModal}
+					network={walletNetwork}
+				/>
+			)}
+		</>
 	);
 };
 
