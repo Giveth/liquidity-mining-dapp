@@ -259,7 +259,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 									/>
 									<HelpRow alignItems='center'>
 										<Caption>
-											Added to your GIVstream flowrate2
+											Added to your GIVstream flowrate
 										</Caption>
 										<IconHelp
 											size={16}
@@ -277,6 +277,9 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 							)}
 							{!claimableNow.isZero() && (
 								<>
+									<HelpRow alignItems='center'>
+										<B>Claimable from GIVstream</B>
+									</HelpRow>
 									<GIVBoxWithPrice
 										amount={claimableNow.sub(
 											givBackLiquidPart,
