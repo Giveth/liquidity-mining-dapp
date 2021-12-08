@@ -78,17 +78,21 @@ export const TabGIVstreamTop = () => {
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
 	const { tokenDistroHelper } = useTokenDistro();
 	const { currentBalance } = useBalances();
-	const { allocatedTokens, claimed } = currentBalance;
+	const { allocatedTokens, claimed, givback } = currentBalance;
 	const { network: walletNetwork } = useContext(OnboardContext);
 
 	useEffect(() => {
 		setRewardLiquidPart(
-			tokenDistroHelper.getLiquidPart(allocatedTokens).sub(claimed),
+			tokenDistroHelper
+				.getLiquidPart(allocatedTokens.sub(givback))
+				.sub(claimed),
 		);
 		setRewardStream(
-			tokenDistroHelper.getStreamPartTokenPerWeek(allocatedTokens),
+			tokenDistroHelper.getStreamPartTokenPerWeek(
+				allocatedTokens.sub(givback),
+			),
 		);
-	}, [allocatedTokens, tokenDistroHelper]);
+	}, [allocatedTokens, claimed, givback, tokenDistroHelper]);
 
 	return (
 		<>
