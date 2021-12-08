@@ -353,8 +353,8 @@ const convetSourceTypeToIcon = (distributor: string) => {
 				</Row>
 			);
 		case 'giveth':
-		case 'balancerLM':
-		case 'uniswapPool':
+		case 'balancerlm':
+		case 'uniswappool':
 		case 'givlm':
 			return (
 				<Row gap='16px'>
