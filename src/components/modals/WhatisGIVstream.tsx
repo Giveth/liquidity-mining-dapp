@@ -63,7 +63,12 @@ export const WhatisGIVstreamModal: FC<IWhatisGIVstreamModal> = ({
 						</GLink>
 					</Link>
 				</LinksRow>
-				<GotItButton label='GOT IT' onClick={() => {}} />
+				<GotItButton
+					label='GOT IT'
+					onClick={() => {
+						setShowModal(false);
+					}}
+				/>
 			</WhatisGIVstreamContainer>
 		</Modal>
 	);
