@@ -67,12 +67,24 @@ import config from '@/configuration';
 import { calcTokenInfo, convertMSToHRD, ITokenInfo } from '@/lib/helpers';
 import { NetworkSelector } from '@/components/NetworkSelector';
 import { useBalances } from '@/context/balance.context';
-import { BigNumber, ethers } from 'ethers';
-import { Zero } from '@ethersproject/constants';
+import { constants, ethers } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
+import BigNumber from 'bignumber.js';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
+	const [rewardLiquidPart, setRewardLiquidPart] = useState(constants.Zero);
+	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
+	const { tokenDistroHelper } = useTokenDistro();
+	const { currentBalance } = useBalances();
+	const { allocatedTokens } = currentBalance;
+
+	useEffect(() => {
+		setRewardLiquidPart(tokenDistroHelper.getLiquidPart(allocatedTokens));
+		setRewardStream(
+			tokenDistroHelper.getStreamPartTokenPerWeek(allocatedTokens),
+		);
+	}, [allocatedTokens, tokenDistroHelper]);
 
 	return (
 		<GIVstreamTopContainer>
@@ -91,10 +103,8 @@ export const TabGIVstreamTop = () => {
 					</Left>
 					<Right>
 						<GIVstreamRewardCard
-							liquidAmount={BigNumber.from(
-								'257000000000000000000',
-							)}
-							stream={0}
+							liquidAmount={rewardLiquidPart}
+							stream={rewardStream}
 							actionLabel='HARVEST'
 							actionCb={() => {
 								setShowModal(true);
@@ -389,6 +399,8 @@ export const GIVstreamHistory: FC = () => {
 	const count = 6;
 	const { currentBalance } = useBalances();
 	const { allocationCount } = currentBalance;
+
+	console.log(`allocationCount`, allocationCount);
 
 	const { tokenDistroHelper } = useTokenDistro();
 

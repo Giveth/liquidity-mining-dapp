@@ -177,7 +177,7 @@ export const getHistory = async (
 	count?: number,
 ): Promise<ITokenAllocation[]> => {
 	const query = `{
-		tokenAllocations(skip: ${from}, first:${count} ,firstorderBy: timestamp, orderDirection: desc, , where: { recipient: "${address.toLowerCase()}"  }) {
+		tokenAllocations(skip: ${from}, first:${count} ,orderBy: timestamp, orderDirection: desc, , where: { recipient: "${address.toLowerCase()}"  }) {
 		recipient
 		amount
 		timestamp
