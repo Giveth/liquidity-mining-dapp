@@ -2,7 +2,7 @@ import { GLink, neutralColors, brandColors } from '@giveth/ui-design-system';
 import { BigNumber, utils } from 'ethers';
 import { FC, useState, useCallback, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
-import { formatEthHelper, formatWeiHelper } from '../helpers/number';
+import { formatWeiHelper } from '../helpers/number';
 import { PoolStakingConfig } from '../types/config';
 import { Row } from './styled-components/Grid';
 
@@ -19,7 +19,7 @@ export const AmountInput: FC<IAmountInput> = ({
 	poolStakingConfig,
 	disabled = false,
 }) => {
-	const [displayAmount, setDisplayAmount] = useState('0');
+	const [displayAmount, setDisplayAmount] = useState('');
 
 	const setAmountPercentage = useCallback(
 		(percentage: number): void => {
@@ -33,10 +33,17 @@ export const AmountInput: FC<IAmountInput> = ({
 		[maxAmount],
 	);
 
-	const onChange = useCallback(value => {
-		setDisplayAmount(formatEthHelper(value, 6, false));
-		setAmount(utils.parseUnits('' + value).toString());
-	}, []);
+	const onChange = (value: string) => {
+		let temp;
+		try {
+			temp = utils.parseUnits(value || '0').toString();
+		} catch (error) {
+			console.log('number is not acceptable');
+			return;
+		}
+		setDisplayAmount(value);
+		setAmount(temp);
+	};
 
 	return (
 		<>
@@ -62,7 +69,8 @@ export const AmountInput: FC<IAmountInput> = ({
 			<Input
 				value={displayAmount}
 				type='number'
-				onChange={e => onChange(+e.target.value || '0')}
+				placeholder='0'
+				onChange={e => onChange(e.target.value)}
 				disabled={disabled}
 			/>
 			<FiltersRow>
