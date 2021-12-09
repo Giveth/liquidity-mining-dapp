@@ -27,7 +27,9 @@ export const TabOverviewTop = () => {
 				<PreTitle as='span'>Welcome to the</PreTitle>
 				<OverviewTitle>Giveth Economy</OverviewTitle>
 				<SubTitle size='medium'>
-					The GIVeconomy empowers our collective of projects, donors, builders, and community members to build the Future of Giving.
+					The GIVeconomy empowers our collective of projects, donors,
+					builders, and community members to build the Future of
+					Giving.
 				</SubTitle>
 			</Container>
 		</OverviewTopContainer>
@@ -44,7 +46,8 @@ export const TabOverviewBottom = () => {
 			<Container>
 				<TabTitle weight={700}>The Economy of Giving</TabTitle>
 				<TabDesc size='medium'>
-					Giveth is rewarding and empowering those who give to projects, to society, and to the world!
+					Giveth is rewarding and empowering those who give to
+					projects, to society, and to the world!
 				</TabDesc>
 				<Row wrap={1} justifyContent='space-between'>
 					<EGDataBlock

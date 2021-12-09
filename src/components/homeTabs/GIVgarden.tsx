@@ -74,7 +74,8 @@ export const TabGardenTop = () => {
 							<IconGIVGarden size={64} />
 						</Row>
 						<Subtitle size='medium'>
-							The GIVgarden is the decentralized governance platform for the GIVeconomy.
+							The GIVgarden is the decentralized governance
+							platform for the GIVeconomy.
 						</Subtitle>
 					</Left>
 					<Right>
