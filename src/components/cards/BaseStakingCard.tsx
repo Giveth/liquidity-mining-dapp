@@ -229,7 +229,12 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 					/>
 				</StakePoolInfoContainer>
 			</StakingPoolContainer>
-			<APRModal showModal={showAPRModal} setShowModal={setShowAPRModal} />
+			<APRModal
+				showModal={showAPRModal}
+				setShowModal={setShowAPRModal}
+				poolStakingConfig={poolStakingConfig}
+				maxAmount={userNotStakedAmount}
+			/>
 			{showStakeModal &&
 				(isV3Staking ? (
 					<V3StakeModal
