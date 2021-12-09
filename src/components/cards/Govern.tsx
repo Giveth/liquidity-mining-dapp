@@ -1,16 +1,28 @@
-import { useState, ChangeEvent, FC, useContext } from 'react';
+import {
+	ChangeEvent,
+	FC,
+	useContext,
+	useEffect,
+	useRef,
+	useState,
+} from 'react';
 import Image from 'next/image';
+import BigNumber from 'bignumber.js';
+import { utils } from 'ethers';
 import styled from 'styled-components';
+import { ArrowButton, Card, MaxGIV } from './common';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
 import { H2, H4, P } from '../styled-components/Typography';
-import { ArrowButton, Card, ICardProps, MaxGIV } from './common';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
-import { utils } from 'ethers';
+import config from '../../configuration';
 import { UserContext } from '../../context/user.context';
+import { formatEthHelper, Zero } from '../../helpers/number';
+import { fetchGivStakingInfo } from '../../lib/stakingPool';
+import { APR } from '../../types/poolInfo';
 
 const GovernCardContainer = styled(Card)`
 	::before {
@@ -54,6 +66,10 @@ const GovernLabel = styled.span`
 	gap: 6px;
 `;
 
+const MaxStakeGIV = styled(MaxGIV)`
+	cursor: pointer;
+`;
+
 const GovernInput = styled.div`
 	width: 392px;
 `;
@@ -73,6 +89,45 @@ const GovernGIVEarn = styled.div`
 	text-align: left;
 `;
 
+const PoolCardContainer = styled.div`
+	z-index: 1;
+`;
+
+const PoolCardTitle = styled.div`
+	font-size: 16px;
+	padding-bottom: 12px;
+`;
+
+const PoolCard = styled.div`
+	width: 350px;
+	height: 164px;
+	padding: 10px 30px;
+
+	background: #211985;
+	border-radius: 16px;
+	z-index: 1;
+`;
+
+const PoolItems = styled.div`
+	padding: 12px 0;
+`;
+
+const PoolItem = styled.div`
+	font-size: 14px;
+	height: 40px;
+	line-height: 40px;
+	display: flex;
+	gap: 6px;
+`;
+
+const PoolItemBold = styled.div`
+	font-size: 16px;
+	font-weight: 500;
+	line-height: 40px;
+	display: flex;
+	gap: 6px;
+`;
+
 const GovernFooter = styled.div`
 	max-width: 500px;
 	font-size: 12px;
@@ -85,6 +140,9 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { claimableAmount } = useContext(UserContext);
 
 	const [stacked, setStacked] = useState(0);
+	const [potentialClaim, setPotentialClaim] = useState<BigNumber>(Zero);
+	const [earnEstimate, setEarnEstimate] = useState<number>(0);
+	const [apr, setApr] = useState<APR>(null);
 
 	const stackedChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
 		if (e.target.value.length === 0) {
@@ -95,6 +153,38 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 			setStacked(+e.target.value);
 		}
 	};
+
+	useEffect(() => {
+		const stackedWithApr = apr ? apr.times(stacked).div(100).div(12) : Zero;
+		setPotentialClaim(stackedWithApr.times(0.1));
+		setEarnEstimate((stackedWithApr.toNumber() * 0.9) / (52 * 5));
+	}, [apr, stacked]);
+
+	const mounted = useRef(true);
+	useEffect(
+		() => () => {
+			mounted.current = false;
+		},
+		[],
+	);
+
+	useEffect(() => {
+		const cb = () => {
+			fetchGivStakingInfo(
+				config.XDAI_CONFIG.GIV.LM_ADDRESS,
+				config.XDAI_NETWORK_NUMBER,
+			)
+				.then(({ apr: _apr }) => {
+					mounted.current && setApr(_apr);
+				})
+				.catch(e => console.error('Error on fetching APR:', e));
+		};
+
+		cb();
+		const interval = setInterval(cb, 120 * 1000);
+
+		return () => clearInterval(interval);
+	}, [stacked]);
 
 	return (
 		<GovernCardContainer activeIndex={activeIndex} index={index}>
@@ -129,9 +219,17 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 							justifyContent={'space-between'}
 						>
 							<GovernLabel>Amount of GIV wrapped</GovernLabel>
-							<MaxGIV>{`Max ${utils.formatEther(
+							<MaxStakeGIV
+								onClick={() =>
+									setStacked(
+										Number(
+											utils.formatEther(claimableAmount),
+										),
+									)
+								}
+							>{`Max ${utils.formatEther(
 								claimableAmount,
-							)} GIV`}</MaxGIV>
+							)} GIV`}</MaxStakeGIV>
 						</Row>
 						<GovernInput>
 							<InputWithUnit
@@ -142,21 +240,37 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 						</GovernInput>
 					</div>
 				</GovernGIVToken>
-				<YouCanEarn>
-					<H4 as='h2'>You will earn an estimated</H4>
-					<Row alignItems={'center'} justifyContent={'space-between'}>
-						<GovernGIVEarn>{stacked}</GovernGIVEarn>
-						<GovernLabel>
-							GIV/month{' '}
-							<Image
-								src='/images/icons/questionMark.svg'
-								height='16'
-								width='16'
-								alt='Operations icon'
-							/>
-						</GovernLabel>
-					</Row>
-				</YouCanEarn>
+				<PoolCardContainer>
+					<PoolCardTitle>If you stake for 1 month:</PoolCardTitle>
+					<PoolCard>
+						<PoolItems>
+							<Row justifyContent='space-between'>
+								<PoolItem>APR</PoolItem>
+								<PoolItemBold>
+									<Image
+										src='/images/icons/star.svg'
+										height='16'
+										width='16'
+										alt='Star icon'
+									/>
+									{formatEthHelper(apr, 2)}%
+								</PoolItemBold>
+							</Row>
+							<Row justifyContent='space-between'>
+								<PoolItem>Claimable</PoolItem>
+								<PoolItemBold>
+									{formatEthHelper(potentialClaim, 2)} GIV
+								</PoolItemBold>
+							</Row>
+							<Row justifyContent='space-between'>
+								<PoolItem>Streaming</PoolItem>
+								<PoolItemBold>
+									{earnEstimate.toFixed(2)} GIV/week
+								</PoolItemBold>
+							</Row>
+						</PoolItems>
+					</PoolCard>
+				</PoolCardContainer>
 			</Row>
 			<Row>
 				<GovernFooter>
