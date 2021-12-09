@@ -1,6 +1,7 @@
 export interface BasicStakingConfig {
 	LM_ADDRESS: string;
 	GARDEN_ADDRESS?: string;
+	BUY_LINK?: string;
 }
 
 export enum StakingType {

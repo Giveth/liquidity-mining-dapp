@@ -134,6 +134,12 @@ export const TabGIVbacksBottom = () => {
 								label='DONATE TO EARN GIV'
 								buttonType='secondary'
 								size='large'
+								onClick={() => {
+									window.open(
+										'https://giveth.io/projects',
+										'_blank',
+									);
+								}}
 							/>
 						}
 					>
@@ -148,6 +154,12 @@ export const TabGIVbacksBottom = () => {
 								label='VERIFY YOUR PROJECT'
 								buttonType='secondary'
 								size='large'
+								onClick={() => {
+									window.open(
+										'https://hlfkiwoiwhi.typeform.com/to/pXxk0HO5',
+										'_blank',
+									);
+								}}
 							/>
 						}
 					>
@@ -188,6 +200,12 @@ export const TabGIVbacksBottom = () => {
 									size='small'
 									label={'DONATE TO EARN GIV'}
 									buttonType='primary'
+									onClick={() => {
+										window.open(
+											'https://giveth.io/projects',
+											'_blank',
+										);
+									}}
 								/>
 							</RoundInfo>
 						</RoundSection>

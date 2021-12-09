@@ -221,7 +221,17 @@ export const TabGIVstreamBottom = () => {
 								buttonType='secondary'
 								size='large'
 								onClick={() => {
-									console.log('clicked');
+									if (increaseSecRef.current) {
+										const elDistanceToTop =
+											window.pageYOffset +
+											increaseSecRef.current.getBoundingClientRect()
+												.top;
+										window.scrollTo({
+											top: elDistanceToTop || 100,
+											left: 0,
+											behavior: 'smooth',
+										});
+									}
 								}}
 							/>
 						}

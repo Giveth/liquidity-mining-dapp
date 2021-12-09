@@ -47,6 +47,8 @@ const config: EnvConfig = {
 		TOKEN_DISTRO_ADDRESS: '0x35f8414Ca6d5629887b9049cE99C7B592E583dd3',
 		GIV: {
 			LM_ADDRESS: '0xE1039af141101CB4A3C6D7B88FD0dFaB246Bab97',
+			BUY_LINK:
+				'https://app.uniswap.org/#/swap?outputCurrency=0x03472537CB64652Aa1224E4aaF6f33a34e73E877',
 		},
 
 		nodeUrl: 'https://kovan.infura.io/v3/' + INFURA_API_KEY,
@@ -97,6 +99,8 @@ const config: EnvConfig = {
 		GIV: {
 			LM_ADDRESS: '0x860C72092b7FBca277F94ba1Df11e33043724eAF',
 			GARDEN_ADDRESS: '0xF07eaBb35aFFB171D13435a12dbDCE728915D8A1',
+			BUY_LINK:
+				'https://app.honeyswap.org/#/swap?outputCurrency=0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3',
 		},
 
 		pools: [
