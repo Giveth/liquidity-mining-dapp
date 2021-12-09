@@ -35,9 +35,17 @@ export const getNftManagerPositionsContract = (
 	);
 };
 
-export const getUniswapV3StakerContract = (provider: Web3Provider | null) => {
-	const signer = provider?.getSigner();
+export const getUniswapV3StakerContract = (
+	provider: Web3Provider | null,
+	isUnchecked?: boolean,
+) => {
+	var signer;
 
+	if (isUnchecked) {
+		signer = provider?.getSigner().connectUnchecked();
+	} else {
+		signer = provider?.getSigner();
+	}
 	if (!signer) {
 		return;
 	}

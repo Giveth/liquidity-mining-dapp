@@ -52,24 +52,28 @@ export const SubmittedInnerModal: FC<IConfirmSubmitProps> = ({
 				height={100}
 				width={100}
 			/>
-			<TxSubmit weight={700}>Transaction submitted</TxSubmit>
-			<BlockExplorerLink
-				href={`${
-					walletNetwork === config.MAINNET_NETWORK_NUMBER
-						? config.MAINNET_NETWORK.blockExplorerUrls
-						: config.XDAI_NETWORK.blockExplorerUrls
-				}
+			<TxSubmit weight={700}>
+				{txHash && 'Transaction submitted'}
+			</TxSubmit>
+			{txHash && (
+				<BlockExplorerLink
+					href={`${
+						walletNetwork === config.MAINNET_NETWORK_NUMBER
+							? config.MAINNET_NETWORK.blockExplorerUrls
+							: config.XDAI_NETWORK.blockExplorerUrls
+					}
 			/tx/${txHash}`}
-				target='_blank'
-				size='Big'
-			>
-				View on{' '}
-				{walletNetwork === config.MAINNET_NETWORK_NUMBER
-					? config.MAINNET_NETWORK.blockExplorerName
-					: config.XDAI_NETWORK.blockExplorerName}
-				&nbsp;
-				<IconExternalLink size={16} color={'currentColor'} />
-			</BlockExplorerLink>
+					target='_blank'
+					size='Big'
+				>
+					View on{' '}
+					{walletNetwork === config.MAINNET_NETWORK_NUMBER
+						? config.MAINNET_NETWORK.blockExplorerName
+						: config.XDAI_NETWORK.blockExplorerName}
+					&nbsp;
+					<IconExternalLink size={16} color={'currentColor'} />
+				</BlockExplorerLink>
+			)}
 		</>
 	);
 };
