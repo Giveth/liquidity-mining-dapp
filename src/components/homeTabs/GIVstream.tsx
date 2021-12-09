@@ -272,41 +272,41 @@ export const TabGIVstreamBottom = () => {
 							title='GIVbacks'
 							button={
 								<GsButton
-									label='GIVE AND EARN'
+									label='SEE PROJECTS'
 									buttonType='primary'
 									size='medium'
 								/>
 							}
 						>
-							Donate to verified projects on Giveth. Earn GIV and
-							increase your GIVstream with GIVbacks.
+							Donate to verified projects on Giveth. Get GIV and
+							increase your GIVstream with the GIVbacks program.
 						</IGsDataBox>
 						<IGsDataBox
 							title='GIVgarden'
 							button={
 								<GsButton
-									label='SEE OPEN PROPOSALS'
+									label='SEE PROPOSALS'
 									buttonType='primary'
 									size='medium'
 								/>
 							}
 						>
 							The GIVgarden is the decentralized governance
-							platform for the GIVeconomy. Earn GIV and increase
-							your GIVstream when you vote.
+							platform for the GIVeconomy. Increase
+							your GIVstream when you wrap GIV to vote.
 						</IGsDataBox>
 						<IGsDataBox
 							title='GIVfarm'
 							button={
 								<GsButton
-									label='STAKE AND EARN'
+									label='SEE OPPORTUNITIES'
 									buttonType='primary'
 									size='medium'
 								/>
 							}
 						>
 							Stake GIV, or become a liquidity provider and stake
-							LP tokens in the GIVfarm. Earn GIV rewards and
+							LP tokens in the GIVfarm. Get GIV rewards and
 							increase your GIVstream.
 						</IGsDataBox>
 					</Row>
