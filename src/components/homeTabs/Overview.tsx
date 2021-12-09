@@ -17,6 +17,7 @@ import {
 	EGDataBlock,
 	ParticipateDataBlock,
 	ClaimCardQuote,
+	DataBlockButton,
 } from './Overview.sc';
 import { IconGIV } from '../Icons/GIV';
 
@@ -81,7 +82,7 @@ export const TabOverviewBottom = () => {
 				<Row wrap={1} justifyContent='space-between'>
 					<ParticipateDataBlock
 						title='Give'
-						button={<Button label='DONATE TO PROJECTS' />}
+						button={<DataBlockButton label='DONATE TO PROJECTS' />}
 					>
 						Donate to empower change-makers that are working hard to
 						make a difference. Get GIVbacks when you donate to
@@ -89,7 +90,7 @@ export const TabOverviewBottom = () => {
 					</ParticipateDataBlock>
 					<ParticipateDataBlock
 						title='Govern'
-						button={<Button label='SEE PROPOSALS' />}
+						button={<DataBlockButton label='SEE PROPOSALS' />}
 					>
 						The GIVeconomy empowers our collective of projects,
 						donors, builders and community members to build the
@@ -97,7 +98,7 @@ export const TabOverviewBottom = () => {
 					</ParticipateDataBlock>
 					<ParticipateDataBlock
 						title='Earn'
-						button={<Button label='SEE FARMS' />}
+						button={<DataBlockButton label='SEE FARMS' />}
 					>
 						Become a liquidity provider and stake tokens in the
 						GIVfarm to generate even more GIV in rewards.
