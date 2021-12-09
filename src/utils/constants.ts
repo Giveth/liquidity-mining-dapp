@@ -1,4 +1,40 @@
-const chainName = (chainId: number) => {
+export const networksParams: Record<number, any> = {
+	1: {
+		chainId: '0x1',
+		chainName: 'Mainnet',
+		nativeCurrency: {
+			name: 'ETH',
+			symbol: 'ETH',
+			decimals: 18,
+		},
+		blockExplorerUrls: ['https://etherscan.io'],
+	},
+	42: {
+		chainId: '0x2A',
+		chainName: 'Kovan',
+		nativeCurrency: {
+			name: 'Kovan ETH',
+			symbol: 'ETH',
+			decimals: 18,
+		},
+		blockExplorerUrls: ['https://kovan.etherscan.io'],
+	},
+	100: {
+		chainId: '0x64',
+		chainName: 'xDAI Chain',
+		iconUrls: [
+			'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/xdai/info/logo.png',
+		],
+		nativeCurrency: {
+			name: 'xDAI',
+			symbol: 'xDAI',
+			decimals: 18,
+		},
+		blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
+	},
+};
+
+export const chainName = (chainId: number) => {
 	switch (chainId) {
 		case 31337:
 			return 'Hardhat';
@@ -8,6 +44,8 @@ const chainName = (chainId: number) => {
 			return 'Rinkeby';
 		case 100:
 			return 'xDai';
+		case 42:
+			return 'Kovan';
 		default:
 			return 'Unknown';
 	}
