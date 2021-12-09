@@ -87,7 +87,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	const { tokenDistroHelper } = useTokenDistro();
 	const { setInfo } = useFarms();
 
-	const { type, title, description, provideLiquidityLink, LM_ADDRESS, unit } =
+	const { type, title, description, provideLiquidityLink, BUY_LINK, unit } =
 		poolStakingConfig;
 
 	const isV3Staking = type === StakingType.UNISWAP;
@@ -208,11 +208,17 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 					</StakeButtonsRow>
 					<LiquidityButton
 						label={
-							title === 'GIV'
+							type === StakingType.GIV_LM
 								? 'BUY GIV TOKENS'
 								: 'PROVIDE LIQUIDITY'
 						}
-						onClick={() => window.open(provideLiquidityLink)}
+						onClick={() =>
+							window.open(
+								type === StakingType.GIV_LM
+									? BUY_LINK
+									: provideLiquidityLink,
+							)
+						}
 						buttonType='texty'
 						icon={
 							<IconExternalLink
