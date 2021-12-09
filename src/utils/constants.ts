@@ -7,6 +7,9 @@ export const networksParams: Record<number, any> = {
 			symbol: 'ETH',
 			decimals: 18,
 		},
+		rpcUrls: [
+			'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+		],
 		blockExplorerUrls: ['https://etherscan.io'],
 	},
 	42: {
@@ -17,6 +20,9 @@ export const networksParams: Record<number, any> = {
 			symbol: 'ETH',
 			decimals: 18,
 		},
+		rpcUrls: [
+			'https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+		],
 		blockExplorerUrls: ['https://kovan.etherscan.io'],
 	},
 	100: {
@@ -30,6 +36,7 @@ export const networksParams: Record<number, any> = {
 			symbol: 'xDAI',
 			decimals: 18,
 		},
+		rpcUrls: ['https://rpc.xdaichain.com'],
 		blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
 	},
 };
