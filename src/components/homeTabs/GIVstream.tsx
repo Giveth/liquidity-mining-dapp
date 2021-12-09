@@ -215,7 +215,7 @@ export const TabGIVstreamBottom = () => {
 					>
 						At launch, 10% of the total supply of GIV is liquid. The
 						rest is released via the GIVstream, becoming liquid
-						gradually until November 23, 2026.
+						gradually until December 24, 2026.
 					</GsDataBlock>
 					<GsDataBlock
 						title='Expanding GIViverse'
