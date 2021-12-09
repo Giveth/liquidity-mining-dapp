@@ -6,7 +6,7 @@ import { Row } from '../styled-components/Grid';
 import { H2, P } from '../styled-components/Typography';
 import { ArrowButton, Card, Header } from './common';
 import { OnboardContext } from '../../context/onboard.context';
-import { UserContext } from '../../context/user.context';
+import { UserContext, GiveDropStateType } from '../../context/user.context';
 import { utils } from 'ethers';
 import {
 	ClaimViewContext,
@@ -30,7 +30,7 @@ const ConnectCardContainer = styled(Card)<IConnectCardContainerProps>`
 	}
 `;
 const Title = styled(H2)`
-	width: 700px;
+	width: 800px;
 `;
 
 const Desc = styled(P)`
@@ -71,22 +71,23 @@ const EarnGiv = styled.span`
 	top: 494px;
 `;
 
-enum GiveDropStateType {
-	notConnected,
-	Success,
-	Missed,
-}
+const ClaimedRow = styled(Row)`
+	gap: 50px;
+`;
+
+const ChangeWallet = styled.div`
+	color: #fed670;
+	cursor: pointer;
+`;
 
 export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
 
 	const { address, connect } = useContext(OnboardContext);
-	const { submitUserAddress, claimableAmount } = useContext(UserContext);
+	const { submitUserAddress, claimableAmount, giveDropState, resetWallet } =
+		useContext(UserContext);
 
 	const [walletAddress, setWalletAddress] = useState<string>('');
-	const [giveDropState, setGiveDropState] = useState<GiveDropStateType>(
-		GiveDropStateType.notConnected,
-	);
 	const [addressSubmitted, setAddressSubmitted] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 
@@ -98,11 +99,13 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 		if (addressSubmitted) {
 			console.log('claimableAmount:', utils.formatEther(claimableAmount));
 
-			setGiveDropState(
-				claimableAmount.isZero()
-					? GiveDropStateType.Missed
-					: GiveDropStateType.Success,
-			);
+			// if (claimableAmount.isZero()) {
+			// 	setGiveDropState(GiveDropStateType.Missed);
+			// } else if (claimableAmount.isNegative()) {
+			// 	setGiveDropState(GiveDropStateType.Claimed);
+			// } else {
+			// 	setGiveDropState(GiveDropStateType.Success);
+			// }
 
 			setLoading(false);
 			setAddressSubmitted(false);
@@ -125,6 +128,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 		right: '0',
 		bg: '/images/connectbg.png',
 	};
+
 	switch (giveDropState) {
 		case GiveDropStateType.notConnected:
 			title = 'Claim your GIVdrop';
@@ -165,6 +169,19 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 				bg: '/images/connectMissbg.png',
 			};
 			break;
+		case GiveDropStateType.Claimed:
+			title = 'You already claimed!';
+			desc =
+				'It seems like you already claimed your GIVdrop with this address.';
+			btnLabel = 'JOIN THE GIVECONOMY';
+			bg = {
+				width: '622px',
+				height: '245px',
+				top: '337px',
+				right: '300px',
+				bg: '/images/connectMissbg.png',
+			};
+			break;
 		default:
 			break;
 	}
@@ -177,38 +194,50 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 					{desc}
 				</Desc>
 			</Header>
-			{giveDropState !== GiveDropStateType.Success && (
-				<Row alignItems={'center'} justifyContent={'space-between'}>
-					<ConnectButton secondary onClick={connect}>
-						{btnLabel}
-					</ConnectButton>
-					<Span>or</Span>
-					<InputWithButtonContainer>
-						<WalletAddressInputWithButton
-							btnLable='Check'
-							placeholder='Enter an address to check your GIVdrop'
-							walletAddress={walletAddress}
-							onSubmit={submitAddress}
-							disabled={loading}
-							onUpdate={() => {
-								setGiveDropState(
-									GiveDropStateType.notConnected,
-								);
-							}}
-						/>
-					</InputWithButtonContainer>
-				</Row>
-			)}
+			{giveDropState !== GiveDropStateType.Success &&
+				giveDropState !== GiveDropStateType.Claimed && (
+					<Row alignItems={'center'} justifyContent={'space-between'}>
+						<ConnectButton secondary onClick={connect}>
+							{btnLabel}
+						</ConnectButton>
+						<Span>or</Span>
+						<InputWithButtonContainer>
+							<WalletAddressInputWithButton
+								btnLable='Check'
+								placeholder='Enter an address to check your GIVdrop'
+								walletAddress={walletAddress}
+								onSubmit={submitAddress}
+								disabled={loading}
+								onUpdate={() => {
+									resetWallet();
+								}}
+							/>
+						</InputWithButtonContainer>
+					</Row>
+				)}
 			{giveDropState === GiveDropStateType.Missed && (
 				<>
-					<EarnGiv>How to earn GIV</EarnGiv>
-					<ArrowButton />
+					<EarnGiv>Explore anyway</EarnGiv>
+					<ArrowButton onClick={goNextStep} />
 				</>
 			)}
 			{giveDropState === GiveDropStateType.Success &&
-				activeIndex === index && (
-					<SuccessArrowButton onClick={goNextStep} />
-				)}
+				activeIndex === index && <ArrowButton onClick={goNextStep} />}
+			{giveDropState === GiveDropStateType.Claimed && (
+				<>
+					<ClaimedRow
+						alignItems={'center'}
+						justifyContent={'flex-start'}
+					>
+						<ConnectButton secondary>{btnLabel}</ConnectButton>
+						<ChangeWallet onClick={() => resetWallet()}>
+							Try different wallet address
+						</ChangeWallet>
+					</ClaimedRow>
+					<EarnGiv>Explore anyway</EarnGiv>
+					<ArrowButton onClick={goNextStep} />
+				</>
+			)}
 		</ConnectCardContainer>
 	);
 };
