@@ -40,6 +40,7 @@ const Button = styled.button<IHasBG>`
 	font-size: 12px;
 	line-height: 18px;
 	text-transform: uppercase;
+	cursor: pointer;
 `;
 
 interface IWalletAddressInputWithButtonProps {
