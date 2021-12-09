@@ -215,12 +215,12 @@ export const TabGIVbacksBottom = () => {
 								When you give you get GIV back!
 							</InfoTitle>
 							<InfoDesc>
-								GIVbacks rounds last two weeks. After the End
-								Date, the GIV Allocated to Round will be
-								distributed to Givers who donated to verified
-								project during the round. Projects must apply
-								for verification at least 1 week prior to the
-								Start Date in order to be included in the round.
+								Each GIVbacks round lasts two weeks. After the End
+								Date, the GIV Allocated to that round is distributed
+								to Givers who donated to verified projects during
+								the round. Projects must apply for verification
+								at least 1 week prior to the Start Date in order
+								to be included in the round.
 							</InfoDesc>
 							<InfoReadMore>
 								Read More{' '}
