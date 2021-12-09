@@ -49,6 +49,7 @@ const config: EnvConfig = {
 
 		GIV: {
 			LM_ADDRESS: '',
+			BUY_LINK: '',
 		},
 	},
 
@@ -62,7 +63,9 @@ const config: EnvConfig = {
 		pools: [],
 
 		GIV: {
-			LM_ADDRESS: '0xF66823fdc33B9F4C66dB4C3394FF139872C12f16',
+			LM_ADDRESS: '',
+			GARDEN_ADDRESS: '',
+			BUY_LINK: '',
 		},
 	},
 };
