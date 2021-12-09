@@ -25,7 +25,7 @@ const tokenOptions = {
 	},
 };
 
-export async function addNodeToken(network: number): Promise<void> {
+export async function addGIVToken(network: number): Promise<void> {
 	const { ethereum } = window;
 
 	await ethereum.request({
