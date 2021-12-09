@@ -27,9 +27,7 @@ export const TabOverviewTop = () => {
 				<PreTitle as='span'>Welcome to the</PreTitle>
 				<OverviewTitle>Giveth Economy</OverviewTitle>
 				<SubTitle size='medium'>
-					The Giveth Economy is the collective of projects, donors,
-					builders, and community members building the Future of
-					Giving.
+					The GIVeconomy empowers our collective of projects, donors, builders, and community members to build the Future of Giving.
 				</SubTitle>
 			</Container>
 		</OverviewTopContainer>
@@ -46,9 +44,7 @@ export const TabOverviewBottom = () => {
 			<Container>
 				<TabTitle weight={700}>The Economy of Giving</TabTitle>
 				<TabDesc size='medium'>
-					Giveth is building a future in which giving is effortless
-					and people all around the world are rewarded for creating
-					positive change.
+					Giveth is rewarding and empowering those who give to projects, to society, and to the world!
 				</TabDesc>
 				<Row wrap={1} justifyContent='space-between'>
 					<EGDataBlock
@@ -56,7 +52,7 @@ export const TabOverviewBottom = () => {
 						subtitle='Donate, earn, govern'
 						button={
 							<Button
-								label='CLAIM YOUR GIV'
+								label='CLAIM YOUR GIVDROP'
 								buttonType='primary'
 								onClick={goToClaim}
 							/>
@@ -82,7 +78,7 @@ export const TabOverviewBottom = () => {
 				<Row wrap={1} justifyContent='space-between'>
 					<ParticipateDataBlock
 						title='Give'
-						button={<Button label='Donate to projects' />}
+						button={<Button label='DONATE TO PROJECTS' />}
 					>
 						Donate to empower change-makers that are working hard to
 						make a difference. Get GIVbacks when you donate to
@@ -90,7 +86,7 @@ export const TabOverviewBottom = () => {
 					</ParticipateDataBlock>
 					<ParticipateDataBlock
 						title='Govern'
-						button={<Button label='See proposals' />}
+						button={<Button label='SEE PROPOSALS' />}
 					>
 						The GIVeconomy empowers our collective of projects,
 						donors, builders and community members to build the
@@ -98,7 +94,7 @@ export const TabOverviewBottom = () => {
 					</ParticipateDataBlock>
 					<ParticipateDataBlock
 						title='Earn'
-						button={<Button label='Add Liquidty and Earn' />}
+						button={<Button label='SEE FARMS' />}
 					>
 						Become a liquidity provider and stake tokens in the
 						GIVfarm to generate even more GIV in rewards.
@@ -106,7 +102,7 @@ export const TabOverviewBottom = () => {
 				</Row>
 				<ClaimCard>
 					<ClaimCardTitle weight={900}>
-						Claim your GIV tokens
+						Claim your GIVdrop
 					</ClaimCardTitle>
 					<ClaimCardQuote size='small'>
 						Connect your wallet or check an ethereum address to see

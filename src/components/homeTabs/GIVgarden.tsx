@@ -74,9 +74,7 @@ export const TabGardenTop = () => {
 							<IconGIVGarden size={64} />
 						</Row>
 						<Subtitle size='medium'>
-							The Giveth Economy is the collective of projects,
-							donors, builders, and community members building the
-							Future of Giving.
+							The GIVgarden is the decentralized governance platform for the GIVeconomy.
 						</Subtitle>
 					</Left>
 					<Right>

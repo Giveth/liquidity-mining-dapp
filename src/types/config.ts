@@ -5,11 +5,11 @@ export interface BasicStakingConfig {
 }
 
 export enum StakingType {
-	UNISWAP = 'UNISWAP',
-	BALANCER = 'BALANCER',
-	SUSHISWAP = 'SUSHI SWAP',
-	HONEYSWAP = 'HONEY SWAP',
-	GIV_LM = 'GIV LM',
+	UNISWAP = 'Uniswap',
+	BALANCER = 'Balancer',
+	SUSHISWAP = 'Sushiswap',
+	HONEYSWAP = 'Honeyswap',
+	GIV_LM = 'Staking',
 }
 
 export type PoolStakingConfig =
