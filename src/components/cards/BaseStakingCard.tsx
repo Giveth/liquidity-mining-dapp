@@ -24,6 +24,7 @@ import {
 	StakeAmount,
 	LiquidityButton,
 	IconContainer,
+	IconHelpWraper,
 } from './BaseStakingCard.sc';
 import {
 	IconCalculator,
@@ -47,6 +48,7 @@ import { useFarms } from '@/context/farm.context';
 import { constants } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import BigNumber from 'bignumber.js';
+import { WhatisGIVstreamModal } from '../modals/WhatisGIVstream';
 
 export const getPoolIconWithName = (pool: string) => {
 	switch (pool) {
@@ -77,13 +79,15 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	const [showStakeModal, setShowStakeModal] = useState(false);
 	const [showUnStakeModal, setShowUnStakeModal] = useState(false);
 	const [showHarvestModal, setShowHarvestModal] = useState(false);
+	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
+		useState(false);
 	const { network: walletNetwork } = useContext(OnboardContext);
 	const [rewardLiquidPart, setRewardLiquidPart] = useState(constants.Zero);
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
 	const { tokenDistroHelper } = useTokenDistro();
 	const { setInfo } = useFarms();
 
-	const { type, title, description, provideLiquidityLink, LM_ADDRESS, unit } =
+	const { type, title, description, provideLiquidityLink, BUY_LINK, unit } =
 		poolStakingConfig;
 
 	const isV3Staking = type === StakingType.UNISWAP;
@@ -149,7 +153,13 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 						<Detail justifyContent='space-between'>
 							<Row gap='8px' alignItems='center'>
 								<DetailLabel>Streaming</DetailLabel>
-								<IconHelp size={16} />
+								<IconHelpWraper
+									onClick={() => {
+										setShowWhatIsGIVstreamModal(true);
+									}}
+								>
+									<IconHelp size={16} />
+								</IconHelpWraper>
 							</Row>
 							<Row gap='4px' alignItems='center'>
 								<DetailValue>
@@ -162,7 +172,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 					<ClaimButton
 						disabled={earned.isZero()}
 						onClick={() => setShowHarvestModal(true)}
-						label='CLAIM Rewards'
+						label='CLAIM REWARDS'
 					/>
 					<StakeButtonsRow>
 						<StakeContainer flexDirection='column'>
@@ -198,11 +208,17 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 					</StakeButtonsRow>
 					<LiquidityButton
 						label={
-							title === 'GIV'
+							type === StakingType.GIV_LM
 								? 'BUY GIV TOKENS'
 								: 'PROVIDE LIQUIDITY'
 						}
-						onClick={() => window.open(provideLiquidityLink)}
+						onClick={() =>
+							window.open(
+								type === StakingType.GIV_LM
+									? BUY_LINK
+									: provideLiquidityLink,
+							)
+						}
 						buttonType='texty'
 						icon={
 							<IconExternalLink
@@ -253,6 +269,12 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 					poolStakingConfig={poolStakingConfig}
 					claimable={earned}
 					network={walletNetwork}
+				/>
+			)}
+			{showWhatIsGIVstreamModal && (
+				<WhatisGIVstreamModal
+					showModal={showWhatIsGIVstreamModal}
+					setShowModal={setShowWhatIsGIVstreamModal}
 				/>
 			)}
 		</>

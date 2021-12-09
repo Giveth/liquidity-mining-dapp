@@ -225,7 +225,17 @@ export const TabGIVstreamBottom = () => {
 								buttonType='secondary'
 								size='large'
 								onClick={() => {
-									console.log('clicked');
+									if (increaseSecRef.current) {
+										const elDistanceToTop =
+											window.pageYOffset +
+											increaseSecRef.current.getBoundingClientRect()
+												.top;
+										window.scrollTo({
+											top: elDistanceToTop || 100,
+											left: 0,
+											behavior: 'smooth',
+										});
+									}
 								}}
 							/>
 						}
@@ -235,7 +245,7 @@ export const TabGIVstreamBottom = () => {
 						liquid & flows to our community.
 					</GsDataBlock>
 				</Row>
-				<HistoryTitleRow>
+				{/* <HistoryTitleRow>
 					<HistoryTitle>History</HistoryTitle>
 					<IconWithTooltip
 						icon={<IconHelp size={16} />}
@@ -247,8 +257,8 @@ export const TabGIVstreamBottom = () => {
 							increases. Below is a summary.
 						</HistoryTooltip>
 					</IconWithTooltip>
-				</HistoryTitleRow>
-				<GIVstreamHistory />
+				</HistoryTitleRow> */}
+				{/* <GIVstreamHistory /> */}
 			</Container>
 			{/* //unipooldis */}
 			<IncreaseSection ref={increaseSecRef}>
@@ -341,69 +351,40 @@ export const GIVstreamProgress: FC<IGIVstreamProgressProps> = ({
 	);
 };
 
-export enum GIVstreamSources {
+export enum GIVstreamDistributor {
 	Back,
 	Farm,
 	Garden,
 }
 
-const streamHistory = [
-	{
-		type: GIVstreamSources.Back,
-		flowRate: 5,
-		date: 'Sep 24',
-		Tx: '0xd41a333d7fe141',
-	},
-	{
-		type: GIVstreamSources.Farm,
-		flowRate: 1,
-		date: 'Sep 24',
-		Tx: '0xd41a333d7fe141',
-	},
-	{
-		type: GIVstreamSources.Back,
-		flowRate: 7,
-		date: 'Sep 24',
-		Tx: '0xd41a333d7fe141',
-	},
-	{
-		type: GIVstreamSources.Garden,
-		flowRate: 12,
-		date: 'Sep 24',
-		Tx: '0xd41a333d7fe141',
-	},
-	{
-		type: GIVstreamSources.Farm,
-		flowRate: 0.5,
-		date: 'Sep 24',
-		Tx: '0xd41a333d7fe141',
-	},
-];
-
-const convetSourceTypeToIcon = (type: GIVstreamSources) => {
-	switch (type) {
-		case GIVstreamSources.Back:
+const convetSourceTypeToIcon = (distributor: string) => {
+	switch (distributor.toLowerCase()) {
+		case 'givback':
 			return (
 				<Row gap='16px'>
 					<IconGIVBack size={24} color={brandColors.mustard[500]} />
 					<P>{` GIVback`}</P>
 				</Row>
 			);
-		case GIVstreamSources.Farm:
+		case 'giveth':
+		case 'balancerlm':
+		case 'uniswappool':
+		case 'givlm':
 			return (
 				<Row gap='16px'>
 					<IconGIVFarm size={24} color={brandColors.mustard[500]} />
 					<P>{` GIVfarm`}</P>
 				</Row>
 			);
-		case GIVstreamSources.Garden:
-			return (
-				<Row gap='16px'>
-					<IconGIVGarden size={24} color={brandColors.mustard[500]} />
-					<P>{` GIVgarden`}</P>
-				</Row>
-			);
+		// case GIVstreamSources.Garden:
+		// 	return (
+		// 		<Row gap='16px'>
+		// 			<IconGIVGarden size={24} color={brandColors.mustard[500]} />
+		// 			<P>{` GIVgarden`}</P>
+		// 		</Row>
+		// 	);
 		default:
+			return distributor; //'Unknown'
 			break;
 	}
 };
@@ -414,12 +395,10 @@ export const GIVstreamHistory: FC = () => {
 		ITokenAllocation[]
 	>([]);
 	const [page, setPage] = useState(0);
-	const [hasNext, setHasNext] = useState(false);
+	const [pages, setPages] = useState<any[]>([]);
 	const count = 6;
 	const { currentBalance } = useBalances();
 	const { allocationCount } = currentBalance;
-
-	console.log(`allocationCount`, allocationCount);
 
 	const { tokenDistroHelper } = useTokenDistro();
 
@@ -431,14 +410,22 @@ export const GIVstreamHistory: FC = () => {
 		getHistory(network, address, page * count, count).then(
 			_tokenAllocations => {
 				setTokenAllocations(_tokenAllocations);
-				if (_tokenAllocations.length === count) {
-					setHasNext(true);
-				} else {
-					setHasNext(false);
-				}
 			},
 		);
 	}, [network, address, page]);
+
+	useEffect(() => {
+		const nop = Math.floor(allocationCount / count) + 1;
+		if (nop > 4) {
+			setPages([1, 2, '...', nop - 1, nop]);
+		} else {
+			const _pages = [];
+			for (let i = 1; i < nop + 1; i++) {
+				_pages.push(i);
+			}
+			setPages(_pages);
+		}
+	}, [allocationCount]);
 
 	return (
 		<HistoryContainer>
@@ -451,7 +438,7 @@ export const GIVstreamHistory: FC = () => {
 			{tokenAllocations && tokenAllocations.length > 0 && (
 				<Grid>
 					{tokenAllocations.map((tokenAllocation, idx) => {
-						const d = new Date();
+						const d = new Date(+`${tokenAllocation.timestamp}000`);
 						const date = d
 							.toDateString()
 							.split(' ')
@@ -461,8 +448,11 @@ export const GIVstreamHistory: FC = () => {
 							// <span key={idx}>1</span>
 							<Fragment key={idx}>
 								<P as='span'>
-									{/* {convetSourceTypeToIcon(history.type)} */}
-									{tokenAllocation.distributor}
+									{convetSourceTypeToIcon(
+										tokenAllocation.distributor ||
+											'Unknown',
+									)}
+									{/* {tokenAllocation.distributor || 'Unknown'} */}
 								</P>
 								<B as='span'>
 									+
@@ -476,7 +466,23 @@ export const GIVstreamHistory: FC = () => {
 									<GsHFrUnit as='span'>{` GIV/week`}</GsHFrUnit>
 								</B>
 								<P as='span'>{date}</P>
-								<TxHash as='span' size='Big'>
+								<TxHash
+									as='span'
+									size='Big'
+									onClick={() => {
+										const url =
+											network ===
+											config.MAINNET_NETWORK_NUMBER
+												? config.MAINNET_NETWORK
+														.blockExplorerUrls
+												: config.XDAI_NETWORK
+														.blockExplorerUrls;
+										window.open(
+											`${url}/tx/${tokenAllocation.txHash}`,
+											'_blank',
+										);
+									}}
+								>
 									{tokenAllocation.txHash}
 								</TxHash>
 							</Fragment>
@@ -492,15 +498,29 @@ export const GIVstreamHistory: FC = () => {
 					}}
 					disable={page == 0}
 				>
-					Back
+					{'<  Back'}
 				</PaginationItem>
+				{pages.map((p, id) => {
+					return (
+						<PaginationItem
+							key={id}
+							onClick={() => {
+								if (!isNaN(+p)) setPage(+p - 1);
+							}}
+							isActive={+p - 1 === page}
+						>
+							{p}
+						</PaginationItem>
+					);
+				})}
 				<PaginationItem
 					onClick={() => {
-						if (hasNext) setPage(page => page + 1);
+						if (page < Math.floor(allocationCount / count))
+							setPage(page => page + 1);
 					}}
-					disable={!hasNext}
+					disable={page >= Math.floor(allocationCount / count)}
 				>
-					Next
+					{'Next  >'}
 				</PaginationItem>
 			</PaginationRow>
 		</HistoryContainer>

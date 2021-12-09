@@ -16,7 +16,10 @@ export const transfer = async (
 	currentIncentive: { key?: (string | number)[] | null },
 ) => {
 	try {
-		const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
+		const uniswapV3StakerContract = getUniswapV3StakerContract(
+			provider,
+			true,
+		);
 		const nftManagerPositionsContract =
 			getNftManagerPositionsContract(provider);
 
@@ -36,9 +39,12 @@ export const transfer = async (
 
 		console.log('incentinve:', data);
 
-		await nftManagerPositionsContract[
+		const tx = await nftManagerPositionsContract[
 			'safeTransferFrom(address,address,uint256,bytes)'
 		](walletAddress, uniswapV3StakerContract.address, tokenId, data);
+
+		await tx.wait();
+		return tx;
 	} catch (e) {
 		console.warn(e);
 	}
@@ -51,7 +57,10 @@ export const exit = async (
 	currentIncentive: { key?: (string | number)[] | null },
 ) => {
 	try {
-		const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
+		const uniswapV3StakerContract = getUniswapV3StakerContract(
+			provider,
+			true,
+		);
 
 		if (
 			!tokenId ||
@@ -79,11 +88,14 @@ export const exit = async (
 				[tokenId, walletAddress, 0],
 			);
 
-		await uniswapV3StakerContract.multicall([
+		const tx = await uniswapV3StakerContract.multicall([
 			unstakeCalldata,
 			claimRewardCalldata,
 			withdrawTokenCalldata,
 		]);
+
+		await tx.wait();
+		return tx;
 	} catch (e) {
 		console.warn(e);
 	}

@@ -27,6 +27,7 @@ import { OnboardContext } from '@/context/onboard.context';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { IconEthereum } from './Icons/Eth';
+import { WhatisGIVstreamModal } from '@/components/modals/WhatisGIVstream';
 
 interface IRewardCardProps {
 	title?: string;
@@ -48,6 +49,8 @@ export const RewardCard: FC<IRewardCardProps> = ({
 	className,
 }) => {
 	const [usdAmount, setUSDAmount] = useState('0');
+	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
+		useState(false);
 	useEffect(() => {
 		getGIVPrice(network).then(price => {
 			const usd = (
@@ -58,43 +61,57 @@ export const RewardCard: FC<IRewardCardProps> = ({
 	}, [liquidAmount, network]);
 
 	return (
-		<RewadCardContainer className={className}>
-			<CardHeader justifyContent='space-between'>
-				<CardTitle>{title}</CardTitle>
-				<ChainInfo alignItems='center'>
-					{network === config.MAINNET_NETWORK_NUMBER && (
-						<IconEthereum size={16} />
-					)}
-					{network === config.XDAI_NETWORK_NUMBER && (
-						<IconXDAI size={16} />
-					)}
-					<ChainName styleType='Small'>
-						{network === config.MAINNET_NETWORK_NUMBER
-							? 'ETH'
-							: 'XDAI'}
-					</ChainName>
-				</ChainInfo>
-			</CardHeader>
-			<AmountInfo alignItems='center' gap='8px'>
-				<IconGIV size={32} />
-				<Title>{formatWeiHelper(liquidAmount)}</Title>
-				<AmountUnit>GIV</AmountUnit>
-			</AmountInfo>
-			<Converted>~${usdAmount}</Converted>
-			<RateInfo alignItems='center' gap='8px'>
-				<IconGIVStream size={24} />
-				<P>{formatWeiHelper(stream)}</P>
-				<RateUnit>GIV/week</RateUnit>
-				<IconHelp size={24} color={brandColors.deep[200]} />
-			</RateInfo>
-			{actionLabel && actionCb && (
-				<ActionButton
-					label={actionLabel}
-					onClick={actionCb}
-					buttonType='primary'
+		<>
+			<RewadCardContainer className={className}>
+				<CardHeader justifyContent='space-between'>
+					<CardTitle>{title}</CardTitle>
+					<ChainInfo alignItems='center'>
+						{network === config.MAINNET_NETWORK_NUMBER && (
+							<IconEthereum size={16} />
+						)}
+						{network === config.XDAI_NETWORK_NUMBER && (
+							<IconXDAI size={16} />
+						)}
+						<ChainName styleType='Small'>
+							{network === config.MAINNET_NETWORK_NUMBER
+								? 'ETH'
+								: 'XDAI'}
+						</ChainName>
+					</ChainInfo>
+				</CardHeader>
+				<AmountInfo alignItems='center' gap='8px'>
+					<IconGIV size={32} />
+					<Title>{formatWeiHelper(liquidAmount)}</Title>
+					<AmountUnit>GIV</AmountUnit>
+				</AmountInfo>
+				<Converted>~${usdAmount}</Converted>
+				<RateInfo alignItems='center' gap='8px'>
+					<IconGIVStream size={24} />
+					<P>{formatWeiHelper(stream)}</P>
+					<RateUnit>GIV/week</RateUnit>
+					<IconHelpWraper
+						onClick={() => {
+							setShowWhatIsGIVstreamModal(true);
+						}}
+					>
+						<IconHelp size={24} color={brandColors.deep[200]} />
+					</IconHelpWraper>
+				</RateInfo>
+				{actionLabel && actionCb && (
+					<ActionButton
+						label={actionLabel}
+						onClick={actionCb}
+						buttonType='primary'
+					/>
+				)}
+			</RewadCardContainer>
+			{showWhatIsGIVstreamModal && (
+				<WhatisGIVstreamModal
+					showModal={showWhatIsGIVstreamModal}
+					setShowModal={setShowWhatIsGIVstreamModal}
 				/>
 			)}
-		</RewadCardContainer>
+		</>
 	);
 };
 
@@ -141,4 +158,8 @@ const RateUnit = styled(Lead)`
 
 const ActionButton = styled(Button)`
 	width: 100%;
+`;
+
+const IconHelpWraper = styled.div`
+	cursor: pointer;
 `;

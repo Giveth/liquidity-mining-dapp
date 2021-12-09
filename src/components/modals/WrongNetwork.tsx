@@ -1,43 +1,59 @@
 import config from '@/configuration';
-import { P, B, neutralColors } from '@giveth/ui-design-system';
+import { P, brandColors } from '@giveth/ui-design-system';
 import styled from 'styled-components';
-import { FC } from 'react';
-import { Row } from '../styled-components/Grid';
-import { IconEthereum } from '../Icons/Eth';
-import { IconXDAI } from '../Icons/XDAI';
+import { FC, useState } from 'react';
+import { Button } from '@giveth/ui-design-system';
+import { switchNetwork } from '@/lib/metamask';
 
+import { chainName } from '@/utils/constants';
+import { Modal } from './Modal';
 interface IWrongNetworkInnerModal {
-	targetNetwork: number;
+	text: string;
+	targetNetworks: number[];
 }
 
 export const WrongNetworkInnerModal: FC<IWrongNetworkInnerModal> = ({
-	targetNetwork,
+	text,
+	targetNetworks,
 }) => {
+	const [showModal, setShowModal] = useState(true);
+
 	return (
-		<WrongNetworkInnerModalContainer>
-			{targetNetwork === config.MAINNET_NETWORK_NUMBER ? (
-				<IconEthereum size={64} />
-			) : (
-				<IconXDAI size={64} />
-			)}
-			<Description>
-				<P>Please change your network to</P>
-				<B>
-					{targetNetwork === config.MAINNET_NETWORK_NUMBER
-						? 'Ethereum'
-						: 'xDai'}
-				</B>
-			</Description>
-		</WrongNetworkInnerModalContainer>
+		<Modal hiddenClose showModal={showModal} setShowModal={setShowModal}>
+			<WrongNetworkInnerModalContainer>
+				<Description>
+					<P>{text}</P>
+					<P>Please switch the network.</P>
+				</Description>
+				<ButtonsContainer>
+					{targetNetworks.map(network => (
+						<Button
+							label={`SWITCH TO ${chainName(
+								network,
+							).toUpperCase()}`}
+							onClick={() => switchNetwork(network)}
+							key={network}
+						/>
+					))}
+				</ButtonsContainer>
+			</WrongNetworkInnerModalContainer>
+		</Modal>
 	);
 };
 
 const WrongNetworkInnerModalContainer = styled.div`
-	padding: 50px 25px 25px;
+	max-width: 450px;
+	padding: 40px 24px 24px;
 `;
 
-const Description = styled(Row)`
-	padding: 25px;
-	color: ${neutralColors.gray[100]};
-	gap: 4px;
+const Description = styled.div`
+	padding: 12px;
+	margin-bottom: 12px;
+	color: ${brandColors.deep[100]};
+`;
+
+const ButtonsContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 `;

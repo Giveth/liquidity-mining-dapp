@@ -88,7 +88,7 @@ export const NetworkSelector = () => {
 					}}
 				>
 					<IconXDAI size={24} />
-					<B>xDAI</B>
+					<B>xDai</B>
 				</XDaiSelecor>
 				<EthSelector
 					isSelected={walletNetwork === config.MAINNET_NETWORK_NUMBER}
