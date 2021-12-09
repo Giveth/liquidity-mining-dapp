@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Modal, IModal } from './Modal';
 import {
 	neutralColors,
@@ -13,11 +13,13 @@ import styled from 'styled-components';
 import { PoolStakingConfig } from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
 import V3StakingCard from '../cards/PositionCard';
-import { useLiquidityPositions } from '@/context';
+import { useLiquidityPositions, useOnboard } from '@/context';
+
 interface IV3StakeModalProps extends IModal {
 	poolStakingConfig: PoolStakingConfig;
 	isUnstakingModal?: boolean;
 }
+import { ConfirmedInnerModal, SubmittedInnerModal } from './ConfirmSubmit';
 
 export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	poolStakingConfig,
@@ -25,11 +27,14 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	showModal,
 	setShowModal,
 }) => {
+	const { network } = useOnboard();
 	const { unstakedPositions, stakedPositions } = useLiquidityPositions();
 	console.log(unstakedPositions, stakedPositions);
 	const positions = isUnstakingModal ? stakedPositions : unstakedPositions;
 	console.log(positions);
 	const { title } = poolStakingConfig;
+	const [waitTx, setWaitTx] = useState<boolean>(false);
+	const [txStatus, setTxStatus] = useState<any>();
 
 	return (
 		<Modal showModal={showModal} setShowModal={setShowModal}>
@@ -41,13 +46,35 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 					</StakeModalTitleText>
 				</StakeModalTitle>
 				<InnerModal>
-					{positions.map(position => (
-						<V3StakingCard
-							position={position}
-							isUnstaking={isUnstakingModal}
-							key={position.tokenId.toString()}
-						/>
-					))}
+					{waitTx ? (
+						txStatus ? (
+							<ConfirmedInnerModal
+								title='Successful transaction.'
+								walletNetwork={network}
+								txHash={txStatus?.hash}
+							/>
+						) : (
+							<SubmittedInnerModal
+								title={
+									txStatus?.hash
+										? 'Submitting your transaction.'
+										: 'Waiting for confirmation. '
+								}
+								walletNetwork={network}
+								txHash={txStatus?.hash}
+							/>
+						)
+					) : (
+						positions.map(position => (
+							<V3StakingCard
+								position={position}
+								isUnstaking={isUnstakingModal}
+								key={position.tokenId.toString()}
+								handleWaitTx={setWaitTx}
+								handleStatusTx={setTxStatus}
+							/>
+						))
+					)}
 					<FullWidthButton
 						buttonType='texty'
 						label='CLOSE'
