@@ -292,8 +292,8 @@ export const TabGIVstreamBottom = () => {
 							}
 						>
 							The GIVgarden is the decentralized governance
-							platform for the GIVeconomy. Increase
-							your GIVstream when you wrap GIV to vote.
+							platform for the GIVeconomy. Increase your GIVstream
+							when you wrap GIV to vote.
 						</IGsDataBox>
 						<IGsDataBox
 							title='GIVfarm'
