@@ -46,7 +46,7 @@ interface IModalWrapper {
 
 export interface IModal {
 	showModal: boolean;
-	hiddenClose: boolean;
+	hiddenClose?: boolean;
 	setShowModal: (value: boolean) => void;
 	children?: React.ReactNode;
 	// title?: string;
