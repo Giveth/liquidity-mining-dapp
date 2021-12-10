@@ -44,22 +44,15 @@ export const WhatisGIVstreamModal: FC<IWhatisGIVstreamModal> = ({
 					2026 at which point the GIVeconomy will be full power!
 				</Desc>
 				<LinksRow alignItems='center' justifyContent='center'>
-					<Link href='/' passHref>
+					<Link href='/givstream' passHref>
 						<GLink>
-							Read More{' '}
-							<IconExternalLink
-								size={16}
-								color={'currentColor'}
-							/>
-						</GLink>
-					</Link>
-					<Link href='/' passHref>
-						<GLink>
-							View Your GIVstream{' '}
-							<IconExternalLink
-								size={16}
-								color={'currentColor'}
-							/>
+							<LinksRow justifyContent='center'>
+								View Your GIVstream{' '}
+								<IconExternalLink
+									size={16}
+									color={'currentColor'}
+								/>
+							</LinksRow>
 						</GLink>
 					</Link>
 				</LinksRow>
@@ -92,7 +85,7 @@ const Desc = styled(P)`
 `;
 
 const LinksRow = styled(Row)`
-	gap: 32px;
+	gap: 8px;
 	color: ${brandColors.cyan[500]};
 	margin-bottom: 24px;
 `;
