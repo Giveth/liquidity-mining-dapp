@@ -124,3 +124,7 @@ export const OutOfRangeTooltip = styled(Subline)`
 	width: 233px;
 	text-align: center;
 `;
+
+export const IconHelpWraper = styled.div`
+	cursor: pointer;
+`;

@@ -1,13 +1,9 @@
 import styled from 'styled-components';
-import { Row } from '../styled-components/Grid';
-import StakingPoolCard from '../cards/StakingPoolCard';
-import config from '../../configuration';
-import {
-	BasicNetworkConfig,
-	SimplePoolStakingConfig,
-	StakingType,
-} from '@/types/config';
-import React, { useContext } from 'react';
+import { Row } from '@/components/styled-components/Grid';
+import StakingPoolCard from '@/components/cards/StakingPoolCard';
+import config from '@/configuration';
+import { StakingType } from '@/types/config';
+import React, { useContext, useEffect, useState } from 'react';
 import {
 	GIVfarmTopContainer,
 	Left,
@@ -24,10 +20,25 @@ import StakingPositionCard from '@/components/cards/StakingPositionCard';
 import { getGivStakingConfig } from '@/helpers/networkProvider';
 import { BigNumber } from 'bignumber.js';
 import { constants } from 'ethers';
+import { useTokenDistro } from '@/context/tokenDistro.context';
+import { useFarms } from '@/context/farm.context';
 
 const GIVfarmTabContainer = styled(Container)``;
 
 export const TabGIVfarmTop = () => {
+	const [rewardLiquidPart, setRewardLiquidPart] = useState(constants.Zero);
+	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
+	const { tokenDistroHelper } = useTokenDistro();
+	const { totalEarned } = useFarms();
+	const { network: walletNetwork } = useContext(OnboardContext);
+
+	useEffect(() => {
+		setRewardLiquidPart(tokenDistroHelper.getLiquidPart(totalEarned));
+		setRewardStream(
+			tokenDistroHelper.getStreamPartTokenPerWeek(totalEarned),
+		);
+	}, [totalEarned, tokenDistroHelper]);
+
 	return (
 		<GIVfarmTopContainer>
 			<Container>
@@ -44,7 +55,9 @@ export const TabGIVfarmTop = () => {
 					<Right>
 						<GIVfarmRewardCard
 							title='Your GIVfarm rewards'
-							amount={constants.Zero}
+							liquidAmount={rewardLiquidPart}
+							stream={rewardStream}
+							network={walletNetwork}
 						/>
 					</Right>
 				</Row>

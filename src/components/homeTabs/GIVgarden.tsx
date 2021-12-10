@@ -25,10 +25,10 @@ import { HarvestAllModal } from '../modals/HarvestAll';
 import config from '@/configuration';
 import { useStakingPool } from '@/hooks/useStakingPool';
 import { getGivStakingConfig } from '@/helpers/networkProvider';
-import { harvestTokens } from '@/lib/stakingPool';
-import { OnboardContext } from '@/context/onboard.context';
 import { calcTokenInfo, ITokenInfo } from '@/lib/helpers';
 import { getTokenDistroInfo } from '@/services/subgraph';
+import BigNumber from 'bignumber.js';
+import { Zero } from '@ethersproject/constants';
 
 const poolStakingConfig = getGivStakingConfig(config.XDAI_CONFIG);
 
@@ -36,12 +36,10 @@ export const TabGardenTop = () => {
 	const [showModal, setShowModal] = useState(false);
 	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
 
-	const { userStakeInfo, rewardRatePerToken } = useStakingPool(
+	const { earned } = useStakingPool(
 		poolStakingConfig,
 		config.XDAI_NETWORK_NUMBER,
 	);
-
-	const { earned } = userStakeInfo;
 
 	useEffect(() => {
 		getTokenDistroInfo(config.XDAI_NETWORK_NUMBER).then(distroInfo => {
@@ -76,20 +74,22 @@ export const TabGardenTop = () => {
 							<IconGIVGarden size={64} />
 						</Row>
 						<Subtitle size='medium'>
-							The Giveth Economy is the collective of projects,
-							donors, builders, and community members building the
-							Future of Giving.
+							The GIVgarden is the decentralized governance
+							platform for the GIVeconomy.
 						</Subtitle>
 					</Left>
 					<Right>
 						<GardenRewardCard
 							title='Your GIVgarden rewards'
-							amount={tokenInfo?.releasedReward}
-							rate={tokenInfo?.flowratePerWeek}
+							liquidAmount={tokenInfo?.releasedReward || Zero}
+							stream={new BigNumber(
+								tokenInfo?.flowratePerWeek.toString() || 0,
+							).valueOf()}
 							actionLabel='HARVEST'
 							actionCb={() => {
 								setShowModal(true);
 							}}
+							network={config.XDAI_NETWORK_NUMBER}
 						/>
 					</Right>
 				</Row>
@@ -110,8 +110,7 @@ export const TabGardenTop = () => {
 
 export const TabGardenBottom = () => {
 	const goToGarden = () => {
-		const url =
-			'https://honey-pot-o49n5fgrn-1hive.vercel.app/#/garden/0x79c52e1a74d01cf030f3cbbbbf84b01476c9ac93';
+		const url = config.GARDEN_LINK;
 		window.open(url, '_blank');
 	};
 

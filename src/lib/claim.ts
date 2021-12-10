@@ -6,12 +6,11 @@ import { networkProviders } from '../helpers/networkProvider';
 import config from '../configuration';
 import { abi as MERKLE_ABI } from '../artifacts/MerkleDrop.json';
 import { abi as TOKEN_DISTRO_ABI } from '../artifacts/TokenDistro.json';
-import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers';
 import {
-	showConfirmedClaim,
-	showFailedClaim,
-	showPendingClaim,
-} from './notifications/claim';
+	JsonRpcProvider,
+	Web3Provider,
+	TransactionResponse,
+} from '@ethersproject/providers';
 
 export const formatAddress = (address: string): string => {
 	try {
@@ -142,7 +141,7 @@ export const getTokenDistroAmounts = async (
 export const claimReward = async (
 	tokenDistroAddress: string,
 	provider: Web3Provider | null,
-): Promise<void> => {
+): Promise<TransactionResponse | undefined> => {
 	if (!isAddress(tokenDistroAddress)) return;
 	if (!provider) return;
 
@@ -157,13 +156,15 @@ export const claimReward = async (
 
 	const tx = await tokenDistro.claim();
 
-	showPendingClaim(network, tx.hash);
+	return tx;
 
-	const { status } = await tx.wait();
+	// showPendingClaim(network, tx.hash);
 
-	if (status) {
-		showConfirmedClaim(network, tx.hash);
-	} else {
-		showFailedClaim(network, tx.hash);
-	}
+	// const { status } = await tx.wait();
+
+	// if (status) {
+	// 	showConfirmedClaim(network, tx.hash);
+	// } else {
+	// 	showFailedClaim(network, tx.hash);
+	// }
 };

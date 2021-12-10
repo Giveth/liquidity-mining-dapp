@@ -1,6 +1,7 @@
 import config from '@/configuration';
 import {
 	B,
+	P,
 	brandColors,
 	Caption,
 	GLink,
@@ -52,20 +53,28 @@ export const SubmittedInnerModal: FC<IConfirmSubmitProps> = ({
 				height={100}
 				width={100}
 			/>
-			<TxSubmit weight={700}>Transaction submitted</TxSubmit>
-			<BlockExplorerLink
-				href={`${
-					walletNetwork === config.MAINNET_NETWORK_NUMBER
-						? config.MAINNET_NETWORK.blockExplorerUrls
-						: config.XDAI_NETWORK.blockExplorerUrls
-				}
+			<TxSubmit weight={700}>
+				{txHash && 'Transaction submitted'}
+			</TxSubmit>
+			{txHash && (
+				<BlockExplorerLink
+					href={`${
+						walletNetwork === config.MAINNET_NETWORK_NUMBER
+							? config.MAINNET_NETWORK.blockExplorerUrls
+							: config.XDAI_NETWORK.blockExplorerUrls
+					}
 			/tx/${txHash}`}
-				target='_blank'
-				size='Big'
-			>
-				View on Blockscout&nbsp;
-				<IconExternalLink size={16} color={'currentColor'} />
-			</BlockExplorerLink>
+					target='_blank'
+					size='Big'
+				>
+					View on{' '}
+					{walletNetwork === config.MAINNET_NETWORK_NUMBER
+						? config.MAINNET_NETWORK.blockExplorerName
+						: config.XDAI_NETWORK.blockExplorerName}
+					&nbsp;
+					<IconExternalLink size={16} color={'currentColor'} />
+				</BlockExplorerLink>
+			)}
 		</>
 	);
 };
@@ -80,6 +89,7 @@ export const ConfirmedInnerModal: FC<IConfirmSubmitProps> = ({
 			<B>{title}</B>
 			<Lottie options={tikAnimationOptions} height={100} width={100} />
 			<TxConfirm weight={700}>Transaction confirmed!</TxConfirm>
+			<Info>It may take a few minutes for the UI to update</Info>
 			<BlockExplorerLink
 				href={`${
 					walletNetwork === config.MAINNET_NETWORK_NUMBER
@@ -90,7 +100,11 @@ export const ConfirmedInnerModal: FC<IConfirmSubmitProps> = ({
 				target='_blank'
 				size='Big'
 			>
-				View on Blockscout&nbsp;
+				View on{' '}
+				{walletNetwork === config.MAINNET_NETWORK_NUMBER
+					? config.MAINNET_NETWORK.blockExplorerName
+					: config.XDAI_NETWORK.blockExplorerName}
+				&nbsp;
 				<IconExternalLink size={16} color={'currentColor'} />
 			</BlockExplorerLink>
 		</>
@@ -105,8 +119,11 @@ const TxSubmit = styled(H6)`
 
 const TxConfirm = styled(H5)`
 	color: ${neutralColors.gray[100]};
-	margin-top: 18px;
-	margin-bottom: 16px;
+	margin: 12px 0;
+`;
+
+const Info = styled(P)`
+	margin-bottom: 12px;
 `;
 
 const BlockExplorerLink = styled(GLink)`

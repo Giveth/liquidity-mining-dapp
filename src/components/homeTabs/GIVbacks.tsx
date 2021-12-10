@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Row } from '../styled-components/Grid';
 import router from 'next/router';
 import {
@@ -34,41 +34,91 @@ import {
 	GivAllocated,
 	InfoReadMore,
 } from './GIVbacks.sc';
-import { constants } from 'ethers';
+import { useTokenDistro } from '@/context/tokenDistro.context';
+import { Zero } from '@ethersproject/constants';
+import BigNumber from 'bignumber.js';
+import { useBalances } from '@/context/balance.context';
+import config from '@/configuration';
+import { HarvestAllModal } from '../modals/HarvestAll';
+import { getTokenDistroInfo, ITokenDistroInfo } from '@/services/subgraph';
+import { OnboardContext } from '@/context/onboard.context';
 
 export const TabGIVbacksTop = () => {
 	const [showModal, setShowModal] = useState(false);
+	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
+	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
+	const { tokenDistroHelper } = useTokenDistro();
+	const { xDaiBalance } = useBalances();
+
+	useEffect(() => {
+		setGivBackLiquidPart(
+			tokenDistroHelper.getLiquidPart(xDaiBalance.givback),
+		);
+		setGivBackStream(
+			tokenDistroHelper.getStreamPartTokenPerWeek(xDaiBalance.givback),
+		);
+	}, [xDaiBalance, tokenDistroHelper]);
 
 	return (
-		<GIVbacksTopContainer>
-			<Container>
-				<Row justifyContent='space-between'>
-					<Left>
-						<Row alignItems='baseline' gap='16px'>
-							<GBTitle>GIVbacks</GBTitle>
-							<IconGIVBack size={64} />
-						</Row>
-						<GBSubtitle size='medium'>
-							GIVbacks is a revolutionary concept that rewards
-							donors to verified projects with GIV tokens.
-						</GBSubtitle>
-					</Left>
-					<Right>
-						<GIVbackRewardCard
-							amount={constants.Zero}
-							actionLabel='HARVEST'
-							actionCb={() => {
-								setShowModal(true);
-							}}
-						/>
-					</Right>
-				</Row>
-			</Container>
-		</GIVbacksTopContainer>
+		<>
+			<GIVbacksTopContainer>
+				<Container>
+					<Row justifyContent='space-between'>
+						<Left>
+							<Row alignItems='baseline' gap='16px'>
+								<GBTitle>GIVbacks</GBTitle>
+								<IconGIVBack size={64} />
+							</Row>
+							<GBSubtitle size='medium'>
+								GIVbacks is a revolutionary concept that rewards
+								donors to verified projects with GIV tokens.
+							</GBSubtitle>
+						</Left>
+						<Right>
+							<GIVbackRewardCard
+								title='Your GIVback rewards'
+								liquidAmount={givBackLiquidPart}
+								stream={givBackStream}
+								actionLabel='HARVEST'
+								actionCb={() => {
+									setShowModal(true);
+								}}
+								network={config.XDAI_NETWORK_NUMBER}
+							/>
+						</Right>
+					</Row>
+				</Container>
+			</GIVbacksTopContainer>
+			{showModal && (
+				<HarvestAllModal
+					title='GIVback Rewards'
+					showModal={showModal}
+					setShowModal={setShowModal}
+					network={config.XDAI_NETWORK_NUMBER}
+				/>
+			)}
+		</>
 	);
 };
 
 export const TabGIVbacksBottom = () => {
+	const [tokenDistroInfo, setTokenDistroInfo] = useState<ITokenDistroInfo>();
+	const [round, setRound] = useState(0);
+	const { network: walletNetwork } = useContext(OnboardContext);
+
+	useEffect(() => {
+		getTokenDistroInfo(walletNetwork).then(distroInfo => {
+			if (distroInfo) {
+				setTokenDistroInfo(distroInfo);
+				console.log('distroInfo', distroInfo);
+				const deltaT = Date.now() - distroInfo.startTime.getTime();
+				const TwoWeek = 1209600000;
+				const _round = Math.floor(deltaT / TwoWeek) + 1;
+				setRound(_round);
+			}
+		});
+	}, [walletNetwork]);
+
 	const goToClaim = () => {
 		router.push('/claim');
 	};
@@ -84,6 +134,12 @@ export const TabGIVbacksBottom = () => {
 								label='DONATE TO EARN GIV'
 								buttonType='secondary'
 								size='large'
+								onClick={() => {
+									window.open(
+										'https://giveth.io/projects',
+										'_blank',
+									);
+								}}
 							/>
 						}
 					>
@@ -98,6 +154,12 @@ export const TabGIVbacksBottom = () => {
 								label='VERIFY YOUR PROJECT'
 								buttonType='secondary'
 								size='large'
+								onClick={() => {
+									window.open(
+										'https://hlfkiwoiwhi.typeform.com/to/pXxk0HO5',
+										'_blank',
+									);
+								}}
 							/>
 						}
 					>
@@ -109,27 +171,41 @@ export const TabGIVbacksBottom = () => {
 				<GIVBackCard>
 					<Row justifyContent='space-between' alignItems='center'>
 						<RoundSection>
-							<RoundTitle>GIVback Round 8</RoundTitle>
+							<RoundTitle>GIVback Round {round}</RoundTitle>
 							<RoundInfo>
 								<RoundInfoRow justifyContent='space-between'>
 									<P>Start Date</P>
-									<P>October 31, 2021</P>
+									<P>
+										{tokenDistroInfo
+											? tokenDistroInfo.startTime.toDateString()
+											: '-'}
+									</P>
 								</RoundInfoRow>
 								<RoundInfoRow justifyContent='space-between'>
 									<P>End Date</P>
-									<P>November 14, 2021 </P>
+									<P>
+										{tokenDistroInfo
+											? tokenDistroInfo.endTime.toDateString()
+											: '-'}
+									</P>
 								</RoundInfoRow>
 								<RoundInfoTallRow
 									justifyContent='space-between'
 									alignItems='center'
 								>
 									<P>GIV Allocated to Round</P>
-									<GivAllocated>133,291</GivAllocated>
+									<GivAllocated>1 M</GivAllocated>
 								</RoundInfoTallRow>
 								<RoundButton
 									size='small'
 									label={'DONATE TO EARN GIV'}
 									buttonType='primary'
+									onClick={() => {
+										window.open(
+											'https://giveth.io/projects',
+											'_blank',
+										);
+									}}
 								/>
 							</RoundInfo>
 						</RoundSection>
@@ -139,10 +215,10 @@ export const TabGIVbacksBottom = () => {
 								When you give you get GIV back!
 							</InfoTitle>
 							<InfoDesc>
-								GIVbacks rounds last two weeks. After the End
-								Date, the GIV Allocated to Round will be
+								Each GIVbacks round lasts two weeks. After the
+								End Date, the GIV Allocated to that round is
 								distributed to Givers who donated to verified
-								project during the round. Projects must apply
+								projects during the round. Projects must apply
 								for verification at least 1 week prior to the
 								Start Date in order to be included in the round.
 							</InfoDesc>

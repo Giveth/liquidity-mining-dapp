@@ -42,6 +42,7 @@ export const HarvestAllModalContainer = styled.div`
 
 export const HarvestAllModalTitleRow = styled(Row)`
 	gap: 14px;
+	margin-bottom: 32px;
 `;
 
 export const HarvestAllModalTitle = styled(H6)`
