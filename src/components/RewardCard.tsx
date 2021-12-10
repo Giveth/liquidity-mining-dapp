@@ -40,7 +40,7 @@ interface IRewardCardProps {
 }
 
 export const RewardCard: FC<IRewardCardProps> = ({
-	title = 'Your Rewards',
+	title = 'Your GIVstream Rewards',
 	liquidAmount = ethers.constants.Zero,
 	stream = Zero,
 	actionLabel,
