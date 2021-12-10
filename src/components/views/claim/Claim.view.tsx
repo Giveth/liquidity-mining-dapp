@@ -6,11 +6,11 @@ import { ConnectCard } from '../../cards/Connect';
 import { DonateCard } from '../../cards/Donate';
 import { StreamCard } from '../../cards/Stream';
 import GovernCard from '../../cards/Govern';
-import InvestCard from '../../cards/Invest';
+import InvestCard from '../../cards/Stake';
 import { Row } from '../../styled-components/Grid';
 import { number } from 'prop-types';
 
-const stepsTitle = ['Connect', 'Invest', 'Govern', 'Donate', 'Stream', 'Claim'];
+const stepsTitle = ['Connect', 'Stake', 'Govern', 'Donate', 'Stream', 'Claim'];
 
 const Steps = styled(Row)`
 	height: 80px;
@@ -31,6 +31,7 @@ const StepTitle = styled.div<IStepTitleProps>`
 	position: relative;
 	padding: 8px 0;
 	margin: 4px;
+	cursor: pointer;
 	::before {
 		content: '';
 		position: absolute;

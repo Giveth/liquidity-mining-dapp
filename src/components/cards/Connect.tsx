@@ -30,14 +30,14 @@ const ConnectCardContainer = styled(Card)<IConnectCardContainerProps>`
 	}
 `;
 const Title = styled(H2)`
-	width: 600px;
+	width: 700px;
 `;
 
 const Desc = styled(P)`
 	margin-top: 22px;
 `;
 
-const ConenctButton = styled(Button)`
+const ConnectButton = styled(Button)`
 	width: 300px;
 `;
 
@@ -129,7 +129,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 		case GiveDropStateType.notConnected:
 			title = 'Claim your GIVdrop';
 			desc =
-				'Connect your wallet or check an ethereum address to see your rewards.';
+				'Connect your wallet or check an Ethereum address to see your rewards.';
 			btnLabel = 'CONNECT WALLET';
 			bg = {
 				width: '473px',
@@ -179,9 +179,9 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			</Header>
 			{giveDropState !== GiveDropStateType.Success && (
 				<Row alignItems={'center'} justifyContent={'space-between'}>
-					<ConenctButton secondary onClick={connect}>
+					<ConnectButton secondary onClick={connect}>
 						{btnLabel}
-					</ConenctButton>
+					</ConnectButton>
 					<Span>or</Span>
 					<InputWithButtonContainer>
 						<WalletAddressInputWithButton

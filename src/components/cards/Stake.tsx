@@ -6,6 +6,7 @@ import {
 	useEffect,
 	useRef,
 } from 'react';
+import Image from 'next/image';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
@@ -36,7 +37,15 @@ const InvestCardContainer = styled(Card)`
 	}
 `;
 
-const DepositeLable = styled.span`
+const Title = styled(H2)`
+	width: 700px;
+`;
+
+const Desc = styled(P)`
+	margin-top: 22px;
+`;
+
+const DepositLabel = styled.span`
 	color: #cabaff;
 `;
 
@@ -45,7 +54,7 @@ const DepositInput = styled.div`
 `;
 
 const ImpactCard = styled.div`
-	padding: 20px 30px;
+	padding: 20px 0px;
 	height: 208px;
 	display: flex;
 	flex-direction: column;
@@ -54,13 +63,17 @@ const ImpactCard = styled.div`
 
 const PoolCard = styled.div`
 	width: 399px;
-	height: 208px;
+	height: 192px;
 	padding: 20px 30px;
 
-	background: #ffffff;
+	background: #211985;
 	border-radius: 16px;
-	color: #1b1657;
 	z-index: 1;
+`;
+
+const PoolTitle = styled(H4)`
+	font-size: 18px;
+	font-weight: bold;
 `;
 
 const PoolItems = styled.div`
@@ -68,15 +81,25 @@ const PoolItems = styled.div`
 `;
 
 const PoolItem = styled.div`
-	font-size: 16px;
+	font-size: 14px;
 	height: 40px;
 	line-height: 40px;
+	display: flex;
+	gap: 6px;
 `;
 
 const PoolItemBold = styled.div`
-	font-size: 32px;
-	font-weight: bold;
+	font-size: 16px;
+	font-weight: 500;
 	line-height: 40px;
+	display: flex;
+	gap: 6px;
+`;
+
+const PoolCardFooter = styled.div`
+	max-width: 500px;
+	font-size: 12px;
+	line-height: 18px;
 `;
 
 const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
@@ -129,21 +152,21 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	return (
 		<InvestCardContainer activeIndex={activeIndex} index={index}>
 			<Header>
-				<H2 as='h1'>Invest with GIVmining</H2>
-				<P size='small' color={'#CABAFF'}>
-					Provide liquidity or stake your GIV tokens to earn up to
-					{apr ? formatEthHelper(apr, 2) : '?'}% APY
-				</P>
+				<Title as='h1'>How to use your GIV</Title>
+				<Desc size='small' color={'#CABAFF'}>
+					Stake tokens in the GIVfarm to earn up to
+					{apr ? `${formatEthHelper(apr, 2)}% APR` : ' ? '}
+				</Desc>
 			</Header>
 			<Row alignItems={'flex-start'} justifyContent={'space-between'}>
 				<ImpactCard>
-					<H4 as='h2'>See your impact</H4>
+					<H4 as='h2'>See how much you could earn</H4>
 					<div>
 						<Row
 							alignItems={'center'}
 							justifyContent={'space-between'}
 						>
-							<DepositeLable>Your deposit</DepositeLable>
+							<DepositLabel>If you deposit</DepositLabel>
 							<MaxGIV>{`Max ${utils.formatEther(
 								claimableAmount,
 							)} GIV`}</MaxGIV>
@@ -158,24 +181,56 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 					</div>
 				</ImpactCard>
 				<PoolCard>
-					<H4 as='h2'>Your Pool</H4>
+					<PoolTitle as='h2'>GIV Staking</PoolTitle>
 					<PoolItems>
 						<Row justifyContent='space-between'>
-							<PoolItem>Your deposit</PoolItem>
-							<PoolItem>{deposit}</PoolItem>
-						</Row>
-						<Row justifyContent='space-between'>
-							<PoolItem>Farm fee</PoolItem>
-							<PoolItem>Free</PoolItem>
-						</Row>
-						<Row justifyContent='space-between'>
-							<PoolItem>Annual GIV earned</PoolItem>
+							<PoolItem>
+								APR
+								<Image
+									src='/images/icons/operations.svg'
+									height='16'
+									width='16'
+									alt='Operations icon'
+								/>
+							</PoolItem>
 							<PoolItemBold>
-								{formatEthHelper(earnEstimate, 2)}
+								<Image
+									src='/images/icons/star.svg'
+									height='16'
+									width='16'
+									alt='Star icon'
+								/>
+								{deposit}%
+							</PoolItemBold>
+						</Row>
+						<Row justifyContent='space-between'>
+							<PoolItem>Claimable</PoolItem>
+							<PoolItemBold>0 GIV</PoolItemBold>
+						</Row>
+						<Row justifyContent='space-between'>
+							<PoolItem>
+								Streaming
+								<Image
+									src='/images/icons/questionMark.svg'
+									height='16'
+									width='16'
+									alt='Operations icon'
+								/>
+							</PoolItem>
+							<PoolItemBold>
+								{formatEthHelper(earnEstimate, 2)} GIV/week
 							</PoolItemBold>
 						</Row>
 					</PoolItems>
 				</PoolCard>
+			</Row>
+			<Row>
+				<PoolCardFooter>
+					The following calculators demonstrate how you can use GIV to
+					participate in the GIVeconomy!{' '}
+					<b>These are just simulations.</b> To participate for real,
+					claim your GIV.
+				</PoolCardFooter>
 			</Row>
 			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
 		</InvestCardContainer>
