@@ -87,7 +87,15 @@ export const EGDataBlock = styled(DataBlock)`
 `;
 
 export const ParticipateDataBlock = styled(DataBlock)`
+	min-height: 345px;
 	width: 286px;
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: flex-start;
+`;
+
+export const DataBlockButton = styled(Button)`
+	margin-top: auto;
 `;
 
 export const ClaimCardQuote = styled(QuoteText)`

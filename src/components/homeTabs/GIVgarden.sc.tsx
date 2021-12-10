@@ -89,7 +89,11 @@ export const Section2Title = styled(H1)`
 `;
 
 export const GovernanceDB = styled(DataBlock)`
-	width: 343px;
+	width: 385px;
+	min-height: 285px;
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: flex-start;
 `;
 
 export const GovernanceLink = styled(GLink)`
@@ -97,6 +101,7 @@ export const GovernanceLink = styled(GLink)`
 	padding: 16px 0;
 	cursor: pointer;
 	font-weight: bold;
+	margin-top: auto;
 `;
 
 export const GovernanceRaw = styled(Row)`

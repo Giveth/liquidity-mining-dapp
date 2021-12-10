@@ -49,11 +49,16 @@ export const GIVbackRewardCard = styled(RewardCard)`
 export const GIVbacksBottomContainer = styled.div``;
 
 export const GbDataBlock = styled(DataBlock)`
-	width: 459px;
+	width: 460px;
+	min-height: 285px;
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: flex-start;
 `;
 
 export const GbButton = styled(Button)`
 	padding: 24px 31px;
+	margin-top: auto;
 `;
 
 export const GIVBackCard = styled.div`

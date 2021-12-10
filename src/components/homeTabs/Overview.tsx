@@ -18,6 +18,7 @@ import {
 	EGDataBlock,
 	ParticipateDataBlock,
 	ClaimCardQuote,
+	DataBlockButton,
 } from './Overview.sc';
 import { IconGIV } from '../Icons/GIV';
 
@@ -82,15 +83,7 @@ export const TabOverviewBottom = () => {
 				<Row wrap={1} justifyContent='space-between'>
 					<ParticipateDataBlock
 						title='Give'
-						button={
-							<a
-								href='https://giveth.io/projects'
-								target='_blank'
-								rel='noreferrer'
-							>
-								<Button label='DONATE TO PROJECTS' />
-							</a>
-						}
+						button={<DataBlockButton label='DONATE TO PROJECTS' />}
 					>
 						Donate to empower change-makers that are working hard to
 						make a difference. Get GIVbacks when you donate to
@@ -98,15 +91,7 @@ export const TabOverviewBottom = () => {
 					</ParticipateDataBlock>
 					<ParticipateDataBlock
 						title='Govern'
-						button={
-							<a
-								href='https://gardens-staging.1hive.org/#/xdai/garden/0x2050eabe84409e480ad1062001fdb6dfbc836192'
-								target='_blank'
-								rel='noreferrer'
-							>
-								<Button label='SEE PROPOSALS' />
-							</a>
-						}
+						button={<DataBlockButton label='SEE PROPOSALS' />}
 					>
 						The GIVeconomy empowers our collective of projects,
 						donors, builders and community members to build the
@@ -114,11 +99,7 @@ export const TabOverviewBottom = () => {
 					</ParticipateDataBlock>
 					<ParticipateDataBlock
 						title='Earn'
-						button={
-							<Link href='/givfarm' passHref>
-								<Button label='SEE FARMS' />
-							</Link>
-						}
+						button={<DataBlockButton label='SEE FARMS' />}
 					>
 						Become a liquidity provider and stake tokens in the
 						GIVfarm to generate even more GIV in rewards.
