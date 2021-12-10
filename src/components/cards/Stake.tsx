@@ -214,7 +214,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 										width='16'
 										alt='Star icon'
 									/>
-									{formatEthHelper(apr, 2)}%
+									{formatEthHelper(apr ? apr : Zero, 2)}%
 								</PoolItemBold>
 							</Row>
 							<Row justifyContent='space-between'>

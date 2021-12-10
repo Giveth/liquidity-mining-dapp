@@ -97,8 +97,6 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	useEffect(() => {
 		if (addressSubmitted) {
-			console.log('claimableAmount:', utils.formatEther(claimableAmount));
-
 			// if (claimableAmount.isZero()) {
 			// 	setGiveDropState(GiveDropStateType.Missed);
 			// } else if (claimableAmount.isNegative()) {
