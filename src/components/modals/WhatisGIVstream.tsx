@@ -40,7 +40,7 @@ export const WhatisGIVstreamModal: FC<IWhatisGIVstreamModal> = ({
 					When you earn GIV, part will be liquid and part will add to
 					your GIVstream flowrate after you claim. As time passes and
 					the GIVstream flows, a greater percentage of the total GIV
-					you earn is liquid. The GIVstream flows until November 23,
+					you earn is liquid. The GIVstream flows until December 24,
 					2026 at which point the GIVeconomy will be full power!
 				</Desc>
 				<LinksRow alignItems='center' justifyContent='center'>
