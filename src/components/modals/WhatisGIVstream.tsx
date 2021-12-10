@@ -37,13 +37,12 @@ export const WhatisGIVstreamModal: FC<IWhatisGIVstreamModal> = ({
 				</Desc>
 				<H5 weight={900}>How it Works </H5>
 				<Desc>
-					When you claim your GIVdrop or harvest GIV rewards, a
-					portion of your GIV is sent directly to your wallet and the
-					rest is added to your GIVstream flowrate. As time passes and
-					the GIVstream flows, a larger portion of the total GIV you
-					earn is sent directly to you at the time of harvest. The
-					GIVstream flows until December 24, 2026 at which point the
-					GIVeconomy will be full power!
+					When you harvest GIV rewards, a portion of your GIV is sent
+					directly to your wallet and the rest is added to your
+					GIVstream. As time passes and the GIVstream flows, a larger
+					portion of the total GIV you get is sent directly to you at
+					the time of harvest. The GIVstream flows until December 24,
+					2026 at which point the GIVeconomy will be full power!
 				</Desc>
 				<LinksRow alignItems='center' justifyContent='center'>
 					<Link href='/' passHref>
