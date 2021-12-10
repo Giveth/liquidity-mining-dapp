@@ -1,11 +1,11 @@
 import GIVbackView from '@/components/views/Back.view';
 import Head from 'next/head';
 
-export default function GIVgardenRoute() {
+export default function GIVbacksRoute() {
 	return (
 		<>
 			<Head>
-				<title>GIVgarden</title>
+				<title>GIVbacks</title>
 			</Head>
 			<GIVbackView />
 		</>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Row } from '../styled-components/Grid';
+import Link from 'next/link';
 import router from 'next/router';
 import { Container, Button } from '@giveth/ui-design-system';
 import {
@@ -81,7 +82,15 @@ export const TabOverviewBottom = () => {
 				<Row wrap={1} justifyContent='space-between'>
 					<ParticipateDataBlock
 						title='Give'
-						button={<Button label='DONATE TO PROJECTS' />}
+						button={
+							<a
+								href='https://giveth.io/projects'
+								target='_blank'
+								rel='noreferrer'
+							>
+								<Button label='DONATE TO PROJECTS' />
+							</a>
+						}
 					>
 						Donate to empower change-makers that are working hard to
 						make a difference. Get GIVbacks when you donate to
@@ -89,7 +98,15 @@ export const TabOverviewBottom = () => {
 					</ParticipateDataBlock>
 					<ParticipateDataBlock
 						title='Govern'
-						button={<Button label='SEE PROPOSALS' />}
+						button={
+							<a
+								href='https://gardens-staging.1hive.org/#/xdai/garden/0x2050eabe84409e480ad1062001fdb6dfbc836192'
+								target='_blank'
+								rel='noreferrer'
+							>
+								<Button label='SEE PROPOSALS' />
+							</a>
+						}
 					>
 						The GIVeconomy empowers our collective of projects,
 						donors, builders and community members to build the
@@ -97,7 +114,11 @@ export const TabOverviewBottom = () => {
 					</ParticipateDataBlock>
 					<ParticipateDataBlock
 						title='Earn'
-						button={<Button label='SEE FARMS' />}
+						button={
+							<Link href='/givfarm' passHref>
+								<Button label='SEE FARMS' />
+							</Link>
+						}
 					>
 						Become a liquidity provider and stake tokens in the
 						GIVfarm to generate even more GIV in rewards.

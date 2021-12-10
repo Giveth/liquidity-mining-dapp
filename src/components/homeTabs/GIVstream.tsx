@@ -6,6 +6,7 @@ import React, {
 	useRef,
 	useState,
 } from 'react';
+import Link from 'next/link';
 import { Row } from '../styled-components/Grid';
 import {
 	B,
@@ -271,11 +272,17 @@ export const TabGIVstreamBottom = () => {
 						<IGsDataBox
 							title='GIVbacks'
 							button={
-								<GsButton
-									label='SEE PROJECTS'
-									buttonType='primary'
-									size='medium'
-								/>
+								<a
+									href='https://giveth.io/projects'
+									target='_blank'
+									rel='noreferrer'
+								>
+									<GsButton
+										label='SEE PROJECTS'
+										buttonType='primary'
+										size='medium'
+									/>
+								</a>
 							}
 						>
 							Donate to verified projects on Giveth. Get GIV and
@@ -284,11 +291,17 @@ export const TabGIVstreamBottom = () => {
 						<IGsDataBox
 							title='GIVgarden'
 							button={
-								<GsButton
-									label='SEE PROPOSALS'
-									buttonType='primary'
-									size='medium'
-								/>
+								<a
+									href='https://gardens-staging.1hive.org/#/xdai/garden/0x2050eabe84409e480ad1062001fdb6dfbc836192'
+									target='_blank'
+									rel='noreferrer'
+								>
+									<GsButton
+										label='SEE PROPOSALS'
+										buttonType='primary'
+										size='medium'
+									/>
+								</a>
 							}
 						>
 							The GIVgarden is the decentralized governance
@@ -298,11 +311,13 @@ export const TabGIVstreamBottom = () => {
 						<IGsDataBox
 							title='GIVfarm'
 							button={
-								<GsButton
-									label='SEE OPPORTUNITIES'
-									buttonType='primary'
-									size='medium'
-								/>
+								<Link href='/givfarm' passHref>
+									<GsButton
+										label='SEE OPPORTUNITIES'
+										buttonType='primary'
+										size='medium'
+									/>
+								</Link>
 							}
 						>
 							Stake GIV, or become a liquidity provider and stake

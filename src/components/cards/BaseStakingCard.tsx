@@ -172,7 +172,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 					<ClaimButton
 						disabled={earned.isZero()}
 						onClick={() => setShowHarvestModal(true)}
-						label='CLAIM REWARDS'
+						label='HARVEST REWARDS'
 					/>
 					<StakeButtonsRow>
 						<StakeContainer flexDirection='column'>

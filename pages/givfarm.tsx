@@ -1,11 +1,11 @@
 import GIVfarmView from '@/components/views/Farm.view';
 import Head from 'next/head';
 
-export default function GIVgardenRoute() {
+export default function GIVfarmRoute() {
 	return (
 		<>
 			<Head>
-				<title>GIVgarden</title>
+				<title>GIVfarm</title>
 			</Head>
 			<GIVfarmView />
 		</>
