@@ -1,11 +1,11 @@
 import Head from 'next/head';
 import ClaimView from '@/components/views/claim/Claim.view';
 
-export default function HomeRoute() {
+export default function GIVdropRoute() {
 	return (
 		<>
 			<Head>
-				<title>Claim Giv Drop</title>
+				<title>GIVdrop</title>
 			</Head>
 			<ClaimView />
 		</>
