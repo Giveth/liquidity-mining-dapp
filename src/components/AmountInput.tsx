@@ -2,11 +2,10 @@ import { GLink, neutralColors, brandColors } from '@giveth/ui-design-system';
 import { BigNumber, utils } from 'ethers';
 import { FC, useState, useCallback, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
-import config from 'src/configuration';
-import { formatEthHelper, formatWeiHelper } from '../helpers/number';
+import { formatWeiHelper } from '../helpers/number';
 import { PoolStakingConfig } from '../types/config';
 import { Row } from './styled-components/Grid';
-
+import NumericalInput from './NumericalInput';
 interface IAmountInput {
 	maxAmount: BigNumber;
 	setAmount: Dispatch<SetStateAction<string>>;
@@ -14,13 +13,15 @@ interface IAmountInput {
 	disabled?: boolean;
 }
 
+function valueToBigNumber(value: string) {}
+
 export const AmountInput: FC<IAmountInput> = ({
 	maxAmount,
 	setAmount,
 	poolStakingConfig,
 	disabled = false,
 }) => {
-	const [displayAmount, setDisplayAmount] = useState('0');
+	const [displayAmount, setDisplayAmount] = useState('');
 
 	const setAmountPercentage = useCallback(
 		(percentage: number): void => {
@@ -34,9 +35,17 @@ export const AmountInput: FC<IAmountInput> = ({
 		[maxAmount],
 	);
 
-	const onChange = useCallback(value => {
-		setDisplayAmount(formatEthHelper(value, 6, false));
-		setAmount(utils.parseUnits('' + value).toString());
+	const onUserInput = useCallback(value => {
+		setDisplayAmount(value);
+		let valueBn = BigNumber.from(0);
+
+		try {
+			valueBn = utils.parseUnits(value);
+		} catch (error) {
+			console.debug(`Failed to parse input amount: "${value}"`, error);
+		}
+
+		setAmount(valueBn.toString());
 	}, []);
 
 	return (
@@ -46,7 +55,7 @@ export const AmountInput: FC<IAmountInput> = ({
 					<InputLabelText>Available: </InputLabelText>
 					<InputLabelValue>
 						&nbsp;
-						{formatWeiHelper(maxAmount, config.TOKEN_PRECISION)}
+						{formatWeiHelper(maxAmount)}
 						&nbsp;
 						{poolStakingConfig.title}
 						&nbsp;LP
@@ -60,12 +69,7 @@ export const AmountInput: FC<IAmountInput> = ({
 					Max
 				</InputLabelAction>
 			</InputLabelRow>
-			<Input
-				value={displayAmount}
-				type='number'
-				onChange={e => onChange(+e.target.value || '0')}
-				disabled={disabled}
-			/>
+			<NumericalInput value={displayAmount} onUserInput={onUserInput} />
 			<FiltersRow>
 				<Filter
 					onClick={() => {
@@ -111,39 +115,6 @@ const InputLabelValue = styled.div``;
 const InputLabelAction = styled(GLink)`
 	color: ${brandColors.cyan[500]};
 	cursor: pointer;
-`;
-
-export const Input = styled.input`
-	width: 100%;
-	height: 54px;
-	padding: 15px 16px;
-	margin-top: 10px;
-	margin-bottom: 8px;
-
-	background: ${brandColors.giv[700]};
-	color: ${neutralColors.gray[100]};
-
-	border: 1px solid ${brandColors.giv[500]};
-	border-radius: 8px;
-
-	font-family: Red Hat Text;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 16px;
-	line-height: 150%;
-
-	&:focus {
-		outline: none;
-	}
-	&[type='number'] {
-		-moz-appearance: textfield;
-	}
-	&::-webkit-outer-spin-button,
-	&::-webkit-inner-spin-button {
-		-webkit-appearance: none;
-		margin: 0;
-	}
-	${props => (props.disabled ? `color: ${brandColors.giv[300]};` : '')}
 `;
 
 const FiltersRow = styled(Row)`

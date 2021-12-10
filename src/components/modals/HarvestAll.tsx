@@ -1,58 +1,57 @@
 import React, { FC, useContext, useEffect, useState } from 'react';
-import { Modal, IModal } from './Modal';
+import { IModal, Modal } from './Modal';
 import Lottie from 'react-lottie';
 import LoadingAnimation from '../../animations/loading.json';
-import CheckAnimation from '../../animations/check.json';
 import {
+	B,
 	brandColors,
 	Caption,
 	IconGIVStream,
 	IconHelp,
 	Lead,
-	B,
 } from '@giveth/ui-design-system';
-import { BigNumber } from '@ethersproject/bignumber';
 import { OnboardContext } from '@/context/onboard.context';
-import {
-	fetchBalances,
-	getGIVPrice,
-	getTokenDistroInfo,
-} from '@/services/subgraph';
+import { getGIVPrice } from '@/services/subgraph';
 import { PoolStakingConfig } from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
-import { calcTokenInfo, ITokenInfo } from '@/lib/helpers';
 import { formatWeiHelper } from '@/helpers/number';
-import config from '@/configuration';
-import { TokenBalanceContext } from '@/context/tokenBalance.context';
+import { useBalances } from '@/context/balance.context';
+import { useTokenDistro } from '@/context/tokenDistro.context';
 import { harvestTokens } from '@/lib/stakingPool';
 import { claimUnstakeStake } from '@/lib/stakingNFT';
 import { useLiquidityPositions } from '@/context';
-import { SubmittedInnerModal, ConfirmedInnerModal } from './ConfirmSubmit';
+import { ConfirmedInnerModal, SubmittedInnerModal } from './ConfirmSubmit';
 import {
+	CancelButton,
+	GIVBoxWithPriceAmount,
+	GIVBoxWithPriceContainer,
+	GIVBoxWithPriceIcon,
+	GIVBoxWithPriceUSD,
+	GIVRate,
+	HarvestAllDesc,
 	HarvestAllModalContainer,
-	HarvestAllModalTitleRow,
 	HarvestAllModalTitle,
-	TitleIcon,
+	HarvestAllModalTitleRow,
+	HarvestButton,
+	HelpRow,
+	Pending,
+	RateRow,
 	SPTitle,
 	StakingPoolLabel,
 	StakingPoolSubtitle,
-	HelpRow,
-	RateRow,
-	GIVRate,
-	HarvestAllDesc,
-	HarvestButton,
-	Pending,
-	CancelButton,
-	GIVBoxWithPriceContainer,
-	GIVBoxWithPriceIcon,
-	GIVBoxWithPriceAmount,
-	GIVBoxWithPriceUSD,
+	TitleIcon,
 } from './HarvestAll.sc';
+import { Zero } from '@ethersproject/constants';
+import { ethers } from 'ethers';
+import BigNumber from 'bignumber.js';
+import { claimReward } from '@/lib/claim';
+import config from '@/configuration';
+import { WrongNetworkInnerModal } from './WrongNetwork';
 
 interface IHarvestAllModalProps extends IModal {
 	title: string;
-	poolStakingConfig: PoolStakingConfig;
-	claimable: BigNumber;
+	poolStakingConfig?: PoolStakingConfig;
+	claimable?: ethers.BigNumber;
 	network: number;
 }
 
@@ -60,15 +59,6 @@ const loadingAnimationOptions = {
 	loop: true,
 	autoplay: true,
 	animationData: LoadingAnimation,
-	rendererSettings: {
-		preserveAspectRatio: 'xMidYMid slice',
-	},
-};
-
-const checkAnimationOptions = {
-	loop: false,
-	autoplay: true,
-	animationData: CheckAnimation,
 	rendererSettings: {
 		preserveAspectRatio: 'xMidYMid slice',
 	},
@@ -90,43 +80,38 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	network,
 }) => {
 	const [state, setState] = useState(HarvestStates.HARVEST);
-	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
-	const [givBackInfo, setGivBackInfo] = useState<ITokenInfo>();
-	const [balanceInfo, setBalanceInfo] = useState<ITokenInfo>();
-	const { tokenBalance } = useContext(TokenBalanceContext);
-	const { address, provider } = useContext(OnboardContext);
+	const { currentBalance } = useBalances();
+	const { tokenDistroHelper } = useTokenDistro();
+	const {
+		network: walletNetwork,
+		address,
+		provider,
+	} = useContext(OnboardContext);
 	const { currentIncentive, stakedPositions } = useLiquidityPositions();
 	const [txHash, setTxHash] = useState('');
 
 	const [price, setPrice] = useState(0);
+	const [rewardLiquidPart, setRewardLiquidPart] = useState(Zero);
+	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
+	const [claimableNow, setClaimableNow] = useState(Zero);
+	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
+	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
 
 	useEffect(() => {
-		const getTokensInfo = async () => {
-			const distroInfo = await getTokenDistroInfo(network);
-			const balances = await fetchBalances(network, address);
-			if (distroInfo) {
-				const {
-					initialAmount,
-					totalTokens,
-					startTime,
-					cliffTime,
-					duration,
-				} = distroInfo;
-				const _givBackInfo = calcTokenInfo(
-					initialAmount,
-					totalTokens,
-					balances.givback,
-					duration,
-					cliffTime,
-					startTime,
-				);
-				setGivBackInfo(_givBackInfo);
-			}
-		};
-		if (network === config.XDAI_NETWORK_NUMBER) {
-			getTokensInfo();
+		if (claimable) {
+			setRewardLiquidPart(tokenDistroHelper.getLiquidPart(claimable));
+			setRewardStream(
+				tokenDistroHelper.getStreamPartTokenPerWeek(claimable),
+			);
 		}
-	}, [address, network]);
+		setClaimableNow(tokenDistroHelper.getUserClaimableNow(currentBalance));
+		setGivBackLiquidPart(
+			tokenDistroHelper.getLiquidPart(currentBalance.givback),
+		);
+		setGivBackStream(
+			tokenDistroHelper.getStreamPartTokenPerWeek(currentBalance.givback),
+		);
+	}, [claimable, currentBalance, tokenDistroHelper]);
 
 	useEffect(() => {
 		getGIVPrice(network).then(price => {
@@ -134,75 +119,52 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		});
 	}, [network]);
 
-	useEffect(() => {
-		getTokenDistroInfo(network).then(distroInfo => {
-			if (distroInfo) {
-				const {
-					initialAmount,
-					totalTokens,
-					startTime,
-					cliffTime,
-					duration,
-				} = distroInfo;
-				const _tokenInfo = calcTokenInfo(
-					initialAmount,
-					totalTokens,
-					claimable,
-					duration,
-					cliffTime,
-					startTime,
-				);
-				setTokenInfo(_tokenInfo);
-			}
-		});
-	}, [claimable, network]);
-
-	useEffect(() => {
-		getTokenDistroInfo(network).then(distroInfo => {
-			if (distroInfo) {
-				const {
-					initialAmount,
-					totalTokens,
-					startTime,
-					cliffTime,
-					duration,
-				} = distroInfo;
-				const _balanceInfo = calcTokenInfo(
-					initialAmount,
-					totalTokens,
-					tokenBalance,
-					duration,
-					cliffTime,
-					startTime,
-				);
-				setBalanceInfo(_balanceInfo);
-			}
-		});
-	}, [tokenBalance, network]);
-
 	const onHarvest = () => {
 		if (!provider) return;
 		setState(HarvestStates.HARVESTING);
-		if (poolStakingConfig.hasOwnProperty('NFT_POSITIONS_MANAGER_ADDRESS')) {
-			//NFT Harvest
-			claimUnstakeStake(
-				address,
-				provider,
-				currentIncentive,
-				stakedPositions,
-			).then(res => {
-				setState(HarvestStates.CONFIRMED);
-			});
+		if (poolStakingConfig) {
+			if (
+				poolStakingConfig.hasOwnProperty(
+					'NFT_POSITIONS_MANAGER_ADDRESS',
+				)
+			) {
+				//NFT Harvest
+				claimUnstakeStake(
+					address,
+					provider,
+					currentIncentive,
+					stakedPositions,
+				).then(res => {
+					setState(HarvestStates.CONFIRMED);
+				});
+			} else {
+				// LP Harvest
+				harvestTokens(poolStakingConfig.LM_ADDRESS, provider)
+					.then(txResponse => {
+						if (txResponse) {
+							setState(HarvestStates.SUBMITTED);
+							setTxHash(txResponse.hash);
+							txResponse.wait().then(data => {
+								setState(HarvestStates.CONFIRMED);
+							});
+						} else {
+							setState(HarvestStates.HARVEST);
+						}
+					})
+					.catch(err => {
+						setState(HarvestStates.HARVEST);
+					});
+			}
 		} else {
-			// LP Harvest
-			harvestTokens(poolStakingConfig.LM_ADDRESS, provider)
+			claimReward(
+				config.NETWORKS_CONFIG[network]?.TOKEN_DISTRO_ADDRESS,
+				provider,
+			)
 				.then(txResponse => {
 					if (txResponse) {
 						setState(HarvestStates.SUBMITTED);
 						setTxHash(txResponse.hash);
 						txResponse.wait().then(data => {
-							const { status } = data;
-							console.log('status', status);
 							setState(HarvestStates.CONFIRMED);
 						});
 					} else {
@@ -220,199 +182,189 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		return usd;
 	};
 
-	console.log(`state`, state);
-
 	return (
 		<Modal
 			showModal={showModal}
 			setShowModal={setShowModal}
 			// title='Your GIVgardens Rewards'
 		>
-			{(state === HarvestStates.HARVEST ||
-				state === HarvestStates.HARVESTING) && (
-				<HarvestAllModalContainer>
-					<HarvestAllModalTitleRow alignItems='center'>
-						<HarvestAllModalTitle weight={700}>
-							{title}
-						</HarvestAllModalTitle>
-						<TitleIcon size={24} />
-					</HarvestAllModalTitleRow>
-					<SPTitle alignItems='center' gap='16px'>
-						<StakingPoolImages title={poolStakingConfig.title} />
-						<div>
-							<StakingPoolLabel weight={900}>
-								{poolStakingConfig.title}
-							</StakingPoolLabel>
-							<StakingPoolSubtitle>
-								{poolStakingConfig.description}
-							</StakingPoolSubtitle>
-						</div>
-					</SPTitle>
-					{tokenInfo && (
-						<>
-							<GIVBoxWithPrice
-								amount={tokenInfo.releasedReward}
-								price={calcUSD(
-									formatWeiHelper(
-										tokenInfo.releasedReward,
-										config.TOKEN_PRECISION,
-									),
-								)}
-							/>
-							<HelpRow alignItems='center'>
-								<Caption>
-									Added to your GIVstream flowrate
-								</Caption>
-								<IconHelp
-									size={16}
-									color={brandColors.deep[100]}
+			<>
+				{(state === HarvestStates.HARVEST ||
+					state === HarvestStates.HARVESTING) && (
+					<HarvestAllModalContainer>
+						<HarvestAllModalTitleRow alignItems='center'>
+							<HarvestAllModalTitle weight={700}>
+								{title}
+							</HarvestAllModalTitle>
+							<TitleIcon size={24} />
+						</HarvestAllModalTitleRow>
+						{poolStakingConfig && (
+							<SPTitle alignItems='center' gap='16px'>
+								<StakingPoolImages
+									title={poolStakingConfig.title}
 								/>
-							</HelpRow>
-							<RateRow alignItems='center'>
-								<IconGIVStream size={24} />
-								<GIVRate>
-									{formatWeiHelper(
-										tokenInfo.flowratePerWeek,
-										config.TOKEN_PRECISION,
+								<div>
+									<StakingPoolLabel weight={900}>
+										{poolStakingConfig.title}
+									</StakingPoolLabel>
+									<StakingPoolSubtitle>
+										{poolStakingConfig.description}
+									</StakingPoolSubtitle>
+								</div>
+							</SPTitle>
+						)}
+						{claimable && claimable.gt(0) && (
+							<>
+								<GIVBoxWithPrice
+									amount={rewardLiquidPart}
+									price={calcUSD(
+										formatWeiHelper(rewardLiquidPart),
 									)}
-								</GIVRate>
-								<Lead>GIV/week</Lead>
-							</RateRow>
-						</>
-					)}
-					{givBackInfo && givBackInfo.releasedReward.gt(0) && (
-						<>
-							<HelpRow alignItems='center'>
-								<B>Claimable from GIVbacks</B>
-								<IconHelp
-									size={16}
-									color={brandColors.deep[100]}
 								/>
-							</HelpRow>
-							<GIVBoxWithPrice
-								amount={givBackInfo.releasedReward}
-								price={calcUSD(
-									formatWeiHelper(
-										givBackInfo.releasedReward,
-										config.TOKEN_PRECISION,
-									),
-								)}
-							/>
-							<HelpRow alignItems='center'>
-								<Caption>
-									Added to your GIVstream flowrate
-								</Caption>
-								<IconHelp
-									size={16}
-									color={brandColors.deep[100]}
-								/>
-							</HelpRow>
-							<RateRow alignItems='center'>
-								<IconGIVStream size={24} />
-								<GIVRate>
-									{formatWeiHelper(
-										givBackInfo.flowratePerWeek,
-										config.TOKEN_PRECISION,
+								<HelpRow alignItems='center'>
+									<Caption>
+										Added to your GIVstream flowrate
+									</Caption>
+									<IconHelp
+										size={16}
+										color={brandColors.deep[100]}
+									/>
+								</HelpRow>
+								<RateRow alignItems='center'>
+									<IconGIVStream size={24} />
+									<GIVRate>
+										{formatWeiHelper(rewardStream)}
+									</GIVRate>
+									<Lead>GIV/week</Lead>
+								</RateRow>
+							</>
+						)}
+						{currentBalance.givback.gt(0) && (
+							<>
+								<HelpRow alignItems='center'>
+									<B>Claimable from GIVbacks</B>
+									<IconHelp
+										size={16}
+										color={brandColors.deep[100]}
+									/>
+								</HelpRow>
+								<GIVBoxWithPrice
+									amount={givBackLiquidPart}
+									price={calcUSD(
+										formatWeiHelper(givBackLiquidPart),
 									)}
-								</GIVRate>
-								<Lead>GIV/week</Lead>
-							</RateRow>
-						</>
-					)}
-					{balanceInfo && (
-						<>
-							<GIVBoxWithPrice
-								amount={balanceInfo.releasedReward}
-								price={calcUSD(
-									formatWeiHelper(
-										balanceInfo.releasedReward,
-										config.TOKEN_PRECISION,
-									),
-								)}
-							/>
-							{/* <HelpRow alignItems='center'>
-								<Caption>
-									Added to your GIVstream flowrate
-								</Caption>
-								<IconHelp
-									size={16}
-									color={brandColors.deep[100]}
 								/>
-							</HelpRow> */}
-							{/* <RateRow alignItems='center'>
-								<IconGIVStream size={24} />
-								<GIVRate>
-									{formatWeiHelper(
-										balanceInfo.flowratePerWeek,
-										config.TOKEN_PRECISION,
+								<HelpRow alignItems='center'>
+									<Caption>
+										Added to your GIVstream flowrate
+									</Caption>
+									<IconHelp
+										size={16}
+										color={brandColors.deep[100]}
+									/>
+								</HelpRow>
+								<RateRow alignItems='center'>
+									<IconGIVStream size={24} />
+									<GIVRate>
+										{formatWeiHelper(givBackStream)}
+									</GIVRate>
+									<Lead>GIV/week</Lead>
+								</RateRow>
+							</>
+						)}
+						{!claimableNow.isZero() && (
+							<>
+								<HelpRow alignItems='center'>
+									<B>Claimable from GIVstream</B>
+								</HelpRow>
+								<GIVBoxWithPrice
+									amount={claimableNow.sub(givBackLiquidPart)}
+									price={calcUSD(
+										formatWeiHelper(claimableNow),
 									)}
-								</GIVRate>
-								<Lead>GIV/week</Lead>
-							</RateRow> */}
-						</>
-					)}
-					{/* <StyledGivethIcon>
-						<IconGIV size={64} />
-					</StyledGivethIcon>
-					<GIVAmount>{257.9055}</GIVAmount>
-					<USDAmount>~${348.74}</USDAmount> */}
-					<HarvestAllDesc>
-						When you claim rewards from GIVbacks, you also claim any
-						other liquid GIV allocated to you in the token distro.
-					</HarvestAllDesc>
-					{state === HarvestStates.HARVEST && (
-						<HarvestButton
-							label='HARVEST'
+								/>
+								{/* <HelpRow alignItems='center'>
+									<Caption></Caption>
+									<IconHelp
+										size={16}
+										color={brandColors.deep[100]}
+									/>
+								</HelpRow> */}
+								{/* <RateRow alignItems='center'>
+									<IconGIVStream size={24} />
+									<GIVRate>
+										{formatWeiHelper(
+											balanceInfo.flowratePerWeek,
+										)}
+									</GIVRate>
+									<Lead>GIV/week</Lead>
+								</RateRow> */}
+							</>
+						)}
+						{/* <StyledGivethIcon>
+							<IconGIV size={64} />
+						</StyledGivethIcon>
+						<GIVAmount>{257.9055}</GIVAmount>
+						<USDAmount>~${348.74}</USDAmount> */}
+						<HarvestAllDesc>
+							When you claim rewards from GIVbacks, you also claim
+							any other liquid GIV allocated to you in the token
+							distro.
+						</HarvestAllDesc>
+						{state === HarvestStates.HARVEST && (
+							<HarvestButton
+								label='HARVEST'
+								size='medium'
+								buttonType='primary'
+								onClick={onHarvest}
+							/>
+						)}
+						{state === HarvestStates.HARVESTING && (
+							<Pending>
+								<Lottie
+									options={loadingAnimationOptions}
+									height={40}
+									width={40}
+								/>
+								&nbsp;HARVEST PENDING
+							</Pending>
+						)}
+						<CancelButton
+							disabled={state !== HarvestStates.HARVEST}
+							label='CANCEL'
 							size='medium'
-							buttonType='primary'
-							onClick={onHarvest}
+							buttonType='texty'
+							onClick={() => {
+								setShowModal(false);
+							}}
 						/>
-					)}
-					{state === HarvestStates.HARVESTING && (
-						<Pending>
-							<Lottie
-								options={loadingAnimationOptions}
-								height={40}
-								width={40}
-							/>
-							&nbsp;HARVEST PENDING
-						</Pending>
-					)}
-					<CancelButton
-						disabled={state !== HarvestStates.HARVEST}
-						label='CANCEL'
-						size='medium'
-						buttonType='texty'
-						onClick={() => {
-							setShowModal(false);
-						}}
-					/>
-				</HarvestAllModalContainer>
-			)}
-			{state === HarvestStates.SUBMITTED && (
-				<HarvestAllModalContainer>
-					<SubmittedInnerModal
-						title={title}
-						walletNetwork={network}
-						txHash={txHash}
-					/>
-				</HarvestAllModalContainer>
-			)}
-			{state === HarvestStates.CONFIRMED && (
-				<HarvestAllModalContainer>
-					<ConfirmedInnerModal
-						title={title}
-						walletNetwork={network}
-						txHash={txHash}
-					/>
-				</HarvestAllModalContainer>
-			)}
+					</HarvestAllModalContainer>
+				)}
+				{state === HarvestStates.SUBMITTED && (
+					<HarvestAllModalContainer>
+						<SubmittedInnerModal
+							title={title}
+							walletNetwork={network}
+							txHash={txHash}
+						/>
+					</HarvestAllModalContainer>
+				)}
+				{state === HarvestStates.CONFIRMED && (
+					<HarvestAllModalContainer>
+						<ConfirmedInnerModal
+							title={title}
+							walletNetwork={network}
+							txHash={txHash}
+						/>
+					</HarvestAllModalContainer>
+				)}
+			</>
 		</Modal>
 	);
 };
 
 interface IGIVBoxWithPriceProps {
-	amount: BigNumber;
+	amount: ethers.BigNumber;
 	price: string;
 }
 
@@ -422,7 +374,7 @@ const GIVBoxWithPrice: FC<IGIVBoxWithPriceProps> = ({ amount, price }) => {
 			<GIVBoxWithPriceContainer alignItems='center'>
 				<GIVBoxWithPriceIcon size={40} />
 				<GIVBoxWithPriceAmount>
-					{formatWeiHelper(amount, config.TOKEN_PRECISION)}
+					{formatWeiHelper(amount)}
 				</GIVBoxWithPriceAmount>
 				<GIVBoxWithPriceUSD>~${price}</GIVBoxWithPriceUSD>
 			</GIVBoxWithPriceContainer>

@@ -1,5 +1,5 @@
 import { createContext, FC, ReactNode, useState, useContext } from 'react';
-import { fetchAirDropClaimData, hasClaimedAirDrop } from '../lib/claim';
+import { fetchAirDropClaimData, hasClaimedAirDrop } from '@/lib/claim';
 import { Zero } from '@ethersproject/constants';
 import { BigNumber } from 'ethers';
 

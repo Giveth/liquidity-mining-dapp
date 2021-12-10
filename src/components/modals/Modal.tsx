@@ -46,6 +46,7 @@ interface IModalWrapper {
 
 export interface IModal {
 	showModal: boolean;
+	hiddenClose?: boolean;
 	setShowModal: (value: boolean) => void;
 	children?: React.ReactNode;
 	// title?: string;
@@ -54,7 +55,7 @@ export interface IModal {
 export const Modal: FC<IModal> = ({
 	showModal,
 	setShowModal,
-	// title,
+	hiddenClose = false,
 	children,
 }) => {
 	const modalRef = useRef(null);
@@ -94,13 +95,15 @@ export const Modal: FC<IModal> = ({
 				<Background onClick={closeModal} ref={modalRef}>
 					<animated.div style={animation}>
 						<ModalWrapper showModal={showModal}>
-							<CloseModalButton
-								onClick={() => {
-									setShowModal(false);
-								}}
-							>
-								<IconX size={24} />
-							</CloseModalButton>
+							{!hiddenClose && (
+								<CloseModalButton
+									onClick={() => {
+										setShowModal(false);
+									}}
+								>
+									<IconX size={24} />
+								</CloseModalButton>
+							)}
 							{/* <ModalTitle>{title}</ModalTitle> */}
 							{children}
 						</ModalWrapper>

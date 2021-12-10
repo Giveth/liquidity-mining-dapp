@@ -6,6 +6,8 @@ const config: EnvConfig = {
 	MAINNET_NETWORK_NUMBER: 1,
 	XDAI_NETWORK_NUMBER: 100,
 
+	GARDEN_LINK: '',
+
 	MAINNET_NETWORK: {
 		chainId: '0x1', // A 0x-prefixed hexadecimal string
 		chainName: 'Ethereum Mainnet',
@@ -15,6 +17,7 @@ const config: EnvConfig = {
 			decimals: 18,
 		},
 		rpcUrls: [],
+		blockExplorerName: ['etherscan'],
 		blockExplorerUrls: ['https://etherscan.io/'],
 		subgraphAddress:
 			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-kovan',
@@ -29,6 +32,7 @@ const config: EnvConfig = {
 			decimals: 18,
 		},
 		rpcUrls: ['https://rpc.xdaichain.com'],
+		blockExplorerName: ['blockscout'],
 		blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
 		subgraphAddress:
 			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-xdai',
@@ -45,6 +49,7 @@ const config: EnvConfig = {
 
 		GIV: {
 			LM_ADDRESS: '',
+			BUY_LINK: '',
 		},
 	},
 
@@ -58,7 +63,9 @@ const config: EnvConfig = {
 		pools: [],
 
 		GIV: {
-			LM_ADDRESS: '0xF66823fdc33B9F4C66dB4C3394FF139872C12f16',
+			LM_ADDRESS: '',
+			GARDEN_ADDRESS: '',
+			BUY_LINK: '',
 		},
 	},
 };

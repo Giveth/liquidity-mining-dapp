@@ -6,6 +6,9 @@ const config: EnvConfig = {
 	MAINNET_NETWORK_NUMBER: 42, // Kovan
 	XDAI_NETWORK_NUMBER: 100, // xDAI
 
+	GARDEN_LINK:
+		'https://gardens-staging.1hive.org/#/xdai/garden/0x2050eabe84409e480ad1062001fdb6dfbc836192',
+
 	MAINNET_NETWORK: {
 		chainId: '0x2a', // A 0x-prefixed hexadecimal string
 		chainName: 'Kovan',
@@ -17,6 +20,7 @@ const config: EnvConfig = {
 		rpcUrls: [
 			'https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
 		],
+		blockExplorerName: ['Etherscan'],
 		blockExplorerUrls: ['https://kovan.etherscan.io'],
 		subgraphAddress:
 			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-kovan',
@@ -31,6 +35,7 @@ const config: EnvConfig = {
 			decimals: 18,
 		},
 		rpcUrls: ['https://rpc.xdaichain.com'],
+		blockExplorerName: ['Blockscout'],
 		blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
 		subgraphAddress:
 			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-xdai',
@@ -42,6 +47,8 @@ const config: EnvConfig = {
 		TOKEN_DISTRO_ADDRESS: '0x35f8414Ca6d5629887b9049cE99C7B592E583dd3',
 		GIV: {
 			LM_ADDRESS: '0xE1039af141101CB4A3C6D7B88FD0dFaB246Bab97',
+			BUY_LINK:
+				'https://app.uniswap.org/#/swap?outputCurrency=0x03472537CB64652Aa1224E4aaF6f33a34e73E877',
 		},
 
 		nodeUrl: 'https://kovan.infura.io/v3/' + INFURA_API_KEY,
@@ -92,6 +99,8 @@ const config: EnvConfig = {
 		GIV: {
 			LM_ADDRESS: '0x860C72092b7FBca277F94ba1Df11e33043724eAF',
 			GARDEN_ADDRESS: '0xF07eaBb35aFFB171D13435a12dbDCE728915D8A1',
+			BUY_LINK:
+				'https://app.honeyswap.org/#/swap?outputCurrency=0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3',
 		},
 
 		pools: [
@@ -108,7 +117,7 @@ const config: EnvConfig = {
 			{
 				POOL_ADDRESS: '0x8c77ba1d90c57d584aeed57bc9b55258b8be3438',
 				LM_ADDRESS: '0x579869ADcB3a3203D7876be889D58C5cbe089F05',
-				type: StakingType.HONEYSWAP,
+				type: StakingType.SUSHISWAP,
 				title: 'ETH / GIV',
 				description: '50% ETH, 50% GIV',
 				provideLiquidityLink:

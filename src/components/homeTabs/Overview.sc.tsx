@@ -23,7 +23,7 @@ export const OverviewTopContainer = styled(TopContainer)``;
 
 export const OverviewTitle = styled(D3)`
 	font-size: 107px;
-	padding-bottom: 42px;
+	padding-bottom: 36px;
 	max-width: 989px;
 `;
 

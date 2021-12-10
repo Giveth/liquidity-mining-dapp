@@ -24,6 +24,7 @@ import {
 	StakeAmount,
 	LiquidityButton,
 	IconContainer,
+	IconHelpWraper,
 } from './BaseStakingCard.sc';
 import {
 	IconCalculator,
@@ -37,21 +38,23 @@ import { StakeModal } from '../modals/Stake';
 import { UnStakeModal } from '../modals/UnStake';
 import { StakingPoolImages } from '../StakingPoolImages';
 import { V3StakeModal } from '../modals/V3Stake';
-import { IconEthereum } from '../Icons/Eth';
 import { IconGIV } from '../Icons/GIV';
 import { IconHoneyswap } from '../Icons/Honeyswap';
 import { IconBalancer } from '../Icons/Balancer';
 import { IconUniswap } from '../Icons/Uniswap';
 import { HarvestAllModal } from '../modals/HarvestAll';
 import { OnboardContext } from '@/context/onboard.context';
-import { ITokenInfo, calcTokenInfo } from '@/lib/helpers';
-import { getTokenDistroInfo } from '@/services/subgraph';
+import { useFarms } from '@/context/farm.context';
+import { constants } from 'ethers';
+import { useTokenDistro } from '@/context/tokenDistro.context';
+import BigNumber from 'bignumber.js';
+import { WhatisGIVstreamModal } from '../modals/WhatisGIVstream';
 
 export const getPoolIconWithName = (pool: string) => {
 	switch (pool) {
 		case StakingType.BALANCER:
 			return <IconBalancer size={16} />;
-		case StakingType.GIV_STREAM:
+		case StakingType.GIV_LM:
 			return <IconGIV size={16} />;
 		case StakingType.HONEYSWAP:
 			return <IconHoneyswap size={16} />;
@@ -72,48 +75,33 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	poolStakingConfig,
 	notif,
 }) => {
-	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
 	const [showAPRModal, setShowAPRModal] = useState(false);
 	const [showStakeModal, setShowStakeModal] = useState(false);
 	const [showUnStakeModal, setShowUnStakeModal] = useState(false);
 	const [showHarvestModal, setShowHarvestModal] = useState(false);
+	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
+		useState(false);
 	const { network: walletNetwork } = useContext(OnboardContext);
+	const [rewardLiquidPart, setRewardLiquidPart] = useState(constants.Zero);
+	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
+	const { tokenDistroHelper } = useTokenDistro();
+	const { setInfo } = useFarms();
 
-	const { type, title, description, provideLiquidityLink, LM_ADDRESS, unit } =
+	const { type, title, description, provideLiquidityLink, BUY_LINK, unit } =
 		poolStakingConfig;
 
 	const isV3Staking = type === StakingType.UNISWAP;
 
-	const {
-		apr,
-		earned,
-		stakedLpAmount,
-		rewardRatePerToken,
-		userNotStakedAmount,
-	} = stakeInfo;
+	const { apr, earned, stakedLpAmount, userNotStakedAmount } = stakeInfo;
 
 	useEffect(() => {
-		getTokenDistroInfo(walletNetwork).then(distroInfo => {
-			if (distroInfo) {
-				const {
-					initialAmount,
-					totalTokens,
-					startTime,
-					cliffTime,
-					duration,
-				} = distroInfo;
-				const _tokenInfo = calcTokenInfo(
-					initialAmount,
-					totalTokens,
-					earned,
-					duration,
-					cliffTime,
-					startTime,
-				);
-				setTokenInfo(_tokenInfo);
-			}
-		});
-	}, [earned, walletNetwork]);
+		setRewardLiquidPart(tokenDistroHelper.getLiquidPart(earned));
+		setRewardStream(tokenDistroHelper.getStreamPartTokenPerWeek(earned));
+	}, [earned, tokenDistroHelper]);
+
+	useEffect(() => {
+		setInfo(walletNetwork, type, earned);
+	}, [walletNetwork, earned, type]);
 
 	return (
 		<>
@@ -159,24 +147,23 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 						<Detail justifyContent='space-between'>
 							<DetailLabel>Claimable</DetailLabel>
 							<DetailValue>
-								{`${formatWeiHelper(
-									earned,
-									config.TOKEN_PRECISION,
-								)} GIV`}
+								{`${formatWeiHelper(rewardLiquidPart)} GIV`}
 							</DetailValue>
 						</Detail>
 						<Detail justifyContent='space-between'>
 							<Row gap='8px' alignItems='center'>
 								<DetailLabel>Streaming</DetailLabel>
-								<IconHelp size={16} />
+								<IconHelpWraper
+									onClick={() => {
+										setShowWhatIsGIVstreamModal(true);
+									}}
+								>
+									<IconHelp size={16} />
+								</IconHelpWraper>
 							</Row>
 							<Row gap='4px' alignItems='center'>
 								<DetailValue>
-									{tokenInfo &&
-										formatWeiHelper(
-											tokenInfo.flowratePerWeek,
-											config.TOKEN_PRECISION,
-										)}
+									{formatWeiHelper(rewardStream)}
 								</DetailValue>
 								<DetailUnit>GIV/week</DetailUnit>
 							</Row>
@@ -185,7 +172,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 					<ClaimButton
 						disabled={earned.isZero()}
 						onClick={() => setShowHarvestModal(true)}
-						label='CLAIM Rewards'
+						label='HARVEST REWARDS'
 					/>
 					<StakeButtonsRow>
 						<StakeContainer flexDirection='column'>
@@ -200,7 +187,6 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 									? `${userNotStakedAmount.toNumber()} ${unit}`
 									: `${formatWeiHelper(
 											userNotStakedAmount,
-											config.TOKEN_PRECISION,
 									  )} ${unit}`}
 							</StakeAmount>
 						</StakeContainer>
@@ -216,18 +202,23 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 									? `${stakedLpAmount.toNumber()} ${unit}`
 									: `${formatWeiHelper(
 											stakedLpAmount,
-											config.TOKEN_PRECISION,
 									  )} ${unit}`}
 							</StakeAmount>
 						</StakeContainer>
 					</StakeButtonsRow>
 					<LiquidityButton
 						label={
-							title === 'GIV'
+							type === StakingType.GIV_LM
 								? 'BUY GIV TOKENS'
 								: 'PROVIDE LIQUIDITY'
 						}
-						onClick={() => window.open(provideLiquidityLink)}
+						onClick={() =>
+							window.open(
+								type === StakingType.GIV_LM
+									? BUY_LINK
+									: provideLiquidityLink,
+							)
+						}
 						buttonType='texty'
 						icon={
 							<IconExternalLink
@@ -278,6 +269,12 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 					poolStakingConfig={poolStakingConfig}
 					claimable={earned}
 					network={walletNetwork}
+				/>
+			)}
+			{showWhatIsGIVstreamModal && (
+				<WhatisGIVstreamModal
+					showModal={showWhatIsGIVstreamModal}
+					setShowModal={setShowWhatIsGIVstreamModal}
 				/>
 			)}
 		</>

@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import {
@@ -23,11 +23,18 @@ import { IconWithTooltip } from '../IconWithToolTip';
 interface IV3StakeCardProps {
 	position: LiquidityPosition;
 	isUnstaking?: boolean;
+	handleWaitTx: Dispatch<SetStateAction<boolean>>;
+	handleStatusTx: Dispatch<SetStateAction<any>>;
 }
 
 const STARTS_WITH = 'data:application/json;base64,';
 
-const V3StakingCard: FC<IV3StakeCardProps> = ({ position, isUnstaking }) => {
+const V3StakingCard: FC<IV3StakeCardProps> = ({
+	position,
+	isUnstaking,
+	handleWaitTx,
+	handleStatusTx,
+}) => {
 	const { address, provider } = useOnboard();
 	const { currentIncentive } = useLiquidityPositions();
 	const { pool, tickLower, tickUpper } = position._position || {};
@@ -57,22 +64,26 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({ position, isUnstaking }) => {
 
 	const { image } = parseUri(position.uri);
 
-	const handleAction = () => {
+	const handleAction = async () => {
 		if (!provider) return;
 		if (isUnstaking) {
-			return exit(
+			handleWaitTx(true);
+			const tx = await exit(
 				position.tokenId.toNumber(),
 				address,
 				provider,
 				currentIncentive,
 			);
+			handleStatusTx(tx);
 		} else {
-			return transfer(
+			handleWaitTx(true);
+			const tx = await transfer(
 				position.tokenId.toNumber(),
 				address,
 				provider,
 				currentIncentive,
 			);
+			handleStatusTx(tx);
 		}
 	};
 

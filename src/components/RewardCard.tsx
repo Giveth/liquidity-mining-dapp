@@ -24,65 +24,94 @@ import { IconGIV } from './Icons/GIV';
 import { IconXDAI } from './Icons/XDAI';
 import { Row } from './styled-components/Grid';
 import { OnboardContext } from '@/context/onboard.context';
-import { BigNumber } from 'ethers';
+import { ethers } from 'ethers';
+import BigNumber from 'bignumber.js';
+import { IconEthereum } from './Icons/Eth';
+import { WhatisGIVstreamModal } from '@/components/modals/WhatisGIVstream';
 
 interface IRewardCardProps {
 	title?: string;
-	amount?: BigNumber;
-	rate?: BigNumber;
+	liquidAmount: ethers.BigNumber;
+	stream: BigNumber.Value;
 	actionLabel?: string;
 	actionCb?: MouseEventHandler<HTMLButtonElement>;
+	network: number;
 	className?: string;
 }
 
 export const RewardCard: FC<IRewardCardProps> = ({
-	title = 'Your Rewards',
-	amount = Zero,
-	rate = Zero,
+	title = 'Your GIVstream Rewards',
+	liquidAmount = ethers.constants.Zero,
+	stream = Zero,
 	actionLabel,
 	actionCb,
+	network,
 	className,
 }) => {
-	const { network: walletNetwork } = useContext(OnboardContext);
 	const [usdAmount, setUSDAmount] = useState('0');
+	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
+		useState(false);
 	useEffect(() => {
-		getGIVPrice(walletNetwork).then(price => {
+		getGIVPrice(network).then(price => {
 			const usd = (
-				+formatWeiHelper(amount, config.TOKEN_PRECISION) * price
+				+ethers.utils.formatEther(liquidAmount) * price
 			).toFixed(2);
 			setUSDAmount(usd);
 		});
-	}, [amount, walletNetwork]);
+	}, [liquidAmount, network]);
 
 	return (
-		<RewadCardContainer className={className}>
-			<CardHeader justifyContent='space-between'>
-				<CardTitle>{title}</CardTitle>
-				<ChainInfo alignItems='center'>
-					<IconXDAI size={16} />
-					<ChainName styleType='Small'>XDAI</ChainName>
-				</ChainInfo>
-			</CardHeader>
-			<AmountInfo alignItems='center' gap='8px'>
-				<IconGIV size={32} />
-				<Title>{formatWeiHelper(amount, config.TOKEN_PRECISION)}</Title>
-				<AmountUnit>GIV</AmountUnit>
-			</AmountInfo>
-			<Converted>~${usdAmount}</Converted>
-			<RateInfo alignItems='center' gap='8px'>
-				<IconGIVStream size={24} />
-				<P>{formatWeiHelper(rate, config.TOKEN_PRECISION)}</P>
-				<RateUnit>GIV/week</RateUnit>
-				<IconHelp size={24} color={brandColors.deep[200]} />
-			</RateInfo>
-			{actionLabel && actionCb && (
-				<ActionButton
-					label={actionLabel}
-					onClick={actionCb}
-					buttonType='primary'
+		<>
+			<RewadCardContainer className={className}>
+				<CardHeader justifyContent='space-between'>
+					<CardTitle>{title}</CardTitle>
+					<ChainInfo alignItems='center'>
+						{network === config.MAINNET_NETWORK_NUMBER && (
+							<IconEthereum size={16} />
+						)}
+						{network === config.XDAI_NETWORK_NUMBER && (
+							<IconXDAI size={16} />
+						)}
+						<ChainName styleType='Small'>
+							{network === config.MAINNET_NETWORK_NUMBER
+								? 'ETH'
+								: 'XDAI'}
+						</ChainName>
+					</ChainInfo>
+				</CardHeader>
+				<AmountInfo alignItems='center' gap='8px'>
+					<IconGIV size={32} />
+					<Title>{formatWeiHelper(liquidAmount)}</Title>
+					<AmountUnit>GIV</AmountUnit>
+				</AmountInfo>
+				<Converted>~${usdAmount}</Converted>
+				<RateInfo alignItems='center' gap='8px'>
+					<IconGIVStream size={24} />
+					<P>{formatWeiHelper(stream)}</P>
+					<RateUnit>GIV/week</RateUnit>
+					<IconHelpWraper
+						onClick={() => {
+							setShowWhatIsGIVstreamModal(true);
+						}}
+					>
+						<IconHelp size={24} color={brandColors.deep[200]} />
+					</IconHelpWraper>
+				</RateInfo>
+				{actionLabel && actionCb && (
+					<ActionButton
+						label={actionLabel}
+						onClick={actionCb}
+						buttonType='primary'
+					/>
+				)}
+			</RewadCardContainer>
+			{showWhatIsGIVstreamModal && (
+				<WhatisGIVstreamModal
+					showModal={showWhatIsGIVstreamModal}
+					setShowModal={setShowWhatIsGIVstreamModal}
 				/>
 			)}
-		</RewadCardContainer>
+		</>
 	);
 };
 
@@ -129,4 +158,8 @@ const RateUnit = styled(Lead)`
 
 const ActionButton = styled(Button)`
 	width: 100%;
+`;
+
+const IconHelpWraper = styled.div`
+	cursor: pointer;
 `;

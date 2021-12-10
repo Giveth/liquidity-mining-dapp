@@ -137,7 +137,7 @@ export const HarvestModal: FC<IHarvesModalProps> = ({
 						</CDSecond>
 					</ConfirmedData>
 					<ConfirmedData>
-						<CDFirst>Added to GIVsteram</CDFirst>
+						<CDFirst>Added to GIVstream</CDFirst>
 						<CDSecond>
 							<CDInfo gap='4px'>
 								<Lead>{9.588}</Lead>
