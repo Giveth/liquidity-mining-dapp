@@ -1,4 +1,4 @@
-import { FC, useContext } from 'react';
+import { FC, useContext, useState } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
@@ -61,6 +61,8 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { isReady, changeWallet, connect, provider, network, walletCheck } =
 		useContext(OnboardContext);
 
+	const [txStatus, setTxStatus] = useState();
+
 	const onClaim = async () => {
 		if (!isReady) {
 			console.log('Wallet is not connected');
@@ -98,27 +100,34 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	return (
 		<ClaimCardContainer activeIndex={activeIndex} index={index}>
-			<ClaimHeader>
-				<Title as='h1'>Claim your GIV tokens now!</Title>
-				<Desc size='small' color={'#CABAFF'}>
-					Join the giving economy.
-				</Desc>
-			</ClaimHeader>
-			<Row alignItems={'center'} justifyContent={'center'}>
-				<ClaimButton secondary onClick={onClaim}>
-					CLAIM {utils.formatEther(claimableAmount)} GIV Tokens
-				</ClaimButton>
-			</Row>
-			<Row alignItems={'center'} justifyContent={'center'}>
-				<MetamaskButton>
-					<Image
-						src='/images/metamask.png'
-						height='32'
-						width='215'
-						alt='Metamask button'
-					/>
-				</MetamaskButton>
-			</Row>
+			{txStatus ? (
+				<></>
+			) : (
+				<>
+					<ClaimHeader>
+						<Title as='h1'>Claim your GIV tokens now!</Title>
+						<Desc size='small' color={'#CABAFF'}>
+							Join the giving economy.
+						</Desc>
+					</ClaimHeader>
+					<Row alignItems={'center'} justifyContent={'center'}>
+						<ClaimButton secondary onClick={onClaim}>
+							CLAIM {utils.formatEther(claimableAmount)} GIV
+							Tokens
+						</ClaimButton>
+					</Row>
+					<Row alignItems={'center'} justifyContent={'center'}>
+						<MetamaskButton>
+							<Image
+								src='/images/metamask.png'
+								height='32'
+								width='215'
+								alt='Metamask button'
+							/>
+						</MetamaskButton>
+					</Row>
+				</>
+			)}
 		</ClaimCardContainer>
 	);
 };

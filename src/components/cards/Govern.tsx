@@ -241,7 +241,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 					</div>
 				</GovernGIVToken>
 				<PoolCardContainer>
-					<PoolCardTitle>If you stake for 1 month:</PoolCardTitle>
+					<PoolCardTitle>If you wrap for 1 month:</PoolCardTitle>
 					<PoolCard>
 						<PoolItems>
 							<Row justifyContent='space-between'>

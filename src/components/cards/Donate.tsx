@@ -157,7 +157,15 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 							justifyContent={'space-between'}
 						>
 							<DonateLabel>Your donation</DonateLabel>
-							<MaxGIV>{`Max ${utils.formatEther(
+							<MaxGIV
+								onClick={() =>
+									setDonation(
+										Number(
+											utils.formatEther(claimableAmount),
+										),
+									)
+								}
+							>{`Max ${utils.formatEther(
 								claimableAmount,
 							)} GIV`}</MaxGIV>
 						</Row>
@@ -186,7 +194,6 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 					</Row>
 				</GetBack> */}
 				<PoolCardContainer>
-					<PoolCardTitle>If you stake for 1 month:</PoolCardTitle>
 					<PoolCard>
 						<PoolItems>
 							<Row justifyContent='space-between'>

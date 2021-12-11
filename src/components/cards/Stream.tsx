@@ -131,15 +131,7 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 						alt='Thunder image'
 					/>
 					<StreamValue>{streamValue}</StreamValue>
-					<StreamPlaceholder>
-						GIV/week
-						<Image
-							src='/images/icons/questionMark.svg'
-							height='16'
-							width='16'
-							alt='Question mark icon'
-						/>
-					</StreamPlaceholder>
+					<StreamPlaceholder>GIV/week</StreamPlaceholder>
 				</StreamValueContainer>
 			</StreamRow>
 			<Row>

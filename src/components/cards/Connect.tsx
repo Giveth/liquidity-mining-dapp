@@ -1,4 +1,5 @@
 import { FC, useContext, useEffect, useState } from 'react';
+import Link from 'next/link';
 import styled from 'styled-components';
 import { WalletAddressInputWithButton } from '../input';
 import { Button } from '../styled-components/Button';
@@ -157,7 +158,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 		case GiveDropStateType.Missed:
 			title = 'You missed the GIVdrop';
 			desc =
-				'But there are more ways to get GIV. Try another address or learn how to earn GIV.';
+				'But there are more ways to get GIV! Try another address or donate to verified projects to get GIV back.';
 			btnLabel = 'CHANGE WALLET';
 			bg = {
 				width: '622px',
@@ -213,12 +214,6 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 						</InputWithButtonContainer>
 					</Row>
 				)}
-			{giveDropState === GiveDropStateType.Missed && (
-				<>
-					<EarnGiv>Explore anyway</EarnGiv>
-					<ArrowButton onClick={goNextStep} />
-				</>
-			)}
 			{giveDropState === GiveDropStateType.Success &&
 				activeIndex === index && <ArrowButton onClick={goNextStep} />}
 			{giveDropState === GiveDropStateType.Claimed && (
@@ -227,12 +222,13 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 						alignItems={'center'}
 						justifyContent={'flex-start'}
 					>
-						<ConnectButton secondary>{btnLabel}</ConnectButton>
+						<Link href='/' passHref>
+							<ConnectButton secondary>{btnLabel}</ConnectButton>
+						</Link>
 						<ChangeWallet onClick={() => resetWallet()}>
 							Try different wallet address
 						</ChangeWallet>
 					</ClaimedRow>
-					<EarnGiv>Explore anyway</EarnGiv>
 					<ArrowButton onClick={goNextStep} />
 				</>
 			)}
