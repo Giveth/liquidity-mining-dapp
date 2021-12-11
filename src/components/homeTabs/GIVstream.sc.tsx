@@ -30,11 +30,10 @@ export const GIVstreamTopContainer = styled(TopContainer)`
 
 export const GIVstreamTopInnerContainer = styled(Container)`
 	overflow: hidden;
-	position: relative;
 	&::after {
 		content: url('/images/stream.svg');
 		position: absolute;
-		right: 180px;
+		right: 350px;
 		top: calc(50% - 240px);
 		z-index: 0;
 	}
