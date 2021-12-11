@@ -1,4 +1,3 @@
-import styled from 'styled-components';
 import Image from 'next/image';
 import router from 'next/router';
 import { Row } from './styled-components/Grid';
@@ -7,8 +6,6 @@ import { ThemeContext, ThemeType } from '@/context/theme.context';
 import { OnboardContext } from '@/context/onboard.context';
 import { useBalances } from '@/context/balance.context';
 import { formatWeiHelper } from '@/helpers/number';
-import config from '../configuration';
-import { claimReward } from '@/lib/claim';
 import { networksParams } from '@/helpers/blockchain';
 import {
 	ConenctButton,
@@ -40,13 +37,6 @@ const Header: FC<IHeader> = () => {
 	const { network, connect, address, provider } = useContext(OnboardContext);
 	const goToClaim = () => {
 		router.push('/claim');
-	};
-
-	const onClaimReward = () => {
-		claimReward(
-			config.NETWORKS_CONFIG[network]?.TOKEN_DISTRO_ADDRESS,
-			provider,
-		);
 	};
 
 	useEffect(() => {
@@ -112,7 +102,7 @@ const Header: FC<IHeader> = () => {
 					<NotifButton />
 					{address ? (
 						<>
-							<HeaderButton outline onClick={onClaimReward}>
+							<HeaderButton outline>
 								<HBContainer>
 									<HBBalanceLogo
 										src={'/images/logo/logo.svg'}
