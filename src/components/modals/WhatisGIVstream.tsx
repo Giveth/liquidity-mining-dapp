@@ -46,7 +46,7 @@ export const WhatisGIVstreamModal: FC<IWhatisGIVstreamModal> = ({
 				</Desc>
 				<LinksRow alignItems='center' justifyContent='center'>
 					<Link href='/givstream' passHref>
-						<GLink>
+						<GLink onClick={() => setShowModal(false)}>
 							<LinksRow justifyContent='center'>
 								View Your GIVstream{' '}
 								<IconExternalLink
