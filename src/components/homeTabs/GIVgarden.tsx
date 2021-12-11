@@ -138,7 +138,12 @@ export const TabGardenBottom = () => {
 					<GovernanceDB
 						title='Covenant'
 						button={
-							<GovernanceLink size='Medium'>
+							<GovernanceLink
+								size='Medium'
+								target='_blank'
+								rel='noreferrer'
+								href='https://docs.giveth.io/whatisgiveth/covenant'
+							>
 								LEARN MORE
 							</GovernanceLink>
 						}
@@ -149,7 +154,12 @@ export const TabGardenBottom = () => {
 					<GovernanceDB
 						title='Conviction Voting'
 						button={
-							<GovernanceLink size='Medium'>
+							<GovernanceLink
+								size='Medium'
+								target='_blank'
+								rel='noreferrer'
+								href='https://forum.giveth.io/t/conviction-voting/154'
+							>
 								LEARN MORE
 							</GovernanceLink>
 						}
@@ -161,7 +171,12 @@ export const TabGardenBottom = () => {
 					<GovernanceDB
 						title='Tao Voting'
 						button={
-							<GovernanceLink size='Medium'>
+							<GovernanceLink
+								size='Medium'
+								target='_blank'
+								rel='noreferrer'
+								href='https://forum.giveth.io/t/tao-voting-explained/155'
+							>
 								LEARN MORE
 							</GovernanceLink>
 						}
