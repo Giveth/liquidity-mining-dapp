@@ -6,6 +6,7 @@ import React, {
 	useRef,
 	useState,
 } from 'react';
+import Link from 'next/link';
 import { Row } from '../styled-components/Grid';
 import {
 	B,
@@ -78,17 +79,21 @@ export const TabGIVstreamTop = () => {
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
 	const { tokenDistroHelper } = useTokenDistro();
 	const { currentBalance } = useBalances();
-	const { allocatedTokens, claimed } = currentBalance;
+	const { allocatedTokens, claimed, givback } = currentBalance;
 	const { network: walletNetwork } = useContext(OnboardContext);
 
 	useEffect(() => {
 		setRewardLiquidPart(
-			tokenDistroHelper.getLiquidPart(allocatedTokens).sub(claimed),
+			tokenDistroHelper
+				.getLiquidPart(allocatedTokens.sub(givback))
+				.sub(claimed),
 		);
 		setRewardStream(
-			tokenDistroHelper.getStreamPartTokenPerWeek(allocatedTokens),
+			tokenDistroHelper.getStreamPartTokenPerWeek(
+				allocatedTokens.sub(givback),
+			),
 		);
-	}, [allocatedTokens, tokenDistroHelper]);
+	}, [allocatedTokens, claimed, givback, tokenDistroHelper]);
 
 	return (
 		<>
@@ -211,7 +216,7 @@ export const TabGIVstreamBottom = () => {
 					>
 						At launch, 10% of the total supply of GIV is liquid. The
 						rest is released via the GIVstream, becoming liquid
-						gradually until November 23, 2026.
+						gradually until December 24, 2026.
 					</GsDataBlock>
 					<GsDataBlock
 						title='Expanding GIViverse'
@@ -267,42 +272,56 @@ export const TabGIVstreamBottom = () => {
 						<IGsDataBox
 							title='GIVbacks'
 							button={
-								<GsButton
-									label='GIVE AND EARN'
-									buttonType='primary'
-									size='medium'
-								/>
+								<a
+									href='https://giveth.io/projects'
+									target='_blank'
+									rel='noreferrer'
+								>
+									<GsButton
+										label='SEE PROJECTS'
+										buttonType='primary'
+										size='medium'
+									/>
+								</a>
 							}
 						>
-							Donate to verified projects on Giveth. Earn GIV and
-							increase your GIVstream with GIVbacks.
+							Donate to verified projects on Giveth. Get GIV and
+							increase your GIVstream with the GIVbacks program.
 						</IGsDataBox>
 						<IGsDataBox
 							title='GIVgarden'
 							button={
-								<GsButton
-									label='SEE OPEN PROPOSALS'
-									buttonType='primary'
-									size='medium'
-								/>
+								<a
+									href='https://gardens-staging.1hive.org/#/xdai/garden/0x2050eabe84409e480ad1062001fdb6dfbc836192'
+									target='_blank'
+									rel='noreferrer'
+								>
+									<GsButton
+										label='SEE PROPOSALS'
+										buttonType='primary'
+										size='medium'
+									/>
+								</a>
 							}
 						>
 							The GIVgarden is the decentralized governance
-							platform for the GIVeconomy. Earn GIV and increase
-							your GIVstream when you vote.
+							platform for the GIVeconomy. Increase your GIVstream
+							when you wrap GIV to vote.
 						</IGsDataBox>
 						<IGsDataBox
 							title='GIVfarm'
 							button={
-								<GsButton
-									label='STAKE AND EARN'
-									buttonType='primary'
-									size='medium'
-								/>
+								<Link href='/givfarm' passHref>
+									<GsButton
+										label='SEE OPPORTUNITIES'
+										buttonType='primary'
+										size='medium'
+									/>
+								</Link>
 							}
 						>
 							Stake GIV, or become a liquidity provider and stake
-							LP tokens in the GIVfarm. Earn GIV rewards and
+							LP tokens in the GIVfarm. Get GIV rewards and
 							increase your GIVstream.
 						</IGsDataBox>
 					</Row>

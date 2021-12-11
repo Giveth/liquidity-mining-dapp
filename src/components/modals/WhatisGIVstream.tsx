@@ -28,38 +28,32 @@ export const WhatisGIVstreamModal: FC<IWhatisGIVstreamModal> = ({
 			<WhatisGIVstreamContainer>
 				<TitleRow alignItems='center' justifyContent='center'>
 					<IconGIVStream size={24} />
-					<Title>What is GIVstream?</Title>
+					<Title>What is the GIVstream?</Title>
 				</TitleRow>
 				<Desc>
 					Welcome to the expanding GIViverse! The GIVstream aligns
 					community members with the long term success of Giveth and
 					the GIVeconomy.
 				</Desc>
-				<H5 weight={900}>How it Works? </H5>
+				<H5 weight={900}>How it Works </H5>
 				<Desc>
-					When you earn GIV, part will be liquid and part will add to
-					your GIVstream flowrate after you claim. As time passes and
-					the GIVstream flows, a greater percentage of the total GIV
-					you earn is liquid. The GIVstream flows until November 23,
+					When you harvest GIV rewards, a portion of your GIV is sent
+					directly to your wallet and the rest is added to your
+					GIVstream. As time passes and the GIVstream flows, a larger
+					portion of the total GIV you get is sent directly to you at
+					the time of harvest. The GIVstream flows until December 24,
 					2026 at which point the GIVeconomy will be full power!
 				</Desc>
 				<LinksRow alignItems='center' justifyContent='center'>
-					<Link href='/' passHref>
+					<Link href='/givstream' passHref>
 						<GLink>
-							Read More{' '}
-							<IconExternalLink
-								size={16}
-								color={'currentColor'}
-							/>
-						</GLink>
-					</Link>
-					<Link href='/' passHref>
-						<GLink>
-							View Your GIVstream{' '}
-							<IconExternalLink
-								size={16}
-								color={'currentColor'}
-							/>
+							<LinksRow justifyContent='center'>
+								View Your GIVstream{' '}
+								<IconExternalLink
+									size={16}
+									color={'currentColor'}
+								/>
+							</LinksRow>
 						</GLink>
 					</Link>
 				</LinksRow>
@@ -92,7 +86,7 @@ const Desc = styled(P)`
 `;
 
 const LinksRow = styled(Row)`
-	gap: 32px;
+	gap: 8px;
 	color: ${brandColors.cyan[500]};
 	margin-bottom: 24px;
 `;

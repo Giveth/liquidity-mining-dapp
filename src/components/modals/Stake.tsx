@@ -200,7 +200,7 @@ export const StakeModal: FC<IStakeModalProps> = ({
 								)}
 								{stakeState === StakeStates.WRAP && (
 									<ConfirmButton
-										label={'WRAP'}
+										label={'STAKE'}
 										onClick={onWrap}
 										disabled={
 											amount == '0' ||

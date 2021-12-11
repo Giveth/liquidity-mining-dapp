@@ -17,19 +17,19 @@ const tabs = [
 	},
 	{
 		label: 'GIVgarden',
-		href: '/garden',
+		href: '/givgarden',
 	},
 	{
 		label: 'GIVfarm',
-		href: '/farm',
+		href: '/givfarm',
 	},
 	{
 		label: 'GIVbacks',
-		href: '/back',
+		href: '/givbacks',
 	},
 	{
 		label: 'GIVstream',
-		href: '/stream',
+		href: '/givstream',
 	},
 ];
 

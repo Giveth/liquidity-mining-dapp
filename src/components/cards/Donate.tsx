@@ -1,4 +1,5 @@
 import { useState, ChangeEvent, FC, useContext } from 'react';
+import Image from 'next/image';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
@@ -25,11 +26,11 @@ const DonateCardContainer = styled(Card)`
 `;
 
 const Title = styled(H2)`
-	width: 577px;
+	width: 700px;
 `;
 
-const Description = styled(P)`
-	width: 577px;
+const Desc = styled(P)`
+	margin-top: 22px;
 `;
 
 const DonateRow = styled(Row)`
@@ -39,6 +40,8 @@ const DonateRow = styled(Row)`
 
 const DonateLabel = styled.span`
 	color: #cabaff;
+	display: flex;
+	gap: 6px;
 `;
 
 const DonateInput = styled.div`
@@ -59,8 +62,10 @@ const DonateGIVEarn = styled.div`
 	text-align: left;
 `;
 
-const DonateHeader = styled(Header)`
-	margin-bottom: 16px;
+const DonateFooter = styled.div`
+	max-width: 500px;
+	font-size: 12px;
+	line-height: 18px;
 `;
 
 export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
@@ -81,13 +86,13 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	return (
 		<DonateCardContainer activeIndex={activeIndex} index={index}>
-			<DonateHeader>
-				<Title as='h1'>Give GIV to get GIVbacks!</Title>
-				<Description size='small' color={'#CABAFF'}>
-					Donate to verified projects on Giveth to earn more GIV with
+			<Header>
+				<Title as='h1'>How to use your GIV</Title>
+				<Desc size='small' color={'#CABAFF'}>
+					Donate to verified projects on Giveth to earn GIV with
 					GIVbacks.
-				</Description>
-			</DonateHeader>
+				</Desc>
+			</Header>
 			<Row alignItems={'center'} justifyContent={'flex-start'}>
 				<DonateRow
 					flexDirection='column'
@@ -114,12 +119,28 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 					</div>
 				</DonateRow>
 				<GetBack flexDirection='column' justifyContent='space-between'>
-					<H4 as='h2'>You can get back</H4>
-					<div>
-						<DonateLabel>GIV Tokens</DonateLabel>
+					<H4 as='h2'>You can get back up to</H4>
+					<Row alignItems={'center'} justifyContent={'space-between'}>
 						<DonateGIVEarn>{donation}</DonateGIVEarn>
-					</div>
+						<DonateLabel>
+							GIV{' '}
+							<Image
+								src='/images/icons/questionMark.svg'
+								height='16'
+								width='16'
+								alt='Operations icon'
+							/>
+						</DonateLabel>
+					</Row>
 				</GetBack>
+			</Row>
+			<Row>
+				<DonateFooter>
+					The following calculators demonstrate how you can use GIV to
+					participate in the GIVeconomy!{' '}
+					<b>These are just simulations.</b> To participate for real,
+					claim your GIV.
+				</DonateFooter>
 			</Row>
 			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
 		</DonateCardContainer>
