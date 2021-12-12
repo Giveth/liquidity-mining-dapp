@@ -70,4 +70,12 @@ export class TokenDistroHelper {
 			userBalance.claimed,
 		);
 	}
+
+	public get GlobalReleasePercentage(): number {
+		if (this.totalTokens.isZero()) return 0;
+		const initialPercent = this.getLiquidPart(this.totalTokens)
+			.mul(100)
+			.div(this.totalTokens);
+		return initialPercent.toNumber();
+	}
 }
