@@ -102,6 +102,7 @@ export const RewardCard: FC<IRewardCardProps> = ({
 						label={actionLabel}
 						onClick={actionCb}
 						buttonType='primary'
+						disabled={liquidAmount.isZero()}
 					/>
 				)}
 			</RewadCardContainer>
