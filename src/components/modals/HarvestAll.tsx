@@ -196,7 +196,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 							<HarvestAllModalTitle weight={700}>
 								{title}
 							</HarvestAllModalTitle>
-							<TitleIcon size={24} />
+							{/* <TitleIcon size={24} /> */}
 						</HarvestAllModalTitleRow>
 						{poolStakingConfig && (
 							<SPTitle alignItems='center' gap='16px'>
@@ -307,9 +307,9 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 						<GIVAmount>{257.9055}</GIVAmount>
 						<USDAmount>~${348.74}</USDAmount> */}
 						<HarvestAllDesc>
-							When you claim rewards from GIVbacks, you also claim
-							any other liquid GIV allocated to you in the token
-							distro.
+							When you harvest GIV rewards, all liquid GIV
+							allocated to you in the token distro gets sent to
+							your wallet.
 						</HarvestAllDesc>
 						{state === HarvestStates.HARVEST && (
 							<HarvestButton
