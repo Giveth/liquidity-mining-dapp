@@ -5,7 +5,7 @@ export default function HomeRoute() {
 	return (
 		<>
 			<Head>
-				<title>Giveth Economy</title>
+				<title>GIVeconomy</title>
 			</Head>
 			<HomeView />
 		</>

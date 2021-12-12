@@ -5,5 +5,5 @@ export const TabContainer = styled.div``;
 export const TopContainer = styled(TabContainer)`
 	background-image: url('/images/Giv.png');
 	background-size: cover;
-	height: 335px;
+	height: 370px;
 `;

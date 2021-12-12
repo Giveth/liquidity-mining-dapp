@@ -38,7 +38,7 @@ export default class MyDocument extends Document {
 		return (
 			<Html>
 				<Head>
-					<meta name='title' content='Giveth Economy' />
+					<meta name='title' content='GIVeconomy' />
 					<meta
 						name='description'
 						content='The GIVeconomy empowers our collective to build the Future of Giving.'
@@ -46,7 +46,7 @@ export default class MyDocument extends Document {
 
 					<meta property='og:type' content='website' />
 					<meta property='og:url' content='http://giveth.io/' />
-					<meta property='og:title' content='Giveth Economy' />
+					<meta property='og:title' content='GIVeconomy' />
 					<meta
 						property='og:description'
 						content='The GIVeconomy empowers our collective to build the Future of Giving.'
@@ -61,7 +61,7 @@ export default class MyDocument extends Document {
 						content='summary_large_image'
 					/>
 					<meta property='twitter:url' content='http://giveth.io/' />
-					<meta property='twitter:title' content='Giveth Economy' />
+					<meta property='twitter:title' content='GIVeconomy' />
 					<meta
 						property='twitter:description'
 						content='The GIVeconomy empowers our collective to build the Future of Giving.'
