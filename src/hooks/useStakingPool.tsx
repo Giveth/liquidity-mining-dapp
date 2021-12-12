@@ -70,7 +70,7 @@ export const useStakingPool = (
 
 		cb();
 
-		stakePoolInfoPoll.current = setInterval(cb, 60000); // Every 15 seconds
+		stakePoolInfoPoll.current = setInterval(cb, 60000); // Every one minutes
 
 		return () => {
 			if (stakePoolInfoPoll.current) {
@@ -108,7 +108,10 @@ export const useStakingPool = (
 
 		cb();
 
-		userStakeInfoPoll.current = setInterval(cb, config.POLLING_INTERVAL); // Every 15 seconds
+		userStakeInfoPoll.current = setInterval(
+			cb,
+			config.SUBGRAPH_POLLING_INTERVAL,
+		); // Every 15 seconds
 
 		return () => {
 			if (userStakeInfoPoll.current) {

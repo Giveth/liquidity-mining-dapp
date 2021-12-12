@@ -88,7 +88,8 @@ export interface EnvConfig {
 
 export interface GlobalConfig extends EnvConfig {
 	TOKEN_NAME: string;
-	POLLING_INTERVAL: number;
+	WEB3_POLLING_INTERVAL: number;
+	SUBGRAPH_POLLING_INTERVAL: number;
 	TOKEN_PRECISION: number;
 
 	NETWORKS_CONFIG: {
