@@ -2,6 +2,7 @@ import { IUnipool } from '@/services/subgraph';
 import { ethers } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 import BigNumber from 'bignumber.js';
+import { getNowUnix } from '@/helpers/time';
 
 const toBN = (value: ethers.BigNumberish): BigNumber => {
 	return new BigNumber(value.toString());
@@ -28,20 +29,20 @@ export class UnipoolHelper {
 		this.periodFinish = periodFinish;
 	}
 
-	get lastTimeRewardApplicable(): BigNumber {
+	async lastTimeRewardApplicable(): Promise<BigNumber> {
 		const lastTimeRewardApplicableMS: number = Math.min(
-			new Date().getTime(),
+			await getNowUnix(),
 			this.periodFinish.getTime(),
 		);
 		return toBN(Math.floor(lastTimeRewardApplicableMS / 1000));
 	}
 
-	get rewardPerToken(): BigNumber {
+	async rewardPerToken(): Promise<BigNumber> {
 		if (this.totalSupply.isZero()) {
 			return this.rewardPerTokenStored;
 		}
 		return this.rewardPerTokenStored.plus(
-			this.lastTimeRewardApplicable
+			(await this.lastTimeRewardApplicable())
 				.minus(this.lastUpdateTime.getTime() / 1000)
 				.times(this.rewardRate)
 				.times(1e18)
@@ -50,11 +51,11 @@ export class UnipoolHelper {
 		);
 	}
 
-	earned = (
+	earned = async (
 		rewards: ethers.BigNumber,
 		userRewardPerTokenPaid: ethers.BigNumber,
 		stakedAmount: ethers.BigNumber,
-	): ethers.BigNumber => {
+	): Promise<ethers.BigNumber> => {
 		// const rewardPerToken = this.rewardPerToken;
 		// console.log('rewardPerToken:', rewardPerToken.toFixed());
 		// console.log(
@@ -69,7 +70,11 @@ export class UnipoolHelper {
 		// );
 		// console.log('rewards:', rewards.toString());
 		const earndBN = toBN(stakedAmount)
-			.times(this.rewardPerToken.minus(toBN(userRewardPerTokenPaid)))
+			.times(
+				(await this.rewardPerToken()).minus(
+					toBN(userRewardPerTokenPaid),
+				),
+			)
 			.div(1e18)
 			.plus(rewards.toString());
 		// console.log('earned:', earndBN.toFixed(0));

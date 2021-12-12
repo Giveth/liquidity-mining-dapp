@@ -42,6 +42,7 @@ import config from '@/configuration';
 import { HarvestAllModal } from '../modals/HarvestAll';
 import { getTokenDistroInfo, ITokenDistroInfo } from '@/services/subgraph';
 import { OnboardContext } from '@/context/onboard.context';
+import { getNowUnix } from '@/helpers/time';
 
 export const TabGIVbacksTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -107,11 +108,12 @@ export const TabGIVbacksBottom = () => {
 	const { network: walletNetwork } = useContext(OnboardContext);
 
 	useEffect(() => {
-		getTokenDistroInfo(walletNetwork).then(distroInfo => {
+		getTokenDistroInfo(walletNetwork).then(async distroInfo => {
 			if (distroInfo) {
 				setTokenDistroInfo(distroInfo);
 				console.log('distroInfo', distroInfo);
-				const deltaT = Date.now() - distroInfo.startTime.getTime();
+				const now = await getNowUnix();
+				const deltaT = now - distroInfo.startTime.getTime();
 				const TwoWeek = 1209600000;
 				const _round = Math.floor(deltaT / TwoWeek) + 1;
 				setRound(_round);
