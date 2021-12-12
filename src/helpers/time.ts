@@ -16,17 +16,18 @@ export const getNowUnix = async (): Promise<number> => {
 
 		try {
 			const response = await fetch(
-				'http://worldtimeapi.org/api/timezone/Etc/UTC',
+				'https://api.timezonedb.com/v2.1/get-time-zone?by=zone&format=json&key=LU8PKNDD9BUB&zone=GM',
 			);
 
 			if (response.ok) {
 				const json = await response.json();
-				const { unixtime } = json;
-				console.info('Unix time from api:', unixtime);
-				timeDifference = unixtime * 1000 - Date.now();
-				console.info('Machine time difference ms:', timeDifference);
+				const { timestamp, gmtOffset } = json;
+				const unixMS = (timestamp - gmtOffset) * 1000;
+				// console.info('unixMs:', unixMS);
+				timeDifference = unixMS - Date.now();
+				// console.info('Machine time difference ms:', timeDifference);
 				initialized = true;
-				now = unixtime * 1000;
+				now = unixMS;
 			} else {
 				now = Date.now();
 			}
