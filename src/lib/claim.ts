@@ -107,37 +107,37 @@ export const claimAirDrop = async (
 		.claim(...args);
 };
 
-export const getTokenDistroAmounts = async (
-	address: string,
-	tokenDistroAddress: string,
-	networkNumber: number,
-	userProvider: Web3Provider | null,
-): Promise<ITokenDistroBalance> => {
-	if (!isAddress(tokenDistroAddress)) {
-		return {
-			claimable: constants.Zero,
-			allocatedAmount: constants.Zero,
-			claimedAmount: constants.Zero,
-		};
-	}
-
-	const provider: JsonRpcProvider = userProvider
-		? userProvider
-		: networkProviders[networkNumber];
-
-	const tokenDistro = new Contract(
-		tokenDistroAddress,
-		TOKEN_DISTRO_ABI,
-		provider,
-	);
-
-	const balances = await tokenDistro.balances(address);
-	const claimable = await tokenDistro.claimableNow(address);
-	const [allocatedAmount, claimedAmount] = balances;
-
-	return { claimable, allocatedAmount, claimedAmount };
-};
-
+// export const getTokenDistroAmounts = async (
+// 	address: string,
+// 	tokenDistroAddress: string,
+// 	networkNumber: number,
+// 	userProvider: Web3Provider | null,
+// ): Promise<ITokenDistroBalance> => {
+// 	if (!isAddress(tokenDistroAddress)) {
+// 		return {
+// 			claimable: constants.Zero,
+// 			allocatedAmount: constants.Zero,
+// 			claimedAmount: constants.Zero,
+// 		};
+// 	}
+//
+// 	const provider: JsonRpcProvider = userProvider
+// 		? userProvider
+// 		: networkProviders[networkNumber];
+//
+// 	const tokenDistro = new Contract(
+// 		tokenDistroAddress,
+// 		TOKEN_DISTRO_ABI,
+// 		provider,
+// 	);
+//
+// 	const balances = await tokenDistro.balances(address);
+// 	const claimable = await tokenDistro.claimableNow(address);
+// 	const [allocatedAmount, claimedAmount] = balances;
+//
+// 	return { claimable, allocatedAmount, claimedAmount };
+// };
+//
 export const claimReward = async (
 	tokenDistroAddress: string,
 	provider: Web3Provider | null,

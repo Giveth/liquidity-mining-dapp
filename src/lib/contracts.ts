@@ -53,16 +53,16 @@ export const getUniswapV3StakerContract = (
 	return new Contract(UNISWAP_V3_STAKER, UNISWAP_V3_STAKER_ABI, signer);
 };
 
-export const getStakingRewardsContract = (provider: Web3Provider | null) => {
-	const signer = provider?.getSigner();
-
-	if (!signer) {
-		return;
-	}
-
-	return new Contract(STAKING_REWARDS_CONTRACT, STAKING_REWARDS_ABI, signer);
-};
-
+// export const getStakingRewardsContract = (provider: Web3Provider | null) => {
+// 	const signer = provider?.getSigner();
+//
+// 	if (!signer) {
+// 		return;
+// 	}
+//
+// 	return new Contract(STAKING_REWARDS_CONTRACT, STAKING_REWARDS_ABI, signer);
+// };
+//
 export const getGivethV3PoolContract = (provider: Web3Provider | null) => {
 	const signer = provider?.getSigner();
 

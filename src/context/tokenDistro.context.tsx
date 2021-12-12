@@ -56,20 +56,36 @@ export const TokenDistroProvider: FC = ({ children }) => {
 	}, [mainnetTokenDistro, xDaiTokenDistro, network]);
 
 	useEffect(() => {
+		getTokenDistroInfo(config.MAINNET_NETWORK_NUMBER).then(
+			_tokenDistroInfo => {
+				if (_tokenDistroInfo)
+					setMainnetTokenDistro(
+						new TokenDistroHelper(_tokenDistroInfo),
+					);
+			},
+		);
+		getTokenDistroInfo(config.XDAI_NETWORK_NUMBER).then(
+			_tokenDistroInfo => {
+				if (_tokenDistroInfo)
+					setXDaiTokenDistro(new TokenDistroHelper(_tokenDistroInfo));
+			},
+		);
+	}, []);
+
+	useEffect(() => {
 		const fetchTokenDistroInfo = async () => {
 			try {
-				const [_mainnetTokenDistro, _xDaiTokenDistro] =
-					await Promise.all([
-						getTokenDistroInfo(config.MAINNET_NETWORK_NUMBER),
-						getTokenDistroInfo(config.XDAI_NETWORK_NUMBER),
-					]);
-
-				if (_mainnetTokenDistro)
-					setMainnetTokenDistro(
-						new TokenDistroHelper(_mainnetTokenDistro),
-					);
-				if (_xDaiTokenDistro)
-					setXDaiTokenDistro(new TokenDistroHelper(_xDaiTokenDistro));
+				const _tokenDistroInfo = await getTokenDistroInfo(network);
+				if (_tokenDistroInfo) {
+					if (network === config.MAINNET_NETWORK_NUMBER)
+						setMainnetTokenDistro(
+							new TokenDistroHelper(_tokenDistroInfo),
+						);
+					else
+						setXDaiTokenDistro(
+							new TokenDistroHelper(_tokenDistroInfo),
+						);
+				}
 			} catch (e) {
 				console.error(
 					'Error in fetching token and streaming balances',
@@ -78,15 +94,14 @@ export const TokenDistroProvider: FC = ({ children }) => {
 			}
 		};
 
-		fetchTokenDistroInfo();
 		const interval = setInterval(
 			fetchTokenDistroInfo,
-			config.POLLING_INTERVAL,
+			120000, // Every two minutes
 		);
 		return () => {
 			clearInterval(interval);
 		};
-	}, [address, network, provider]);
+	}, [network]);
 
 	return (
 		<BalanceContext.Provider

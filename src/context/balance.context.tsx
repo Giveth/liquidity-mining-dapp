@@ -199,7 +199,7 @@ import config from '@/configuration';
 //
 // 			const interval = setInterval(
 // 				fetchTokenBalance,
-// 				config.POLLING_INTERVAL,
+// 				config.WEB3_POLLING_INTERVAL,
 // 			);
 // 			return () => {
 // 				clearInterval(interval);
@@ -293,7 +293,7 @@ export const BalanceProvider: FC = ({ children }) => {
 
 			const interval = setInterval(
 				fetchTokenBalance,
-				config.POLLING_INTERVAL,
+				config.SUBGRAPH_POLLING_INTERVAL,
 			);
 			return () => {
 				clearInterval(interval);
