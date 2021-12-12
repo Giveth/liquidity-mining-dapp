@@ -145,6 +145,7 @@ export const IncreaseSectionTitle = styled(H2)`
 
 export const IGsDataBox = styled(DataBox)`
 	height: 387px;
+	margin-bottom: 16px;
 `;
 
 export const HistoryTitleRow = styled(Row)`

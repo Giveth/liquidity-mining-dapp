@@ -54,6 +54,7 @@ export const GbDataBlock = styled(DataBlock)`
 	display: flex;
 	flex-flow: column nowrap;
 	align-items: flex-start;
+	margin-bottom: 16px;
 `;
 
 export const GbButton = styled(Button)`
