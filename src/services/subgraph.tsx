@@ -1,5 +1,6 @@
 import config from '@/configuration';
 import { constants, ethers } from 'ethers';
+import { getNowUnix } from '@/helpers/time';
 
 const BN = ethers.BigNumber.from;
 
@@ -299,13 +300,15 @@ export const getTokenDistroInfo = async (
 		const cliffTime = new Date(+(_cliffTime.toString() + '000'));
 		const duration = +(_duration.toString() + '000');
 
-		const progress = Date.now() - startTime.getTime();
+		const now = await getNowUnix();
+
+		const progress = now - startTime.getTime();
 		// console.log(`progress`, convertMSToHRD(progress));
 
 		const endTime = new Date(startTime.getTime() + duration);
 		// console.log(`endTime`, endTime);
 
-		const remain = endTime.getTime() - Date.now();
+		const remain = endTime.getTime() - now;
 		// console.log(`remain`, convertMSToHRD(remain));
 
 		const percent = Math.floor((progress / duration) * 100);

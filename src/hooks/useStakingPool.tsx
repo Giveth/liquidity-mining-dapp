@@ -95,7 +95,7 @@ export const useStakingPool = (
 				if (unipoolInfo) unipoolHelper = new UnipoolHelper(unipoolInfo);
 
 				setUserStakeInfo(
-					getUserStakeInfo(
+					await getUserStakeInfo(
 						poolStakingConfig.type,
 						currentBalance,
 						unipoolHelper,

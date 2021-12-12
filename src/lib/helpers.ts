@@ -1,19 +1,6 @@
 import { Zero } from '@/helpers/number';
 import { BigNumber } from 'ethers';
 
-export const calcStream = (start: string, end: string, cliff: string) => {
-	const startTime = new Date(start);
-	const endTime = new Date(end);
-	const cliffTime = new Date(cliff);
-	const now = new Date();
-
-	const duration = endTime.getTime() - cliffTime.getTime();
-
-	if (now <= cliffTime) {
-		return Zero;
-	}
-};
-
 // HRM: Human Readable Date.
 export const convertMSToHRD = (ms: number) => {
 	let rem = ms / 1000;
