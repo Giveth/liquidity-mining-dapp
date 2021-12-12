@@ -126,14 +126,14 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 				<StakePoolInfoContainer>
 					<Details>
 						<FirstDetail justifyContent='space-between'>
-							<Row gap='8px' alignItems='center'>
-								<DetailLabel>APR</DetailLabel>
+							<DetailLabel>APR</DetailLabel>
+							{/* <Row gap='8px' alignItems='center'>
 								<IconContainer
 									onClick={() => setShowAPRModal(true)}
 								>
 									<IconCalculator size={16} />
 								</IconContainer>
-							</Row>
+							</Row> */}
 							<Row gap='8px' alignItems='center'>
 								<IconSpark
 									size={24}
@@ -142,6 +142,11 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 								<DetailValue>
 									{apr && formatEthHelper(apr, 2)}%
 								</DetailValue>
+								<IconContainer
+									onClick={() => setShowAPRModal(true)}
+								>
+									<IconHelp size={16} />
+								</IconContainer>
 							</Row>
 						</FirstDetail>
 						<Detail justifyContent='space-between'>
