@@ -13,7 +13,7 @@ function GIVstreamView() {
 			<Header />
 			<TabGIVstreamTop />
 			<Tabs />
-			<TabGIVstreamBottom />,
+			<TabGIVstreamBottom />
 		</>
 	);
 }

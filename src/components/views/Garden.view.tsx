@@ -25,7 +25,7 @@ function GIVgardenView() {
 			<Header />
 			<TabGardenTop />
 			<Tabs />
-			<TabGardenBottom />,
+			<TabGardenBottom />
 		</>
 	);
 }

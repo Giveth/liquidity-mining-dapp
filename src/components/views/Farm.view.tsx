@@ -28,7 +28,7 @@ function GIVfarmView() {
 			<Header />
 			<TabGIVfarmTop />
 			<Tabs />
-			<TabGIVfarmBottom />,
+			<TabGIVfarmBottom />
 		</>
 	);
 }

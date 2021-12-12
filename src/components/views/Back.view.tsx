@@ -13,7 +13,7 @@ function GIVbackView() {
 			<Header />
 			<TabGIVbacksTop />
 			<Tabs />
-			<TabGIVbacksBottom />,
+			<TabGIVbacksBottom />
 		</>
 	);
 }

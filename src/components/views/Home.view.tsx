@@ -13,7 +13,7 @@ function HomeView() {
 			<Header />
 			<TabOverviewTop />
 			<Tabs />
-			<TabOverviewBottom />,
+			<TabOverviewBottom />
 		</>
 	);
 }
