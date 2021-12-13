@@ -49,6 +49,7 @@ import { constants } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import BigNumber from 'bignumber.js';
 import { WhatisGIVstreamModal } from '../modals/WhatisGIVstream';
+import { IconSushiswap } from '../Icons/Sushiswap';
 
 export const getPoolIconWithName = (pool: string) => {
 	switch (pool) {
@@ -60,6 +61,8 @@ export const getPoolIconWithName = (pool: string) => {
 			return <IconHoneyswap size={16} />;
 		case StakingType.UNISWAP:
 			return <IconUniswap size={16} />;
+		case StakingType.SUSHISWAP:
+			return <IconSushiswap size={16} />;
 		default:
 			break;
 	}
@@ -178,6 +181,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 						disabled={earned.isZero()}
 						onClick={() => setShowHarvestModal(true)}
 						label='HARVEST REWARDS'
+						buttonType='primary'
 					/>
 					<StakeButtonsRow>
 						<StakeContainer flexDirection='column'>
