@@ -37,7 +37,7 @@ export const Footer = () => {
 								<LinkItem>FAQ</LinkItem>
 							</a>
 							<a href=''>
-								<LinkItem>Contanct</LinkItem>
+								<LinkItem>Support</LinkItem>
 							</a>
 						</LinkColumn>
 						<LinkColumn>
@@ -112,12 +112,10 @@ export const Footer = () => {
 							</a>
 						</SocialContainer>
 						<Row justifyContent='flex-end'>
-							<Caption medium>
-								Support us with your Donation -
-							</Caption>
-							<a href=''>
+							<Caption medium>Support us</Caption>
+							<a href='https://giveth.io/donate/the-giveth-community-of-makers'>
 								<CaptionRed medium>
-									&nbsp;revolution.eth
+									&nbsp;with your Donation
 								</CaptionRed>
 							</a>
 						</Row>
@@ -132,7 +130,6 @@ export const Footer = () => {
 };
 
 const FooterContainer = styled.div`
-	background-color: ${brandColors.giv[600]};
 	padding: 57px 0 83px;
 `;
 
