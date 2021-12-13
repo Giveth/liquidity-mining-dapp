@@ -20,6 +20,13 @@ import {
 	getNftManagerPositionsContract,
 	getUniswapV3StakerContract,
 } from '@/lib/contracts';
+import {
+	getUniswapV3Pool,
+	getUserPositions,
+	IUniswapV3Pool,
+	IUniswapV3Position,
+	IUserPositions,
+} from '@/services/subgraph';
 
 const ERC721NftContext = createContext<{
 	totalNftPositions: LiquidityPosition[];
@@ -84,22 +91,22 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	]);
 
 	// check for WETH / GIV Pair
-	const checkForGivethLp = useCallback(
-		(token0: string, token1: string): boolean => {
-			if (!wethAddress || !givethAddress) return false;
-			if (
-				token0.toLowerCase() === wethAddress.toLowerCase() &&
-				token1.toLowerCase() === givethAddress.toLowerCase()
-			) {
-				return true;
-			}
-			return (
-				token0.toLowerCase() === givethAddress.toLowerCase() &&
-				token1.toLowerCase() === wethAddress.toLowerCase()
-			);
-		},
-		[wethAddress, givethAddress],
-	);
+	// const checkForGivethLp = useCallback(
+	// 	(token0: string, token1: string): boolean => {
+	// 		if (!wethAddress || !givethAddress) return false;
+	// 		if (
+	// 			token0.toLowerCase() === wethAddress.toLowerCase() &&
+	// 			token1.toLowerCase() === givethAddress.toLowerCase()
+	// 		) {
+	// 			return true;
+	// 		}
+	// 		return (
+	// 			token0.toLowerCase() === givethAddress.toLowerCase() &&
+	// 			token1.toLowerCase() === wethAddress.toLowerCase()
+	// 		);
+	// 	},
+	// 	[wethAddress, givethAddress],
+	// );
 
 	const loadPositions = useCallback(() => {
 		const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
@@ -120,69 +127,21 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 		const loadPositions = async (owner: string) => {
 			// get number of tokens owned by address
 			try {
-				const noOfPositions =
-					await nftManagerPositionsContract.balanceOf(owner);
-
-				// construct multicall to get all tokenIDs
-
-				const tokenIdsCalldata: Array<string> = new Array(
-					noOfPositions.toNumber(),
-				)
-					.fill(0)
-					.map((_, i) =>
-						nftManagerPositionsContract.interface.encodeFunctionData(
-							'tokenOfOwnerByIndex',
-							[owner, i],
-						),
-					);
-
-				// return list of tokenId big numbers
-				const tokenIds = (
-					await nftManagerPositionsContract.callStatic.multicall(
-						tokenIdsCalldata,
-					)
-				)
-					.map((result: any) =>
-						nftManagerPositionsContract.interface.decodeFunctionResult(
-							'tokenOfOwnerByIndex',
-							result,
-						),
-					)
-					.filter((tokenId: any) => Array.isArray(tokenId))
-					.map(([tokenId]: any) => tokenId);
-
-				// construst position call data
-				const positionCallData = tokenIds.map((tokenId: any) =>
-					nftManagerPositionsContract.interface.encodeFunctionData(
-						'positions',
-						[tokenId],
-					),
-				);
-
-				const encodedPositions =
-					await nftManagerPositionsContract.callStatic.multicall(
-						positionCallData,
-					);
-
-				// get pool info
-				const slot0 = await givethV3PoolContract.slot0();
+				const [_userPosition, _pool]: [IUserPositions, IUniswapV3Pool] =
+					await Promise.all([
+						getUserPositions(owner),
+						getUniswapV3Pool(poolAddress),
+					]);
 
 				// return GIV / Eth positions owned by user
-				const positions: any[] = (
+				return (
 					await Promise.all(
-						encodedPositions.map(
-							(encodedPosition: any, i: number) =>
-								filterPositions(
-									owner,
-									encodedPosition,
-									tokenIds[i],
-									slot0,
-								),
-						),
+						[
+							..._userPosition.staked,
+							..._userPosition.notStaked,
+						].map(_position => filterPositions(_position, _pool)),
 					)
 				).filter((p: any) => p);
-
-				return positions;
 			} catch (err) {
 				console.log('err', err);
 				return [];
@@ -190,118 +149,83 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 		};
 
 		const filterPositions = async (
-			owner: string,
-			encodedPosition: any,
-			tokenId: any,
-			slot0: any,
+			{
+				liquidity,
+				owner,
+				staked,
+				tickLower,
+				tickUpper,
+				tokenId,
+			}: IUniswapV3Position,
+			poolInfo: IUniswapV3Pool,
 		): Promise<any | null> => {
 			try {
-				const { token0, token1, liquidity, fee, tickLower, tickUpper } =
-					nftManagerPositionsContract.interface.decodeFunctionResult(
-						'positions',
-						encodedPosition,
-					);
+				// const { token0, token1, liquidity, fee, tickLower, tickUpper } =
+				// 	nftManagerPositionsContract.interface.decodeFunctionResult(
+				// 		'positions',
+				// 		encodedPosition,
+				// 	);
 
-				// check for liquidity
-				if (liquidity.isZero()) {
-					return null;
-				}
-
-				// check for GIV / ETH pair
-				if (!checkForGivethLp(token0, token1)) {
-					return null;
-				}
-
-				// check if fee is 0.3%
-				if (fee !== 3000) {
-					return null;
-				}
+				// // check for liquidity
+				// if (liquidity.isZero()) {
+				// 	return null;
+				// }
+				//
+				// // check for GIV / ETH pair
+				// if (!checkForGivethLp(token0, token1)) {
+				// 	return null;
+				// }
+				//
+				// // check if fee is 0.3%
+				// if (fee !== 3000) {
+				// 	return null;
+				// }
 
 				// sdk position
 				let _position: Position | null = null;
-				if (
-					poolAddress &&
-					liquidity &&
-					typeof tickLower === 'number' &&
-					typeof tickUpper === 'number'
-				) {
+				if (poolAddress && liquidity) {
 					try {
 						let _token0: Token;
 						let _token1: Token;
-						if (
-							token0.toLowerCase() ===
-							givethAddress?.toLowerCase()
-						) {
-							_token0 = new Token(
-								network,
-								token0,
-								18,
-								'GIV',
-								'GIV',
-							);
-							_token1 = new Token(
-								network,
-								token1,
-								18,
-								'WETH',
-								'WETH',
-							);
-						} else {
-							_token0 = new Token(
-								network,
-								token1,
-								18,
-								'WETH',
-								'WETH',
-							);
-							_token1 = new Token(
-								network,
-								token0,
-								18,
-								'GIV',
-								'GIV',
-							);
-						}
+						_token0 = new Token(
+							network,
+							config.MAINNET_CONFIG.TOKEN_ADDRESS,
+							18,
+							'GIV',
+							'GIV',
+						);
+						_token1 = new Token(
+							network,
+							config.MAINNET_CONFIG.WETH_TOKEN_ADDRESS as string,
+							18,
+							'WETH',
+							'WETH',
+						);
 
 						let pool = new Pool(
 							_token0,
 							_token1,
-							fee,
-							slot0.sqrtPriceX96,
-							liquidity,
-							slot0.tick,
+							3000,
+							poolInfo.sqrtPriceX96.toString(),
+							poolInfo.liquidity.toString(),
+							poolInfo.tick,
 						);
 
 						_position = new Position({
 							pool,
 							liquidity: liquidity.toString(),
-							tickLower,
-							tickUpper,
+							tickLower: tickLower,
+							tickUpper: tickUpper,
 						});
 					} catch (err) {
 						console.log('error', err);
 					}
 				}
 
-				const stakedPosition = await uniswapV3StakerContract.deposits(
-					tokenId,
-				);
-
-				// check if owner of staked nft
-				let forTotalLiquidity = false;
-				if (
-					owner !== walletAddress &&
-					stakedPosition.owner.toLowerCase() !== walletAddress
-				) {
-					forTotalLiquidity = true;
-				}
-
 				return {
-					owner,
-					staked: !!stakedPosition.numberOfStakes,
-					numberOfStakes: stakedPosition.numberOfStakes,
-					tokenId,
-					forTotalLiquidity,
+					owner: owner,
+					staked: staked,
+					tokenId: tokenId,
 					_position,
 				};
 			} catch {
@@ -315,7 +239,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 				const owners: string[] = [
 					walletAddress,
-					uniswapV3StakerContract.address,
+					// uniswapV3StakerContract.address,
 				];
 
 				const allPositions: LiquidityPosition[][] = await Promise.all(
@@ -334,10 +258,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 				const stakedPositions = allPositions
 					.flat()
-					.filter(
-						position =>
-							position.staked && !position.forTotalLiquidity,
-					);
+					.filter(position => position.staked);
 
 				const stakedPositionsWithURI = await Promise.all(
 					stakedPositions.map(downloadURI),
@@ -345,10 +266,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 				const unstakedPositions = allPositions
 					.flat()
-					.filter(
-						position =>
-							!position.staked && !position.forTotalLiquidity,
-					);
+					.filter(position => !position.staked);
 
 				const unstakedPositionsWithURI = await Promise.all(
 					unstakedPositions.map(downloadURI),
@@ -366,74 +284,76 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 		};
 
 		return init();
-	}, [
-		walletAddress,
-		checkForGivethLp,
-		network,
-		poolAddress,
-		givethAddress,
-		provider,
-	]);
+	}, [walletAddress, network, provider]);
 
 	//initial load of positions
 	useEffect(() => {
-		const nftManagerPositionsContract =
-			getNftManagerPositionsContract(provider);
+		const cb = () => {
+			const nftManagerPositionsContract =
+				getNftManagerPositionsContract(provider);
 
-		const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
-		if (
-			!nftManagerPositionsContract ||
-			!uniswapV3StakerContract ||
-			!walletAddress
-		)
-			return;
+			const uniswapV3StakerContract =
+				getUniswapV3StakerContract(provider);
+			if (
+				!nftManagerPositionsContract ||
+				!uniswapV3StakerContract ||
+				!walletAddress
+			)
+				return;
 
-		// only check if network is ethereum or rinkeby
-		if (network && (network === 1 || network === 4 || network == 42)) {
-			loadPositions();
-		}
+			// only check if network is ethereum or rinkeby
+			if (network && network === config.MAINNET_NETWORK_NUMBER) {
+				loadPositions();
+			}
+		};
+		cb();
+		const interval = setInterval(cb, config.WEB3_POLLING_INTERVAL);
+		return () => {
+			clearInterval(interval);
+		};
 	}, [walletAddress, loadPositions, network, provider]);
+
 	// handle nft events
-	useEffect(() => {
-		const nftManagerPositionsContract =
-			getNftManagerPositionsContract(provider);
-
-		const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
-		if (
-			!nftManagerPositionsContract ||
-			!uniswapV3StakerContract ||
-			!walletAddress
-		)
-			return;
-
-		const handleTransfer = (_1: any, address1: any, address2: string) => {
-			loadPositions();
-		};
-
-		const subscribe = () => {
-			const inTransfer =
-				uniswapV3StakerContract.filters.DepositTransferred(
-					null,
-					walletAddress,
-					null,
-				);
-			const outTransfer =
-				uniswapV3StakerContract.filters.DepositTransferred(
-					null,
-					null,
-					walletAddress,
-				);
-			uniswapV3StakerContract.on(inTransfer, handleTransfer);
-			uniswapV3StakerContract.on(outTransfer, handleTransfer);
-
-			return () => {
-				uniswapV3StakerContract.off(inTransfer, handleTransfer);
-				uniswapV3StakerContract.off(outTransfer, handleTransfer);
-			};
-		};
-
-		return subscribe();
-	}, [walletAddress, loadPositions, provider]);
+	// useEffect(() => {
+	// 	const nftManagerPositionsContract =
+	// 		getNftManagerPositionsContract(provider);
+	//
+	// 	const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
+	// 	if (
+	// 		!nftManagerPositionsContract ||
+	// 		!uniswapV3StakerContract ||
+	// 		!walletAddress
+	// 	)
+	// 		return;
+	//
+	// 	const handleTransfer = (_1: any, address1: any, address2: string) => {
+	// 		setTimeout(() => loadPositions(), 5000);
+	// 	};
+	//
+	// 	const subscribe = () => {
+	// 		const inTransfer =
+	// 			uniswapV3StakerContract.filters.DepositTransferred(
+	// 				null,
+	// 				walletAddress,
+	// 				null,
+	// 			);
+	// 		const outTransfer =
+	// 			uniswapV3StakerContract.filters.DepositTransferred(
+	// 				null,
+	// 				null,
+	// 				walletAddress,
+	// 			);
+	// 		uniswapV3StakerContract.on(inTransfer, handleTransfer);
+	// 		uniswapV3StakerContract.on(outTransfer, handleTransfer);
+	//
+	// 		return () => {
+	// 			uniswapV3StakerContract.off(inTransfer, handleTransfer);
+	// 			uniswapV3StakerContract.off(outTransfer, handleTransfer);
+	// 		};
+	// 	};
+	//
+	// 	return subscribe();
+	// }, [walletAddress, loadPositions, provider]);
 
 	return (
 		<ERC721NftContext.Provider

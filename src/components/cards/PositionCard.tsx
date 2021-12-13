@@ -36,7 +36,7 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 	handleStatusTx,
 }) => {
 	const { address, provider } = useOnboard();
-	const { currentIncentive } = useLiquidityPositions();
+	const { currentIncentive, loadPositions } = useLiquidityPositions();
 	const { pool, tickLower, tickUpper } = position._position || {};
 
 	// Check price range
@@ -69,21 +69,23 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 		if (isUnstaking) {
 			handleWaitTx(true);
 			const tx = await exit(
-				position.tokenId.toNumber(),
+				position.tokenId,
 				address,
 				provider,
 				currentIncentive,
 			);
-			handleStatusTx(tx);
+			setTimeout(() => loadPositions(), 5000);
 		} else {
 			handleWaitTx(true);
 			const tx = await transfer(
-				position.tokenId.toNumber(),
+				position.tokenId,
 				address,
 				provider,
 				currentIncentive,
 			);
 			handleStatusTx(tx);
+			console.log('tx done');
+			setTimeout(() => loadPositions(), 5000);
 		}
 	};
 

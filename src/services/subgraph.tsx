@@ -1,6 +1,7 @@
 import config from '@/configuration';
 import { constants, ethers } from 'ethers';
 import { getNowUnix } from '@/helpers/time';
+import { Zero } from '@ethersproject/constants';
 
 const BN = ethers.BigNumber.from;
 
@@ -399,5 +400,124 @@ export const getUnipoolInfo = async (
 	} catch (error) {
 		console.error('Error in getGIVPrice from Subgraph', error);
 		return;
+	}
+};
+
+export interface IUniswapV3Position {
+	tokenId: number;
+	liquidity: ethers.BigNumber;
+	tickLower: number;
+	tickUpper: number;
+	owner: string;
+	staker: string | null;
+	staked: Boolean;
+}
+export interface IUserPositions {
+	staked: IUniswapV3Position[];
+	notStaked: IUniswapV3Position[];
+}
+export const getUserPositions = async (
+	account: string,
+): Promise<IUserPositions> => {
+	const query = `{
+		notStaked: uniswapPositions(where:{owner: "${account.toLowerCase()}"}){
+			tokenId
+			liquidity
+			tickLower
+			tickUpper
+			staked
+			staker
+		}
+		staked: uniswapPositions(where:{staker: "${account.toLowerCase()}"}){
+			tokenId
+			liquidity
+			tickLower
+			tickUpper
+			staked
+			staker
+		}
+	  }`;
+	const body = { query };
+	try {
+		const res = await fetch(config.MAINNET_NETWORK.subgraphAddress, {
+			method: 'POST',
+			body: JSON.stringify(body),
+		});
+		const data = await res.json();
+		const stakedPositionsInfo = data?.data?.staked || [];
+		const notStakedPositionsInfo = data?.data?.notStaked || [];
+		const mapper = (info: any): IUniswapV3Position => {
+			const tokenId = Number(info?.tokenId || 0);
+			const liquidity = BN(info?.liquidity);
+			const tickLower = Number(info?.tickLower);
+			const tickUpper = Number(info?.tickUpper);
+			const staked = Boolean(info?.staked);
+			return {
+				tokenId,
+				liquidity,
+				tickLower,
+				tickUpper,
+				owner: info.owner,
+				staked,
+				staker: info.staker,
+			};
+		};
+		return {
+			staked: stakedPositionsInfo.map(mapper),
+			notStaked: notStakedPositionsInfo.map(mapper),
+		};
+	} catch (e) {
+		console.error('Error in fetching user positions', e);
+		return {
+			staked: [],
+			notStaked: [],
+		};
+	}
+};
+
+export interface IUniswapV3Pool {
+	sqrtPriceX96: ethers.BigNumber;
+	tick: number;
+	liquidity: ethers.BigNumber;
+	stakedLiquidity: ethers.BigNumber;
+}
+
+export const getUniswapV3Pool = async (
+	address: string,
+): Promise<IUniswapV3Pool> => {
+	const query = `{
+		uniswapV3Pool(id: "${address.toLowerCase()}"){
+			sqrtPriceX96
+			tick
+			liquidity
+			stakedLiquidity
+		}
+	  }`;
+	const body = { query };
+	try {
+		const res = await fetch(config.MAINNET_NETWORK.subgraphAddress, {
+			method: 'POST',
+			body: JSON.stringify(body),
+		});
+		const data = await res.json();
+		const poolInfo = data?.data?.uniswapV3Pool || {};
+		const sqrtPriceX96 = BN(poolInfo.sqrtPriceX96);
+		const tick = Number(poolInfo.tick);
+		const liquidity = BN(poolInfo.liquidity);
+		const stakedLiquidity = BN(poolInfo.stakedLiquidity);
+		return {
+			sqrtPriceX96,
+			tick,
+			liquidity,
+			stakedLiquidity,
+		};
+	} catch (e) {
+		console.error('Error in fetching user positions', e);
+		return {
+			stakedLiquidity: Zero,
+			liquidity: Zero,
+			sqrtPriceX96: Zero,
+			tick: 0,
+		};
 	}
 };

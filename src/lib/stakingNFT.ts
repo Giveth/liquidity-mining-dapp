@@ -122,13 +122,13 @@ export const claimUnstakeStake = async (
 		const unstakeCalldata = ({ tokenId: _tokenId }: LiquidityPosition) =>
 			uniswapV3StakerContract.interface.encodeFunctionData(
 				'unstakeToken',
-				[currentIncentive.key, _tokenId.toNumber()],
+				[currentIncentive.key, _tokenId],
 			);
 
 		const stakeCalldata = ({ tokenId: _tokenId }: LiquidityPosition) =>
 			uniswapV3StakerContract.interface.encodeFunctionData('stakeToken', [
 				currentIncentive.key,
-				_tokenId.toNumber(),
+				_tokenId,
 			]);
 
 		const claimRewardCalldata =
