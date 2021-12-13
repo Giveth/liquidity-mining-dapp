@@ -216,7 +216,7 @@ export const StakeModal: FC<IStakeModalProps> = ({
 											height={40}
 											width={40}
 										/>
-										&nbsp;WRAP PENDING
+										&nbsp;STAKE PENDING
 									</Pending>
 								)}
 								{stakeState === StakeStates.STAKE && (
