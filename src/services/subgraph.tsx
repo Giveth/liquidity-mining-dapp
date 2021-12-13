@@ -410,7 +410,7 @@ export interface IUniswapV3Position {
 	tickUpper: number;
 	owner: string;
 	staker: string | null;
-	staked: Boolean;
+	staked: boolean;
 }
 export interface IUserPositions {
 	staked: IUniswapV3Position[];

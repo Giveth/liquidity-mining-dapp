@@ -37,8 +37,6 @@ export const transfer = async (
 			currentIncentive.key,
 		);
 
-		console.log('incentinve:', data);
-
 		const tx = await nftManagerPositionsContract[
 			'safeTransferFrom(address,address,uint256,bytes)'
 		](walletAddress, uniswapV3StakerContract.address, tokenId, data);
