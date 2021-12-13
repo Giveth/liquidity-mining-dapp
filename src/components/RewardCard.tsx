@@ -84,7 +84,8 @@ export const RewardCard: FC<IRewardCardProps> = ({
 					<Title>{formatWeiHelper(liquidAmount)}</Title>
 					<AmountUnit>GIV</AmountUnit>
 				</AmountInfo>
-				<Converted>~${usdAmount}</Converted>
+				{/* <Converted>~${usdAmount}</Converted> */}
+				<Converted>reserved</Converted>
 				<RateInfo alignItems='center' gap='8px'>
 					<IconGIVStream size={24} />
 					<P>{formatWeiHelper(stream)}</P>
@@ -145,8 +146,10 @@ const AmountUnit = styled(Lead)`
 
 const Converted = styled(P)`
 	color: ${brandColors.deep[200]};
+	opacity: 0;
 	margin-left: 40px;
 	margin-bottom: 22px;
+	user-select: none;
 `;
 
 const RateInfo = styled(Row)`

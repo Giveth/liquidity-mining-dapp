@@ -376,7 +376,8 @@ const GIVBoxWithPrice: FC<IGIVBoxWithPriceProps> = ({ amount, price }) => {
 				<GIVBoxWithPriceAmount>
 					{formatWeiHelper(amount)}
 				</GIVBoxWithPriceAmount>
-				<GIVBoxWithPriceUSD>~${price}</GIVBoxWithPriceUSD>
+				{/* <GIVBoxWithPriceUSD>~${price}</GIVBoxWithPriceUSD> */}
+				<GIVBoxWithPriceUSD>reserved</GIVBoxWithPriceUSD>
 			</GIVBoxWithPriceContainer>
 		</>
 	);
