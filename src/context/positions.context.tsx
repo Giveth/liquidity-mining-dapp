@@ -304,6 +304,77 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				setStakedPositions(stakedPositionsWithURI);
 				setUnstakedPositions(unstakedPositionsWithURI);
 
+				if (userPositionInfo.anyPosition) {
+					const anyPosition = (await transformToLiquidityPosition(
+						userPositionInfo.anyPosition,
+						poolInfo,
+					)) as LiquidityPosition;
+
+					// TODO: set GIV price to ETH here on mainnet
+					console.log(
+						'price to ETH:',
+						anyPosition._position?.pool
+							.priceOf(anyPosition._position?.pool.token1)
+							.toFixed(10),
+					);
+				}
+
+				const allStaked = (await Promise.all(
+					userPositionInfo.allStaked.map(p =>
+						transformToLiquidityPosition(p, poolInfo),
+					),
+				)) as LiquidityPosition[];
+
+				const totalETHValue = allStaked
+					.flat()
+					.reduce((acc, { _position }) => {
+						if (!_position) return acc;
+
+						// GIV is token0
+
+						// GIV Token
+						// let _givToken = _position.pool.token0;
+
+						// amount of giv in LP
+						let giveAmount = _position.amount0;
+
+						// amount of eth in LP
+						let wethAmount = _position.amount1;
+
+						// calc value of GIV in terms of ETH
+						const ethValueGIV =
+							_position.pool.token0Price.quote(giveAmount);
+
+						// console.log("givAmount", givAmount.toFixed(2));
+						// console.log("ethValueGIV", ethValueGIV.toFixed(2));
+
+						// add values of all tokens in ETH
+						return acc?.add(ethValueGIV).add(wethAmount);
+					}, allPositions[0]._position?.amount1.multiply('0'));
+
+				if (totalETHValue)
+					console.log(
+						'total staked value in eth:',
+						totalETHValue.toFixed(18),
+					);
+				// unstakedPositions.forEach((p: LiquidityPosition) => {
+				// 	console.log('token id:', p.tokenId);
+				// 	console.log(
+				// 		'GIV amount:',
+				// 		p._position?.amount0?.toFixed(10),
+				// 	);
+				// 	console.log(
+				// 		'ETH amount:',
+				// 		p._position?.amount1?.toFixed(10),
+				// 	);
+				// 	console.log(
+				// 		'price:',
+				// 		p._position?.pool
+				// 			.priceOf(p._position?.pool.token1)
+				// 			.toFixed(10),
+				// 	);
+				// });
+
 				setLoadingNftPositions(false);
 			} catch (e) {
 				setLoadingNftPositions(false);

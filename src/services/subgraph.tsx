@@ -2,6 +2,7 @@ import config from '@/configuration';
 import { constants, ethers } from 'ethers';
 import { getNowUnix } from '@/helpers/time';
 import { Zero } from '@ethersproject/constants';
+import { any } from 'prop-types';
 
 const BN = ethers.BigNumber.from;
 
@@ -415,10 +416,13 @@ export interface IUniswapV3Position {
 export interface IUserPositions {
 	staked: IUniswapV3Position[];
 	notStaked: IUniswapV3Position[];
+	allStaked: IUniswapV3Position[];
+	anyPosition: IUniswapV3Position | null;
 }
 export const getUserPositions = async (
 	account: string,
 ): Promise<IUserPositions> => {
+	// TODO: fetching all staked only gets 100 staked positions
 	const query = `{
 		notStaked: uniswapPositions(where:{owner: "${account.toLowerCase()}"}){
 			tokenId
@@ -436,6 +440,22 @@ export const getUserPositions = async (
 			staked
 			staker
 		}
+		allStaked: uniswapPositions(first: 100, where:{staked: true}){
+			tokenId
+			liquidity
+			tickLower
+			tickUpper
+			staked
+			staker
+		}
+		anyPosition: uniswapPositions(first: 1){
+			tokenId
+			liquidity
+			tickLower
+			tickUpper
+			staked
+			staker
+		}
 	  }`;
 	const body = { query };
 	try {
@@ -446,6 +466,8 @@ export const getUserPositions = async (
 		const data = await res.json();
 		const stakedPositionsInfo = data?.data?.staked || [];
 		const notStakedPositionsInfo = data?.data?.notStaked || [];
+		const allStakedPositionsInfo = data?.data?.allStaked || [];
+		const anyPositionInfo = data?.data?.anyPosition || [];
 		const mapper = (info: any): IUniswapV3Position => {
 			const tokenId = Number(info?.tokenId || 0);
 			const liquidity = BN(info?.liquidity);
@@ -465,12 +487,18 @@ export const getUserPositions = async (
 		return {
 			staked: stakedPositionsInfo.map(mapper),
 			notStaked: notStakedPositionsInfo.map(mapper),
+			allStaked: allStakedPositionsInfo.map(mapper),
+			anyPosition: anyPositionInfo.length
+				? mapper(anyPositionInfo[0])
+				: null,
 		};
 	} catch (e) {
 		console.error('Error in fetching user positions', e);
 		return {
 			staked: [],
 			notStaked: [],
+			allStaked: [],
+			anyPosition: null,
 		};
 	}
 };
