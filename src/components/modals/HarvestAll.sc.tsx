@@ -33,6 +33,8 @@ export const GIVBoxWithPriceAmount = styled(Title)`
 
 export const GIVBoxWithPriceUSD = styled(P)`
 	color: ${brandColors.deep[200]};
+	user-select: none;
+	opacity: 0;
 `;
 
 export const HarvestAllModalContainer = styled.div`
