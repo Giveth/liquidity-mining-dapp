@@ -19,7 +19,7 @@ export const StakingPoolContainer = styled.div`
 	background: ${brandColors.giv[600]};
 	color: ${neutralColors.gray[100]};
 	position: relative;
-	margin-bottom: 16px;
+	margin-bottom: 32px;
 `;
 export const StakingPoolExchangeRow = styled(Row)`
 	margin: 16px;
