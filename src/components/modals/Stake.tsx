@@ -113,12 +113,11 @@ export const StakeModal: FC<IStakeModalProps> = ({
 		stakeTokens(amount, POOL_ADDRESS, LM_ADDRESS, provider)
 			.then(txResponse => {
 				if (txResponse) {
+					setTxHash(txResponse.hash);
 					setStakeState(StakeStates.SUBMITTED);
-					if (txResponse) {
-						txResponse.wait().then(data => {
-							setStakeState(StakeStates.CONFIRMED);
-						});
-					}
+					txResponse.wait().then(data => {
+						setStakeState(StakeStates.CONFIRMED);
+					});
 				} else {
 					setStakeState(StakeStates.STAKE);
 				}
