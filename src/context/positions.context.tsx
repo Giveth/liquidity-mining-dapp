@@ -59,6 +59,8 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 	const [loadingNftPositions, setLoadingNftPositions] = useState(false);
 
+	const lastPositionInfo = useRef<IPositionsInfo | null>(null);
+	const nftUriCache = useRef<{ [key: string]: string }>({});
 	const mainnetConfig = config.MAINNET_CONFIG;
 	const givethAddress = mainnetConfig.TOKEN_ADDRESS;
 
@@ -95,7 +97,6 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 		uniswapConfig,
 	]);
 
-	const lastPositionInfo = useRef<IPositionsInfo | null>(null);
 	const positionInfoIsChanged = (
 		newPositionInfo: IPositionsInfo | null,
 	): boolean => {
@@ -270,11 +271,18 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				).filter(p => p) as LiquidityPosition[];
 
 				const downloadURI = async (
-					position: any,
+					position: LiquidityPosition,
 				): Promise<any | null> => {
-					const uri = await nftManagerPositionsContract.tokenURI(
-						position.tokenId,
-					);
+					const { tokenId } = position;
+					let uri;
+					if (nftUriCache.current[tokenId]) {
+						uri = nftUriCache.current[tokenId];
+					} else {
+						uri = await nftManagerPositionsContract.tokenURI(
+							tokenId,
+						);
+						nftUriCache.current[tokenId] = uri;
+					}
 
 					return { ...position, uri };
 				};
