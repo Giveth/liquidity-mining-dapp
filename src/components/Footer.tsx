@@ -30,10 +30,10 @@ export const Footer = () => {
 							<a href='https://giveth.io/projects'>
 								<LinkItem>Projects</LinkItem>
 							</a>
-							<a href=''>
+							<a href='https://giveth.io/about'>
 								<LinkItem>About Us</LinkItem>
 							</a>
-							<a href=''>
+							<a href='https://giveth.io/faq'>
 								<LinkItem>FAQ</LinkItem>
 							</a>
 							<a href=''>
@@ -41,70 +41,70 @@ export const Footer = () => {
 							</a>
 						</LinkColumn>
 						<LinkColumn>
-							<a>
+							<a href='https://giveth.io/join'>
 								<LinkItem>Join Our Community</LinkItem>
 							</a>
-							<a href=''>
+							<a href='https://docs.giveth.io/whatisgiveth/'>
 								<LinkItem>What is Giveth?</LinkItem>
 							</a>
-							<a href=''>
+							<a href='https://docs.giveth.io/dapps/'>
 								<LinkItem>User Guides</LinkItem>
 							</a>
-							<a href=''>
+							<a href='https://docs.giveth.io/dapps/givethioinstallation'>
 								<LinkItem>Developer Docs</LinkItem>
 							</a>
-							<a href=''>
+							<a href='https://giveth.io/tos'>
 								<LinkItem>Terms of Use</LinkItem>
 							</a>
 						</LinkColumn>
 						<LinkColumn>
-							<a>
+							<a href='https://trace.giveth.io/'>
 								<LinkItem>Giveth TRACE</LinkItem>
 							</a>
-							<a href=''>
+							<a href='https://commonsstack.org/'>
 								<LinkItem>Commons Stack</LinkItem>
 							</a>
-							<a href=''>
+							<a href='https://giveth.io/partnerships'>
 								<LinkItem>Partnerships</LinkItem>
 							</a>
-							<a href=''>
+							<a href='https://docs.giveth.io/jobs/'>
 								<LinkItem>We’re Hiring!</LinkItem>
 							</a>
 						</LinkColumn>
 					</LeftContainer>
 					<RightContainer>
 						<SocialContainer>
-							<a href=''>
+							<a href='https://medium.com/giveth/'>
 								<IconMedium
 									size={24}
 									color={brandColors.deep[100]}
 								/>
 							</a>
-							<a href=''>
+							<a href='https://github.com/giveth'>
 								<IconGithub
 									size={24}
 									color={brandColors.deep[100]}
 								/>
 							</a>
-							<a href=''>
+							<a href='https://reddit.com/r/giveth'>
 								<IconRedit
 									size={24}
 									color={brandColors.deep[100]}
 								/>
 							</a>
-							<a href=''>
+							<a href='https://twitter.com/givethio'>
 								<IconTwitter
 									size={24}
 									color={brandColors.deep[100]}
 								/>
 							</a>
-							<a href=''>
+							<a href='https://www.youtube.com/channel/UClfutpRoY0WTVnq0oB0E0wQ'>
 								<IconYoutube
 									size={24}
 									color={brandColors.deep[100]}
 								/>
 							</a>
-							<a href=''>
+							<a href='https://docs.giveth.io/'>
 								<IconWikipedia
 									size={24}
 									color={brandColors.deep[100]}
