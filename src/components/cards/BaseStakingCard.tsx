@@ -112,6 +112,9 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 				<StakingPoolExchangeRow gap='4px' alignItems='center'>
 					{getPoolIconWithName(type)}
 					<StakingPoolExchange styleType='Small'>
+						{type === StakingType.GIV_LM &&
+							walletNetwork === config.XDAI_NETWORK_NUMBER &&
+							`GIVgarden `}
 						{type}
 					</StakingPoolExchange>
 					<div style={{ flex: 1 }}></div>
