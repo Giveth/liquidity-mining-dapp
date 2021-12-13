@@ -337,7 +337,7 @@ export const getTokenDistroInfo = async (
 			percent,
 		};
 	} catch (error) {
-		console.error('Error in getGIVPrice from Subgraph', error);
+		console.error('Error in getTokenDistroInfo from Subgraph', error);
 		return;
 	}
 };
@@ -397,7 +397,7 @@ export const getUnipoolInfo = async (
 			periodFinish,
 		};
 	} catch (error) {
-		console.error('Error in getGIVPrice from Subgraph', error);
+		console.error('Error in getUnipoolInfo from Subgraph', error);
 		return;
 	}
 };
