@@ -74,7 +74,7 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 				provider,
 				currentIncentive,
 			);
-			setTimeout(() => loadPositions(), 5000);
+			loadPositions();
 		} else {
 			handleWaitTx(true);
 			const tx = await transfer(
@@ -84,8 +84,7 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 				currentIncentive,
 			);
 			handleStatusTx(tx);
-			console.log('tx done');
-			setTimeout(() => loadPositions(), 5000);
+			loadPositions();
 		}
 	};
 

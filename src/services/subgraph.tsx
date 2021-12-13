@@ -417,7 +417,6 @@ export interface IUserPositions {
 	staked: IUniswapV3Position[];
 	notStaked: IUniswapV3Position[];
 	allStaked: IUniswapV3Position[];
-	anyPosition: IUniswapV3Position | null;
 }
 export const getUserPositions = async (
 	account: string,
@@ -448,14 +447,6 @@ export const getUserPositions = async (
 			staked
 			staker
 		}
-		anyPosition: uniswapPositions(first: 1){
-			tokenId
-			liquidity
-			tickLower
-			tickUpper
-			staked
-			staker
-		}
 	  }`;
 	const body = { query };
 	try {
@@ -467,7 +458,6 @@ export const getUserPositions = async (
 		const stakedPositionsInfo = data?.data?.staked || [];
 		const notStakedPositionsInfo = data?.data?.notStaked || [];
 		const allStakedPositionsInfo = data?.data?.allStaked || [];
-		const anyPositionInfo = data?.data?.anyPosition || [];
 		const mapper = (info: any): IUniswapV3Position => {
 			const tokenId = Number(info?.tokenId || 0);
 			const liquidity = BN(info?.liquidity);
@@ -488,9 +478,6 @@ export const getUserPositions = async (
 			staked: stakedPositionsInfo.map(mapper),
 			notStaked: notStakedPositionsInfo.map(mapper),
 			allStaked: allStakedPositionsInfo.map(mapper),
-			anyPosition: anyPositionInfo.length
-				? mapper(anyPositionInfo[0])
-				: null,
 		};
 	} catch (e) {
 		console.error('Error in fetching user positions', e);
@@ -498,7 +485,6 @@ export const getUserPositions = async (
 			staked: [],
 			notStaked: [],
 			allStaked: [],
-			anyPosition: null,
 		};
 	}
 };

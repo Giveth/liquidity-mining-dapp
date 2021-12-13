@@ -191,39 +191,13 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				tickUpper,
 				tokenId,
 			}: IUniswapV3Position,
-			poolInfo: IUniswapV3Pool,
+			pool: Pool,
 		): Promise<LiquidityPosition | null> => {
 			try {
 				// sdk position
 				let _position: Position | null = null;
 				if (poolAddress && liquidity) {
 					try {
-						let _token0: Token;
-						let _token1: Token;
-						_token0 = new Token(
-							network,
-							config.MAINNET_CONFIG.TOKEN_ADDRESS,
-							18,
-							'GIV',
-							'GIV',
-						);
-						_token1 = new Token(
-							network,
-							config.MAINNET_CONFIG.WETH_TOKEN_ADDRESS as string,
-							18,
-							'WETH',
-							'WETH',
-						);
-
-						let pool = new Pool(
-							_token0,
-							_token1,
-							3000,
-							poolInfo.sqrtPriceX96.toString(),
-							poolInfo.liquidity.toString(),
-							poolInfo.tick,
-						);
-
 						_position = new Position({
 							pool,
 							liquidity: liquidity.toString(),
@@ -260,16 +234,37 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				lastPositionInfo.current = positionInfo;
 				const { userPositionInfo, poolInfo } = positionInfo;
 
+				const _token0: Token = new Token(
+					network,
+					config.MAINNET_CONFIG.TOKEN_ADDRESS,
+					18,
+					'GIV',
+					'GIV',
+				);
+				const _token1: Token = new Token(
+					network,
+					config.MAINNET_CONFIG.WETH_TOKEN_ADDRESS as string,
+					18,
+					'WETH',
+					'WETH',
+				);
+
+				let pool = new Pool(
+					_token0,
+					_token1,
+					3000,
+					poolInfo.sqrtPriceX96.toString(),
+					poolInfo.liquidity.toString(),
+					poolInfo.tick,
+				);
+
 				const allPositions: LiquidityPosition[] = (
 					await Promise.all(
 						[
 							...userPositionInfo.staked,
 							...userPositionInfo.notStaked,
 						].map(positionInfo =>
-							transformToLiquidityPosition(
-								positionInfo,
-								poolInfo,
-							),
+							transformToLiquidityPosition(positionInfo, pool),
 						),
 					)
 				).filter(p => p) as LiquidityPosition[];
@@ -304,24 +299,14 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				setStakedPositions(stakedPositionsWithURI);
 				setUnstakedPositions(unstakedPositionsWithURI);
 
-				if (userPositionInfo.anyPosition) {
-					const anyPosition = (await transformToLiquidityPosition(
-						userPositionInfo.anyPosition,
-						poolInfo,
-					)) as LiquidityPosition;
-
-					// TODO: set GIV price to ETH here on mainnet
-					console.log(
-						'price to ETH:',
-						anyPosition._position?.pool
-							.priceOf(anyPosition._position?.pool.token1)
-							.toFixed(10),
-					);
-				}
+				console.log(
+					'price to ETH:',
+					pool.priceOf(pool.token1).toFixed(10),
+				);
 
 				const allStaked = (await Promise.all(
 					userPositionInfo.allStaked.map(p =>
-						transformToLiquidityPosition(p, poolInfo),
+						transformToLiquidityPosition(p, pool),
 					),
 				)) as LiquidityPosition[];
 
