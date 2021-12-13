@@ -113,6 +113,7 @@ export const TabGIVstreamTop = () => {
 						</Left>
 						<Right>
 							<GIVstreamRewardCard
+								wrongNetworkText='GIVstream is available on Mainnet and xDAI networks.'
 								liquidAmount={rewardLiquidPart}
 								stream={rewardStream}
 								actionLabel='HARVEST'
@@ -120,6 +121,10 @@ export const TabGIVstreamTop = () => {
 									setShowModal(true);
 								}}
 								network={walletNetwork}
+								targetNetworks={[
+									config.MAINNET_NETWORK_NUMBER,
+									config.XDAI_NETWORK_NUMBER,
+								]}
 							/>
 						</Right>
 					</Row>
@@ -144,6 +149,10 @@ export const TabGIVstreamBottom = () => {
 	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
 	const { currentBalance } = useBalances();
 	const increaseSecRef = useRef<HTMLDivElement>(null);
+	const supportedNetworks = [
+		config.MAINNET_NETWORK_NUMBER,
+		config.XDAI_NETWORK_NUMBER,
+	];
 
 	useEffect(() => {
 		getTokenDistroInfo(walletNetwork).then(distroInfo => {
@@ -188,8 +197,9 @@ export const TabGIVstreamBottom = () => {
 					<H3 weight={700}>Your Flowrate:</H3>
 					<IconGIVStream size={64} />
 					<H1>
-						{tokenInfo &&
-							formatWeiHelper(tokenInfo?.flowratePerWeek)}
+						{tokenInfo && supportedNetworks.includes(walletNetwork)
+							? formatWeiHelper(tokenInfo?.flowratePerWeek)
+							: '0'}
 					</H1>
 					<FlowRateUnit>GIV/week</FlowRateUnit>
 					<IconWithTooltip

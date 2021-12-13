@@ -43,6 +43,7 @@ import { HarvestAllModal } from '../modals/HarvestAll';
 import { getTokenDistroInfo, ITokenDistroInfo } from '@/services/subgraph';
 import { OnboardContext } from '@/context/onboard.context';
 import { getNowUnix } from '@/helpers/time';
+import { useOnboard } from '@/context';
 
 export const TabGIVbacksTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -50,6 +51,7 @@ export const TabGIVbacksTop = () => {
 	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
 	const { tokenDistroHelper } = useTokenDistro();
 	const { xDaiBalance } = useBalances();
+	const { network: walletNetwork } = useOnboard();
 
 	useEffect(() => {
 		setGivBackLiquidPart(
@@ -78,13 +80,18 @@ export const TabGIVbacksTop = () => {
 						<Right>
 							<GIVbackRewardCard
 								title='Your GIVback rewards'
+								wrongNetworkText='GIVbacks is available on Mainnet and xDAI networks.'
 								liquidAmount={givBackLiquidPart}
 								stream={givBackStream}
 								actionLabel='HARVEST'
 								actionCb={() => {
 									setShowModal(true);
 								}}
-								network={config.XDAI_NETWORK_NUMBER}
+								network={walletNetwork}
+								targetNetworks={[
+									config.MAINNET_NETWORK_NUMBER,
+									config.XDAI_NETWORK_NUMBER,
+								]}
 							/>
 						</Right>
 					</Row>

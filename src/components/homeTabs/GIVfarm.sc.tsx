@@ -43,6 +43,12 @@ export const GIVfarmRewardCard = styled(RewardCard)`
 	bottom: -37px;
 `;
 
-export const PoolRow = styled(Row)`
-	margin-top: 24px;
+interface PoolRowProps {
+	disabled?: boolean;
+}
+
+export const PoolRow = styled(Row)<PoolRowProps>`
+	margin: 24px 0;
+	opacity: ${props => (props.disabled ? '0.2' : '1')};
+	pointer-events: ${props => (props.disabled ? 'none' : 'auto')};
 `;

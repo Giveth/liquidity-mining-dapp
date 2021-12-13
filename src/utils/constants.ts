@@ -52,7 +52,7 @@ export const chainName = (chainId: number) => {
 		case 100:
 			return 'xDai';
 		case 42:
-			return 'Kovan';
+			return 'Mainnet';
 		default:
 			return 'Unknown';
 	}

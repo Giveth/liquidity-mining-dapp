@@ -29,10 +29,12 @@ import { calcTokenInfo, ITokenInfo } from '@/lib/helpers';
 import { getTokenDistroInfo } from '@/services/subgraph';
 import BigNumber from 'bignumber.js';
 import { Zero } from '@ethersproject/constants';
+import { useOnboard } from '@/context';
 
 const poolStakingConfig = getGivStakingConfig(config.XDAI_CONFIG);
 
 export const TabGardenTop = () => {
+	const { network: walletNetwork } = useOnboard();
 	const [showModal, setShowModal] = useState(false);
 	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
 
@@ -81,6 +83,7 @@ export const TabGardenTop = () => {
 					<Right>
 						<GardenRewardCard
 							title='Your GIVgarden rewards'
+							wrongNetworkText='GIVgarden is available on xDAI network.'
 							liquidAmount={tokenInfo?.releasedReward || Zero}
 							stream={new BigNumber(
 								tokenInfo?.flowratePerWeek.toString() || 0,
@@ -89,7 +92,8 @@ export const TabGardenTop = () => {
 							actionCb={() => {
 								setShowModal(true);
 							}}
-							network={config.XDAI_NETWORK_NUMBER}
+							network={walletNetwork}
+							targetNetworks={[config.XDAI_NETWORK_NUMBER]}
 						/>
 					</Right>
 				</Row>
