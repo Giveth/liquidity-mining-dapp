@@ -46,7 +46,6 @@ import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { claimReward } from '@/lib/claim';
 import config from '@/configuration';
-import { WrongNetworkInnerModal } from './WrongNetwork';
 
 interface IHarvestAllModalProps extends IModal {
 	title: string;

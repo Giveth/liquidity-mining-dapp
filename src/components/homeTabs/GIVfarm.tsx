@@ -55,9 +55,14 @@ export const TabGIVfarmTop = () => {
 					<Right>
 						<GIVfarmRewardCard
 							title='Your GIVfarm rewards'
+							wrongNetworkText='GIVfarm is only available on Mainnet and xDAI.'
 							liquidAmount={rewardLiquidPart}
 							stream={rewardStream}
 							network={walletNetwork}
+							targetNetworks={[
+								config.MAINNET_NETWORK_NUMBER,
+								config.XDAI_NETWORK_NUMBER,
+							]}
 						/>
 					</Right>
 				</Row>
@@ -68,6 +73,10 @@ export const TabGIVfarmTop = () => {
 
 export const TabGIVfarmBottom = () => {
 	const { network: walletNetwork } = useContext(OnboardContext);
+	const supportedNetworks = [
+		config.MAINNET_NETWORK_NUMBER,
+		config.XDAI_NETWORK_NUMBER,
+	];
 
 	return (
 		<GIVfarmTabContainer>
@@ -93,8 +102,14 @@ export const TabGIVfarmBottom = () => {
 					/>
 				</PoolRow>
 			)}
-			{walletNetwork === config.MAINNET_NETWORK_NUMBER && (
-				<PoolRow justifyContent='center' gap='24px' wrap={1}>
+			{(walletNetwork === config.MAINNET_NETWORK_NUMBER ||
+				!supportedNetworks.includes(walletNetwork)) && (
+				<PoolRow
+					justifyContent='center'
+					gap='24px'
+					wrap={1}
+					disabled={!supportedNetworks.includes(walletNetwork)}
+				>
 					{config.MAINNET_CONFIG.pools.map(
 						(poolStakingConfig, index) => {
 							return poolStakingConfig.type ===

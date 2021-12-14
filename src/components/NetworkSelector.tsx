@@ -9,13 +9,19 @@ import { IconEthereum } from './Icons/Eth';
 import { EthereumChainParameter } from '../types/config';
 import { ChangeNetworkModal } from './modals/ChangeNetwork';
 
-const NetworkSelectorContainer = styled(Row)`
+interface NetworkSelectorProps {
+	disabled?: boolean;
+}
+
+const NetworkSelectorContainer = styled(Row)<NetworkSelectorProps>`
 	width: 270px;
 	height: 48px;
 	border-radius: 88px;
 	border: 1px solid ${brandColors.giv[600]};
 	overflow: hidden;
 	cursor: pointer;
+	opacity: ${props => (props.disabled ? '0.2' : '1')};
+	pointer-events: ${props => (props.disabled ? 'none' : 'auto')};
 `;
 
 interface ISelecetor {
@@ -41,6 +47,10 @@ export const NetworkSelector = () => {
 	const [showChangeNetworkModal, setShowChangeNetworkModal] = useState(false);
 	const [targetNetwork, setTargetNetwork] = useState(1);
 	const { network: walletNetwork, provider } = useContext(OnboardContext);
+	const supportedNetworks = [
+		config.MAINNET_NETWORK_NUMBER,
+		config.XDAI_NETWORK_NUMBER,
+	];
 
 	const handleChangeNetwork = async (
 		networkNumber: number,
@@ -77,7 +87,9 @@ export const NetworkSelector = () => {
 
 	return (
 		<>
-			<NetworkSelectorContainer>
+			<NetworkSelectorContainer
+				disabled={!supportedNetworks.includes(walletNetwork)}
+			>
 				<XDaiSelecor
 					isSelected={walletNetwork === config.XDAI_NETWORK_NUMBER}
 					onClick={() => {
@@ -91,7 +103,10 @@ export const NetworkSelector = () => {
 					<B>xDai</B>
 				</XDaiSelecor>
 				<EthSelector
-					isSelected={walletNetwork === config.MAINNET_NETWORK_NUMBER}
+					isSelected={
+						walletNetwork === config.MAINNET_NETWORK_NUMBER ||
+						!supportedNetworks.includes(walletNetwork)
+					}
 					onClick={() => {
 						handleChangeNetwork(
 							config.MAINNET_NETWORK_NUMBER,

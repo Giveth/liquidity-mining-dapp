@@ -19,6 +19,7 @@ import React, {
 	useContext,
 	useState,
 } from 'react';
+import { useOnboard } from '@/context';
 import styled from 'styled-components';
 import { IconGIV } from './Icons/GIV';
 import { IconXDAI } from './Icons/XDAI';
@@ -28,6 +29,7 @@ import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { IconEthereum } from './Icons/Eth';
 import { WhatisGIVstreamModal } from '@/components/modals/WhatisGIVstream';
+import { WrongNetworkInnerModal } from './modals/WrongNetwork';
 
 interface IRewardCardProps {
 	title?: string;
@@ -37,6 +39,8 @@ interface IRewardCardProps {
 	actionCb?: MouseEventHandler<HTMLButtonElement>;
 	network: number;
 	className?: string;
+	wrongNetworkText: string;
+	targetNetworks: number[];
 }
 
 export const RewardCard: FC<IRewardCardProps> = ({
@@ -47,6 +51,8 @@ export const RewardCard: FC<IRewardCardProps> = ({
 	actionCb,
 	network,
 	className,
+	wrongNetworkText,
+	targetNetworks,
 }) => {
 	const [usdAmount, setUSDAmount] = useState('0');
 	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
@@ -63,48 +69,60 @@ export const RewardCard: FC<IRewardCardProps> = ({
 	return (
 		<>
 			<RewadCardContainer className={className}>
-				<CardHeader justifyContent='space-between'>
-					<CardTitle>{title}</CardTitle>
-					<ChainInfo alignItems='center'>
-						{network === config.MAINNET_NETWORK_NUMBER && (
-							<IconEthereum size={16} />
-						)}
-						{network === config.XDAI_NETWORK_NUMBER && (
-							<IconXDAI size={16} />
-						)}
-						<ChainName styleType='Small'>
-							{network === config.MAINNET_NETWORK_NUMBER
-								? 'ETH'
-								: 'XDAI'}
-						</ChainName>
-					</ChainInfo>
-				</CardHeader>
-				<AmountInfo alignItems='center' gap='8px'>
-					<IconGIV size={32} />
-					<Title>{formatWeiHelper(liquidAmount)}</Title>
-					<AmountUnit>GIV</AmountUnit>
-				</AmountInfo>
-				{/* <Converted>~${usdAmount}</Converted> */}
-				<Converted>reserved</Converted>
-				<RateInfo alignItems='center' gap='8px'>
-					<IconGIVStream size={24} />
-					<P>{formatWeiHelper(stream)}</P>
-					<RateUnit>GIV/week</RateUnit>
-					<IconHelpWraper
-						onClick={() => {
-							setShowWhatIsGIVstreamModal(true);
-						}}
-					>
-						<IconHelp size={24} color={brandColors.deep[200]} />
-					</IconHelpWraper>
-				</RateInfo>
-				{actionLabel && actionCb && (
-					<ActionButton
-						label={actionLabel}
-						onClick={actionCb}
-						buttonType='primary'
-						disabled={liquidAmount.isZero()}
+				{!targetNetworks.includes(network) ? (
+					<WrongNetworkInnerModal
+						targetNetworks={targetNetworks}
+						text={wrongNetworkText}
 					/>
+				) : (
+					<>
+						<CardHeader justifyContent='space-between'>
+							<CardTitle>{title}</CardTitle>
+							<ChainInfo alignItems='center'>
+								{network === config.MAINNET_NETWORK_NUMBER && (
+									<IconEthereum size={16} />
+								)}
+								{network === config.XDAI_NETWORK_NUMBER && (
+									<IconXDAI size={16} />
+								)}
+								<ChainName styleType='Small'>
+									{network === config.MAINNET_NETWORK_NUMBER
+										? 'ETH'
+										: 'XDAI'}
+								</ChainName>
+							</ChainInfo>
+						</CardHeader>
+						<AmountInfo alignItems='center' gap='8px'>
+							<IconGIV size={32} />
+							<Title>{formatWeiHelper(liquidAmount)}</Title>
+							<AmountUnit>GIV</AmountUnit>
+						</AmountInfo>
+						{/* <Converted>~${usdAmount}</Converted> */}
+						<Converted>reserved</Converted>
+						<RateInfo alignItems='center' gap='8px'>
+							<IconGIVStream size={24} />
+							<P>{formatWeiHelper(stream)}</P>
+							<RateUnit>GIV/week</RateUnit>
+							<IconHelpWraper
+								onClick={() => {
+									setShowWhatIsGIVstreamModal(true);
+								}}
+							>
+								<IconHelp
+									size={24}
+									color={brandColors.deep[200]}
+								/>
+							</IconHelpWraper>
+						</RateInfo>
+						{actionLabel && actionCb && (
+							<ActionButton
+								label={actionLabel}
+								onClick={actionCb}
+								buttonType='primary'
+								disabled={liquidAmount.isZero()}
+							/>
+						)}
+					</>
 				)}
 			</RewadCardContainer>
 			{showWhatIsGIVstreamModal && (
