@@ -57,6 +57,9 @@ const config: EnvConfig = {
 			{
 				INCENTIVE_START_TIME: 1638444600,
 				INCENTIVE_END_TIME: 1639567800,
+				// GIV rewards per year is subject to change.
+				// If a new incentive is created, please change the value below.
+				GIV_REWARDS_PER_YEAR: 20000000,
 				NFT_POSITIONS_MANAGER_ADDRESS:
 					'0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
 				UNISWAP_V3_STAKER: '0x1f98407aaB862CdDeF78Ed252D6f557aA5b0f00d',

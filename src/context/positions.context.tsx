@@ -28,6 +28,9 @@ import {
 	IUniswapV3Position,
 	IUserPositions,
 } from '@/services/subgraph';
+import { APR } from '@/types/poolInfo';
+import { Zero } from '@/helpers/number';
+import BigNumber from 'bignumber.js';
 
 const ERC721NftContext = createContext<{
 	totalNftPositions: LiquidityPosition[];
@@ -36,6 +39,7 @@ const ERC721NftContext = createContext<{
 	currentIncentive: { key?: (string | number)[] | null };
 	loadingNftPositions: boolean;
 	loadPositions: () => any;
+	apr: BigNumber;
 } | null>(null);
 
 interface IPositionsInfo {
@@ -56,6 +60,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const [unstakedPositions, setUnstakedPositions] = useState<
 		LiquidityPosition[]
 	>([]);
+	const [apr, setApr] = useState<BigNumber>(Zero);
 
 	const [loadingNftPositions, setLoadingNftPositions] = useState(false);
 
@@ -307,8 +312,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				setStakedPositions(stakedPositionsWithURI);
 				setUnstakedPositions(unstakedPositionsWithURI);
 
-				console.log(
-					'price to ETH:',
+				const givPriceInEth = parseFloat(
 					pool.priceOf(pool.token1).toFixed(10),
 				);
 
@@ -345,11 +349,21 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 						return acc?.add(ethValueGIV).add(wethAmount);
 					}, allPositions[0]._position?.amount1.multiply('0'));
 
-				if (totalETHValue)
-					console.log(
-						'total staked value in eth:',
+				if (totalETHValue) {
+					const totalLiquidityEth = parseFloat(
 						totalETHValue.toFixed(18),
 					);
+
+					const uniswapV3Pool = config.MAINNET_CONFIG
+						.pools[0] as UniswapV3PoolStakingConfig;
+
+					const currentApr = new BigNumber(
+						(uniswapV3Pool.GIV_REWARDS_PER_YEAR * givPriceInEth) /
+							totalLiquidityEth,
+					);
+
+					setApr(currentApr);
+				}
 				// unstakedPositions.forEach((p: LiquidityPosition) => {
 				// 	console.log('token id:', p.tokenId);
 				// 	console.log(
@@ -399,7 +413,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 			}
 		};
 		cb();
-		const interval = setInterval(cb, config.SUBGRAPH_POLLING_INTERVAL);
+		const interval = setInterval(cb, 1000);
 		return () => {
 			clearInterval(interval);
 		};
@@ -414,6 +428,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				currentIncentive,
 				loadingNftPositions,
 				loadPositions,
+				apr,
 			}}
 		>
 			{children}

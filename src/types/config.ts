@@ -29,6 +29,7 @@ export interface SimplePoolStakingConfig extends BasicStakingConfig {
 export interface UniswapV3PoolStakingConfig extends SimplePoolStakingConfig {
 	INCENTIVE_START_TIME: number;
 	INCENTIVE_END_TIME: number;
+	GIV_REWARDS_PER_YEAR: number;
 	NFT_POSITIONS_MANAGER_ADDRESS: string;
 	UNISWAP_V3_STAKER: string;
 	STAKING_REWARDS_CONTRACT: string;

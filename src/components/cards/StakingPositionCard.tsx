@@ -31,13 +31,12 @@ const StakingPositionCard: FC<IStakingPositionCardProps> = ({
 }) => {
 	const { address: walletAddress, provider } = useOnboard();
 	const { rewardBalance } = useStakingNFT();
-	const { currentIncentive, unstakedPositions, stakedPositions } =
-		useLiquidityPositions();
+	const { apr, unstakedPositions, stakedPositions } = useLiquidityPositions();
 	const [oneOfPositionsOutOfRange, setOneOfPositionsOutOfRange] =
 		useState(false);
 
 	const stakeInfo = {
-		apr: Zero,
+		apr: apr,
 		rewardRatePerToken: Zero,
 		userNotStakedAmount: BigNumber.from(unstakedPositions.length),
 		earned: rewardBalance,
