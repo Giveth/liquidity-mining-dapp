@@ -80,7 +80,7 @@ export const TabGIVbacksTop = () => {
 						<Right>
 							<GIVbackRewardCard
 								title='Your GIVback rewards'
-								wrongNetworkText='GIVbacks is available on xDAI network.'
+								wrongNetworkText='GIVbacks is only available on xDAI.'
 								liquidAmount={givBackLiquidPart}
 								stream={givBackStream}
 								actionLabel='HARVEST'

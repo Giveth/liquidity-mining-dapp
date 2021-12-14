@@ -55,7 +55,7 @@ export const TabGIVfarmTop = () => {
 					<Right>
 						<GIVfarmRewardCard
 							title='Your GIVfarm rewards'
-							wrongNetworkText='GIVfarm is available on Mainnet and xDAI networks.'
+							wrongNetworkText='GIVfarm is only available on Mainnet and xDAI.'
 							liquidAmount={rewardLiquidPart}
 							stream={rewardStream}
 							network={walletNetwork}

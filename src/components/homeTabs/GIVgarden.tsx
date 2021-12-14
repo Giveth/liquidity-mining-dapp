@@ -83,7 +83,7 @@ export const TabGardenTop = () => {
 					<Right>
 						<GardenRewardCard
 							title='Your GIVgarden rewards'
-							wrongNetworkText='GIVgarden is available on xDAI network.'
+							wrongNetworkText='GIVgarden is only available on xDAI.'
 							liquidAmount={tokenInfo?.releasedReward || Zero}
 							stream={new BigNumber(
 								tokenInfo?.flowratePerWeek.toString() || 0,
