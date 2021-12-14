@@ -1,7 +1,50 @@
-import React, { useRef, useEffect, useCallback, FC } from 'react';
-import { useSpring, animated } from 'react-spring';
+import { brandColors, IconX } from '@giveth/ui-design-system';
+import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import styled from 'styled-components';
-import { B, brandColors, IconX } from '@giveth/ui-design-system';
+
+export interface IModal {
+	showModal: boolean;
+	setShowModal: (value: boolean) => void;
+	hiddenClose?: boolean;
+}
+
+export const Modal: React.FC<IModal> = ({
+	hiddenClose = false,
+	setShowModal,
+	children,
+}) => {
+	const el = useRef(document.createElement('div'));
+
+	useEffect(() => {
+		const current = el.current;
+		const modalRoot = document.querySelector('body') as HTMLElement;
+		console.log(`modalRoot`, modalRoot);
+
+		if (modalRoot) {
+			modalRoot.appendChild(current);
+		}
+		return () => void modalRoot!.removeChild(current);
+	}, []);
+
+	return createPortal(
+		<Background>
+			<ModalWrapper>
+				{children}
+				{!hiddenClose && (
+					<CloseModalButton
+						onClick={() => {
+							setShowModal(false);
+						}}
+					>
+						<IconX size={24} />
+					</CloseModalButton>
+				)}
+			</ModalWrapper>
+		</Background>,
+		el.current,
+	);
+};
 
 const Background = styled.div`
 	width: 100%;
@@ -16,7 +59,7 @@ const Background = styled.div`
 	z-index: 1110;
 `;
 
-const ModalWrapper = styled.div<IModalWrapper>`
+const ModalWrapper = styled.div`
 	background: ${brandColors.giv[600]};
 	box-shadow: 0px 3px 20px #21203c;
 	border-radius: 8px;
@@ -33,83 +76,3 @@ const CloseModalButton = styled.div`
 	right: 16px;
 	cursor: pointer;
 `;
-
-const ModalTitle = styled(B)`
-	color: ${brandColors.deep[100]};
-	text-align: center;
-	user-select: none;
-`;
-
-interface IModalWrapper {
-	showModal: boolean;
-}
-
-export interface IModal {
-	showModal: boolean;
-	hiddenClose?: boolean;
-	setShowModal: (value: boolean) => void;
-	children?: React.ReactNode;
-	// title?: string;
-}
-
-export const Modal: FC<IModal> = ({
-	showModal,
-	setShowModal,
-	hiddenClose = false,
-	children,
-}) => {
-	const modalRef = useRef(null);
-
-	const animation = useSpring({
-		config: {
-			duration: 250,
-		},
-		opacity: (showModal ? 1 : 0) as any,
-		transform: showModal ? `translateY(0%)` : `translateY(-100%)`,
-	});
-
-	const closeModal: React.MouseEventHandler<HTMLDivElement> = e => {
-		if (modalRef.current === e.target) {
-			// setShowModal(false); //disable close on click outside
-		}
-	};
-
-	const keyPress = useCallback(
-		e => {
-			if (e.key === 'Escape' && showModal) {
-				setShowModal(false);
-				console.log('I pressed');
-			}
-		},
-		[setShowModal, showModal],
-	);
-
-	useEffect(() => {
-		document.addEventListener('keydown', keyPress);
-		return () => document.removeEventListener('keydown', keyPress);
-	}, [keyPress]);
-
-	return (
-		<>
-			{showModal ? (
-				<Background onClick={closeModal} ref={modalRef}>
-					<animated.div style={animation}>
-						<ModalWrapper showModal={showModal}>
-							{!hiddenClose && (
-								<CloseModalButton
-									onClick={() => {
-										setShowModal(false);
-									}}
-								>
-									<IconX size={24} />
-								</CloseModalButton>
-							)}
-							{/* <ModalTitle>{title}</ModalTitle> */}
-							{children}
-						</ModalWrapper>
-					</animated.div>
-				</Background>
-			) : null}
-		</>
-	);
-};
