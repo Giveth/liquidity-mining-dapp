@@ -2,7 +2,12 @@ import styled from 'styled-components';
 import { Row } from './styled-components/Grid';
 import { Button as CButton } from './styled-components/Button';
 import { IHeader } from './Header';
-import { brandColors, Button, GLink } from '@giveth/ui-design-system';
+import {
+	neutralColors,
+	brandColors,
+	Button,
+	GLink,
+} from '@giveth/ui-design-system';
 
 export const StyledHeader = styled(Row)<IHeader>`
 	padding: 16px 32px;
@@ -18,6 +23,15 @@ export const StyledHeader = styled(Row)<IHeader>`
 			return 'box-shadow: 0px 0px 13px 4px rgba(0,0,0,0.5);';
 		}
 	}}
+`;
+
+export const Logo = styled.div`
+	background: ${neutralColors.gray[100]};
+	box-shadow: 0px 4.125px 27.5px rgba(33, 32, 60, 0.24);
+	border-radius: 99px;
+	padding: 8px;
+	width: 64px;
+	height: 64px;
 `;
 
 export const HeaderButton = styled(CButton)`

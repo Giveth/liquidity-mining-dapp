@@ -23,6 +23,7 @@ import {
 	WBInfo,
 	WBNetwork,
 	CreateProject,
+	Logo,
 } from './Header.sc';
 import Link from 'next/link';
 
@@ -45,18 +46,20 @@ const Header: FC<IHeader> = () => {
 				theme={theme}
 			>
 				<Row gap='16px'>
-					<Image
-						width='32p'
-						height='32px'
-						alt='Giveth logo'
-						src={`/images/logo/logo.svg`}
-					/>
-					<Image
+					<Logo>
+						<Image
+							width='48p'
+							height='48px'
+							alt='Giveth logo'
+							src={`/images/logo/logo1.png`}
+						/>
+					</Logo>
+					{/* <Image
 						width='94px'
 						height='20px'
 						alt='Giveth logo'
 						src={`/images/logo/givethio.svg`}
-					/>
+					/> */}
 				</Row>
 				<HeaderLinks>
 					<HeaderLink size='Big' href='https://giveth.io/'>
