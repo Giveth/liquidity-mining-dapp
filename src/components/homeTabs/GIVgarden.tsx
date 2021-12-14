@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { H1, Container, IconGIVGarden } from '@giveth/ui-design-system';
 
 import { Row } from '../styled-components/Grid';
@@ -25,18 +25,24 @@ import { HarvestAllModal } from '../modals/HarvestAll';
 import config from '@/configuration';
 import { useStakingPool } from '@/hooks/useStakingPool';
 import { getGivStakingConfig } from '@/helpers/networkProvider';
-import { calcTokenInfo, ITokenInfo } from '@/lib/helpers';
-import { getTokenDistroInfo } from '@/services/subgraph';
 import BigNumber from 'bignumber.js';
 import { Zero } from '@ethersproject/constants';
 import { useOnboard } from '@/context';
+import { ethers } from 'ethers';
+import { useTokenDistro } from '@/context/tokenDistro.context';
 
 const poolStakingConfig = getGivStakingConfig(config.XDAI_CONFIG);
 
 export const TabGardenTop = () => {
 	const { network: walletNetwork } = useOnboard();
+	const { tokenDistroHelper } = useTokenDistro();
+
 	const [showModal, setShowModal] = useState(false);
-	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
+	const [earnedLiquidPart, setEarnedLiquidPart] =
+		useState<ethers.BigNumber>(Zero);
+	const [earnedStream, setEarnedStream] = useState<BigNumber>(
+		new BigNumber(0),
+	);
 
 	const { earned } = useStakingPool(
 		poolStakingConfig,
@@ -44,26 +50,8 @@ export const TabGardenTop = () => {
 	);
 
 	useEffect(() => {
-		getTokenDistroInfo(config.XDAI_NETWORK_NUMBER).then(distroInfo => {
-			if (distroInfo) {
-				const {
-					initialAmount,
-					totalTokens,
-					startTime,
-					cliffTime,
-					duration,
-				} = distroInfo;
-				const _tokenInfo = calcTokenInfo(
-					initialAmount,
-					totalTokens,
-					earned,
-					duration,
-					cliffTime,
-					startTime,
-				);
-				setTokenInfo(_tokenInfo);
-			}
-		});
+		setEarnedLiquidPart(tokenDistroHelper.getLiquidPart(earned));
+		setEarnedStream(tokenDistroHelper.getStreamPartTokenPerWeek(earned));
 	}, [earned]);
 
 	return (
@@ -84,10 +72,8 @@ export const TabGardenTop = () => {
 						<GardenRewardCard
 							title='Your GIVgarden rewards'
 							wrongNetworkText='GIVgarden is only available on xDAI.'
-							liquidAmount={tokenInfo?.releasedReward || Zero}
-							stream={new BigNumber(
-								tokenInfo?.flowratePerWeek.toString() || 0,
-							).valueOf()}
+							liquidAmount={earnedLiquidPart}
+							stream={earnedStream}
 							actionLabel='HARVEST'
 							actionCb={() => {
 								setShowModal(true);

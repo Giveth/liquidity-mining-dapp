@@ -48,7 +48,11 @@ interface IPositionsInfo {
 
 export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const network = config.MAINNET_NETWORK_NUMBER;
-	const { address: walletAddress, provider } = useOnboard();
+	const {
+		address: walletAddress,
+		provider,
+		network: walletNetwork,
+	} = useOnboard();
 
 	const [totalNftPositions, setTotalNftPositions] = useState<
 		LiquidityPosition[]
@@ -64,7 +68,6 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const [loadingNftPositions, setLoadingNftPositions] = useState(false);
 
 	const lastPositionInfo = useRef<IPositionsInfo | null>(null);
-	const nftUriCache = useRef<{ [key: string]: string }>({});
 	const mainnetConfig = config.MAINNET_CONFIG;
 	const givethAddress = mainnetConfig.TOKEN_ADDRESS;
 
@@ -78,7 +81,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 			!rewardToken ||
 			!poolAddress ||
 			!incentiveRefundeeAddress ||
-			(network !== 1 && network !== 4 && network !== 42)
+			network !== config.MAINNET_NETWORK_NUMBER
 		)
 			return { key: null };
 
@@ -154,6 +157,8 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	};
 
 	const loadPositions = useCallback(() => {
+		// if (network !== walletNetwork) return;
+
 		const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
 		const givethV3PoolContract = getGivethV3PoolContract(provider);
 		const nftManagerPositionsContract =
@@ -278,14 +283,20 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 					position: LiquidityPosition,
 				): Promise<any | null> => {
 					const { tokenId } = position;
-					let uri;
-					if (nftUriCache.current[tokenId]) {
-						uri = nftUriCache.current[tokenId];
-					} else {
-						uri = await nftManagerPositionsContract.tokenURI(
-							tokenId,
-						);
-						nftUriCache.current[tokenId] = uri;
+					const key = `nft-${tokenId}-uri`;
+					let uri = window.sessionStorage.getItem(key);
+					if (!uri) {
+						try {
+							uri = await nftManagerPositionsContract.tokenURI(
+								tokenId,
+							);
+							window.sessionStorage.setItem(key, uri as string);
+						} catch (e) {
+							console.error(
+								'Error on fetching uri of token ' + tokenId,
+								e,
+							);
+						}
 					}
 
 					return { ...position, uri };

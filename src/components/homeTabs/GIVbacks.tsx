@@ -40,9 +40,8 @@ import BigNumber from 'bignumber.js';
 import { useBalances } from '@/context/balance.context';
 import config from '@/configuration';
 import { HarvestAllModal } from '../modals/HarvestAll';
-import { getTokenDistroInfo, ITokenDistroInfo } from '@/services/subgraph';
 import { OnboardContext } from '@/context/onboard.context';
-import { getNowUnix } from '@/helpers/time';
+import { getNowUnixMS } from '@/helpers/time';
 import { useOnboard } from '@/context';
 
 export const TabGIVbacksTop = () => {
@@ -107,22 +106,19 @@ export const TabGIVbacksTop = () => {
 };
 
 export const TabGIVbacksBottom = () => {
-	const [tokenDistroInfo, setTokenDistroInfo] = useState<ITokenDistroInfo>();
 	const [round, setRound] = useState(0);
+	const { tokenDistroHelper } = useTokenDistro();
 	const { network: walletNetwork } = useContext(OnboardContext);
 
 	useEffect(() => {
-		getTokenDistroInfo(walletNetwork).then(async distroInfo => {
-			if (distroInfo) {
-				setTokenDistroInfo(distroInfo);
-				const now = await getNowUnix();
-				const deltaT = now - distroInfo.startTime.getTime();
-				const TwoWeek = 1209600000;
-				const _round = Math.floor(deltaT / TwoWeek) + 1;
-				setRound(_round);
-			}
-		});
-	}, [walletNetwork]);
+		if (tokenDistroHelper) {
+			const now = getNowUnixMS();
+			const deltaT = now - tokenDistroHelper.startTime.getTime();
+			const TwoWeek = 1209600000;
+			const _round = Math.floor(deltaT / TwoWeek) + 1;
+			setRound(_round);
+		}
+	}, [tokenDistroHelper]);
 
 	const goToClaim = () => {
 		router.push('/claim');
@@ -181,16 +177,16 @@ export const TabGIVbacksBottom = () => {
 								<RoundInfoRow justifyContent='space-between'>
 									<P>Start Date</P>
 									<P>
-										{tokenDistroInfo
-											? tokenDistroInfo.startTime.toDateString()
+										{tokenDistroHelper
+											? tokenDistroHelper.startTime.toDateString()
 											: '-'}
 									</P>
 								</RoundInfoRow>
 								<RoundInfoRow justifyContent='space-between'>
 									<P>End Date</P>
 									<P>
-										{tokenDistroInfo
-											? tokenDistroInfo.endTime.toDateString()
+										{tokenDistroHelper
+											? tokenDistroHelper.endTime.toDateString()
 											: '-'}
 									</P>
 								</RoundInfoRow>

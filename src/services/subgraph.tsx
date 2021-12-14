@@ -1,6 +1,6 @@
 import config from '@/configuration';
 import { constants, ethers } from 'ethers';
-import { getNowUnix } from '@/helpers/time';
+import { getNowUnixMS } from '@/helpers/time';
 import { Zero } from '@ethersproject/constants';
 import { any } from 'prop-types';
 
@@ -257,10 +257,6 @@ export interface ITokenDistroInfo {
 	startTime: Date;
 	cliffTime: Date;
 	endTime: Date;
-	duration: number;
-	progress: number;
-	remain: number;
-	percent: number;
 }
 
 export const getTokenDistroInfo = async (
@@ -303,19 +299,8 @@ export const getTokenDistroInfo = async (
 		const cliffTime = new Date(+(_cliffTime.toString() + '000'));
 		const duration = +(_duration.toString() + '000');
 
-		const now = await getNowUnix();
-
-		const progress = now - startTime.getTime();
-		// console.log(`progress`, convertMSToHRD(progress));
-
 		const endTime = new Date(startTime.getTime() + duration);
 		// console.log(`endTime`, endTime);
-
-		const remain = endTime.getTime() - now;
-		// console.log(`remain`, convertMSToHRD(remain));
-
-		const percent = Math.floor((progress / duration) * 100);
-		// console.log(`percent`, percent);
 
 		const initialAmount = BN(info.initialAmount);
 		// console.log(`initialAmount`, initialAmount.toString());
@@ -333,10 +318,6 @@ export const getTokenDistroInfo = async (
 			startTime,
 			cliffTime,
 			endTime,
-			duration,
-			progress,
-			remain,
-			percent,
 		};
 	} catch (error) {
 		console.error('Error in getTokenDistroInfo from Subgraph', error);
