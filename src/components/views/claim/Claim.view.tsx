@@ -1,4 +1,5 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useContext, useState } from 'react';
+import Image from 'next/image';
 import styled from 'styled-components';
 import CongratulationsCard from '../../cards/Congratulations';
 import ClaimCard from '../../cards/Claim';
@@ -9,6 +10,9 @@ import GovernCard from '../../cards/Govern';
 import InvestCard from '../../cards/Stake';
 import { Row } from '../../styled-components/Grid';
 import { number } from 'prop-types';
+import { GiveDropStateType, UserContext } from '@/context/user.context';
+import { OnboardContext } from '@/context/onboard.context';
+import { switchNetwork } from '@/lib/metamask';
 
 const stepsTitle = ['Connect', 'Stake', 'Govern', 'Donate', 'Stream', 'Claim'];
 
@@ -18,6 +22,7 @@ const Steps = styled(Row)`
 
 interface IStepTitleProps {
 	isActive: boolean;
+	disabled?: boolean;
 }
 
 const StepTitle = styled.div<IStepTitleProps>`
@@ -31,7 +36,7 @@ const StepTitle = styled.div<IStepTitleProps>`
 	position: relative;
 	padding: 8px 0;
 	margin: 4px;
-	cursor: pointer;
+	cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
 	::before {
 		content: '';
 		position: absolute;
@@ -48,15 +53,43 @@ interface IStepProps {
 	title: string;
 	isActive: boolean;
 	onClick: any;
+	disabled: boolean;
 }
 
-const Step: FC<IStepProps> = ({ title, isActive, onClick }) => {
+const Step: FC<IStepProps> = ({ title, isActive, onClick, disabled }) => {
 	return (
-		<StepTitle isActive={isActive} onClick={onClick}>
+		<StepTitle
+			isActive={isActive}
+			onClick={disabled ? undefined : onClick}
+			disabled={disabled}
+		>
 			{title}
 		</StepTitle>
 	);
 };
+
+interface ISwitchNetwork {
+	hidden: boolean;
+}
+
+const SwitchNetwork = styled.div<ISwitchNetwork>`
+	height: 48px;
+	background-color: #e1458d;
+	display: ${props => (props.hidden ? 'hidden' : 'flex')};
+	justify-content: center;
+	align-items: center;
+	gap: 12px;
+`;
+
+const ButtonSwitchNetwork = styled.a`
+	background: black;
+	padding: 4px 8px;
+	border-radius: 4px;
+	font-size: 12px;
+	text-transform: uppercase;
+	font-weight: bold;
+	cursor: pointer;
+`;
 
 const ClaimViewContainer = styled.div`
 	background-image: url('/images/cardsbg1.png'), url('/images/cardsbg.png');
@@ -88,43 +121,69 @@ export const ClaimViewContext = React.createContext<IClaimViewContext>({
 
 const ClaimView = () => {
 	const [step, setStep] = useState(0);
-	return step < 6 ? (
-		<ClaimViewContainer>
-			<Steps justifyContent='center' alignItems='center'>
-				{stepsTitle.map((title, idx) => (
-					<Step
-						title={title}
-						isActive={step === idx}
-						key={idx}
-						onClick={() => {
-							setStep(idx);
-						}}
-					/>
-				))}
-			</Steps>
-			<ClaimCarouselContainer>
-				<ClaimViewContext.Provider
-					value={{
-						activeIndex: step,
-						goNextStep: () => {
-							setStep(step + 1);
-						},
-						goFirstStep: () => {
-							setStep(0);
-						},
-					}}
-				>
-					<ConnectCard index={0} />
-					<InvestCard index={1} />
-					<GovernCard index={2} />
-					<DonateCard index={3} />
-					<StreamCard index={4} />
-					<ClaimCard index={5} />
-				</ClaimViewContext.Provider>
-			</ClaimCarouselContainer>
-		</ClaimViewContainer>
-	) : (
-		<CongratulationsCard />
+	const { giveDropState } = useContext(UserContext);
+	const { network, isReady } = useContext(OnboardContext);
+
+	return (
+		<>
+			<SwitchNetwork
+				hidden={(isReady && network === 100) || network === 0}
+			>
+				<Image
+					src='/images/icons/warning.svg'
+					height='24'
+					width='24'
+					alt='Warning icon'
+				/>
+				<span>Please switch to xDAI network!</span>
+				<ButtonSwitchNetwork onClick={() => switchNetwork(100)}>
+					Switch
+				</ButtonSwitchNetwork>
+			</SwitchNetwork>
+			{step < 6 ? (
+				<ClaimViewContainer>
+					<Steps justifyContent='center' alignItems='center'>
+						{stepsTitle.map((title, idx) => (
+							<Step
+								title={title}
+								isActive={step === idx}
+								key={idx}
+								onClick={() => {
+									setStep(idx);
+								}}
+								disabled={
+									giveDropState ===
+										GiveDropStateType.Missed ||
+									giveDropState === GiveDropStateType.Claimed
+								}
+							/>
+						))}
+					</Steps>
+					<ClaimCarouselContainer>
+						<ClaimViewContext.Provider
+							value={{
+								activeIndex: step,
+								goNextStep: () => {
+									setStep(step + 1);
+								},
+								goFirstStep: () => {
+									setStep(0);
+								},
+							}}
+						>
+							<ConnectCard index={0} />
+							<InvestCard index={1} />
+							<GovernCard index={2} />
+							<DonateCard index={3} />
+							<StreamCard index={4} />
+							<ClaimCard index={5} />
+						</ClaimViewContext.Provider>
+					</ClaimCarouselContainer>
+				</ClaimViewContainer>
+			) : (
+				<CongratulationsCard />
+			)}
+		</>
 	);
 };
 
