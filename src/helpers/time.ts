@@ -12,7 +12,7 @@ export const getNowUnix = async (): Promise<number> => {
 	}
 
 	promise = new Promise(async resolve => {
-		let now;
+		let now = Date.now();
 
 		try {
 			const response = await fetch(
@@ -24,8 +24,10 @@ export const getNowUnix = async (): Promise<number> => {
 				const { timestamp, gmtOffset } = json;
 				const unixMS = (timestamp - gmtOffset) * 1000;
 				// console.info('unixMs:', unixMS);
-				timeDifference = unixMS - Date.now();
-				// console.info('Machine time difference ms:', timeDifference);
+				// now variable holds the unix MS before the request, and Date.now() is right now!
+				timeDifference = Math.floor(
+					(unixMS + unixMS - now - Date.now()) / 2,
+				);
 				initialized = true;
 				now = unixMS;
 			} else {

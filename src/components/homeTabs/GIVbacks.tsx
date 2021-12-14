@@ -115,7 +115,6 @@ export const TabGIVbacksBottom = () => {
 		getTokenDistroInfo(walletNetwork).then(async distroInfo => {
 			if (distroInfo) {
 				setTokenDistroInfo(distroInfo);
-				console.log('distroInfo', distroInfo);
 				const now = await getNowUnix();
 				const deltaT = now - distroInfo.startTime.getTime();
 				const TwoWeek = 1209600000;
