@@ -92,12 +92,6 @@ const StreamGIVEarn = styled.div`
 	text-align: left;
 `;
 
-const StreamFooter = styled.div`
-	max-width: 500px;
-	font-size: 12px;
-	line-height: 18px;
-`;
-
 export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
 	const { claimableAmount } = useContext(UserContext);
@@ -134,14 +128,6 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 					<StreamPlaceholder>GIV/week</StreamPlaceholder>
 				</StreamValueContainer>
 			</StreamRow>
-			<Row>
-				<StreamFooter>
-					The following calculators demonstrate how you can use GIV to
-					participate in the GIVeconomy!{' '}
-					<b>These are just simulations.</b> To participate for real,
-					claim your GIV.
-				</StreamFooter>
-			</Row>
 			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
 		</StreamCardContainer>
 	);
