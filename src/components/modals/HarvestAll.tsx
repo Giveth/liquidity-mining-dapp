@@ -320,8 +320,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 							)}
 							<HarvestAllDesc>
 								When you harvest GIV rewards, all liquid GIV
-								allocated to you in the token distro gets sent
-								to your wallet.
+								allocated to you is sent to your wallet.
 							</HarvestAllDesc>
 							{state === HarvestStates.HARVEST && (
 								<HarvestButton
