@@ -325,7 +325,7 @@ export function showPendingClaim(network: number, txHash: string): void {
 }
 
 export function wrongWallet(address: string): void {
-	toast.error(
+	toast(
 		<span>
 			Please connect to the eligible wallet address on xDai: {address}
 		</span>,

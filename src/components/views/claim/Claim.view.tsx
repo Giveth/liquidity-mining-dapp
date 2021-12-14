@@ -154,7 +154,10 @@ const ClaimView = () => {
 								disabled={
 									giveDropState ===
 										GiveDropStateType.Missed ||
-									giveDropState === GiveDropStateType.Claimed
+									giveDropState ===
+										GiveDropStateType.Claimed ||
+									giveDropState ===
+										GiveDropStateType.notConnected
 								}
 							/>
 						))}

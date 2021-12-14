@@ -214,7 +214,6 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 							Try different wallet address
 						</ChangeWallet>
 					</ClaimedRow>
-					<ArrowButton onClick={goNextStep} />
 				</>
 			)}
 		</ConnectCardContainer>
