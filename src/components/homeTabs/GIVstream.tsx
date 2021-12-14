@@ -65,13 +65,14 @@ import {
 import { OnboardContext } from '@/context/onboard.context';
 import { formatWeiHelper } from '@/helpers/number';
 import config from '@/configuration';
-import { calcTokenInfo, convertMSToHRD, ITokenInfo } from '@/lib/helpers';
+import { convertMSToHRD } from '@/lib/helpers';
 import { NetworkSelector } from '@/components/NetworkSelector';
 import { useBalances } from '@/context/balance.context';
 import { constants, ethers } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import BigNumber from 'bignumber.js';
 import { HarvestAllModal } from '../modals/HarvestAll';
+import { Zero } from '@ethersproject/constants';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -144,9 +145,14 @@ export const TabGIVstreamTop = () => {
 
 export const TabGIVstreamBottom = () => {
 	const { network: walletNetwork } = useContext(OnboardContext);
+	const { tokenDistroHelper } = useTokenDistro();
+
 	const [percent, setPercent] = useState(0);
 	const [remain, setRemain] = useState('');
-	const [tokenInfo, setTokenInfo] = useState<ITokenInfo>();
+	useState<ethers.BigNumber>(Zero);
+	const [streamAmount, setStreamAmount] = useState<BigNumber>(
+		new BigNumber(0),
+	);
 	const { currentBalance } = useBalances();
 	const increaseSecRef = useRef<HTMLDivElement>(null);
 	const supportedNetworks = [
@@ -155,40 +161,21 @@ export const TabGIVstreamBottom = () => {
 	];
 
 	useEffect(() => {
-		getTokenDistroInfo(walletNetwork).then(distroInfo => {
-			if (distroInfo) {
-				const {
-					initialAmount,
-					totalTokens,
-					startTime,
-					cliffTime,
-					duration,
-				} = distroInfo;
-				const _tokenInfo = calcTokenInfo(
-					initialAmount,
-					totalTokens,
-					currentBalance.allocatedTokens,
-					duration,
-					cliffTime,
-					startTime,
-				);
-				setTokenInfo(_tokenInfo);
-			}
-		});
-	}, [currentBalance.allocatedTokens, walletNetwork]);
+		setStreamAmount(
+			tokenDistroHelper.getStreamPartTokenPerWeek(
+				currentBalance.allocatedTokens,
+			),
+		);
+	}, [currentBalance.allocatedTokens, tokenDistroHelper]);
 
 	useEffect(() => {
-		getTokenDistroInfo(walletNetwork).then(_streamInfo => {
-			if (_streamInfo) {
-				const _remain = convertMSToHRD(_streamInfo.remain);
-				const _HRremain = `${_remain.y ? _remain.y + 'y' : ''} ${
-					_remain.m ? _remain.m + 'm' : ''
-				} ${_remain.d ? _remain.d + 'd' : ''} `;
-				setPercent(_streamInfo.percent);
-				setRemain(_HRremain);
-			}
-		});
-	}, [walletNetwork]);
+		const _remain = convertMSToHRD(tokenDistroHelper.remain);
+		const _HRremain = `${_remain.y ? _remain.y + 'y' : ''} ${
+			_remain.m ? _remain.m + 'm' : ''
+		} ${_remain.d ? _remain.d + 'd' : ''} `;
+		setPercent(tokenDistroHelper.percent);
+		setRemain(_HRremain);
+	}, [tokenDistroHelper]);
 	return (
 		<GIVbacksBottomContainer>
 			<Container>
@@ -197,8 +184,8 @@ export const TabGIVstreamBottom = () => {
 					<H3 weight={700}>Your Flowrate:</H3>
 					<IconGIVStream size={64} />
 					<H1>
-						{tokenInfo && supportedNetworks.includes(walletNetwork)
-							? formatWeiHelper(tokenInfo?.flowratePerWeek)
+						{supportedNetworks.includes(walletNetwork)
+							? formatWeiHelper(streamAmount)
 							: '0'}
 					</H1>
 					<FlowRateUnit>GIV/week</FlowRateUnit>
@@ -230,26 +217,26 @@ export const TabGIVstreamBottom = () => {
 					</GsDataBlock>
 					<GsDataBlock
 						title='Expanding GIViverse'
-						button={
-							<GsButton
-								label='INCREASE YOUR GIVSTREAM'
-								buttonType='secondary'
-								size='large'
-								onClick={() => {
-									if (increaseSecRef.current) {
-										const elDistanceToTop =
-											window.pageYOffset +
-											increaseSecRef.current.getBoundingClientRect()
-												.top;
-										window.scrollTo({
-											top: elDistanceToTop || 100,
-											left: 0,
-											behavior: 'smooth',
-										});
-									}
-								}}
-							/>
-						}
+						// button={
+						// 	<GsButton
+						// 		label='INCREASE YOUR GIVSTREAM'
+						// 		buttonType='secondary'
+						// 		size='large'
+						// 		onClick={() => {
+						// 			if (increaseSecRef.current) {
+						// 				const elDistanceToTop =
+						// 					window.pageYOffset +
+						// 					increaseSecRef.current.getBoundingClientRect()
+						// 						.top;
+						// 				window.scrollTo({
+						// 					top: elDistanceToTop || 100,
+						// 					left: 0,
+						// 					behavior: 'smooth',
+						// 				});
+						// 			}
+						// 		}}
+						// 	/>
+						// }
 					>
 						Anyone who adds value to the Giveth ecosystem recieves a
 						GIVstream. As the GIVeconomy grows, more GIV becomes
@@ -369,7 +356,7 @@ export const GIVstreamProgress: FC<IGIVstreamProgressProps> = ({
 			</GsPTitleRow>
 			<Bar percentage={percentage} />
 			<PercentageRow justifyContent='space-between'>
-				<B>{percentage}%</B>
+				<B>{percentage?.toFixed(2)}%</B>
 				<B>100%</B>
 			</PercentageRow>
 		</GIVstreamProgressContainer>

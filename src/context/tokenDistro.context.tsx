@@ -18,10 +18,6 @@ const defaultTokenDistroHelper = new TokenDistroHelper({
 	startTime: new Date(),
 	cliffTime: new Date(),
 	endTime: new Date(),
-	duration: 0,
-	progress: 0,
-	remain: 0,
-	percent: 0,
 });
 
 export const BalanceContext = createContext<ITokenDistroContext>({
