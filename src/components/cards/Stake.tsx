@@ -130,10 +130,11 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 				setDeposit(+value);
 		}
 	};
-
+	// 9 / 52 * 5
 	useEffect(() => {
-		setEarnEstimate(apr ? apr.times(deposit).div(100) : Zero);
-		setPotentialClaim(apr ? apr.times(deposit).div(100).div(12) : Zero);
+		const stackedWithApr = apr ? apr.times(deposit).div(100).div(12) : Zero;
+		setPotentialClaim(stackedWithApr.times(0.1));
+		setEarnEstimate(stackedWithApr.times(0.9).div(52 * 5));
 	}, [apr, deposit]);
 
 	const mounted = useRef(true);
@@ -194,6 +195,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 						</Row>
 						<DepositInput>
 							<InputWithUnit
+								type='number'
 								value={deposit}
 								unit={'GIV'}
 								onChange={depositChangeHandler}
