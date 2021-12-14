@@ -181,7 +181,13 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			{giveDropState !== GiveDropStateType.Success &&
 				giveDropState !== GiveDropStateType.Claimed && (
 					<Row alignItems={'center'} justifyContent={'space-between'}>
-						<ConnectButton secondary onClick={changeWallet}>
+						<ConnectButton
+							secondary
+							onClick={() => {
+								changeWallet();
+								submitAddress(walletAddress);
+							}}
+						>
 							{btnLabel}
 						</ConnectButton>
 						<Span>or</Span>
