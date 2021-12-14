@@ -19,7 +19,6 @@ export const Modal: React.FC<IModal> = ({
 	useEffect(() => {
 		const current = el.current;
 		const modalRoot = document.querySelector('body') as HTMLElement;
-		console.log(`modalRoot`, modalRoot);
 
 		if (modalRoot) {
 			modalRoot.appendChild(current);
