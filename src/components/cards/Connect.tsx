@@ -53,25 +53,6 @@ const InputWithButtonContainer = styled.div`
 	width: 588px;
 `;
 
-const SuccessArrowButton = styled(ArrowButton)`
-	right: 300px;
-	bottom: 260px;
-`;
-
-const EarnGiv = styled.span`
-	font-family: 'Red Hat Text';
-	font-size: 16px;
-	font-style: normal;
-	font-weight: 700;
-	line-height: 13px;
-	letter-spacing: 0.04em;
-	text-align: center;
-
-	position: absolute;
-	right: 54px;
-	top: 494px;
-`;
-
 const ClaimedRow = styled(Row)`
 	gap: 50px;
 `;
@@ -81,10 +62,14 @@ const ChangeWallet = styled.div`
 	cursor: pointer;
 `;
 
+const ClickableStrong = styled.strong`
+	cursor: pointer;
+`;
+
 export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
 
-	const { address, connect } = useContext(OnboardContext);
+	const { address, changeWallet } = useContext(OnboardContext);
 	const { submitUserAddress, claimableAmount, giveDropState, resetWallet } =
 		useContext(UserContext);
 
@@ -98,14 +83,6 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	useEffect(() => {
 		if (addressSubmitted) {
-			// if (claimableAmount.isZero()) {
-			// 	setGiveDropState(GiveDropStateType.Missed);
-			// } else if (claimableAmount.isNegative()) {
-			// 	setGiveDropState(GiveDropStateType.Claimed);
-			// } else {
-			// 	setGiveDropState(GiveDropStateType.Success);
-			// }
-
 			setLoading(false);
 			setAddressSubmitted(false);
 		}
@@ -157,8 +134,16 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			break;
 		case GiveDropStateType.Missed:
 			title = 'You missed the GIVdrop';
-			desc =
-				'But there are more ways to get GIV! Try another address or donate to verified projects to get GIV back.';
+			desc = (
+				<span>
+					But there are more ways to get GIV! Try another address or
+					donate to verified projects to get{' '}
+					<Link href='/givbacks' passHref>
+						<ClickableStrong>GIV back</ClickableStrong>
+					</Link>
+					.
+				</span>
+			);
 			btnLabel = 'CHANGE WALLET';
 			bg = {
 				width: '622px',
@@ -196,7 +181,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			{giveDropState !== GiveDropStateType.Success &&
 				giveDropState !== GiveDropStateType.Claimed && (
 					<Row alignItems={'center'} justifyContent={'space-between'}>
-						<ConnectButton secondary onClick={connect}>
+						<ConnectButton secondary onClick={changeWallet}>
 							{btnLabel}
 						</ConnectButton>
 						<Span>or</Span>
