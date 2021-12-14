@@ -2,13 +2,13 @@ import {
 	brandColors,
 	neutralColors,
 	P,
-	H6,
 	IconGIVGarden,
 	Lead,
 	Button,
 	GLink,
 	OulineButton,
 	H5,
+	H6,
 	Caption,
 } from '@giveth/ui-design-system';
 import styled from 'styled-components';
@@ -166,6 +166,12 @@ export const StakePoolInfoContainer = styled.div`
 
 export const HarvestAllDesc = styled(P)`
 	text-align: justify;
+	color: ${neutralColors.gray[100]};
+	margin-bottom: 32px;
+`;
+
+export const NothingToHarvest = styled(H6)`
+	text-align: center;
 	color: ${neutralColors.gray[100]};
 	margin-bottom: 32px;
 `;

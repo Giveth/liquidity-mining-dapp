@@ -79,7 +79,7 @@ export const TabGIVbacksTop = () => {
 						</Left>
 						<Right>
 							<GIVbackRewardCard
-								title='Your GIVback rewards'
+								title='Your GIVbacks rewards'
 								wrongNetworkText='GIVbacks is only available on xDAI.'
 								liquidAmount={givBackLiquidPart}
 								stream={givBackStream}
@@ -96,7 +96,7 @@ export const TabGIVbacksTop = () => {
 			</GIVbacksTopContainer>
 			{showModal && (
 				<HarvestAllModal
-					title='GIVback Rewards'
+					title='GIVbacks Rewards'
 					showModal={showModal}
 					setShowModal={setShowModal}
 					network={config.XDAI_NETWORK_NUMBER}
@@ -177,7 +177,7 @@ export const TabGIVbacksBottom = () => {
 				<GIVBackCard>
 					<Row justifyContent='space-between' alignItems='center'>
 						<RoundSection>
-							<RoundTitle>GIVback Round {round}</RoundTitle>
+							<RoundTitle>GIVbacks Round {round}</RoundTitle>
 							<RoundInfo>
 								<RoundInfoRow justifyContent='space-between'>
 									<P>Start Date</P>
@@ -200,7 +200,7 @@ export const TabGIVbacksBottom = () => {
 									alignItems='center'
 								>
 									<P>GIV Allocated to Round</P>
-									<GivAllocated>1 M</GivAllocated>
+									<GivAllocated>1 Million GIV</GivAllocated>
 								</RoundInfoTallRow>
 								<RoundButton
 									size='small'

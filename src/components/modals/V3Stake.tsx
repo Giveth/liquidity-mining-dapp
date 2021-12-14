@@ -29,9 +29,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 }) => {
 	const { network } = useOnboard();
 	const { unstakedPositions, stakedPositions } = useLiquidityPositions();
-	console.log(unstakedPositions, stakedPositions);
 	const positions = isUnstakingModal ? stakedPositions : unstakedPositions;
-	console.log(positions);
 	const { title } = poolStakingConfig;
 	const [waitTx, setWaitTx] = useState<boolean>(false);
 	const [txStatus, setTxStatus] = useState<any>();
