@@ -2,6 +2,7 @@ import { IBalances, ITokenDistroInfo } from '@/services/subgraph';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { Zero } from '@ethersproject/constants';
+import { getNowUnixMS } from '@/helpers/time';
 
 export class TokenDistroHelper {
 	public readonly initialAmount: ethers.BigNumber;
@@ -10,10 +11,6 @@ export class TokenDistroHelper {
 	public readonly startTime: Date;
 	public readonly cliffTime: Date;
 	public readonly endTime: Date;
-	public readonly duration: number;
-	public readonly progress: number;
-	public readonly remain: number;
-	public readonly percent: number;
 
 	constructor({
 		initialAmount,
@@ -22,10 +19,6 @@ export class TokenDistroHelper {
 		startTime,
 		cliffTime,
 		endTime,
-		duration,
-		progress,
-		remain,
-		percent,
 	}: ITokenDistroInfo) {
 		this.initialAmount = initialAmount;
 		this.lockedAmount = lockedAmount;
@@ -33,16 +26,35 @@ export class TokenDistroHelper {
 		this.startTime = startTime;
 		this.cliffTime = cliffTime;
 		this.endTime = endTime;
-		this.duration = duration;
-		this.progress = progress;
-		this.remain = remain;
-		this.percent = percent;
 	}
 
-	public get globallyClaimableNow(): ethers.BigNumber {
-		if (this.duration === 0) return Zero;
+	get duration(): number {
+		return this.endTime.getTime() - this.startTime.getTime();
+	}
+
+	get remain(): number {
+		return Math.max(this.endTime.getTime() - getNowUnixMS(), 0);
+	}
+
+	get percent(): number {
+		const { duration, remain } = this;
+		return ((duration - remain) / duration) * 100;
+	}
+
+	get globallyClaimableNow(): ethers.BigNumber {
+		const now = getNowUnixMS();
+
+		if (now < this.startTime.getTime()) return Zero;
+		if (now <= this.cliffTime.getTime()) return this.initialAmount;
+		if (now > this.endTime.getTime()) return this.totalTokens;
+
+		const deltaTime = now - this.startTime.getTime();
+
+		const releasedAmount = new BigNumber(this.lockedAmount.toString())
+			.times(deltaTime)
+			.div(this.duration);
 		return this.initialAmount.add(
-			this.lockedAmount.mul(this.progress).div(this.duration),
+			releasedAmount.toFixed(0, BigNumber.ROUND_DOWN),
 		);
 	}
 
@@ -54,15 +66,16 @@ export class TokenDistroHelper {
 	public getStreamPartTokenPerSecond = (
 		amount: ethers.BigNumber,
 	): BigNumber => {
-		if (this.remain === 0) return new BigNumber(0);
+		const toFinish = this.remain / 1000;
+		if (toFinish <= 0) return new BigNumber(0);
 		const lockAmount = amount.sub(this.getLiquidPart(amount));
-		return new BigNumber(lockAmount.toString()).div(this.remain);
+		return new BigNumber(lockAmount.toString()).div(toFinish);
 	};
 
 	public getStreamPartTokenPerWeek = (
 		amount: ethers.BigNumber,
 	): BigNumber => {
-		return this.getStreamPartTokenPerSecond(amount).times(604800000);
+		return this.getStreamPartTokenPerSecond(amount).times(604800);
 	};
 
 	public getUserClaimableNow(userBalance: IBalances): ethers.BigNumber {

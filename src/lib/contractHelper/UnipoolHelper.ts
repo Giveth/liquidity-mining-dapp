@@ -2,7 +2,7 @@ import { IUnipool } from '@/services/subgraph';
 import { ethers } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 import BigNumber from 'bignumber.js';
-import { getNowUnix } from '@/helpers/time';
+import { getNowUnixMS } from '@/helpers/time';
 
 const toBN = (value: ethers.BigNumberish): BigNumber => {
 	return new BigNumber(value.toString());
@@ -29,20 +29,20 @@ export class UnipoolHelper {
 		this.periodFinish = periodFinish;
 	}
 
-	async lastTimeRewardApplicable(): Promise<BigNumber> {
+	get lastTimeRewardApplicable(): BigNumber {
 		const lastTimeRewardApplicableMS: number = Math.min(
-			await getNowUnix(),
+			getNowUnixMS(),
 			this.periodFinish.getTime(),
 		);
 		return toBN(Math.floor(lastTimeRewardApplicableMS / 1000));
 	}
 
-	async rewardPerToken(): Promise<BigNumber> {
+	get rewardPerToken(): BigNumber {
 		if (this.totalSupply.isZero()) {
 			return this.rewardPerTokenStored;
 		}
 		return this.rewardPerTokenStored.plus(
-			(await this.lastTimeRewardApplicable())
+			this.lastTimeRewardApplicable
 				.minus(this.lastUpdateTime.getTime() / 1000)
 				.times(this.rewardRate)
 				.times(1e18)
@@ -51,30 +51,13 @@ export class UnipoolHelper {
 		);
 	}
 
-	earned = async (
+	earned = (
 		rewards: ethers.BigNumber,
 		userRewardPerTokenPaid: ethers.BigNumber,
 		stakedAmount: ethers.BigNumber,
-	): Promise<ethers.BigNumber> => {
-		// const rewardPerToken = this.rewardPerToken;
-		// console.log('rewardPerToken:', rewardPerToken.toFixed());
-		// console.log(
-		// 	this.rewardPerToken
-		// 		.minus(userRewardPerTokenPaid.toString())
-		// 		.toFixed(0),
-		// );
-		// console.log('stakedAmount:', stakedAmount.toString());
-		// console.log(
-		// 	'userRewardPerTokenPaid:',
-		// 	userRewardPerTokenPaid.toString(),
-		// );
-		// console.log('rewards:', rewards.toString());
+	): ethers.BigNumber => {
 		const earndBN = toBN(stakedAmount)
-			.times(
-				(await this.rewardPerToken()).minus(
-					toBN(userRewardPerTokenPaid),
-				),
-			)
+			.times(this.rewardPerToken.minus(toBN(userRewardPerTokenPaid)))
 			.div(1e18)
 			.plus(rewards.toString());
 		// console.log('earned:', earndBN.toFixed(0));

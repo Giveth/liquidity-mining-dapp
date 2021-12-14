@@ -39,7 +39,6 @@ import {
 	SPTitle,
 	StakingPoolLabel,
 	StakingPoolSubtitle,
-	TitleIcon,
 	NothingToHarvest,
 } from './HarvestAll.sc';
 import { Zero } from '@ethersproject/constants';
