@@ -282,7 +282,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 				))}
 			{showHarvestModal && (
 				<HarvestAllModal
-					title='Your Reward'
+					title='GIVfarm Rewards'
 					showModal={showHarvestModal}
 					setShowModal={setShowHarvestModal}
 					poolStakingConfig={poolStakingConfig}

@@ -217,26 +217,26 @@ export const TabGIVstreamBottom = () => {
 					</GsDataBlock>
 					<GsDataBlock
 						title='Expanding GIViverse'
-						button={
-							<GsButton
-								label='INCREASE YOUR GIVSTREAM'
-								buttonType='secondary'
-								size='large'
-								onClick={() => {
-									if (increaseSecRef.current) {
-										const elDistanceToTop =
-											window.pageYOffset +
-											increaseSecRef.current.getBoundingClientRect()
-												.top;
-										window.scrollTo({
-											top: elDistanceToTop || 100,
-											left: 0,
-											behavior: 'smooth',
-										});
-									}
-								}}
-							/>
-						}
+						// button={
+						// 	<GsButton
+						// 		label='INCREASE YOUR GIVSTREAM'
+						// 		buttonType='secondary'
+						// 		size='large'
+						// 		onClick={() => {
+						// 			if (increaseSecRef.current) {
+						// 				const elDistanceToTop =
+						// 					window.pageYOffset +
+						// 					increaseSecRef.current.getBoundingClientRect()
+						// 						.top;
+						// 				window.scrollTo({
+						// 					top: elDistanceToTop || 100,
+						// 					left: 0,
+						// 					behavior: 'smooth',
+						// 				});
+						// 			}
+						// 		}}
+						// 	/>
+						// }
 					>
 						Anyone who adds value to the Giveth ecosystem recieves a
 						GIVstream. As the GIVeconomy grows, more GIV becomes
