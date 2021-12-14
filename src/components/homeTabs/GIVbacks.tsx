@@ -200,7 +200,7 @@ export const TabGIVbacksBottom = () => {
 									alignItems='center'
 								>
 									<P>GIV Allocated to Round</P>
-									<GivAllocated>1 M</GivAllocated>
+									<GivAllocated>1 Million GIV</GivAllocated>
 								</RoundInfoTallRow>
 								<RoundButton
 									size='small'
