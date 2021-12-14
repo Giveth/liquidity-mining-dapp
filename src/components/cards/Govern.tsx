@@ -139,14 +139,14 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
 	const { claimableAmount } = useContext(UserContext);
 
-	const [stacked, setStacked] = useState(0);
+	const [stacked, setStacked] = useState<any>();
 	const [potentialClaim, setPotentialClaim] = useState<BigNumber>(Zero);
 	const [earnEstimate, setEarnEstimate] = useState<number>(0);
 	const [apr, setApr] = useState<APR>(null);
 
 	const stackedChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
 		if (e.target.value.length === 0) {
-			setStacked(0);
+			setStacked(null);
 		} else if (isNaN(+e.target.value)) {
 			setStacked(stacked);
 		} else {
@@ -160,6 +160,12 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 		setPotentialClaim(stackedWithApr.times(0.1));
 		setEarnEstimate((stackedWithApr.toNumber() * 0.9) / (52 * 5));
 	}, [apr, stacked]);
+
+	useEffect(() => {
+		if (claimableAmount) {
+			setStacked(utils.formatEther(claimableAmount));
+		}
+	}, [claimableAmount]);
 
 	const mounted = useRef(true);
 	useEffect(
