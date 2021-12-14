@@ -183,8 +183,8 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 					<Row alignItems={'center'} justifyContent={'space-between'}>
 						<ConnectButton
 							secondary
-							onClick={() => {
-								changeWallet();
+							onClick={async () => {
+								await changeWallet();
 								submitAddress(walletAddress);
 							}}
 						>
