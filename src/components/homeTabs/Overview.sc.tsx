@@ -92,6 +92,10 @@ export const ParticipateDataBlock = styled(DataBlock)`
 	display: flex;
 	flex-flow: column nowrap;
 	align-items: flex-start;
+
+	div:nth-child(2) {
+		flex-grow: 1;
+	}
 `;
 
 export const DataBlockButton = styled(Button)`
