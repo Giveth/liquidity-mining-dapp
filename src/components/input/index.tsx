@@ -40,6 +40,7 @@ const Button = styled.button<IHasBG>`
 	font-size: 12px;
 	line-height: 18px;
 	text-transform: uppercase;
+	cursor: pointer;
 `;
 
 interface IWalletAddressInputWithButtonProps {
@@ -96,6 +97,7 @@ interface IInputWithUnitProps {
 	unit: string;
 	value: string | number;
 	onChange?: any;
+	type?: string;
 }
 
 export const InputWithUnit: FC<IInputWithUnitProps> = ({
@@ -103,10 +105,12 @@ export const InputWithUnit: FC<IInputWithUnitProps> = ({
 	unit,
 	value,
 	onChange,
+	type,
 }) => {
 	return (
 		<InputContainer>
 			<Input
+				type={type}
 				placeholder={placeholder}
 				value={value}
 				onChange={onChange}

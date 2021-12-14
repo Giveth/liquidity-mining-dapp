@@ -23,6 +23,10 @@ import config from '../../configuration';
 import { APR } from '../../types/poolInfo';
 import BigNumber from 'bignumber.js';
 import { formatEthHelper, Zero } from '../../helpers/number';
+import { PoolStakingConfig, StakingType } from '@/types/config';
+import { StakePoolInfo } from '@/types/poolInfo';
+import { fetchLPStakingInfo } from '@/lib/stakingPool';
+import { useLiquidityPositions } from '@/context';
 
 const InvestCardContainer = styled(Card)`
 	::before {
@@ -61,19 +65,27 @@ const ImpactCard = styled.div`
 	justify-content: space-between;
 `;
 
+const MaxStakeGIV = styled(MaxGIV)`
+	cursor: pointer;
+`;
+
+const PoolCardContainer = styled.div`
+	z-index: 1;
+`;
+
+const PoolCardTitle = styled.div`
+	font-size: 16px;
+	padding-bottom: 12px;
+`;
+
 const PoolCard = styled.div`
 	width: 399px;
-	height: 192px;
-	padding: 20px 30px;
+	height: 164px;
+	padding: 10px 30px;
 
 	background: #211985;
 	border-radius: 16px;
 	z-index: 1;
-`;
-
-const PoolTitle = styled(H4)`
-	font-size: 18px;
-	font-weight: bold;
 `;
 
 const PoolItems = styled.div`
@@ -108,22 +120,27 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	const [deposit, setDeposit] = useState(0);
 	const [earnEstimate, setEarnEstimate] = useState<BigNumber>(Zero);
-	const [apr, setApr] = useState<APR>(null);
+	const [APR, setAPR] = useState<any>();
+	const { apr: univ3apr } = useLiquidityPositions();
+	const [potentialClaim, setPotentialClaim] = useState<BigNumber>(Zero);
 
 	const depositChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-		if (e.target.value.length === 0) {
+		const { value } = e.target;
+		if (value.length === 0) {
 			setDeposit(0);
-		} else if (isNaN(+e.target.value)) {
+		} else if (isNaN(+value)) {
 			setDeposit(deposit);
 		} else {
-			if (claimableAmount.gte(utils.parseEther(e.target.value)))
-				setDeposit(+e.target.value);
+			if (claimableAmount.gte(utils.parseEther(value)))
+				setDeposit(+value);
 		}
 	};
-
+	// 9 / 52 * 5
 	useEffect(() => {
-		setEarnEstimate(apr ? apr.times(deposit).div(100) : Zero);
-	}, [apr, deposit]);
+		const stackedWithApr = APR ? APR.times(deposit).div(100).div(12) : Zero;
+		setPotentialClaim(stackedWithApr.times(0.1));
+		setEarnEstimate(stackedWithApr.times(0.9).div(52 * 5));
+	}, [APR, deposit]);
 
 	const mounted = useRef(true);
 	useEffect(
@@ -133,20 +150,33 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		[],
 	);
 
+	const getAPRs = async (promises: Promise<StakePoolInfo>[]) => {
+		const promiseResult = await Promise.all(promises);
+		const APRs: BigNumber[] = promiseResult.map(elem =>
+			elem.apr ? elem.apr : Zero,
+		);
+		APRs.push(univ3apr);
+		const sortedAPRs = APRs.sort((a, b) => (a.gt(b) ? 0 : -1));
+		setAPR(sortedAPRs.pop());
+	};
+
 	useEffect(() => {
-		const cb = () => {
-			fetchGivStakingInfo(
-				config.XDAI_CONFIG.GIV.LM_ADDRESS,
+		const promiseQueue: Promise<StakePoolInfo>[] = [];
+		config.XDAI_CONFIG.pools.forEach(poolStakingConfig => {
+			const promise: Promise<StakePoolInfo> = fetchLPStakingInfo(
+				poolStakingConfig,
 				config.XDAI_NETWORK_NUMBER,
-			)
-				.then(({ apr: _apr }) => mounted.current && setApr(_apr))
-				.catch(e => console.error('Error on fetching APR:', e));
-		};
-
-		cb();
-		const interval = setInterval(cb, 120 * 1000);
-
-		return () => clearInterval(interval);
+			);
+			promiseQueue.push(promise);
+		});
+		config.MAINNET_CONFIG.pools.forEach(poolStakingConfig => {
+			const promise: Promise<StakePoolInfo> = fetchLPStakingInfo(
+				poolStakingConfig,
+				config.MAINNET_NETWORK_NUMBER,
+			);
+			promiseQueue.push(promise);
+		});
+		getAPRs(promiseQueue);
 	}, []);
 
 	return (
@@ -154,8 +184,8 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 			<Header>
 				<Title as='h1'>How to use your GIV</Title>
 				<Desc size='small' color={'#CABAFF'}>
-					Stake tokens in the GIVfarm to earn up to
-					{apr ? `${formatEthHelper(apr, 2)}% APR` : ' ? '}
+					Stake tokens in the GIVfarm to earn up to{' '}
+					{APR ? `${formatEthHelper(APR, 2)}% APR` : ' ? '}
 				</Desc>
 			</Header>
 			<Row alignItems={'flex-start'} justifyContent={'space-between'}>
@@ -167,12 +197,21 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 							justifyContent={'space-between'}
 						>
 							<DepositLabel>If you deposit</DepositLabel>
-							<MaxGIV>{`Max ${utils.formatEther(
+							<MaxStakeGIV
+								onClick={() =>
+									setDeposit(
+										Number(
+											utils.formatEther(claimableAmount),
+										),
+									)
+								}
+							>{`Max ${utils.formatEther(
 								claimableAmount,
-							)} GIV`}</MaxGIV>
+							)} GIV`}</MaxStakeGIV>
 						</Row>
 						<DepositInput>
 							<InputWithUnit
+								type='number'
 								value={deposit}
 								unit={'GIV'}
 								onChange={depositChangeHandler}
@@ -180,49 +219,37 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 						</DepositInput>
 					</div>
 				</ImpactCard>
-				<PoolCard>
-					<PoolTitle as='h2'>GIV Staking</PoolTitle>
-					<PoolItems>
-						<Row justifyContent='space-between'>
-							<PoolItem>
-								APR
-								<Image
-									src='/images/icons/operations.svg'
-									height='16'
-									width='16'
-									alt='Operations icon'
-								/>
-							</PoolItem>
-							<PoolItemBold>
-								<Image
-									src='/images/icons/star.svg'
-									height='16'
-									width='16'
-									alt='Star icon'
-								/>
-								{deposit}%
-							</PoolItemBold>
-						</Row>
-						<Row justifyContent='space-between'>
-							<PoolItem>Claimable</PoolItem>
-							<PoolItemBold>0 GIV</PoolItemBold>
-						</Row>
-						<Row justifyContent='space-between'>
-							<PoolItem>
-								Streaming
-								<Image
-									src='/images/icons/questionMark.svg'
-									height='16'
-									width='16'
-									alt='Operations icon'
-								/>
-							</PoolItem>
-							<PoolItemBold>
-								{formatEthHelper(earnEstimate, 2)} GIV/week
-							</PoolItemBold>
-						</Row>
-					</PoolItems>
-				</PoolCard>
+				<PoolCardContainer>
+					<PoolCardTitle>If you stake for 1 month:</PoolCardTitle>
+					<PoolCard>
+						<PoolItems>
+							<Row justifyContent='space-between'>
+								<PoolItem>APR</PoolItem>
+								<PoolItemBold>
+									<Image
+										src='/images/icons/star.svg'
+										height='16'
+										width='16'
+										alt='Star icon'
+									/>
+									{formatEthHelper(APR ? APR : Zero, 2)}%
+								</PoolItemBold>
+							</Row>
+							<Row justifyContent='space-between'>
+								<PoolItem>Claimable</PoolItem>
+								<PoolItemBold>
+									{formatEthHelper(potentialClaim, 2)} GIV
+								</PoolItemBold>
+							</Row>
+							<Row justifyContent='space-between'>
+								<PoolItem>Streaming</PoolItem>
+								<PoolItemBold>
+									{formatEthHelper(earnEstimate, 2)} GIV/week
+								</PoolItemBold>
+							</Row>
+						</PoolItems>
+					</PoolCard>
+				</PoolCardContainer>
 			</Row>
 			<Row>
 				<PoolCardFooter>

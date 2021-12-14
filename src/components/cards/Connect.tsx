@@ -1,4 +1,5 @@
 import { FC, useContext, useEffect, useState } from 'react';
+import Link from 'next/link';
 import styled from 'styled-components';
 import { WalletAddressInputWithButton } from '../input';
 import { Button } from '../styled-components/Button';
@@ -6,7 +7,7 @@ import { Row } from '../styled-components/Grid';
 import { H2, P } from '../styled-components/Typography';
 import { ArrowButton, Card, Header } from './common';
 import { OnboardContext } from '../../context/onboard.context';
-import { UserContext } from '../../context/user.context';
+import { UserContext, GiveDropStateType } from '../../context/user.context';
 import { utils } from 'ethers';
 import {
 	ClaimViewContext,
@@ -30,7 +31,7 @@ const ConnectCardContainer = styled(Card)<IConnectCardContainerProps>`
 	}
 `;
 const Title = styled(H2)`
-	width: 700px;
+	width: 800px;
 `;
 
 const Desc = styled(P)`
@@ -52,41 +53,27 @@ const InputWithButtonContainer = styled.div`
 	width: 588px;
 `;
 
-const SuccessArrowButton = styled(ArrowButton)`
-	right: 300px;
-	bottom: 260px;
+const ClaimedRow = styled(Row)`
+	gap: 50px;
 `;
 
-const EarnGiv = styled.span`
-	font-family: 'Red Hat Text';
-	font-size: 16px;
-	font-style: normal;
-	font-weight: 700;
-	line-height: 13px;
-	letter-spacing: 0.04em;
-	text-align: center;
-
-	position: absolute;
-	right: 54px;
-	top: 494px;
+const ChangeWallet = styled.div`
+	color: #fed670;
+	cursor: pointer;
 `;
 
-enum GiveDropStateType {
-	notConnected,
-	Success,
-	Missed,
-}
+const ClickableStrong = styled.strong`
+	cursor: pointer;
+`;
 
 export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
 
-	const { address, connect } = useContext(OnboardContext);
-	const { submitUserAddress, claimableAmount } = useContext(UserContext);
+	const { address, changeWallet } = useContext(OnboardContext);
+	const { submitUserAddress, claimableAmount, giveDropState, resetWallet } =
+		useContext(UserContext);
 
 	const [walletAddress, setWalletAddress] = useState<string>('');
-	const [giveDropState, setGiveDropState] = useState<GiveDropStateType>(
-		GiveDropStateType.notConnected,
-	);
 	const [addressSubmitted, setAddressSubmitted] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 
@@ -96,14 +83,6 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	useEffect(() => {
 		if (addressSubmitted) {
-			console.log('claimableAmount:', utils.formatEther(claimableAmount));
-
-			setGiveDropState(
-				claimableAmount.isZero()
-					? GiveDropStateType.Missed
-					: GiveDropStateType.Success,
-			);
-
 			setLoading(false);
 			setAddressSubmitted(false);
 		}
@@ -125,6 +104,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 		right: '0',
 		bg: '/images/connectbg.png',
 	};
+
 	switch (giveDropState) {
 		case GiveDropStateType.notConnected:
 			title = 'Claim your GIVdrop';
@@ -154,9 +134,30 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			break;
 		case GiveDropStateType.Missed:
 			title = 'You missed the GIVdrop';
-			desc =
-				'But there are more ways to get GIV. Try another address or learn how to earn GIV.';
+			desc = (
+				<span>
+					But there are more ways to get GIV! Try another address or
+					donate to verified projects to get{' '}
+					<Link href='/givbacks' passHref>
+						<ClickableStrong>GIV back</ClickableStrong>
+					</Link>
+					.
+				</span>
+			);
 			btnLabel = 'CHANGE WALLET';
+			bg = {
+				width: '622px',
+				height: '245px',
+				top: '337px',
+				right: '300px',
+				bg: '/images/connectMissbg.png',
+			};
+			break;
+		case GiveDropStateType.Claimed:
+			title = 'You already claimed!';
+			desc =
+				'It seems like you already claimed your GIVdrop with this address.';
+			btnLabel = 'JOIN THE GIVECONOMY';
 			bg = {
 				width: '622px',
 				height: '245px',
@@ -177,38 +178,44 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 					{desc}
 				</Desc>
 			</Header>
-			{giveDropState !== GiveDropStateType.Success && (
-				<Row alignItems={'center'} justifyContent={'space-between'}>
-					<ConnectButton secondary onClick={connect}>
-						{btnLabel}
-					</ConnectButton>
-					<Span>or</Span>
-					<InputWithButtonContainer>
-						<WalletAddressInputWithButton
-							btnLable='Check'
-							placeholder='Enter an address to check your GIVdrop'
-							walletAddress={walletAddress}
-							onSubmit={submitAddress}
-							disabled={loading}
-							onUpdate={() => {
-								setGiveDropState(
-									GiveDropStateType.notConnected,
-								);
-							}}
-						/>
-					</InputWithButtonContainer>
-				</Row>
-			)}
-			{giveDropState === GiveDropStateType.Missed && (
+			{giveDropState !== GiveDropStateType.Success &&
+				giveDropState !== GiveDropStateType.Claimed && (
+					<Row alignItems={'center'} justifyContent={'space-between'}>
+						<ConnectButton secondary onClick={changeWallet}>
+							{btnLabel}
+						</ConnectButton>
+						<Span>or</Span>
+						<InputWithButtonContainer>
+							<WalletAddressInputWithButton
+								btnLable='Check'
+								placeholder='Enter an address to check your GIVdrop'
+								walletAddress={walletAddress}
+								onSubmit={submitAddress}
+								disabled={loading}
+								onUpdate={() => {
+									resetWallet();
+								}}
+							/>
+						</InputWithButtonContainer>
+					</Row>
+				)}
+			{giveDropState === GiveDropStateType.Success &&
+				activeIndex === index && <ArrowButton onClick={goNextStep} />}
+			{giveDropState === GiveDropStateType.Claimed && (
 				<>
-					<EarnGiv>How to earn GIV</EarnGiv>
-					<ArrowButton />
+					<ClaimedRow
+						alignItems={'center'}
+						justifyContent={'flex-start'}
+					>
+						<Link href='/' passHref>
+							<ConnectButton secondary>{btnLabel}</ConnectButton>
+						</Link>
+						<ChangeWallet onClick={() => resetWallet()}>
+							Try different wallet address
+						</ChangeWallet>
+					</ClaimedRow>
 				</>
 			)}
-			{giveDropState === GiveDropStateType.Success &&
-				activeIndex === index && (
-					<SuccessArrowButton onClick={goNextStep} />
-				)}
 		</ConnectCardContainer>
 	);
 };

@@ -1,10 +1,12 @@
-import { useState, ChangeEvent, FC, useContext } from 'react';
+import { useState, ChangeEvent, FC, useContext, useEffect } from 'react';
 import Image from 'next/image';
+import { utils } from 'ethers';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
 import { H2, H4, P } from '../styled-components/Typography';
 import { ArrowButton, Card, ICardProps, MaxGIV } from './common';
+import { UserContext } from '../../context/user.context';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
@@ -98,18 +100,13 @@ const StreamFooter = styled.div`
 
 export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
+	const { claimableAmount } = useContext(UserContext);
+	const [streamValue, setStreamValue] = useState<string>('0');
 
-	const [donation, setDonation] = useState(0);
-
-	const stackedChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-		if (e.target.value.length === 0) {
-			setDonation(0);
-		} else if (isNaN(+e.target.value)) {
-			setDonation(donation);
-		} else {
-			setDonation(+e.target.value);
-		}
-	};
+	useEffect(() => {
+		const value = utils.formatEther(claimableAmount.mul(9).div(52 * 5));
+		setStreamValue((+value).toFixed(2));
+	}, [claimableAmount]);
 
 	return (
 		<StreamCardContainer activeIndex={activeIndex} index={index}>
@@ -133,16 +130,8 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 						width='32'
 						alt='Thunder image'
 					/>
-					<StreamValue>16.06</StreamValue>
-					<StreamPlaceholder>
-						GIV/week
-						<Image
-							src='/images/icons/questionMark.svg'
-							height='16'
-							width='16'
-							alt='Question mark icon'
-						/>
-					</StreamPlaceholder>
+					<StreamValue>{streamValue}</StreamValue>
+					<StreamPlaceholder>GIV/week</StreamPlaceholder>
 				</StreamValueContainer>
 			</StreamRow>
 			<Row>
