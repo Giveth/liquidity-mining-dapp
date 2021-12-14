@@ -324,7 +324,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 			) : (
 				<>
 					<ClaimHeader>
-						<Title as='h1'>Claim your GIV tokens now!</Title>
+						<Title as='h1'>Claim your GIV now!</Title>
 						<Desc size='small' color={'#CABAFF'}>
 							Join the giving economy.
 						</Desc>
@@ -332,7 +332,6 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 					<Row alignItems={'center'} justifyContent={'center'}>
 						<ClaimButton secondary onClick={onClaim}>
 							CLAIM {utils.formatEther(claimableAmount)} GIV
-							Tokens
 						</ClaimButton>
 					</Row>
 					<Row alignItems={'center'} justifyContent={'center'}>
