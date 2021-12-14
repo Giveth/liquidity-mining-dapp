@@ -150,7 +150,8 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 		} else if (isNaN(+e.target.value)) {
 			setStacked(stacked);
 		} else {
-			setStacked(+e.target.value);
+			if (claimableAmount.gte(utils.parseEther(e.target.value)))
+				setStacked(+e.target.value);
 		}
 	};
 
@@ -233,6 +234,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 						</Row>
 						<GovernInput>
 							<InputWithUnit
+								type='number'
 								value={stacked}
 								unit={'GIV'}
 								onChange={stackedChangeHandler}

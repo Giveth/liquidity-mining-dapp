@@ -125,7 +125,8 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 		} else if (isNaN(+e.target.value)) {
 			setDonation(donation);
 		} else {
-			setDonation(+e.target.value);
+			if (claimableAmount.gte(utils.parseEther(e.target.value)))
+				setDonation(+e.target.value);
 		}
 	};
 
@@ -171,6 +172,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 						</Row>
 						<DonateInput>
 							<InputWithUnit
+								type='number'
 								value={donation}
 								unit={'GIV'}
 								onChange={stackedChangeHandler}
@@ -178,21 +180,6 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 						</DonateInput>
 					</div>
 				</DonateRow>
-				{/* <GetBack flexDirection='column' justifyContent='space-between'>
-					<H4 as='h2'>You can get back up to</H4>
-					<Row alignItems={'center'} justifyContent={'space-between'}>
-						<DonateGIVEarn>{donation}</DonateGIVEarn>
-						<DonateLabel>
-							GIV{' '}
-							<Image
-								src='/images/icons/questionMark.svg'
-								height='16'
-								width='16'
-								alt='Operations icon'
-							/>
-						</DonateLabel>
-					</Row>
-				</GetBack> */}
 				<PoolCardContainer>
 					<PoolCard>
 						<PoolItems>
@@ -211,14 +198,12 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 							<Row justifyContent='space-between'>
 								<PoolItem>Claimable</PoolItem>
 								<PoolItemBold>
-									{/* {formatEthHelper(, 2)} GIV */}
-									{potentialClaim} GIV
+									{potentialClaim.toFixed(2)} GIV
 								</PoolItemBold>
 							</Row>
 							<Row justifyContent='space-between'>
 								<PoolItem>Streaming</PoolItem>
 								<PoolItemBold>
-									{/* {earnEstimate.toFixed(2)} GIV/week */}
 									{earnEstimate.toFixed(2)} GIV/week
 								</PoolItemBold>
 							</Row>
