@@ -54,12 +54,6 @@ const Header: FC<IHeader> = () => {
 							src={`/images/logo/logo1.png`}
 						/>
 					</Logo>
-					{/* <Image
-						width='94px'
-						height='20px'
-						alt='Giveth logo'
-						src={`/images/logo/givethio.svg`}
-					/> */}
 				</Row>
 				<HeaderLinks>
 					<HeaderLink size='Big' href='https://giveth.io/'>
