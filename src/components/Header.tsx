@@ -79,7 +79,9 @@ const Header: FC<IHeader> = () => {
 				</HeaderLinks>
 				<Row gap='8px'>
 					{/* <NotifButton /> */}
-					<CreateProject label='CREATE A PROJECT' />
+					<a href='https://giveth.io/create'>
+						<CreateProject label='CREATE A PROJECT' />
+					</a>
 					{address ? (
 						<>
 							<HeaderButton outline>
