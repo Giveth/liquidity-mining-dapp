@@ -388,7 +388,7 @@ const convetSourceTypeToIcon = (distributor: string) => {
 			return (
 				<Row gap='16px'>
 					<IconGIVBack size={24} color={brandColors.mustard[500]} />
-					<P>{` GIVback`}</P>
+					<P>{` GIVbacks`}</P>
 				</Row>
 			);
 		case 'giveth':
