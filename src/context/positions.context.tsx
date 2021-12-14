@@ -28,7 +28,6 @@ import {
 	IUniswapV3Position,
 	IUserPositions,
 } from '@/services/subgraph';
-import { APR } from '@/types/poolInfo';
 import { Zero } from '@/helpers/number';
 import BigNumber from 'bignumber.js';
 
