@@ -127,7 +127,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 		const { staked: newStaked, notStaked: newNotStaked } =
 			newUserPositionInfo;
 		const { staked: currentStaked, notStaked: currentNotStaked } =
-			newUserPositionInfo;
+			lastUserPositionInfo;
 
 		if (
 			newStaked.length !== currentStaked.length ||
