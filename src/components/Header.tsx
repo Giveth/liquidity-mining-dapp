@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import router from 'next/router';
 import { Row } from './styled-components/Grid';
-import React, { FC, useContext, useRef, useEffect, useState } from 'react';
+import React, { FC, useContext } from 'react';
 import { ThemeContext, ThemeType } from '@/context/theme.context';
 import { OnboardContext } from '@/context/onboard.context';
 import { useBalances } from '@/context/balance.context';
@@ -14,6 +14,7 @@ import {
 	HBContent,
 	HBPic,
 	HeaderButton,
+	HeaderLinks,
 	HeaderLink,
 	HeaderPlaceHolder,
 	NotifButton,
@@ -21,7 +22,10 @@ import {
 	WalletButton,
 	WBInfo,
 	WBNetwork,
+	CreateProject,
+	Logo,
 } from './Header.sc';
+import Link from 'next/link';
 
 export interface IHeader {
 	theme?: ThemeType;
@@ -29,77 +33,49 @@ export interface IHeader {
 }
 
 const Header: FC<IHeader> = () => {
-	const [scrolled, setScrolled] = useState(false);
-
 	const { theme } = useContext(ThemeContext);
-	const placeholderRef = useRef<HTMLDivElement>(null);
 	const { currentBalance } = useBalances();
 	const { network, connect, address, provider } = useContext(OnboardContext);
-	const goToClaim = () => {
-		router.push('/claim');
-	};
-
-	useEffect(() => {
-		let observer: IntersectionObserver;
-		if (
-			!('IntersectionObserver' in window) ||
-			!('IntersectionObserverEntry' in window) ||
-			!('intersectionRatio' in window.IntersectionObserverEntry.prototype)
-		) {
-			// TODO: load polyfill
-			// console.log('load polyfill now');
-		} else {
-			observer = new IntersectionObserver(
-				([entry]) => {
-					setScrolled(!entry.isIntersecting);
-				},
-				{
-					root: null,
-					rootMargin: '-30px',
-				},
-			);
-			if (placeholderRef.current) {
-				observer.observe(placeholderRef.current);
-			}
-			return () => {
-				if (observer) {
-					observer.disconnect();
-				}
-			};
-		}
-	}, [placeholderRef]);
 
 	return (
 		<>
-			<HeaderPlaceHolder ref={placeholderRef} />
+			<HeaderPlaceHolder />
 			<StyledHeader
 				justifyContent='space-between'
 				alignItems='center'
 				theme={theme}
-				scrolled={scrolled}
 			>
 				<Row gap='16px'>
-					<Image
-						width='32p'
-						height='32px'
-						alt='Giveth logo'
-						src={`/images/logo/logo.svg`}
-					/>
-					<Image
-						width='94px'
-						height='20px'
-						alt='Giveth logo'
-						src={`/images/logo/givethio.svg`}
-					/>
+					<Logo>
+						<Image
+							width='48p'
+							height='48px'
+							alt='Giveth logo'
+							src={`/images/logo/logo1.png`}
+						/>
+					</Logo>
 				</Row>
-				<Row gap='40px'>
-					<HeaderLink>Projects</HeaderLink>
-					<HeaderLink active>GIVeconomy</HeaderLink>
-					<HeaderLink>Join</HeaderLink>
-					<HeaderLink important>Create a Project</HeaderLink>
-				</Row>
+				<HeaderLinks>
+					<HeaderLink size='Big' href='https://giveth.io/'>
+						Home
+					</HeaderLink>
+					<HeaderLink size='Big' href='https://giveth.io/projects'>
+						Projects
+					</HeaderLink>
+					<Link href='/' passHref>
+						<HeaderLink size='Big' active>
+							GIVeconomy
+						</HeaderLink>
+					</Link>
+					<HeaderLink size='Big' href='https://giveth.io/join'>
+						Community
+					</HeaderLink>
+				</HeaderLinks>
 				<Row gap='8px'>
-					<NotifButton />
+					{/* <NotifButton /> */}
+					<a href='https://giveth.io/create'>
+						<CreateProject label='CREATE A PROJECT' />
+					</a>
 					{address ? (
 						<>
 							<HeaderButton outline>
@@ -126,27 +102,30 @@ const Header: FC<IHeader> = () => {
 										height={'24px'}
 									/>
 									<WBInfo>
-										<span>{`${address.substr(
+										<span>{`${address.substring(
 											0,
 											6,
-										)}...${address.substr(
+										)}...${address.substring(
 											address.length - 5,
 											address.length,
 										)}`}</span>
 										<WBNetwork>
 											Connected to{' '}
-											{networksParams[network] &&
-												networksParams[network]
-													.nativeCurrency.symbol}
+											{networksParams[network]
+												? networksParams[network]
+														.nativeCurrency.symbol
+												: provider?._network?.name}
 										</WBNetwork>
 									</WBInfo>
 								</HBContainer>
 							</WalletButton>
 						</>
 					) : (
-						<ConenctButton secondary onClick={connect}>
-							Connect Wallet
-						</ConenctButton>
+						<ConenctButton
+							buttonType='primary'
+							label='Connect Wallet'
+							onClick={connect}
+						/>
 					)}
 				</Row>
 			</StyledHeader>
