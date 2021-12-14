@@ -37,8 +37,6 @@ export const transfer = async (
 			currentIncentive.key,
 		);
 
-		console.log('incentinve:', data);
-
 		const tx = await nftManagerPositionsContract[
 			'safeTransferFrom(address,address,uint256,bytes)'
 		](walletAddress, uniswapV3StakerContract.address, tokenId, data);
@@ -122,13 +120,13 @@ export const claimUnstakeStake = async (
 		const unstakeCalldata = ({ tokenId: _tokenId }: LiquidityPosition) =>
 			uniswapV3StakerContract.interface.encodeFunctionData(
 				'unstakeToken',
-				[currentIncentive.key, _tokenId.toNumber()],
+				[currentIncentive.key, _tokenId],
 			);
 
 		const stakeCalldata = ({ tokenId: _tokenId }: LiquidityPosition) =>
 			uniswapV3StakerContract.interface.encodeFunctionData('stakeToken', [
 				currentIncentive.key,
-				_tokenId.toNumber(),
+				_tokenId,
 			]);
 
 		const claimRewardCalldata =
