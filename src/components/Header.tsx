@@ -126,7 +126,7 @@ const Header: FC<IHeader> = () => {
 								direction={'bottom'}
 							>
 								<BalanceTooltip>
-									GIV current in wallet
+									GIV currently in wallet
 								</BalanceTooltip>
 							</IconWithTooltip>
 
@@ -170,7 +170,7 @@ const Header: FC<IHeader> = () => {
 export const BalanceTooltip = styled(Subline)`
 	color: ${neutralColors.gray[100]};
 	text-align: center;
-	width: 110px;
+	width: 120px;
 `;
 
 export default Header;
