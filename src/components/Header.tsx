@@ -14,6 +14,7 @@ import {
 	HBContent,
 	HBPic,
 	HeaderButton,
+	HeaderLinks,
 	HeaderLink,
 	HeaderPlaceHolder,
 	NotifButton,
@@ -21,7 +22,9 @@ import {
 	WalletButton,
 	WBInfo,
 	WBNetwork,
+	CreateProject,
 } from './Header.sc';
+import Link from 'next/link';
 
 export interface IHeader {
 	theme?: ThemeType;
@@ -32,46 +35,43 @@ const Header: FC<IHeader> = () => {
 	const [scrolled, setScrolled] = useState(false);
 
 	const { theme } = useContext(ThemeContext);
-	const placeholderRef = useRef<HTMLDivElement>(null);
+	// const placeholderRef = useRef<HTMLDivElement>(null);
 	const { currentBalance } = useBalances();
 	const { network, connect, address, provider } = useContext(OnboardContext);
-	const goToClaim = () => {
-		router.push('/claim');
-	};
 
-	useEffect(() => {
-		let observer: IntersectionObserver;
-		if (
-			!('IntersectionObserver' in window) ||
-			!('IntersectionObserverEntry' in window) ||
-			!('intersectionRatio' in window.IntersectionObserverEntry.prototype)
-		) {
-			// TODO: load polyfill
-			// console.log('load polyfill now');
-		} else {
-			observer = new IntersectionObserver(
-				([entry]) => {
-					setScrolled(!entry.isIntersecting);
-				},
-				{
-					root: null,
-					rootMargin: '-30px',
-				},
-			);
-			if (placeholderRef.current) {
-				observer.observe(placeholderRef.current);
-			}
-			return () => {
-				if (observer) {
-					observer.disconnect();
-				}
-			};
-		}
-	}, [placeholderRef]);
+	// useEffect(() => {
+	// 	let observer: IntersectionObserver;
+	// 	if (
+	// 		!('IntersectionObserver' in window) ||
+	// 		!('IntersectionObserverEntry' in window) ||
+	// 		!('intersectionRatio' in window.IntersectionObserverEntry.prototype)
+	// 	) {
+	// 		// TODO: load polyfill
+	// 		// console.log('load polyfill now');
+	// 	} else {
+	// 		observer = new IntersectionObserver(
+	// 			([entry]) => {
+	// 				setScrolled(!entry.isIntersecting);
+	// 			},
+	// 			{
+	// 				root: null,
+	// 				rootMargin: '-30px',
+	// 			},
+	// 		);
+	// 		if (placeholderRef.current) {
+	// 			observer.observe(placeholderRef.current);
+	// 		}
+	// 		return () => {
+	// 			if (observer) {
+	// 				observer.disconnect();
+	// 			}
+	// 		};
+	// 	}
+	// }, [placeholderRef]);
 
 	return (
 		<>
-			<HeaderPlaceHolder ref={placeholderRef} />
+			<HeaderPlaceHolder />
 			<StyledHeader
 				justifyContent='space-between'
 				alignItems='center'
@@ -92,14 +92,25 @@ const Header: FC<IHeader> = () => {
 						src={`/images/logo/givethio.svg`}
 					/>
 				</Row>
-				<Row gap='40px'>
-					<HeaderLink>Projects</HeaderLink>
-					<HeaderLink active>GIVeconomy</HeaderLink>
-					<HeaderLink>Join</HeaderLink>
-					<HeaderLink important>Create a Project</HeaderLink>
-				</Row>
+				<HeaderLinks>
+					<HeaderLink size='Big' href='https://giveth.io/'>
+						Home
+					</HeaderLink>
+					<HeaderLink size='Big' href='https://giveth.io/projects'>
+						Projects
+					</HeaderLink>
+					<Link href='/' passHref>
+						<HeaderLink size='Big' active>
+							GIVeconomy
+						</HeaderLink>
+					</Link>
+					<HeaderLink size='Big' href='https://giveth.io/join'>
+						Community
+					</HeaderLink>
+				</HeaderLinks>
 				<Row gap='8px'>
-					<NotifButton />
+					{/* <NotifButton /> */}
+					<CreateProject label='CREATE A PROJECT' />
 					{address ? (
 						<>
 							<HeaderButton outline>
@@ -126,27 +137,30 @@ const Header: FC<IHeader> = () => {
 										height={'24px'}
 									/>
 									<WBInfo>
-										<span>{`${address.substr(
+										<span>{`${address.substring(
 											0,
 											6,
-										)}...${address.substr(
+										)}...${address.substring(
 											address.length - 5,
 											address.length,
 										)}`}</span>
 										<WBNetwork>
 											Connected to{' '}
-											{networksParams[network] &&
-												networksParams[network]
-													.nativeCurrency.symbol}
+											{networksParams[network]
+												? networksParams[network]
+														.nativeCurrency.symbol
+												: provider?._network?.name}
 										</WBNetwork>
 									</WBInfo>
 								</HBContainer>
 							</WalletButton>
 						</>
 					) : (
-						<ConenctButton secondary onClick={connect}>
-							Connect Wallet
-						</ConenctButton>
+						<ConenctButton
+							buttonType='primary'
+							label='Connect Wallet'
+							onClick={connect}
+						/>
 					)}
 				</Row>
 			</StyledHeader>
