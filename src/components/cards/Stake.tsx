@@ -23,6 +23,10 @@ import config from '../../configuration';
 import { APR } from '../../types/poolInfo';
 import BigNumber from 'bignumber.js';
 import { formatEthHelper, Zero } from '../../helpers/number';
+import { PoolStakingConfig, StakingType } from '@/types/config';
+import { StakePoolInfo } from '@/types/poolInfo';
+import { fetchLPStakingInfo } from '@/lib/stakingPool';
+import { useLiquidityPositions } from '@/context';
 
 const InvestCardContainer = styled(Card)`
 	::before {
@@ -108,8 +112,8 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	const [deposit, setDeposit] = useState(0);
 	const [earnEstimate, setEarnEstimate] = useState<BigNumber>(Zero);
-	const [apr, setApr] = useState<APR>(null);
-
+	const [APR, setAPR] = useState<any>();
+	const { apr: univ3apr } = useLiquidityPositions();
 	const depositChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
 		if (e.target.value.length === 0) {
 			setDeposit(0);
@@ -121,9 +125,9 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		}
 	};
 
-	useEffect(() => {
-		setEarnEstimate(apr ? apr.times(deposit).div(100) : Zero);
-	}, [apr, deposit]);
+	// useEffect(() => {
+	// 	setEarnEstimate(apr ? apr.times(deposit).div(100) : Zero);
+	// }, [apr, deposit]);
 
 	const mounted = useRef(true);
 	useEffect(
@@ -133,29 +137,42 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		[],
 	);
 
+	const getAPRs = async (promises: Promise<StakePoolInfo>[]) => {
+		const promiseResult = await Promise.all(promises);
+		const APRs: BigNumber[] = promiseResult.map(elem =>
+			elem.apr ? elem.apr : Zero,
+		);
+		APRs.push(univ3apr);
+		const sortedAPRs = APRs.sort((a, b) => (a.gt(b) ? 0 : -1));
+		setAPR(sortedAPRs.pop());
+	};
+
 	useEffect(() => {
-		const cb = () => {
-			fetchGivStakingInfo(
-				config.XDAI_CONFIG.GIV.LM_ADDRESS,
+		const promiseQueue: Promise<StakePoolInfo>[] = [];
+		config.XDAI_CONFIG.pools.forEach(poolStakingConfig => {
+			const promise: Promise<StakePoolInfo> = fetchLPStakingInfo(
+				poolStakingConfig,
 				config.XDAI_NETWORK_NUMBER,
-			)
-				.then(({ apr: _apr }) => mounted.current && setApr(_apr))
-				.catch(e => console.error('Error on fetching APR:', e));
-		};
-
-		cb();
-		const interval = setInterval(cb, 120 * 1000);
-
-		return () => clearInterval(interval);
+			);
+			promiseQueue.push(promise);
+		});
+		config.MAINNET_CONFIG.pools.forEach(poolStakingConfig => {
+			const promise: Promise<StakePoolInfo> = fetchLPStakingInfo(
+				poolStakingConfig,
+				config.MAINNET_NETWORK_NUMBER,
+			);
+			promiseQueue.push(promise);
+		});
+		getAPRs(promiseQueue);
 	}, []);
 
 	return (
 		<InvestCardContainer activeIndex={activeIndex} index={index}>
-			<Header>
+			<Header onClick={() => console.log(APR)}>
 				<Title as='h1'>How to use your GIV</Title>
 				<Desc size='small' color={'#CABAFF'}>
 					Stake tokens in the GIVfarm to earn up to
-					{apr ? `${formatEthHelper(apr, 2)}% APR` : ' ? '}
+					{/* {apr ? `${formatEthHelper(apr, 2)}% APR` : ' ? '} */}
 				</Desc>
 			</Header>
 			<Row alignItems={'flex-start'} justifyContent={'space-between'}>
