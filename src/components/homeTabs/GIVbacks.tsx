@@ -80,7 +80,7 @@ export const TabGIVbacksTop = () => {
 						<Right>
 							<GIVbackRewardCard
 								title='Your GIVback rewards'
-								wrongNetworkText='GIVbacks is available on Mainnet and xDAI networks.'
+								wrongNetworkText='GIVbacks is available on xDAI network.'
 								liquidAmount={givBackLiquidPart}
 								stream={givBackStream}
 								actionLabel='HARVEST'
@@ -88,10 +88,7 @@ export const TabGIVbacksTop = () => {
 									setShowModal(true);
 								}}
 								network={walletNetwork}
-								targetNetworks={[
-									config.MAINNET_NETWORK_NUMBER,
-									config.XDAI_NETWORK_NUMBER,
-								]}
+								targetNetworks={[config.XDAI_NETWORK_NUMBER]}
 							/>
 						</Right>
 					</Row>

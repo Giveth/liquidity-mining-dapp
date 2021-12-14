@@ -37,7 +37,7 @@ export const WrongNetworkInnerModal: FC<IWrongNetworkInnerModal> = ({
 
 const WrongNetworkInnerModalContainer = styled.div`
 	max-width: 450px;
-	padding: 40px 24px 24px;
+	padding: 6px 24px;
 `;
 
 const Description = styled.div`
