@@ -82,7 +82,7 @@ export const RoundTitle = styled(H2)`
 `;
 
 export const RoundInfo = styled.div`
-	margin: 38px 100px 32px 0;
+	margin: 38px 64px 32px 0;
 `;
 
 export const RoundInfoRow = styled(Row)`
