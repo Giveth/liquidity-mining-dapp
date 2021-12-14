@@ -154,8 +154,8 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 		if (!provider || userAddress !== address) {
 			console.log('Connected wallet is not the claimed address');
-			wrongWallet(address);
-			// await changeWallet();
+			wrongWallet(userAddress);
+			await changeWallet();
 			return;
 		}
 
