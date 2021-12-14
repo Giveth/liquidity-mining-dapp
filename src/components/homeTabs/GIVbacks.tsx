@@ -128,6 +128,17 @@ export const TabGIVbacksBottom = () => {
 		router.push('/claim');
 	};
 
+	const formatDate = (date) => {
+		return date.toLocaleString('en-US', {
+				weekday: 'short',
+				day: 'numeric',
+				year: 'numeric',
+				month: 'short',
+				hour: 'numeric',
+				minute: 'numeric'})
+				.replace(/,/g, '');
+	}
+
 	return (
 		<GIVbacksBottomContainer>
 			<Container>
@@ -182,7 +193,7 @@ export const TabGIVbacksBottom = () => {
 									<P>Start Date</P>
 									<P>
 										{tokenDistroInfo
-											? tokenDistroInfo.startTime.toDateString()
+											? formatDate(tokenDistroInfo.startTime)
 											: '-'}
 									</P>
 								</RoundInfoRow>
@@ -190,7 +201,7 @@ export const TabGIVbacksBottom = () => {
 									<P>End Date</P>
 									<P>
 										{tokenDistroInfo
-											? tokenDistroInfo.endTime.toDateString()
+											? formatDate(tokenDistroInfo.endTime)
 											: '-'}
 									</P>
 								</RoundInfoRow>
