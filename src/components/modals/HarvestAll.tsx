@@ -117,7 +117,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	useEffect(() => {
 		let _sum = rewardLiquidPart.add(givBackLiquidPart);
 		if (claimableNow) {
-			_sum.add(claimableNow);
+			_sum = _sum.add(claimableNow);
 		}
 		if (_sum.isZero()) {
 		} else {
