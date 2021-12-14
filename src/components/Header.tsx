@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import router from 'next/router';
 import { Row } from './styled-components/Grid';
-import React, { FC, useContext, useRef, useEffect, useState } from 'react';
+import React, { FC, useContext } from 'react';
 import { ThemeContext, ThemeType } from '@/context/theme.context';
 import { OnboardContext } from '@/context/onboard.context';
 import { useBalances } from '@/context/balance.context';
@@ -32,42 +32,9 @@ export interface IHeader {
 }
 
 const Header: FC<IHeader> = () => {
-	const [scrolled, setScrolled] = useState(false);
-
 	const { theme } = useContext(ThemeContext);
-	// const placeholderRef = useRef<HTMLDivElement>(null);
 	const { currentBalance } = useBalances();
 	const { network, connect, address, provider } = useContext(OnboardContext);
-
-	// useEffect(() => {
-	// 	let observer: IntersectionObserver;
-	// 	if (
-	// 		!('IntersectionObserver' in window) ||
-	// 		!('IntersectionObserverEntry' in window) ||
-	// 		!('intersectionRatio' in window.IntersectionObserverEntry.prototype)
-	// 	) {
-	// 		// TODO: load polyfill
-	// 		// console.log('load polyfill now');
-	// 	} else {
-	// 		observer = new IntersectionObserver(
-	// 			([entry]) => {
-	// 				setScrolled(!entry.isIntersecting);
-	// 			},
-	// 			{
-	// 				root: null,
-	// 				rootMargin: '-30px',
-	// 			},
-	// 		);
-	// 		if (placeholderRef.current) {
-	// 			observer.observe(placeholderRef.current);
-	// 		}
-	// 		return () => {
-	// 			if (observer) {
-	// 				observer.disconnect();
-	// 			}
-	// 		};
-	// 	}
-	// }, [placeholderRef]);
 
 	return (
 		<>
@@ -76,7 +43,6 @@ const Header: FC<IHeader> = () => {
 				justifyContent='space-between'
 				alignItems='center'
 				theme={theme}
-				scrolled={scrolled}
 			>
 				<Row gap='16px'>
 					<Image
