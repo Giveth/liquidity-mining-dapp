@@ -354,14 +354,14 @@ export const GIVstreamProgress: FC<IGIVstreamProgressProps> = ({
 		<GIVstreamProgressContainer>
 			<GsPTitleRow justifyContent='space-between'>
 				<GsPTitle alignItems='center' gap='8px'>
-					<H6>GIVstream progress</H6>
+					<H6>GIViverse Expansion</H6>
 					<IconWithTooltip
 						icon={<IconHelp size={16} />}
 						direction={'right'}
 					>
 						<GsPTooltip>
-							The GIVstream progress shows how much time is left
-							for your GIVstream to flow.
+							Time left for all GIVstreams to flow & for the
+							GIViverse to become in full power!
 						</GsPTooltip>
 					</IconWithTooltip>
 				</GsPTitle>

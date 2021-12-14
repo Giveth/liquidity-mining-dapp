@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import styled from 'styled-components';
 import router from 'next/router';
 import { Row } from './styled-components/Grid';
 import React, { FC, useContext } from 'react';
@@ -25,6 +26,8 @@ import {
 	CreateProject,
 	Logo,
 } from './Header.sc';
+import { IconWithTooltip } from './IconWithToolTip';
+import { neutralColors, Subline } from '@giveth/ui-design-system';
 import Link from 'next/link';
 
 export interface IHeader {
@@ -78,21 +81,31 @@ const Header: FC<IHeader> = () => {
 					</a>
 					{address ? (
 						<>
-							<HeaderButton outline>
-								<HBContainer>
-									<HBBalanceLogo
-										src={'/images/logo/logo.svg'}
-										alt='Profile Pic'
-										width={'24px'}
-										height={'24px'}
-									/>
-									<HBContent>
-										{formatWeiHelper(
-											currentBalance.balance,
-										)}
-									</HBContent>
-								</HBContainer>
-							</HeaderButton>
+							<IconWithTooltip
+								icon={
+									<HeaderButton outline>
+										<HBContainer>
+											<HBBalanceLogo
+												src={'/images/logo/logo.svg'}
+												alt='Profile Pic'
+												width={'24px'}
+												height={'24px'}
+											/>
+											<HBContent>
+												{formatWeiHelper(
+													currentBalance.balance,
+												)}
+											</HBContent>
+										</HBContainer>
+									</HeaderButton>
+								}
+								direction={'bottom'}
+							>
+								<BalanceTooltip>
+									GIV currently in wallet
+								</BalanceTooltip>
+							</IconWithTooltip>
+
 							<WalletButton outline onClick={connect}>
 								<HBContainer>
 									<HBPic
@@ -132,5 +145,11 @@ const Header: FC<IHeader> = () => {
 		</>
 	);
 };
+
+export const BalanceTooltip = styled(Subline)`
+	color: ${neutralColors.gray[100]};
+	text-align: center;
+	width: 120px;
+`;
 
 export default Header;
