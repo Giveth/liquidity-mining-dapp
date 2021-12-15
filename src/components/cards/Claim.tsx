@@ -18,6 +18,7 @@ import { OnboardContext } from '../../context/onboard.context';
 import config from '../../configuration';
 import { claimAirDrop } from '../../lib/claim';
 import { addToken } from '@/lib/metamask';
+import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
 
 const ClaimedContainer = styled.div`
 	display: flex;
@@ -212,6 +213,14 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 			index={index}
 			claimed={txStatus}
 		>
+			<WrongNetworkModal
+				showModal={
+					network !== config.XDAI_NETWORK_NUMBER && index === 5
+				}
+				text='test'
+				setShowModal={() => undefined}
+				targetNetworks={[config.XDAI_NETWORK_NUMBER]}
+			/>
 			{txStatus ? (
 				<>
 					<SunImage>
