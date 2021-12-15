@@ -207,10 +207,10 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 		}
 
 		try {
+			setShowClaimModal(true);
 			setClaimState(ClaimState.WAITING);
 			console.log(userAddress);
 			const tx = await claimAirDrop(userAddress, provider);
-			console.log('aeho');
 
 			showPendingClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
 			setClaimState(ClaimState.SUBMITTING);
@@ -355,9 +355,11 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 								</SocialButton>
 							</a>
 							<Link href='/' passHref>
-								<ExploreButton>
-									explore the giveconomy
-								</ExploreButton>
+								<a target='_blank' rel='noreferrer'>
+									<ExploreButton>
+										explore the giveconomy
+									</ExploreButton>
+								</a>
 							</Link>
 							<ClaimFromAnother
 								onClick={() => {

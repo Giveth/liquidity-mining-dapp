@@ -146,7 +146,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep, goFirstStep } =
 		useContext(ClaimViewContext);
 
-	const { address, changeWallet } = useContext(OnboardContext);
+	const { address, connect } = useContext(OnboardContext);
 	const { submitUserAddress, claimableAmount, giveDropState, resetWallet } =
 		useContext(UserContext);
 
@@ -265,7 +265,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 						<ConnectButton
 							secondary
 							onClick={async () => {
-								await changeWallet();
+								await connect();
 								submitAddress(walletAddress);
 							}}
 						>
@@ -375,9 +375,11 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 								</SocialButton>
 							</a>
 							<Link href='/' passHref>
-								<ExploreButton>
-									explore the giveconomy
-								</ExploreButton>
+								<a target='_blank' rel='noreferrer'>
+									<ExploreButton>
+										explore the giveconomy
+									</ExploreButton>
+								</a>
 							</Link>
 							<ClaimFromAnother
 								onClick={() => {
