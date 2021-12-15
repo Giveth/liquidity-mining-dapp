@@ -72,9 +72,10 @@ export const GIVBackCard = styled.div`
 	position: relative;
 `;
 
-export const RoundSection = styled.div`
+export const RoundSection = styled(Row)`
+	flex-direction: column;
+	align-content: stretch;
 	color: ${brandColors.giv[200]};
-	width: 433px;
 `;
 
 export const RoundTitle = styled(H2)`
