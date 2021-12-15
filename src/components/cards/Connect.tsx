@@ -157,7 +157,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			title = 'You already claimed!';
 			desc =
 				'It seems like you already claimed your GIVdrop with this address.';
-			btnLabel = 'JOIN THE GIVECONOMY';
+			btnLabel = 'GO TO GIVECONOMY';
 			bg = {
 				width: '622px',
 				height: '245px',

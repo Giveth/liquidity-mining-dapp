@@ -428,7 +428,7 @@ export function showConfirmedClaim(network: number, txHash: string): void {
 			>
 				Claimed
 			</a>
-			! Your NODE tokens are in your wallet.
+			Your GIV tokens are in your wallet.
 		</span>,
 	);
 }
