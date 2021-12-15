@@ -160,10 +160,20 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 	} = useContext(OnboardContext);
 
 	const [txStatus, setTxStatus] = useState(false);
+	const [showModal, setShowModal] = useState<boolean>(false);
 
 	useEffect(() => {
 		setTxStatus(false);
 	}, [address, userAddress]);
+
+	useEffect(() => {
+		console.log(network);
+		setShowModal(
+			isReady &&
+				network !== config.XDAI_NETWORK_NUMBER &&
+				activeIndex === 5,
+		);
+	}, [network, activeIndex, isReady]);
 
 	const onClaim = async () => {
 		if (!isReady) {
@@ -213,14 +223,13 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 			index={index}
 			claimed={txStatus}
 		>
-			<WrongNetworkModal
-				showModal={
-					network !== config.XDAI_NETWORK_NUMBER && index === 5
-				}
-				text='test'
-				setShowModal={() => undefined}
-				targetNetworks={[config.XDAI_NETWORK_NUMBER]}
-			/>
+			{showModal && (
+				<WrongNetworkModal
+					showModal={showModal}
+					setShowModal={setShowModal}
+					targetNetworks={[config.XDAI_NETWORK_NUMBER]}
+				/>
+			)}
 			{txStatus ? (
 				<>
 					<SunImage>

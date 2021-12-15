@@ -177,6 +177,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 		setLoading(true);
 		await submitUserAddress(value);
 		setAddressSubmitted(true);
+		console.log(giveDropState);
 	};
 
 	let title;
@@ -263,12 +264,14 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	return (
 		<ConnectCardContainer activeIndex={activeIndex} index={index} data={bg}>
-			<Header>
-				<Title as='h1'>{title}</Title>
-				<Desc size='small' color={'#CABAFF'}>
-					{desc}
-				</Desc>
-			</Header>
+			{giveDropState !== GiveDropStateType.Claimed && (
+				<Header>
+					<Title as='h1'>{title}</Title>
+					<Desc size='small' color={'#CABAFF'}>
+						{desc}
+					</Desc>
+				</Header>
+			)}
 			{giveDropState !== GiveDropStateType.Success &&
 				giveDropState !== GiveDropStateType.Claimed && (
 					<Row alignItems={'center'} justifyContent={'space-between'}>

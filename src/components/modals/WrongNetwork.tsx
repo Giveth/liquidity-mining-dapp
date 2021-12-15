@@ -9,7 +9,7 @@ import { chainName } from '@/utils/constants';
 import { Modal, IModal } from './Modal';
 
 interface IWrongNetworkInnerModal {
-	text: string;
+	text?: string;
 	targetNetworks: number[];
 }
 
@@ -65,13 +65,25 @@ export const WrongNetworkModal: FC<IWrongNetworkModal> = ({
 }) => {
 	return (
 		<Modal showModal={showModal} setShowModal={setShowModal} hiddenClose>
-			<div>
-				<span>You&apos;re connect to the wrong network!</span>
+			<WrongNetworkModalContainer>
+				<WrongNetworkModalTitle>
+					You&apos;re connected to the wrong network!
+				</WrongNetworkModalTitle>
 				<WrongNetworkInnerModal
 					text={text}
 					targetNetworks={targetNetworks}
 				/>
-			</div>
+			</WrongNetworkModalContainer>
 		</Modal>
 	);
 };
+
+const WrongNetworkModalContainer = styled.div`
+	padding: 20px 30px;
+`;
+
+const WrongNetworkModalTitle = styled.span`
+	font-family: 'Red Hat Text';
+	font-size: 24px;
+	font-bold;
+`;
