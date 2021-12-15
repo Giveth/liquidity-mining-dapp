@@ -20,15 +20,7 @@ import { LiquidityPosition } from '@/types/nfts';
 import { Row } from '@/components/styled-components/Grid';
 import { useLiquidityPositions, useOnboard } from '@/context';
 import { IconWithTooltip } from '../IconWithToolTip';
-
-enum StakeState {
-	UNKNOWN,
-	CONFIRMING,
-	CONFIRMED,
-	REJECT,
-	SUBMITTING,
-	ERROR,
-}
+import { StakeState } from '../modals/V3Stake';
 
 interface IV3StakeCardProps {
 	position: LiquidityPosition;

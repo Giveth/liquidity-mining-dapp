@@ -15,7 +15,7 @@ import { StakingPoolImages } from '../StakingPoolImages';
 import V3StakingCard from '../cards/PositionCard';
 import { useLiquidityPositions, useOnboard } from '@/context';
 
-enum StakeState {
+export enum StakeState {
 	UNKNOWN,
 	CONFIRMING,
 	CONFIRMED,

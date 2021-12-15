@@ -7,15 +7,7 @@ import {
 	getNftManagerPositionsContract,
 	getUniswapV3StakerContract,
 } from './contracts';
-
-enum StakeState {
-	UNKNOWN,
-	CONFIRMING,
-	CONFIRMED,
-	REJECT,
-	SUBMITTING,
-	ERROR,
-}
+import { StakeState } from '@/components/modals/V3Stake';
 
 const abiEncoder = utils.defaultAbiCoder;
 
