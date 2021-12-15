@@ -96,7 +96,7 @@ const ExploreButton = styled(SocialButton)`
 
 const ClaimFromAnother = styled.span`
 	cursor: pointer;
-	text-decoration: underline;
+	color: '#FED670'
 	margin-top: 4px;
 	margin-left: 80px;
 `;
@@ -158,7 +158,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 		address,
 	} = useContext(OnboardContext);
 
-	const [txStatus, setTxStatus] = useState(true);
+	const [txStatus, setTxStatus] = useState(false);
 
 	const onClaim = async () => {
 		if (!isReady) {

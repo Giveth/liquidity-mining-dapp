@@ -79,6 +79,8 @@ const SwitchNetwork = styled.div<ISwitchNetwork>`
 	justify-content: center;
 	align-items: center;
 	gap: 12px;
+	position: fixed;
+	width: 100%;
 `;
 
 const ButtonSwitchNetwork = styled.a`
@@ -91,10 +93,15 @@ const ButtonSwitchNetwork = styled.a`
 	cursor: pointer;
 `;
 
-const ClaimViewContainer = styled.div`
+interface IClaimViewContainer {
+	switchNetwork: boolean;
+}
+
+const ClaimViewContainer = styled.div<IClaimViewContainer>`
 	background-image: url('/images/cardsbg1.png'), url('/images/cardsbg.png');
 	background-repeat: repeat-x, no-repeat;
 	background-position-y: bottom, top;
+	padding-top: ${props => (props.switchNetwork ? '' : '48px')};
 `;
 
 const ClaimCarouselContainer = styled.div`
@@ -141,7 +148,11 @@ const ClaimView = () => {
 				</ButtonSwitchNetwork>
 			</SwitchNetwork>
 			{step < 6 ? (
-				<ClaimViewContainer>
+				<ClaimViewContainer
+					switchNetwork={
+						(isReady && network === 100) || network === 0
+					}
+				>
 					<Steps justifyContent='center' alignItems='center'>
 						{stepsTitle.map((title, idx) => (
 							<Step
