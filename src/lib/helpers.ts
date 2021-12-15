@@ -9,6 +9,19 @@ export const convertMSToHRD = (ms: number) => {
 	return { y, m, d };
 };
 
+export const formatDate = (date: Date) => {
+	return date
+		.toLocaleString('en-US', {
+			weekday: 'short',
+			day: 'numeric',
+			year: 'numeric',
+			month: 'short',
+			hour: 'numeric',
+			minute: 'numeric',
+		})
+		.replace(/,/g, '');
+};
+
 // export interface ITokenInfo {
 // 	releasedReward: BigNumber;
 // 	lockedReward: BigNumber;
