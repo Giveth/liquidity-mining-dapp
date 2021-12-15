@@ -9,7 +9,7 @@ import { useBalances } from '@/context/balance.context';
 import { formatWeiHelper } from '@/helpers/number';
 import { networksParams } from '@/helpers/blockchain';
 import {
-	ConenctButton,
+	ConnectButton,
 	HBBalanceLogo,
 	HBContainer,
 	HBContent,
@@ -17,7 +17,6 @@ import {
 	HeaderButton,
 	HeaderLinks,
 	HeaderLink,
-	HeaderPlaceHolder,
 	NotifButton,
 	StyledHeader,
 	WalletButton,
@@ -42,7 +41,6 @@ const Header: FC<IHeader> = () => {
 
 	return (
 		<>
-			<HeaderPlaceHolder />
 			<StyledHeader
 				justifyContent='space-between'
 				alignItems='center'
@@ -75,7 +73,6 @@ const Header: FC<IHeader> = () => {
 					</HeaderLink>
 				</HeaderLinks>
 				<Row gap='8px'>
-					{/* <NotifButton /> */}
 					<a href='https://giveth.io/create'>
 						<CreateProject label='CREATE A PROJECT' />
 					</a>
@@ -134,11 +131,13 @@ const Header: FC<IHeader> = () => {
 							</WalletButton>
 						</>
 					) : (
-						<ConenctButton
-							buttonType='primary'
-							label='Connect Wallet'
-							onClick={connect}
-						/>
+						<div>
+							<ConnectButton
+								buttonType='primary'
+								label='Connect Wallet'
+								onClick={connect}
+							/>
+						</div>
 					)}
 				</Row>
 			</StyledHeader>

@@ -10,7 +10,7 @@ import {
 	ClaimViewContext,
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
-import { utils } from 'ethers';
+import { utils, BigNumber } from 'ethers';
 import { UserContext } from '../../context/user.context';
 import { toast } from 'react-hot-toast';
 import { networksParams } from '../../helpers/blockchain';
@@ -29,6 +29,7 @@ const ClaimedContainer = styled.div`
 const SunImage = styled.div`
 	position: relative;
 	height: 0px;
+	left: -5%;
 `;
 
 const StarsImage = styled(SunImage)`
@@ -55,13 +56,19 @@ const ClaimedSubtitleA = styled.div`
 	font-family: 'Red Hat Text';
 	font-size: 21px;
 	text-align: center;
+	display: flex;
+	gap: 12px;
+`;
+
+const AddGivButton = styled.div`
+	cursor: pointer;
 `;
 
 const ClaimedSubtitleB = styled.div`
 	font-family: 'Red Hat Text';
 	font-size: 20px;
 	text-align: center;
-	padding-left: 80px;
+	padding-left: 64px;
 `;
 
 const SocialButton = styled(Button)`
@@ -85,6 +92,13 @@ const ExploreButton = styled(SocialButton)`
 	border: none;
 	margin-left: 80px;
 	width: 285px;
+`;
+
+const ClaimFromAnother = styled.span`
+	cursor: pointer;
+	text-decoration: underline;
+	margin-top: 4px;
+	margin-left: 80px;
 `;
 
 interface IClaimCardContainer {
@@ -131,8 +145,9 @@ const MetamaskButton = styled.a`
 `;
 
 const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex } = useContext(ClaimViewContext);
-	const { userAddress, claimableAmount } = useContext(UserContext);
+	const { activeIndex, goFirstStep } = useContext(ClaimViewContext);
+	const { userAddress, claimableAmount, resetWallet } =
+		useContext(UserContext);
 	const {
 		isReady,
 		changeWallet,
@@ -143,7 +158,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 		address,
 	} = useContext(OnboardContext);
 
-	const [txStatus, setTxStatus] = useState();
+	const [txStatus, setTxStatus] = useState(true);
 
 	const onClaim = async () => {
 		if (!isReady) {
@@ -181,6 +196,12 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 		}
 	};
 
+	const parseEther = (value: BigNumber) =>
+		(+utils.formatEther(value)).toLocaleString('en-US', {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2,
+		});
+
 	return (
 		<ClaimCardContainer
 			activeIndex={activeIndex}
@@ -210,14 +231,40 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 						<ClaimedSubtitleContainer>
 							<ClaimedSubtitleA>
 								You have successfully claimed{' '}
-								{utils.formatEther(claimableAmount)} GIV tokens.
+								{parseEther(claimableAmount)} GIV.{' '}
+								<AddGivButton
+									onClick={() =>
+										addToken(
+											'0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3',
+											'TestGIV',
+											18,
+											'',
+										)
+									}
+								>
+									<Image
+										src='/images/icons/metamask.svg'
+										height='24'
+										width='24'
+										alt='Metamask logo.'
+									/>
+								</AddGivButton>
 							</ClaimedSubtitleA>
 							<ClaimedSubtitleB>
 								Plus you&apos;re getting an additional{' '}
-								<span style={{ color: '#FED670' }}>XX GIV</span>{' '}
+								<span style={{ color: '#FED670' }}>
+									{parseEther(
+										claimableAmount.mul(9).div(52 * 5),
+									)}{' '}
+									GIV
+								</span>{' '}
 								per week.
 							</ClaimedSubtitleB>
-							<a href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'>
+							<a
+								href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
+								target='_blank'
+								rel='noreferrer'
+							>
 								<SocialButton>
 									share on twitter
 									<Image
@@ -263,13 +310,21 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 									explore the giveconomy
 								</ExploreButton>
 							</Link>
+							<ClaimFromAnother
+								onClick={() => {
+									goFirstStep();
+									resetWallet();
+								}}
+							>
+								Claim from another address!
+							</ClaimFromAnother>
 						</ClaimedSubtitleContainer>
 					</ClaimedContainer>
 				</>
 			) : (
 				<>
 					<ClaimHeader>
-						<Title as='h1'>Claim your GIV tokens now!</Title>
+						<Title as='h1'>Claim your GIV now!</Title>
 						<Desc size='small' color={'#CABAFF'}>
 							Join the giving economy.
 						</Desc>
@@ -277,7 +332,6 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 					<Row alignItems={'center'} justifyContent={'center'}>
 						<ClaimButton secondary onClick={onClaim}>
 							CLAIM {utils.formatEther(claimableAmount)} GIV
-							Tokens
 						</ClaimButton>
 					</Row>
 					<Row alignItems={'center'} justifyContent={'center'}>

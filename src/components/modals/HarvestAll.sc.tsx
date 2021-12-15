@@ -10,6 +10,7 @@ import {
 	H5,
 	H6,
 	Caption,
+	Subline,
 } from '@giveth/ui-design-system';
 import styled from 'styled-components';
 import { Title } from '../Header.sc';
@@ -190,4 +191,8 @@ export const Pending = styled(Row)`
 	& > div {
 		margin: 0 !important;
 	}
+`;
+
+export const TooltipContent = styled(Subline)`
+	width: 200px;
 `;

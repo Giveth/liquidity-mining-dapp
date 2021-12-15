@@ -73,7 +73,7 @@ export const APRModal: FC<IAPRModalProps> = ({
 								setShowWhatIsGIVstreamModal(true);
 							}}
 						>
-							What is GIVstream?
+							What is a GIVstream?
 						</Whatis>
 					</DescContainer>
 				</APRModalContainer>
