@@ -119,7 +119,7 @@ const config: EnvConfig = {
 				POOL_ADDRESS: '0x8c77ba1d90c57d584aeed57bc9b55258b8be3438',
 				LM_ADDRESS: '0x579869ADcB3a3203D7876be889D58C5cbe089F05',
 				type: StakingType.SUSHISWAP,
-				title: 'ETH / GIV',
+				title: 'GIV / ETH',
 				description: '50% ETH, 50% GIV',
 				provideLiquidityLink:
 					'https://app.sushi.com/add/0x736a98655049433f79dCcF5e54b887E8890b63D1/0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3',

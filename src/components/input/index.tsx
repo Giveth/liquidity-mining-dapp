@@ -26,6 +26,14 @@ const Input = styled.input<IHasBG>`
 	::placeholder {
 		color: white;
 	}
+	::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+	::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
 `;
 
 const Button = styled.button<IHasBG>`
