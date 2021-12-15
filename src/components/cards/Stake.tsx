@@ -118,7 +118,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
 	const { claimableAmount } = useContext(UserContext);
 
-	const [deposit, setDeposit] = useState<any>();
+	const [deposit, setDeposit] = useState<any>(0);
 	const [earnEstimate, setEarnEstimate] = useState<BigNumber>(Zero);
 	const [APR, setAPR] = useState<any>();
 	const { apr: univ3apr } = useLiquidityPositions();
@@ -127,7 +127,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const depositChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
 		const { value } = e.target;
 		if (value.length === 0) {
-			setDeposit(null);
+			setDeposit(undefined);
 		} else if (isNaN(+value)) {
 			setDeposit(deposit);
 		} else {

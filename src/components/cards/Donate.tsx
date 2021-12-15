@@ -52,6 +52,10 @@ const DonateInput = styled.div`
 	width: 392px;
 `;
 
+const MaxDonateGIV = styled(MaxGIV)`
+	cursor: pointer;
+`;
+
 const GetBack = styled(DonateRow)`
 	padding-left: 124px;
 `;
@@ -121,7 +125,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	const stackedChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
 		if (e.target.value.length === 0) {
-			setDonation(null);
+			setDonation(undefined);
 		} else if (isNaN(+e.target.value)) {
 			setDonation(donation);
 		} else {
@@ -164,7 +168,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 							justifyContent={'space-between'}
 						>
 							<DonateLabel>Your donation</DonateLabel>
-							<MaxGIV
+							<MaxDonateGIV
 								onClick={() =>
 									setDonation(
 										Number(
@@ -174,7 +178,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 								}
 							>{`Max ${utils.formatEther(
 								claimableAmount,
-							)} GIV`}</MaxGIV>
+							)} GIV`}</MaxDonateGIV>
 						</Row>
 						<DonateInput>
 							<InputWithUnit
