@@ -216,29 +216,29 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 			<PositionActions>
 				{isUnstaking ? (
 					<OulineButton
-						label={
-							isConfirming && selectedPosition ? (
-								<LoadingButton label='UNSTAKING' />
-							) : (
-								'UNSTAKE'
-							)
-						}
+						label=''
 						onClick={handleAction}
 						disabled={isConfirming}
-					/>
+					>
+						{isConfirming && selectedPosition ? (
+							<LoadingButton label='UNSTAKING' />
+						) : (
+							'UNSTAKE'
+						)}
+					</OulineButton>
 				) : (
 					<FullWidthButton
-						label={
-							isConfirming && selectedPosition ? (
-								<LoadingButton label='STAKING' />
-							) : (
-								'STAKE'
-							)
-						}
+						label=''
 						buttonType='primary'
 						onClick={handleAction}
 						disabled={isConfirming}
-					/>
+					>
+						{isConfirming && selectedPosition ? (
+							<LoadingButton label='STAKING' />
+						) : (
+							'STAKE'
+						)}
+					</FullWidthButton>
 				)}
 				<FullWidthButton
 					label='VIEW POSITION'
