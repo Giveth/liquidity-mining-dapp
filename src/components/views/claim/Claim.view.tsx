@@ -1,5 +1,6 @@
 import React, { FC, useContext, useState } from 'react';
 import Image from 'next/image';
+import config from '@/configuration';
 import styled from 'styled-components';
 import CongratulationsCard from '../../cards/Congratulations';
 import ClaimCard from '../../cards/Claim';
@@ -134,7 +135,10 @@ const ClaimView = () => {
 	return (
 		<>
 			<SwitchNetwork
-				hidden={(isReady && network === 100) || network === 0}
+				hidden={
+					(isReady && network === config.XDAI_NETWORK_NUMBER) ||
+					network === 0
+				}
 			>
 				<Image
 					src='/images/icons/warning.svg'
@@ -143,14 +147,17 @@ const ClaimView = () => {
 					alt='Warning icon'
 				/>
 				<span>Please switch to xDAI network!</span>
-				<ButtonSwitchNetwork onClick={() => switchNetwork(100)}>
+				<ButtonSwitchNetwork
+					onClick={() => switchNetwork(config.XDAI_NETWORK_NUMBER)}
+				>
 					Switch
 				</ButtonSwitchNetwork>
 			</SwitchNetwork>
 			{step < 6 ? (
 				<ClaimViewContainer
 					switchNetwork={
-						(isReady && network === 100) || network === 0
+						(isReady && network === config.XDAI_NETWORK_NUMBER) ||
+						network === 0
 					}
 				>
 					<Steps justifyContent='center' alignItems='center'>
