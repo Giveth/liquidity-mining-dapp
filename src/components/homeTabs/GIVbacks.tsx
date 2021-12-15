@@ -40,10 +40,10 @@ import BigNumber from 'bignumber.js';
 import { useBalances } from '@/context/balance.context';
 import config from '@/configuration';
 import { HarvestAllModal } from '../modals/HarvestAll';
-import { getTokenDistroInfo, ITokenDistroInfo } from '@/services/subgraph';
 import { OnboardContext } from '@/context/onboard.context';
-import { getNowUnix } from '@/helpers/time';
+import { getNowUnixMS } from '@/helpers/time';
 import { useOnboard } from '@/context';
+import { formatDate } from '@/lib/helpers';
 
 export const TabGIVbacksTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -73,8 +73,9 @@ export const TabGIVbacksTop = () => {
 								<IconGIVBack size={64} />
 							</Row>
 							<GBSubtitle size='medium'>
-								GIVbacks is a revolutionary concept that rewards
-								donors to verified projects with GIV tokens.
+								GIVbacks rewards donors to verified projects
+								with GIV, super-charging Giveth as a
+								donor-driven force for good.
 							</GBSubtitle>
 						</Left>
 						<Right>
@@ -107,38 +108,22 @@ export const TabGIVbacksTop = () => {
 };
 
 export const TabGIVbacksBottom = () => {
-	const [tokenDistroInfo, setTokenDistroInfo] = useState<ITokenDistroInfo>();
 	const [round, setRound] = useState(0);
+	const { tokenDistroHelper } = useTokenDistro();
 	const { network: walletNetwork } = useContext(OnboardContext);
 
 	useEffect(() => {
-		getTokenDistroInfo(walletNetwork).then(async distroInfo => {
-			if (distroInfo) {
-				setTokenDistroInfo(distroInfo);
-				const now = await getNowUnix();
-				const deltaT = now - distroInfo.startTime.getTime();
-				const TwoWeek = 1209600000;
-				const _round = Math.floor(deltaT / TwoWeek) + 1;
-				setRound(_round);
-			}
-		});
-	}, [walletNetwork]);
+		if (tokenDistroHelper) {
+			const now = getNowUnixMS();
+			const deltaT = now - tokenDistroHelper.startTime.getTime();
+			const TwoWeek = 1209600000;
+			const _round = Math.floor(deltaT / TwoWeek) + 1;
+			setRound(_round);
+		}
+	}, [tokenDistroHelper]);
 
 	const goToClaim = () => {
 		router.push('/claim');
-	};
-
-	const formatDate = (date: Date) => {
-		return date
-			.toLocaleString('en-US', {
-				weekday: 'short',
-				day: 'numeric',
-				year: 'numeric',
-				month: 'short',
-				hour: 'numeric',
-				minute: 'numeric',
-			})
-			.replace(/,/g, '');
 	};
 
 	return (
@@ -194,9 +179,9 @@ export const TabGIVbacksBottom = () => {
 								<RoundInfoRow justifyContent='space-between'>
 									<P>Start Date</P>
 									<P>
-										{tokenDistroInfo
+										{tokenDistroHelper
 											? formatDate(
-													tokenDistroInfo.startTime,
+													tokenDistroHelper.startTime,
 											  )
 											: '-'}
 									</P>
@@ -204,9 +189,9 @@ export const TabGIVbacksBottom = () => {
 								<RoundInfoRow justifyContent='space-between'>
 									<P>End Date</P>
 									<P>
-										{tokenDistroInfo
+										{tokenDistroHelper
 											? formatDate(
-													tokenDistroInfo.endTime,
+													tokenDistroHelper.endTime,
 											  )
 											: '-'}
 									</P>
@@ -245,7 +230,13 @@ export const TabGIVbacksBottom = () => {
 								Start Date in order to be included in the round.
 							</InfoDesc>
 							<InfoReadMore>
-								Read More{' '}
+								<a
+									target='_blank'
+									href='https://docs.giveth.io/giveconomy/givbacks'
+									rel='noreferrer noopener'
+								>
+									Read More{' '}
+								</a>
 								<IconExternalLink
 									size={16}
 									color={brandColors.cyan[500]}

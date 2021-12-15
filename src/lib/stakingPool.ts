@@ -214,15 +214,15 @@ const fetchSimplePoolStakingInfo = async (
 	};
 };
 
-export const getUserStakeInfo = async (
+export const getUserStakeInfo = (
 	type: StakingType,
 	balance: IBalances,
 	unipoolHelper: UnipoolHelper | undefined,
-): Promise<{
+): {
 	stakedAmount: ethers.BigNumber;
 	notStakedAmount: ethers.BigNumber;
 	earned: ethers.BigNumber;
-}> => {
+} => {
 	let rewards = Zero;
 	let rewardPerTokenPaid = Zero;
 	let stakedAmount = Zero;
@@ -258,7 +258,7 @@ export const getUserStakeInfo = async (
 	}
 
 	if (unipoolHelper) {
-		earned = await unipoolHelper.earned(
+		earned = unipoolHelper.earned(
 			rewards,
 			rewardPerTokenPaid,
 			stakedAmount,
