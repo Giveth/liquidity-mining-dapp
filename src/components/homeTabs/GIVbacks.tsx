@@ -43,6 +43,7 @@ import { HarvestAllModal } from '../modals/HarvestAll';
 import { OnboardContext } from '@/context/onboard.context';
 import { getNowUnixMS } from '@/helpers/time';
 import { useOnboard } from '@/context';
+import { formatDate } from '@/lib/helpers';
 
 export const TabGIVbacksTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -179,7 +180,9 @@ export const TabGIVbacksBottom = () => {
 									<P>Start Date</P>
 									<P>
 										{tokenDistroHelper
-											? tokenDistroHelper.startTime.toDateString()
+											? formatDate(
+													tokenDistroHelper.startTime,
+											  )
 											: '-'}
 									</P>
 								</RoundInfoRow>
@@ -187,7 +190,9 @@ export const TabGIVbacksBottom = () => {
 									<P>End Date</P>
 									<P>
 										{tokenDistroHelper
-											? tokenDistroHelper.endTime.toDateString()
+											? formatDate(
+													tokenDistroHelper.endTime,
+											  )
 											: '-'}
 									</P>
 								</RoundInfoRow>
