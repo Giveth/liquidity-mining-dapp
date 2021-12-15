@@ -1,4 +1,4 @@
-import { FC, useContext, useState } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import styled from 'styled-components';
@@ -159,6 +159,10 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 	} = useContext(OnboardContext);
 
 	const [txStatus, setTxStatus] = useState(false);
+
+	useEffect(() => {
+		setTxStatus(false);
+	}, [address, userAddress]);
 
 	const onClaim = async () => {
 		if (!isReady) {
