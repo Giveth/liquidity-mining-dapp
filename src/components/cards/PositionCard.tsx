@@ -74,6 +74,7 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 				provider,
 				currentIncentive,
 			);
+			handleStatusTx(tx);
 			loadPositions();
 		} else {
 			handleWaitTx(true);
