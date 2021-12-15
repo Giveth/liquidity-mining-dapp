@@ -115,13 +115,13 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
 	const { claimableAmount } = useContext(UserContext);
 
-	const [donation, setDonation] = useState(0);
+	const [donation, setDonation] = useState<any>(0);
 	const [potentialClaim, setPotentialClaim] = useState<number>(0);
 	const [earnEstimate, setEarnEstimate] = useState<number>(0);
 
 	const stackedChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
 		if (e.target.value.length === 0) {
-			setDonation(0);
+			setDonation(null);
 		} else if (isNaN(+e.target.value)) {
 			setDonation(donation);
 		} else {
@@ -129,6 +129,12 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 				setDonation(+e.target.value);
 		}
 	};
+
+	useEffect(() => {
+		if (claimableAmount) {
+			setDonation(utils.formatEther(claimableAmount));
+		}
+	}, [claimableAmount]);
 
 	useEffect(() => {
 		const donationWithGivBacks = donation * 0.75;

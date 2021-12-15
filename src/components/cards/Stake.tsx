@@ -118,7 +118,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
 	const { claimableAmount } = useContext(UserContext);
 
-	const [deposit, setDeposit] = useState(0);
+	const [deposit, setDeposit] = useState<any>();
 	const [earnEstimate, setEarnEstimate] = useState<BigNumber>(Zero);
 	const [APR, setAPR] = useState<any>();
 	const { apr: univ3apr } = useLiquidityPositions();
@@ -127,7 +127,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const depositChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
 		const { value } = e.target;
 		if (value.length === 0) {
-			setDeposit(0);
+			setDeposit(null);
 		} else if (isNaN(+value)) {
 			setDeposit(deposit);
 		} else {
@@ -135,7 +135,13 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 				setDeposit(+value);
 		}
 	};
-	// 9 / 52 * 5
+
+	useEffect(() => {
+		if (claimableAmount) {
+			setDeposit(utils.formatEther(claimableAmount));
+		}
+	}, [claimableAmount]);
+
 	useEffect(() => {
 		const stackedWithApr = APR ? APR.times(deposit).div(100).div(12) : Zero;
 		setPotentialClaim(stackedWithApr.times(0.1));
