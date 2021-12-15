@@ -78,7 +78,6 @@ const ClaimedContainer = styled.div`
 const SunImage = styled.div`
 	position: relative;
 	height: 0px;
-	left: -5%;
 `;
 
 const StarsImage = styled(SunImage)`
@@ -111,13 +110,6 @@ const ClaimedSubtitleA = styled.div`
 
 const AddGivButton = styled.div`
 	cursor: pointer;
-`;
-
-const ClaimedSubtitleB = styled.div`
-	font-family: 'Red Hat Text';
-	font-size: 20px;
-	text-align: center;
-	padding-left: 64px;
 `;
 
 const SocialButton = styled(Button)`
@@ -240,10 +232,6 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			};
 			break;
 		case GiveDropStateType.Claimed:
-			title = 'You already claimed!';
-			desc =
-				'It seems like you already claimed your GIVdrop with this address.';
-			btnLabel = 'JOIN THE GIVECONOMY';
 			bg = {
 				width: '622px',
 				height: '245px',
@@ -302,14 +290,6 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			{giveDropState === GiveDropStateType.Success &&
 				activeIndex === index && <ArrowButton onClick={goNextStep} />}
 			{giveDropState === GiveDropStateType.Claimed && (
-				// <ClaimedRow alignItems={'center'} justifyContent={'flex-start'}>
-				// 	<Link href='/' passHref>
-				// 		<ConnectButton secondary>{btnLabel}</ConnectButton>
-				// 	</Link>
-				// 	<ChangeWallet onClick={() => resetWallet()}>
-				// 		Try different wallet address
-				// 	</ChangeWallet>
-				// </ClaimedRow>
 				<>
 					<SunImage>
 						<Image
@@ -331,8 +311,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 						<ClaimedTitle>Congratulations!</ClaimedTitle>
 						<ClaimedSubtitleContainer>
 							<ClaimedSubtitleA>
-								You already claimed{' '}
-								{parseEther(claimableAmount)} GIV.{' '}
+								You already claimed your GIV!
 								<AddGivButton
 									onClick={() =>
 										addToken(
@@ -351,16 +330,6 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 									/>
 								</AddGivButton>
 							</ClaimedSubtitleA>
-							<ClaimedSubtitleB>
-								Plus you&apos;re getting an additional{' '}
-								<span style={{ color: '#FED670' }}>
-									{parseEther(
-										claimableAmount.mul(9).div(52 * 5),
-									)}{' '}
-									GIV
-								</span>{' '}
-								per week.
-							</ClaimedSubtitleB>
 							<a
 								href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
 								target='_blank'
