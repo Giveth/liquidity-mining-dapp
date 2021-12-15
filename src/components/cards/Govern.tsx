@@ -23,6 +23,7 @@ import { UserContext } from '../../context/user.context';
 import { formatEthHelper, Zero } from '../../helpers/number';
 import { fetchGivStakingInfo } from '../../lib/stakingPool';
 import { APR } from '../../types/poolInfo';
+import { useTokenDistro } from '@/context/tokenDistro.context';
 
 const GovernCardContainer = styled(Card)`
 	::before {
@@ -143,6 +144,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const [potentialClaim, setPotentialClaim] = useState<BigNumber>(Zero);
 	const [earnEstimate, setEarnEstimate] = useState<number>(0);
 	const [apr, setApr] = useState<APR>(null);
+	const { xDaiTokenDistro } = useTokenDistro();
 
 	const stackedChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
 		if (e.target.value.length === 0) {

@@ -19,6 +19,15 @@ import config from '../../configuration';
 import { claimAirDrop } from '../../lib/claim';
 import { addToken } from '@/lib/metamask';
 import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
+import { ClaimModal } from '../modals/ClaimModal';
+
+enum ClaimState {
+	UNKNOWN,
+	WAITING,
+	SUBMITTING,
+	CLAIMED,
+	ERROR,
+}
 
 const ClaimedContainer = styled.div`
 	display: flex;
@@ -161,13 +170,16 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	const [txStatus, setTxStatus] = useState(false);
 	const [showModal, setShowModal] = useState<boolean>(false);
+	const [showClaimModal, setShowClaimModal] = useState<boolean>(false);
+	const [claimState, setClaimState] = useState<ClaimState>(
+		ClaimState.UNKNOWN,
+	);
 
 	useEffect(() => {
 		setTxStatus(false);
 	}, [address, userAddress]);
 
 	useEffect(() => {
-		console.log(network);
 		setShowModal(
 			isReady &&
 				network !== config.XDAI_NETWORK_NUMBER &&
@@ -195,15 +207,21 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 		}
 
 		try {
+			setClaimState(ClaimState.WAITING);
+			console.log(userAddress);
 			const tx = await claimAirDrop(userAddress, provider);
+			console.log('aeho');
 
 			showPendingClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
-
+			setClaimState(ClaimState.SUBMITTING);
 			const { status } = await tx.wait();
-			setTxStatus(status);
+
 			if (status) {
+				setTxStatus(status);
+				setClaimState(ClaimState.CLAIMED);
 				showConfirmedClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
 			} else {
+				setClaimState(ClaimState.ERROR);
 				showFailedClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
 			}
 		} catch (e) {
@@ -228,6 +246,15 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 					showModal={showModal}
 					setShowModal={setShowModal}
 					targetNetworks={[config.XDAI_NETWORK_NUMBER]}
+				/>
+			)}
+			{showClaimModal && (
+				<ClaimModal
+					showModal={showClaimModal}
+					setShowModal={setShowClaimModal}
+					claimState={claimState}
+					network={network}
+					txStatus={txStatus}
 				/>
 			)}
 			{txStatus ? (

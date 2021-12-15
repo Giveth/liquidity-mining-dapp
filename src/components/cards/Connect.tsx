@@ -169,7 +169,6 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 		setLoading(true);
 		await submitUserAddress(value);
 		setAddressSubmitted(true);
-		console.log(giveDropState);
 	};
 
 	let title;

@@ -13,6 +13,7 @@ import {
 import Lottie from 'react-lottie';
 import LoadingAnimation from '../../animations/loading.json';
 import TikAnimation from '../../animations/tik.json';
+import ErrorAnimation from '../../animations/error.json';
 import styled from 'styled-components';
 import { FC } from 'react';
 
@@ -29,6 +30,15 @@ const tikAnimationOptions = {
 	loop: false,
 	autoplay: true,
 	animationData: TikAnimation,
+	rendererSettings: {
+		preserveAspectRatio: 'xMidYMid slice',
+	},
+};
+
+const errorAnimationOptions = {
+	loop: false,
+	autoplay: true,
+	animationData: ErrorAnimation,
 	rendererSettings: {
 		preserveAspectRatio: 'xMidYMid slice',
 	},
@@ -107,6 +117,39 @@ export const ConfirmedInnerModal: FC<IConfirmSubmitProps> = ({
 				&nbsp;
 				<IconExternalLink size={16} color={'currentColor'} />
 			</BlockExplorerLink>
+		</>
+	);
+};
+
+export const ErrorInnerModal: FC<IConfirmSubmitProps> = ({
+	title,
+	walletNetwork,
+	txHash,
+}) => {
+	return (
+		<>
+			<Caption>{title}</Caption>
+			<Lottie options={errorAnimationOptions} height={100} width={100} />
+			<TxSubmit weight={700}>{txHash}</TxSubmit>
+			{txHash && (
+				<BlockExplorerLink
+					href={`${
+						walletNetwork === config.MAINNET_NETWORK_NUMBER
+							? config.MAINNET_NETWORK.blockExplorerUrls
+							: config.XDAI_NETWORK.blockExplorerUrls
+					}
+			/tx/${txHash}`}
+					target='_blank'
+					size='Big'
+				>
+					View on{' '}
+					{walletNetwork === config.MAINNET_NETWORK_NUMBER
+						? config.MAINNET_NETWORK.blockExplorerName
+						: config.XDAI_NETWORK.blockExplorerName}
+					&nbsp;
+					<IconExternalLink size={16} color={'currentColor'} />
+				</BlockExplorerLink>
+			)}
 		</>
 	);
 };
