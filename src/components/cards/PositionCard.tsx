@@ -20,6 +20,17 @@ import { LiquidityPosition } from '@/types/nfts';
 import { Row } from '@/components/styled-components/Grid';
 import { useLiquidityPositions, useOnboard } from '@/context';
 import { IconWithTooltip } from '../IconWithToolTip';
+import Lottie from 'react-lottie';
+import LoadingAnimation from '@/animations/loading.json';
+
+const loadingAnimationOptions = {
+	loop: true,
+	autoplay: true,
+	animationData: LoadingAnimation,
+	rendererSettings: {
+		preserveAspectRatio: 'xMidYMid slice',
+	},
+};
 
 enum StakeState {
 	UNKNOWN,
@@ -30,10 +41,33 @@ enum StakeState {
 	ERROR,
 }
 
+const LoadingButtonContainer = styled.span`
+	display: flex;
+	place-items: center;
+`;
+
+const DummyDiv = styled.div`
+	width: 24px;
+`;
+
+interface ILoadingButton {
+	label: string;
+}
+
+const LoadingButton: FC<ILoadingButton> = ({ label }) => (
+	<LoadingButtonContainer>
+		<Lottie options={loadingAnimationOptions} height={24} width={24} />
+		{label}
+		<DummyDiv />
+	</LoadingButtonContainer>
+);
 interface IV3StakeCardProps {
 	position: LiquidityPosition;
 	isUnstaking?: boolean;
+	selectedPosition?: boolean;
+	isConfirming?: boolean;
 	handleStakeStatus: Dispatch<SetStateAction<StakeState>>;
+	handleSelectedNFT: Dispatch<SetStateAction<string>>;
 }
 
 const STARTS_WITH = 'data:application/json;base64,';
@@ -41,7 +75,10 @@ const STARTS_WITH = 'data:application/json;base64,';
 const V3StakingCard: FC<IV3StakeCardProps> = ({
 	position,
 	isUnstaking,
+	selectedPosition,
+	isConfirming,
 	handleStakeStatus,
+	handleSelectedNFT,
 }) => {
 	const { address, provider } = useOnboard();
 	const { currentIncentive, loadPositions } = useLiquidityPositions();
@@ -75,6 +112,7 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 	const handleAction = async () => {
 		if (!provider) return;
 		if (isUnstaking) {
+			handleSelectedNFT(position.tokenId.toString());
 			handleStakeStatus(StakeState.CONFIRMING);
 			const tx = await exit(
 				position.tokenId,
@@ -90,6 +128,7 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 			}
 			loadPositions();
 		} else {
+			handleSelectedNFT(position.tokenId.toString());
 			handleStakeStatus(StakeState.CONFIRMING);
 			const tx = await transfer(
 				position.tokenId,
@@ -176,12 +215,29 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 			</PositionInfo>
 			<PositionActions>
 				{isUnstaking ? (
-					<OulineButton label='UNSTAKE' onClick={handleAction} />
+					<OulineButton
+						label={
+							isConfirming && selectedPosition ? (
+								<LoadingButton label='UNSTAKING' />
+							) : (
+								'UNSTAKE'
+							)
+						}
+						onClick={handleAction}
+						disabled={isConfirming}
+					/>
 				) : (
 					<FullWidthButton
+						label={
+							isConfirming && selectedPosition ? (
+								<LoadingButton label='STAKING' />
+							) : (
+								'STAKE'
+							)
+						}
 						buttonType='primary'
-						label='STAKE'
 						onClick={handleAction}
+						disabled={isConfirming}
 					/>
 				)}
 				<FullWidthButton

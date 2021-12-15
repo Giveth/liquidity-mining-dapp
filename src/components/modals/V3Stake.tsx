@@ -48,6 +48,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 		StakeState.UNKNOWN,
 	);
 	const [txStatus, setTxStatus] = useState<any>();
+	const [tokenId, setTokenId] = useState<string>('');
 
 	return (
 		<Modal showModal={showModal} setShowModal={setShowModal}>
@@ -59,22 +60,23 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 					</StakeModalTitleText>
 				</StakeModalTitle>
 				<InnerModal>
-					{stakeStatus === StakeState.UNKNOWN &&
+					{(stakeStatus === StakeState.UNKNOWN ||
+						stakeStatus === StakeState.CONFIRMING) &&
 						positions.map(position => (
 							<V3StakingCard
 								position={position}
 								isUnstaking={isUnstakingModal}
 								key={position.tokenId.toString()}
 								handleStakeStatus={setStakeStatus}
+								handleSelectedNFT={setTokenId}
+								selectedPosition={
+									position.tokenId.toString() === tokenId
+								}
+								isConfirming={
+									stakeStatus === StakeState.CONFIRMING
+								}
 							/>
 						))}
-					{stakeStatus === StakeState.CONFIRMING && (
-						<SubmittedInnerModal
-							title='Waiting for confirmation.'
-							walletNetwork={network}
-							txHash={txStatus?.hash}
-						/>
-					)}
 					{stakeStatus === StakeState.REJECT && (
 						<ErrorInnerModal
 							title='You rejected the transaction.'
