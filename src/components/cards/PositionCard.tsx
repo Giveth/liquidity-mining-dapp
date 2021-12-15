@@ -20,11 +20,13 @@ import { LiquidityPosition } from '@/types/nfts';
 import { Row } from '@/components/styled-components/Grid';
 import { useLiquidityPositions, useOnboard } from '@/context';
 import { IconWithTooltip } from '../IconWithToolTip';
+import { StakeState } from '../modals/V3Stake';
+
 interface IV3StakeCardProps {
 	position: LiquidityPosition;
 	isUnstaking?: boolean;
-	handleWaitTx: Dispatch<SetStateAction<boolean>>;
-	handleStatusTx: Dispatch<SetStateAction<any>>;
+	handleStakeStatus: Dispatch<SetStateAction<StakeState>>;
+	setTxStatus: Dispatch<SetStateAction<any>>;
 }
 
 const STARTS_WITH = 'data:application/json;base64,';
@@ -32,8 +34,8 @@ const STARTS_WITH = 'data:application/json;base64,';
 const V3StakingCard: FC<IV3StakeCardProps> = ({
 	position,
 	isUnstaking,
-	handleWaitTx,
-	handleStatusTx,
+	handleStakeStatus,
+	setTxStatus,
 }) => {
 	const { address, provider } = useOnboard();
 	const { currentIncentive, loadPositions } = useLiquidityPositions();
@@ -67,24 +69,35 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 	const handleAction = async () => {
 		if (!provider) return;
 		if (isUnstaking) {
-			handleWaitTx(true);
+			handleStakeStatus(StakeState.CONFIRMING);
 			const tx = await exit(
 				position.tokenId,
 				address,
 				provider,
 				currentIncentive,
+				handleStakeStatus,
 			);
-			handleStatusTx(tx);
+			if (tx) {
+				handleStakeStatus(StakeState.CONFIRMED);
+			} else {
+				handleStakeStatus(StakeState.ERROR);
+			}
 			loadPositions();
 		} else {
-			handleWaitTx(true);
+			handleStakeStatus(StakeState.CONFIRMING);
 			const tx = await transfer(
 				position.tokenId,
 				address,
 				provider,
 				currentIncentive,
+				handleStakeStatus,
 			);
-			handleStatusTx(tx);
+			if (tx) {
+				handleStakeStatus(StakeState.CONFIRMED);
+				setTxStatus(tx);
+			} else {
+				handleStakeStatus(StakeState.ERROR);
+			}
 			loadPositions();
 		}
 	};

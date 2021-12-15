@@ -15,11 +15,24 @@ import { StakingPoolImages } from '../StakingPoolImages';
 import V3StakingCard from '../cards/PositionCard';
 import { useLiquidityPositions, useOnboard } from '@/context';
 
+export enum StakeState {
+	UNKNOWN,
+	CONFIRMING,
+	CONFIRMED,
+	REJECT,
+	SUBMITTING,
+	ERROR,
+}
+
 interface IV3StakeModalProps extends IModal {
 	poolStakingConfig: PoolStakingConfig;
 	isUnstakingModal?: boolean;
 }
-import { ConfirmedInnerModal, SubmittedInnerModal } from './ConfirmSubmit';
+import {
+	ConfirmedInnerModal,
+	SubmittedInnerModal,
+	ErrorInnerModal,
+} from './ConfirmSubmit';
 
 export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	poolStakingConfig,
@@ -31,7 +44,9 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	const { unstakedPositions, stakedPositions } = useLiquidityPositions();
 	const positions = isUnstakingModal ? stakedPositions : unstakedPositions;
 	const { title } = poolStakingConfig;
-	const [waitTx, setWaitTx] = useState<boolean>(false);
+	const [stakeStatus, setStakeStatus] = useState<StakeState>(
+		StakeState.UNKNOWN,
+	);
 	const [txStatus, setTxStatus] = useState<any>();
 
 	return (
@@ -44,42 +59,51 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 					</StakeModalTitleText>
 				</StakeModalTitle>
 				<InnerModal>
-					{waitTx ? (
-						txStatus ? (
-							<ConfirmedInnerModal
-								title='Successful transaction.'
-								walletNetwork={network}
-								txHash={txStatus?.hash}
-							/>
-						) : (
-							<SubmittedInnerModal
-								title={
-									txStatus?.hash
-										? 'Submitting your transaction.'
-										: 'Waiting for confirmation. '
-								}
-								walletNetwork={network}
-								txHash={txStatus?.hash}
-							/>
-						)
-					) : (
+					{stakeStatus === StakeState.UNKNOWN &&
 						positions.map(position => (
 							<V3StakingCard
 								position={position}
 								isUnstaking={isUnstakingModal}
 								key={position.tokenId.toString()}
-								handleWaitTx={setWaitTx}
-								handleStatusTx={setTxStatus}
+								handleStakeStatus={setStakeStatus}
+								setTxStatus={setTxStatus}
 							/>
-						))
+						))}
+					{stakeStatus === StakeState.CONFIRMING && (
+						<SubmittedInnerModal
+							title='Waiting for confirmation.'
+							walletNetwork={network}
+							txHash={txStatus?.hash}
+						/>
 					)}
-					<FullWidthButton
-						buttonType='texty'
-						label='CLOSE'
-						onClick={() => {
-							setShowModal(false);
-						}}
-					/>
+					{stakeStatus === StakeState.REJECT && (
+						<ErrorInnerModal
+							title='You rejected the transaction.'
+							walletNetwork={network}
+							txHash={txStatus?.hash}
+						/>
+					)}
+					{stakeStatus === StakeState.SUBMITTING && (
+						<SubmittedInnerModal
+							title='Submitting transaction'
+							walletNetwork={network}
+							txHash={txStatus?.hash}
+						/>
+					)}
+					{stakeStatus === StakeState.CONFIRMED && (
+						<ConfirmedInnerModal
+							title='Successful transaction.'
+							walletNetwork={network}
+							txHash={txStatus?.hash}
+						/>
+					)}
+					{stakeStatus === StakeState.ERROR && (
+						<ErrorInnerModal
+							title='Something went wrong!'
+							walletNetwork={network}
+							txHash={txStatus?.hash}
+						/>
+					)}
 				</InnerModal>
 			</StakeModalContainer>
 		</Modal>

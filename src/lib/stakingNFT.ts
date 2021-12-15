@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from 'react';
 import { utils } from 'ethers';
 import { Web3Provider } from '@ethersproject/providers';
 
@@ -6,6 +7,7 @@ import {
 	getNftManagerPositionsContract,
 	getUniswapV3StakerContract,
 } from './contracts';
+import { StakeState } from '@/components/modals/V3Stake';
 
 const abiEncoder = utils.defaultAbiCoder;
 
@@ -14,6 +16,7 @@ export const transfer = async (
 	walletAddress: string,
 	provider: Web3Provider,
 	currentIncentive: { key?: (string | number)[] | null },
+	handleStakeStatus: Dispatch<SetStateAction<StakeState>>,
 ) => {
 	try {
 		const uniswapV3StakerContract = getUniswapV3StakerContract(
@@ -36,11 +39,11 @@ export const transfer = async (
 			['address', 'address', 'uint', 'uint', 'address'],
 			currentIncentive.key,
 		);
-
 		const tx = await nftManagerPositionsContract[
 			'safeTransferFrom(address,address,uint256,bytes)'
 		](walletAddress, uniswapV3StakerContract.address, tokenId, data);
 
+		handleStakeStatus(StakeState.SUBMITTING);
 		await tx.wait();
 		return tx;
 	} catch (e) {
@@ -53,6 +56,7 @@ export const exit = async (
 	walletAddress: string,
 	provider: Web3Provider,
 	currentIncentive: { key?: (string | number)[] | null },
+	handleStakeStatus: Dispatch<SetStateAction<StakeState>>,
 ) => {
 	try {
 		const uniswapV3StakerContract = getUniswapV3StakerContract(
@@ -91,7 +95,7 @@ export const exit = async (
 			claimRewardCalldata,
 			withdrawTokenCalldata,
 		]);
-
+		handleStakeStatus(StakeState.SUBMITTING);
 		await tx.wait();
 		return tx;
 	} catch (e) {
