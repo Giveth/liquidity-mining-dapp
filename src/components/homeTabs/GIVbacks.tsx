@@ -72,8 +72,9 @@ export const TabGIVbacksTop = () => {
 								<IconGIVBack size={64} />
 							</Row>
 							<GBSubtitle size='medium'>
-								GIVbacks is a revolutionary concept that rewards
-								donors to verified projects with GIV tokens.
+								GIVbacks rewards donors to verified projects
+								with GIV, super-charging Giveth as a
+								donor-driven force for good.
 							</GBSubtitle>
 						</Left>
 						<Right>
@@ -224,7 +225,13 @@ export const TabGIVbacksBottom = () => {
 								Start Date in order to be included in the round.
 							</InfoDesc>
 							<InfoReadMore>
-								Read More{' '}
+								<a
+									target='_blank'
+									href='https://docs.giveth.io/giveconomy/givbacks'
+									rel='noreferrer noopener'
+								>
+									Read More{' '}
+								</a>
 								<IconExternalLink
 									size={16}
 									color={brandColors.cyan[500]}
