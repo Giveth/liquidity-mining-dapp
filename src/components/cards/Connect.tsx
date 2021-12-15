@@ -1,4 +1,5 @@
 import { FC, useContext, useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { WalletAddressInputWithButton } from '../input';
@@ -8,12 +9,13 @@ import { H2, P } from '../styled-components/Typography';
 import { ArrowButton, Card, Header } from './common';
 import { OnboardContext } from '../../context/onboard.context';
 import { UserContext, GiveDropStateType } from '../../context/user.context';
-import { utils } from 'ethers';
+import { utils, BigNumber } from 'ethers';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
-
+import next from 'next';
+import { addToken } from '@/lib/metamask';
 interface IConnectCardContainerProps {
 	data: any;
 }
@@ -66,8 +68,91 @@ const ClickableStrong = styled.strong`
 	cursor: pointer;
 `;
 
+const ClaimedContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	position: relative;
+`;
+
+const SunImage = styled.div`
+	position: relative;
+	height: 0px;
+	left: -5%;
+`;
+
+const StarsImage = styled(SunImage)`
+	left: 75%;
+	top: -50px;
+`;
+
+const ClaimedTitle = styled.div`
+	font-family: 'Red Hat Text';
+	font-size: 64px;
+	font-weight: 700;
+	text-align: center;
+`;
+
+const ClaimedSubtitleContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 4px;
+`;
+
+const ClaimedSubtitleA = styled.div`
+	font-family: 'Red Hat Text';
+	font-size: 21px;
+	text-align: center;
+	display: flex;
+	gap: 12px;
+`;
+
+const AddGivButton = styled.div`
+	cursor: pointer;
+`;
+
+const ClaimedSubtitleB = styled.div`
+	font-family: 'Red Hat Text';
+	font-size: 20px;
+	text-align: center;
+	padding-left: 64px;
+`;
+
+const SocialButton = styled(Button)`
+	font-family: 'Red Hat Text';
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	background-color: transparent;
+	border: 2px solid white;
+	height: 50px;
+	width: 265px;
+	margin: 12px 0 0 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 4px;
+`;
+
+const ExploreButton = styled(SocialButton)`
+	background-color: #e1458d;
+	border: none;
+	margin-left: 80px;
+	width: 285px;
+`;
+
+const ClaimFromAnother = styled.span`
+	cursor: pointer;
+	color: '#FED670'
+	margin-top: 4px;
+	margin-left: 80px;
+`;
+
 export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
+	const { activeIndex, goNextStep, goFirstStep } =
+		useContext(ClaimViewContext);
 
 	const { address, changeWallet } = useContext(OnboardContext);
 	const { submitUserAddress, claimableAmount, giveDropState, resetWallet } =
@@ -170,6 +255,12 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			break;
 	}
 
+	const parseEther = (value: BigNumber) =>
+		(+utils.formatEther(value)).toLocaleString('en-US', {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2,
+		});
+
 	return (
 		<ConnectCardContainer activeIndex={activeIndex} index={index} data={bg}>
 			<Header>
@@ -208,18 +299,125 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			{giveDropState === GiveDropStateType.Success &&
 				activeIndex === index && <ArrowButton onClick={goNextStep} />}
 			{giveDropState === GiveDropStateType.Claimed && (
+				// <ClaimedRow alignItems={'center'} justifyContent={'flex-start'}>
+				// 	<Link href='/' passHref>
+				// 		<ConnectButton secondary>{btnLabel}</ConnectButton>
+				// 	</Link>
+				// 	<ChangeWallet onClick={() => resetWallet()}>
+				// 		Try different wallet address
+				// 	</ChangeWallet>
+				// </ClaimedRow>
 				<>
-					<ClaimedRow
-						alignItems={'center'}
-						justifyContent={'flex-start'}
-					>
-						<Link href='/' passHref>
-							<ConnectButton secondary>{btnLabel}</ConnectButton>
-						</Link>
-						<ChangeWallet onClick={() => resetWallet()}>
-							Try different wallet address
-						</ChangeWallet>
-					</ClaimedRow>
+					<SunImage>
+						<Image
+							src='/images/claimed_logo.svg'
+							height='225'
+							width='255'
+							alt='Claimed sun'
+						/>
+					</SunImage>
+					<StarsImage>
+						<Image
+							src='/images/claimed_stars.svg'
+							height='105'
+							width='105'
+							alt='Yellow stars.'
+						/>
+					</StarsImage>
+					<ClaimedContainer>
+						<ClaimedTitle>Congratulations!</ClaimedTitle>
+						<ClaimedSubtitleContainer>
+							<ClaimedSubtitleA>
+								You already claimed{' '}
+								{parseEther(claimableAmount)} GIV.{' '}
+								<AddGivButton
+									onClick={() =>
+										addToken(
+											'0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3',
+											'TestGIV',
+											18,
+											'',
+										)
+									}
+								>
+									<Image
+										src='/images/icons/metamask.svg'
+										height='24'
+										width='24'
+										alt='Metamask logo.'
+									/>
+								</AddGivButton>
+							</ClaimedSubtitleA>
+							<ClaimedSubtitleB>
+								Plus you&apos;re getting an additional{' '}
+								<span style={{ color: '#FED670' }}>
+									{parseEther(
+										claimableAmount.mul(9).div(52 * 5),
+									)}{' '}
+									GIV
+								</span>{' '}
+								per week.
+							</ClaimedSubtitleB>
+							<a
+								href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
+								target='_blank'
+								rel='noreferrer'
+							>
+								<SocialButton>
+									share on twitter
+									<Image
+										src='/images/icons/twitter.svg'
+										height='15'
+										width='15'
+										alt='Twitter logo.'
+									/>
+								</SocialButton>
+							</a>
+							<a
+								href='https://swag.giveth.io/'
+								target='_blank'
+								rel='noreferrer'
+							>
+								<SocialButton>
+									claim your free swag
+									<Image
+										src='/images/icons/tshirt.svg'
+										height='15'
+										width='15'
+										alt='T shirt.'
+									/>
+								</SocialButton>
+							</a>
+							<a
+								href='https://discord.giveth.io/'
+								target='_blank'
+								rel='noreferrer'
+							>
+								<SocialButton>
+									join our discord
+									<Image
+										src='/images/icons/discord.svg'
+										height='15'
+										width='15'
+										alt='discord logo.'
+									/>
+								</SocialButton>
+							</a>
+							<Link href='/' passHref>
+								<ExploreButton>
+									explore the giveconomy
+								</ExploreButton>
+							</Link>
+							<ClaimFromAnother
+								onClick={() => {
+									goFirstStep();
+									resetWallet();
+								}}
+							>
+								Claim from another address!
+							</ClaimFromAnother>
+						</ClaimedSubtitleContainer>
+					</ClaimedContainer>
 				</>
 			)}
 		</ConnectCardContainer>

@@ -318,6 +318,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 								onClick={() => {
 									goFirstStep();
 									resetWallet();
+									setTxStatus(false);
 								}}
 							>
 								Claim from another address!
