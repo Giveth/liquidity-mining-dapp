@@ -1,6 +1,5 @@
 import { getAddress, isAddress } from 'ethers/lib/utils';
 import { constants, Contract } from 'ethers';
-import { fetchMerkleResults } from '../helpers/utils';
 import { ClaimData, ITokenDistroBalance } from '../types/GIV';
 import { networkProviders } from '../helpers/networkProvider';
 import config from '../configuration';
