@@ -26,6 +26,7 @@ interface IV3StakeCardProps {
 	position: LiquidityPosition;
 	isUnstaking?: boolean;
 	handleStakeStatus: Dispatch<SetStateAction<StakeState>>;
+	setTxStatus: Dispatch<SetStateAction<any>>;
 }
 
 const STARTS_WITH = 'data:application/json;base64,';
@@ -34,6 +35,7 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 	position,
 	isUnstaking,
 	handleStakeStatus,
+	setTxStatus,
 }) => {
 	const { address, provider } = useOnboard();
 	const { currentIncentive, loadPositions } = useLiquidityPositions();
@@ -92,6 +94,7 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 			);
 			if (tx) {
 				handleStakeStatus(StakeState.CONFIRMED);
+				setTxStatus(tx);
 			} else {
 				handleStakeStatus(StakeState.ERROR);
 			}

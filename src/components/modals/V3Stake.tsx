@@ -66,6 +66,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 								isUnstaking={isUnstakingModal}
 								key={position.tokenId.toString()}
 								handleStakeStatus={setStakeStatus}
+								setTxStatus={setTxStatus}
 							/>
 						))}
 					{stakeStatus === StakeState.CONFIRMING && (
