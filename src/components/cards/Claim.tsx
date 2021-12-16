@@ -158,7 +158,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 		address,
 	} = useContext(OnboardContext);
 
-	const [txStatus, setTxStatus] = useState(true);
+	const [txStatus, setTxStatus] = useState(false);
 
 	const onClaim = async () => {
 		if (!isReady) {
