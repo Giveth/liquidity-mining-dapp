@@ -163,10 +163,14 @@ export const TabGIVstreamBottom = () => {
 	useEffect(() => {
 		setStreamAmount(
 			tokenDistroHelper.getStreamPartTokenPerWeek(
-				currentBalance.allocatedTokens,
+				currentBalance.allocatedTokens.sub(currentBalance.givback),
 			),
 		);
-	}, [currentBalance.allocatedTokens, tokenDistroHelper]);
+	}, [
+		currentBalance.allocatedTokens,
+		currentBalance.givback,
+		tokenDistroHelper,
+	]);
 
 	useEffect(() => {
 		const _remain = convertMSToHRD(tokenDistroHelper.remain);
