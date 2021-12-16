@@ -48,7 +48,7 @@ const config: EnvConfig = {
 		GIV: {
 			LM_ADDRESS: '0xbDD6F1865E882a412D88d903cDB2817d919B0d36',
 			BUY_LINK:
-				'https://app.uniswap.org/#/swap?outputCurrency=0x03472537CB64652Aa1224E4aaF6f33a34e73E877',
+				'https://app.uniswap.org/#/swap?outputCurrency=0x900d7e4985461ef158f04ca2Ef1aBd136c620DA0',
 		},
 
 		nodeUrl: 'https://kovan.infura.io/v3/' + INFURA_API_KEY,
@@ -72,14 +72,14 @@ const config: EnvConfig = {
 				LM_ADDRESS: '0x1aD46D40648639f84a396Fef32132888038c5aA8',
 				type: StakingType.UNISWAP,
 				title: 'GIV / ETH',
-				provideLiquidityLink: `https://app.uniswap.org/#/add/ETH/0x03472537CB64652Aa1224E4aaF6f33a34e73E877/3000`,
+				provideLiquidityLink: `https://app.uniswap.org/#/add/ETH/0x900d7e4985461ef158f04ca2Ef1aBd136c620DA0/3000`,
 				unit: 'NFT',
 			},
 			{
 				POOL_ADDRESS: '0x81343c08cccd0e13f3c49c8270c93edc5f3d0fc6',
 				VAULT_ADDRESS: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
 				POOL_ID:
-					'0x1ee71e1ed744ae6d4058f5c7797c2e583dbfb095000200000000000000000260',
+					'0x81343c08cccd0e13f3c49c8270c93edc5f3d0fc6000200000000000000000518',
 				LM_ADDRESS: '0x9aF8e5FF803D64f1e10688413e75C656d883Ca70',
 				type: StakingType.BALANCER,
 				title: 'GIV / ETH',
