@@ -1,6 +1,4 @@
 import Image from 'next/image';
-import styled from 'styled-components';
-import router from 'next/router';
 import { Row } from './styled-components/Grid';
 import React, { FC, useContext } from 'react';
 import { ThemeContext, ThemeType } from '@/context/theme.context';
@@ -17,16 +15,15 @@ import {
 	HeaderButton,
 	HeaderLinks,
 	HeaderLink,
-	NotifButton,
 	StyledHeader,
 	WalletButton,
 	WBInfo,
 	WBNetwork,
 	CreateProject,
 	Logo,
+	BalanceTooltip,
 } from './Header.sc';
 import { IconWithTooltip } from './IconWithToolTip';
-import { neutralColors, Subline } from '@giveth/ui-design-system';
 import Link from 'next/link';
 
 export interface IHeader {
@@ -73,9 +70,10 @@ const Header: FC<IHeader> = () => {
 					</HeaderLink>
 				</HeaderLinks>
 				<Row gap='8px'>
-					<a href='https://giveth.io/create'>
-						<CreateProject label='CREATE A PROJECT' />
-					</a>
+					<CreateProject
+						label='CREATE A PROJECT'
+						onClick={() => window.open(`https://giveth.io/create`)}
+					/>
 					{address ? (
 						<>
 							<IconWithTooltip
@@ -144,11 +142,5 @@ const Header: FC<IHeader> = () => {
 		</>
 	);
 };
-
-export const BalanceTooltip = styled(Subline)`
-	color: ${neutralColors.gray[100]};
-	text-align: center;
-	width: 120px;
-`;
 
 export default Header;
