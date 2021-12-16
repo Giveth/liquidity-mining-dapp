@@ -20,6 +20,7 @@ import { claimAirDrop } from '../../lib/claim';
 import { addToken } from '@/lib/metamask';
 import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
 import { ClaimModal } from '../modals/ClaimModal';
+import { HarvestAllModal } from '../modals/HarvestAll';
 
 enum ClaimState {
 	UNKNOWN,
@@ -249,12 +250,12 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 				/>
 			)}
 			{showClaimModal && (
-				<ClaimModal
+				<HarvestAllModal
+					title='GIVdrop'
 					showModal={showClaimModal}
 					setShowModal={setShowClaimModal}
-					claimState={claimState}
-					network={network}
-					txStatus={txStatus}
+					network={config.XDAI_NETWORK_NUMBER}
+					claimable={claimableAmount}
 				/>
 			)}
 			{txStatus ? (
