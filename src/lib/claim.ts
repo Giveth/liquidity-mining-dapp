@@ -1,6 +1,5 @@
 import { getAddress, isAddress } from 'ethers/lib/utils';
 import { constants, Contract } from 'ethers';
-import { fetchMerkleResults } from '../helpers/utils';
 import { ClaimData, ITokenDistroBalance } from '../types/GIV';
 import { networkProviders } from '../helpers/networkProvider';
 import config from '../configuration';
@@ -51,10 +50,24 @@ export const fetchAirDropClaimData = async (
 	address: string,
 ): Promise<ClaimData | undefined> => {
 	try {
-		const { claims } = await fetchMerkleResults();
-		const formatted = formatAddress(address);
-
-		return claims[formatted];
+		const data = {
+			address: address.toLowerCase(),
+		};
+		console.log(`data`, data);
+		const response = await fetch('/api/airdrop', {
+			method: 'POST',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer',
+			body: JSON.stringify(data),
+		});
+		const json = await response.json();
+		return json;
 	} catch (e) {
 		// eslint-disable-next-line no-console
 		console.error(e);
