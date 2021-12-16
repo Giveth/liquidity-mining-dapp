@@ -40,12 +40,14 @@ import {
 	StakingPoolLabel,
 	StakingPoolSubtitle,
 	NothingToHarvest,
+	TooltipContent,
 } from './HarvestAll.sc';
 import { Zero } from '@ethersproject/constants';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { claimReward } from '@/lib/claim';
 import config from '@/configuration';
+import { IconWithTooltip } from '../IconWithToolTip';
 
 interface IHarvestAllModalProps extends IModal {
 	title: string;
@@ -263,10 +265,22 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 										<Caption>
 											Added to your GIVstream flowrate
 										</Caption>
-										<IconHelp
-											size={16}
-											color={brandColors.deep[100]}
-										/>
+										<IconWithTooltip
+											icon={
+												<IconHelp
+													size={16}
+													color={
+														brandColors.deep[100]
+													}
+												/>
+											}
+											direction={'top'}
+										>
+											<TooltipContent>
+												Increase you GIVstream flowrate
+												when you claim liquid rewards!
+											</TooltipContent>
+										</IconWithTooltip>
 									</HelpRow>
 									<RateRow alignItems='center'>
 										<IconGIVStream size={24} />
@@ -281,10 +295,6 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 								<>
 									<HelpRow alignItems='center'>
 										<B>Claimable from GIVbacks</B>
-										<IconHelp
-											size={16}
-											color={brandColors.deep[100]}
-										/>
 									</HelpRow>
 									<GIVBoxWithPrice
 										amount={givBackLiquidPart}
@@ -296,10 +306,22 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 										<Caption>
 											Added to your GIVstream flowrate
 										</Caption>
-										<IconHelp
-											size={16}
-											color={brandColors.deep[100]}
-										/>
+										<IconWithTooltip
+											icon={
+												<IconHelp
+													size={16}
+													color={
+														brandColors.deep[100]
+													}
+												/>
+											}
+											direction={'top'}
+										>
+											<TooltipContent>
+												Increase you GIVstream flowrate
+												when you claim liquid rewards!
+											</TooltipContent>
+										</IconWithTooltip>
 									</HelpRow>
 									<RateRow alignItems='center'>
 										<IconGIVStream size={24} />
@@ -327,8 +349,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 							)}
 							<HarvestAllDesc>
 								When you harvest GIV rewards, all liquid GIV
-								allocated to you in the token distro gets sent
-								to your wallet.
+								allocated to you is sent to your wallet.
 							</HarvestAllDesc>
 							{state === HarvestStates.HARVEST && (
 								<HarvestButton

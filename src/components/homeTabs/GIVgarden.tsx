@@ -110,7 +110,7 @@ export const TabGardenBottom = () => {
 				<Section1Title weight={700}>Vote & Earn</Section1Title>
 				<Row justifyContent='space-between' alignItems='flex-start'>
 					<Section1Subtitle size='small'>
-						GIV token holders control the treasury, roadmap and
+						GIV token holders influence the treasury, roadmap and
 						mission of the Giveth ecosystem. By voting in the
 						GIVgarden you earn rewards on your staked GIV!
 					</Section1Subtitle>

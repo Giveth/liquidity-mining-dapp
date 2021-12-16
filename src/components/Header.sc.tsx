@@ -7,15 +7,11 @@ import {
 	brandColors,
 	Button,
 	GLink,
+	Subline,
 } from '@giveth/ui-design-system';
 
 export const StyledHeader = styled(Row)<IHeader>`
 	padding: 16px 32px;
-	position: fixed;
-	// background-color: ${props => props.theme.bg};
-	top: 0;
-	left: 0;
-	right: 0;
 	z-index: 1050;
 	transition: box-shadow 0.3s ease;
 	${props => {
@@ -118,7 +114,7 @@ export const HeaderLink = styled(GLink)<IHeaderLinkProps>`
 	border-radius: 72px;
 `;
 
-export const ConenctButton = styled(Button)``;
+export const ConnectButton = styled(Button)``;
 
 export const NotifButton = styled(HeaderButton)`
 	padding: 23px;
@@ -128,10 +124,12 @@ export const NotifButton = styled(HeaderButton)`
 	max-width: 48px;
 `;
 
-export const HeaderPlaceHolder = styled.div`
-	height: 120px;
-`;
-
 export const CreateProject = styled(Button)`
 	white-space: nowrap;
+`;
+
+export const BalanceTooltip = styled(Subline)`
+	color: ${neutralColors.gray[100]};
+	text-align: center;
+	width: 120px;
 `;

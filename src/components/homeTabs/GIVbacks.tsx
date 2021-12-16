@@ -43,6 +43,7 @@ import { HarvestAllModal } from '../modals/HarvestAll';
 import { OnboardContext } from '@/context/onboard.context';
 import { getNowUnixMS } from '@/helpers/time';
 import { useOnboard } from '@/context';
+import { formatDate } from '@/lib/helpers';
 
 export const TabGIVbacksTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -72,8 +73,9 @@ export const TabGIVbacksTop = () => {
 								<IconGIVBack size={64} />
 							</Row>
 							<GBSubtitle size='medium'>
-								GIVbacks is a revolutionary concept that rewards
-								donors to verified projects with GIV tokens.
+								GIVbacks rewards donors to verified projects
+								with GIV, super-charging Giveth as a
+								donor-driven force for good.
 							</GBSubtitle>
 						</Left>
 						<Right>
@@ -144,9 +146,9 @@ export const TabGIVbacksBottom = () => {
 							/>
 						}
 					>
-						Empower change-makers and get rewarded for making a
-						difference! When you donate to verified projects, you
-						become eligible to receive GIV from GIVbacks.
+						When you donate to verified projects you qualify to
+						receive GIV tokens. Through GIVbacks, GIV empowers
+						donors with governance rights via the GIVgarden.
 					</GbDataBlock>
 					<GbDataBlock
 						title='Project Verification'
@@ -178,7 +180,9 @@ export const TabGIVbacksBottom = () => {
 									<P>Start Date</P>
 									<P>
 										{tokenDistroHelper
-											? tokenDistroHelper.startTime.toDateString()
+											? formatDate(
+													tokenDistroHelper.startTime,
+											  )
 											: '-'}
 									</P>
 								</RoundInfoRow>
@@ -186,7 +190,9 @@ export const TabGIVbacksBottom = () => {
 									<P>End Date</P>
 									<P>
 										{tokenDistroHelper
-											? tokenDistroHelper.endTime.toDateString()
+											? formatDate(
+													tokenDistroHelper.endTime,
+											  )
 											: '-'}
 									</P>
 								</RoundInfoRow>
@@ -224,7 +230,13 @@ export const TabGIVbacksBottom = () => {
 								Start Date in order to be included in the round.
 							</InfoDesc>
 							<InfoReadMore>
-								Read More{' '}
+								<a
+									target='_blank'
+									href='https://docs.giveth.io/giveconomy/givbacks'
+									rel='noreferrer noopener'
+								>
+									Read More{' '}
+								</a>
 								<IconExternalLink
 									size={16}
 									color={brandColors.cyan[500]}

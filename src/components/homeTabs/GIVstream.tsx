@@ -163,10 +163,14 @@ export const TabGIVstreamBottom = () => {
 	useEffect(() => {
 		setStreamAmount(
 			tokenDistroHelper.getStreamPartTokenPerWeek(
-				currentBalance.allocatedTokens,
+				currentBalance.allocatedTokens.sub(currentBalance.givback),
 			),
 		);
-	}, [currentBalance.allocatedTokens, tokenDistroHelper]);
+	}, [
+		currentBalance.allocatedTokens,
+		currentBalance.givback,
+		tokenDistroHelper,
+	]);
 
 	useEffect(() => {
 		const _remain = convertMSToHRD(tokenDistroHelper.remain);
@@ -204,11 +208,17 @@ export const TabGIVstreamBottom = () => {
 					<GsDataBlock
 						title='GIVstream'
 						button={
-							<GsButton
-								label='LEARN MORE'
-								buttonType='secondary'
-								size='large'
-							/>
+							<a
+								target='_blank'
+								href='https://docs.giveth.io/giveconomy/givstream'
+								rel='noreferrer noopener'
+							>
+								<GsButton
+									label='LEARN MORE'
+									buttonType='secondary'
+									size='large'
+								/>
+							</a>
 						}
 					>
 						At launch, 10% of the total supply of GIV is liquid. The

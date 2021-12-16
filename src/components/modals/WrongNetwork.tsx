@@ -1,13 +1,14 @@
 import config from '@/configuration';
 import { P, brandColors } from '@giveth/ui-design-system';
 import styled from 'styled-components';
-import { FC, useState } from 'react';
+import { FC, useContext, useState } from 'react';
 import { Button } from '@giveth/ui-design-system';
 import { switchNetwork } from '@/lib/metamask';
 
 import { chainName } from '@/utils/constants';
 import { Modal, IModal } from './Modal';
 
+import { OnboardContext } from '@/context/onboard.context';
 interface IWrongNetworkInnerModal {
 	text?: string;
 	targetNetworks: number[];
@@ -17,6 +18,17 @@ export const WrongNetworkInnerModal: FC<IWrongNetworkInnerModal> = ({
 	text,
 	targetNetworks,
 }) => {
+	const { connect, address } = useContext(OnboardContext);
+	const checkWalletAndSwitchNetwork = async (network: number) => {
+		console.log(`address`, address);
+		if (!address) {
+			await connect();
+		}
+		if (address) {
+			await switchNetwork(network);
+		}
+	};
+
 	return (
 		<WrongNetworkInnerModalContainer>
 			<Description>
@@ -27,7 +39,7 @@ export const WrongNetworkInnerModal: FC<IWrongNetworkInnerModal> = ({
 				{targetNetworks.map(network => (
 					<Button
 						label={`SWITCH TO ${chainName(network).toUpperCase()}`}
-						onClick={() => switchNetwork(network)}
+						onClick={() => checkWalletAndSwitchNetwork(network)}
 						buttonType='primary'
 						key={network}
 					/>
