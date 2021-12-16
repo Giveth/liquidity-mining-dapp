@@ -1,4 +1,4 @@
-import airdrops from './merkle_distributor_result_xdai.json';
+import airdrops from './merkle_distributor_xdai_result.json';
 const handler = (req, res) => {
 	const { body, method } = req;
 	if (method === 'POST') {
