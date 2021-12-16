@@ -8,7 +8,7 @@ import {
 } from 'react';
 import Image from 'next/image';
 import BigNumber from 'bignumber.js';
-import { utils } from 'ethers';
+import { utils, BigNumber as EthersBigNumber, constants } from 'ethers';
 import styled from 'styled-components';
 import { ArrowButton, Card, MaxGIV } from './common';
 import { InputWithUnit } from '../input';
@@ -20,7 +20,7 @@ import {
 } from '../views/claim/Claim.view';
 import config from '../../configuration';
 import { UserContext } from '../../context/user.context';
-import { formatEthHelper, Zero } from '../../helpers/number';
+import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
 import { fetchGivStakingInfo } from '../../lib/stakingPool';
 import { APR } from '../../types/poolInfo';
 import { useTokenDistro } from '@/context/tokenDistro.context';
@@ -141,10 +141,12 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { claimableAmount } = useContext(UserContext);
 
 	const [stacked, setStacked] = useState<any>(0);
-	const [potentialClaim, setPotentialClaim] = useState<BigNumber>(Zero);
-	const [earnEstimate, setEarnEstimate] = useState<number>(0);
+	const [potentialClaim, setPotentialClaim] = useState<EthersBigNumber>(
+		constants.Zero,
+	);
+	const [earnEstimate, setEarnEstimate] = useState<BigNumber>(Zero);
 	const [apr, setApr] = useState<APR>(null);
-	const { xDaiTokenDistro } = useTokenDistro();
+	const { tokenDistroHelper } = useTokenDistro();
 
 	const stackedChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
 		if (e.target.value.length === 0) {
@@ -158,9 +160,20 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 	};
 
 	useEffect(() => {
-		const stackedWithApr = apr ? apr.times(stacked).div(100).div(12) : Zero;
-		setPotentialClaim(stackedWithApr.times(0.1));
-		setEarnEstimate((stackedWithApr.toNumber() * 0.9) / (52 * 5));
+		const stackedWithApr = apr ? apr.times(stacked).div(1200) : Zero;
+		const convertedStackedWithApr = EthersBigNumber.from(
+			stackedWithApr.toFixed(0),
+		).mul(constants.WeiPerEther);
+		setPotentialClaim(
+			tokenDistroHelper.getLiquidPart(convertedStackedWithApr),
+		);
+		setEarnEstimate(
+			tokenDistroHelper.getStreamPartTokenPerWeek(
+				convertedStackedWithApr,
+			),
+		);
+		// setPotentialClaim(stackedWithApr.times(0.1));
+		// setEarnEstimate((stackedWithApr.toNumber() * 0.9) / (52 * 5));
 	}, [apr, stacked]);
 
 	useEffect(() => {
@@ -269,13 +282,13 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 							<Row justifyContent='space-between'>
 								<PoolItem>Claimable</PoolItem>
 								<PoolItemBold>
-									{formatEthHelper(potentialClaim, 2)} GIV
+									{formatWeiHelper(potentialClaim)} GIV
 								</PoolItemBold>
 							</Row>
 							<Row justifyContent='space-between'>
 								<PoolItem>Streaming</PoolItem>
 								<PoolItemBold>
-									{earnEstimate.toFixed(2)} GIV/week
+									{formatWeiHelper(earnEstimate, 2)} GIV/week
 								</PoolItemBold>
 							</Row>
 						</PoolItems>
