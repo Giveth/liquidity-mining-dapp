@@ -24,7 +24,8 @@ export const MobileModal: FC<IMobileModalProps> = ({
 				<ModalContainer>
 					<Row gap='8px' alignItems='center' />
 					<DescContainer>
-						The GIVeconomy dApp is currently desktop only.
+						Please switch to desktop to enjoy the GIVeconomy DApp or
+						read about the GIVeconomy here.
 					</DescContainer>
 				</ModalContainer>
 			</Modal>
