@@ -84,13 +84,11 @@ export const TabOverviewBottom = () => {
 					<ParticipateDataBlock
 						title='Give'
 						button={
-							<a
+							<DataBlockButton
 								href='https://giveth.io/projects'
+								label='DONATE TO PROJECTS'
 								target='_blank'
-								rel='noreferrer'
-							>
-								<DataBlockButton label='DONATE TO PROJECTS' />
-							</a>
+							/>
 						}
 					>
 						Donate to empower change-makers that are working hard to
@@ -100,13 +98,11 @@ export const TabOverviewBottom = () => {
 					<ParticipateDataBlock
 						title='Govern'
 						button={
-							<a
+							<DataBlockButton
+								label='SEE PROPOSALS'
 								href='https://gardens-staging.1hive.org/#/xdai/garden/0x2050eabe84409e480ad1062001fdb6dfbc836192'
 								target='_blank'
-								rel='noreferrer'
-							>
-								<DataBlockButton label='SEE PROPOSALS' />
-							</a>
+							/>
 						}
 					>
 						The GIVeconomy empowers our collective of projects,
@@ -117,7 +113,10 @@ export const TabOverviewBottom = () => {
 						title='Earn'
 						button={
 							<Link href='/givfarm' passHref>
-								<DataBlockButton label='SEE FARMS' />
+								<DataBlockButton
+									label='SEE FARMS'
+									href='/givfarm'
+								/>
 							</Link>
 						}
 					>
