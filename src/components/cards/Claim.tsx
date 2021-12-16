@@ -10,7 +10,7 @@ import {
 	ClaimViewContext,
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
-import { utils, BigNumber } from 'ethers';
+import { utils, BigNumber as EtherBigNumber } from 'ethers';
 import { UserContext } from '../../context/user.context';
 import { toast } from 'react-hot-toast';
 import { networksParams } from '../../helpers/blockchain';
@@ -21,6 +21,7 @@ import { addToken } from '@/lib/metamask';
 import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
 import { ClaimModal } from '../modals/ClaimModal';
 import { HarvestAllModal } from '../modals/HarvestAll';
+import BigNumber from 'bignumber.js';
 
 enum ClaimState {
 	UNKNOWN,
@@ -230,7 +231,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 		}
 	};
 
-	const parseEther = (value: BigNumber) =>
+	const parseEther = (value: EtherBigNumber) =>
 		(+utils.formatEther(value)).toLocaleString('en-US', {
 			minimumFractionDigits: 2,
 			maximumFractionDigits: 2,
@@ -256,6 +257,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 					setShowModal={setShowClaimModal}
 					network={config.XDAI_NETWORK_NUMBER}
 					claimable={claimableAmount}
+					// claimable={EtherBigNumber.from('25000')}
 				/>
 			)}
 			{txStatus ? (

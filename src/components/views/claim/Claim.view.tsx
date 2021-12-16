@@ -102,7 +102,6 @@ const ClaimViewContainer = styled.div<IClaimViewContainer>`
 	background-image: url('/images/cardsbg1.png'), url('/images/cardsbg.png');
 	background-repeat: repeat-x, no-repeat;
 	background-position-y: bottom, top;
-	padding-top: ${props => (props.switchNetwork ? '' : '48px')};
 `;
 
 const ClaimCarouselContainer = styled.div`
@@ -134,7 +133,7 @@ const ClaimView = () => {
 
 	return (
 		<>
-			<SwitchNetwork
+			{/* <SwitchNetwork
 				hidden={
 					(isReady && network === config.XDAI_NETWORK_NUMBER) ||
 					network === 0
@@ -152,7 +151,7 @@ const ClaimView = () => {
 				>
 					Switch
 				</ButtonSwitchNetwork>
-			</SwitchNetwork>
+			</SwitchNetwork> */}
 			{step < 6 ? (
 				<ClaimViewContainer
 					switchNetwork={

@@ -153,10 +153,15 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const [walletAddress, setWalletAddress] = useState<string>('');
 	const [addressSubmitted, setAddressSubmitted] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
+	const [connectWallet, setConnectionWallet] = useState<boolean>(false);
 
 	useEffect(() => {
 		setWalletAddress(address);
-	}, [address]);
+		if (address && connectWallet) {
+			submitAddress(address);
+			setConnectionWallet(false);
+		}
+	}, [address, connectWallet]);
 
 	useEffect(() => {
 		if (addressSubmitted) {
@@ -266,12 +271,14 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 							secondary
 							onClick={async () => {
 								await connect();
-								submitAddress(walletAddress);
+								setConnectionWallet(true);
 							}}
 						>
 							{btnLabel}
 						</ConnectButton>
-						<Span>or</Span>
+						<Span onClick={() => console.log(walletAddress)}>
+							or
+						</Span>
 						<InputWithButtonContainer>
 							<WalletAddressInputWithButton
 								btnLable='Check'
