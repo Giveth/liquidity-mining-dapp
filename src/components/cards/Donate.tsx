@@ -37,6 +37,7 @@ const Title = styled(H2)`
 `;
 
 const Desc = styled(P)`
+	max-width: 700px;
 	margin-top: 22px;
 `;
 

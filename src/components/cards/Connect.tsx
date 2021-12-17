@@ -276,9 +276,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 						>
 							{btnLabel}
 						</ConnectButton>
-						<Span onClick={() => console.log(walletAddress)}>
-							or
-						</Span>
+						<Span>or</Span>
 						<InputWithButtonContainer>
 							<WalletAddressInputWithButton
 								btnLable='Check'

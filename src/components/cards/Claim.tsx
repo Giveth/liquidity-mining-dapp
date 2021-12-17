@@ -407,8 +407,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 								openHarvestModal();
 							}}
 						>
-							CLAIM {utils.formatEther(claimableAmount.div(10))}
-							GIV
+							CLAIM {parseEther(claimableAmount.div(10))} GIV
 						</ClaimButton>
 					</Row>
 					<Row alignItems={'center'} justifyContent={'center'}>
