@@ -12,6 +12,9 @@ import {
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
 
+import { useTokenDistro } from '@/context/tokenDistro.context';
+import { formatWeiHelper } from '@/helpers/number';
+
 const StreamCardContainer = styled(Card)`
 	::before {
 		content: '';
@@ -97,9 +100,14 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { claimableAmount } = useContext(UserContext);
 	const [streamValue, setStreamValue] = useState<string>('0');
 
+	const { tokenDistroHelper } = useTokenDistro();
+
 	useEffect(() => {
-		const value = utils.formatEther(claimableAmount.mul(9).div(52 * 5));
-		setStreamValue((+value).toFixed(2));
+		setStreamValue(
+			formatWeiHelper(
+				tokenDistroHelper.getStreamPartTokenPerWeek(claimableAmount),
+			),
+		);
 	}, [claimableAmount]);
 
 	return (

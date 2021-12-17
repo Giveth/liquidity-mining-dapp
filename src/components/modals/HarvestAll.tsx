@@ -23,10 +23,6 @@ import { useLiquidityPositions } from '@/context';
 import { ConfirmedInnerModal, SubmittedInnerModal } from './ConfirmSubmit';
 import {
 	CancelButton,
-	GIVBoxWithPriceAmount,
-	GIVBoxWithPriceContainer,
-	GIVBoxWithPriceIcon,
-	GIVBoxWithPriceUSD,
 	GIVRate,
 	HarvestAllDesc,
 	HarvestAllModalContainer,
@@ -48,6 +44,7 @@ import BigNumber from 'bignumber.js';
 import { claimReward } from '@/lib/claim';
 import config from '@/configuration';
 import { IconWithTooltip } from '../IconWithToolTip';
+import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
 
 interface IHarvestAllModalProps extends IModal {
 	title: string;
@@ -248,6 +245,13 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 							)}
 							{claimable && claimable.gt(0) && (
 								<>
+									<HelpRow alignItems='center'>
+										<B>Claimable from GIVdrop</B>
+										<IconHelp
+											size={16}
+											color={brandColors.deep[100]}
+										/>
+									</HelpRow>
 									<GIVBoxWithPrice
 										amount={rewardLiquidPart}
 										price={calcUSD(
@@ -288,10 +292,6 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 								<>
 									<HelpRow alignItems='center'>
 										<B>Claimable from GIVbacks</B>
-										<IconHelp
-											size={16}
-											color={brandColors.deep[100]}
-										/>
 									</HelpRow>
 									<GIVBoxWithPrice
 										amount={givBackLiquidPart}
@@ -397,25 +397,5 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 				)}
 			</>
 		</Modal>
-	);
-};
-
-interface IGIVBoxWithPriceProps {
-	amount: ethers.BigNumber;
-	price: string;
-}
-
-const GIVBoxWithPrice: FC<IGIVBoxWithPriceProps> = ({ amount, price }) => {
-	return (
-		<>
-			<GIVBoxWithPriceContainer alignItems='center'>
-				<GIVBoxWithPriceIcon size={40} />
-				<GIVBoxWithPriceAmount>
-					{formatWeiHelper(amount)}
-				</GIVBoxWithPriceAmount>
-				{/* <GIVBoxWithPriceUSD>~${price}</GIVBoxWithPriceUSD> */}
-				<GIVBoxWithPriceUSD>reserved</GIVBoxWithPriceUSD>
-			</GIVBoxWithPriceContainer>
-		</>
 	);
 };

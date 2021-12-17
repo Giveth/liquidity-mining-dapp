@@ -47,19 +47,28 @@ export const AmountInput: FC<IAmountInput> = ({
 
 		setAmount(valueBn.toString());
 	}, []);
-
 	return (
 		<>
 			<InputLabelRow justifyContent='space-between'>
 				<InputLabel>
 					<InputLabelText>Available: </InputLabelText>
-					<InputLabelValue>
-						&nbsp;
-						{formatWeiHelper(maxAmount)}
-						&nbsp;
-						{poolStakingConfig.title}
-						&nbsp;LP
-					</InputLabelValue>
+					{poolStakingConfig.type === 'Staking' ? (
+						<InputLabelValue>
+							&nbsp;
+							{formatWeiHelper(maxAmount)}
+							&nbsp;
+							{poolStakingConfig.title}
+							&nbsp;
+						</InputLabelValue>
+					) : (
+						<InputLabelValue>
+							&nbsp;
+							{formatWeiHelper(maxAmount)}
+							&nbsp;
+							{poolStakingConfig.title}
+							&nbsp;LP
+						</InputLabelValue>
+					)}
 				</InputLabel>
 				<InputLabelAction
 					onClick={() => {

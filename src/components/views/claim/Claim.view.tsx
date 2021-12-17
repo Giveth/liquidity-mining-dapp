@@ -1,5 +1,6 @@
 import React, { FC, useContext, useState } from 'react';
 import Image from 'next/image';
+import config from '@/configuration';
 import styled from 'styled-components';
 import CongratulationsCard from '../../cards/Congratulations';
 import ClaimCard from '../../cards/Claim';
@@ -79,6 +80,8 @@ const SwitchNetwork = styled.div<ISwitchNetwork>`
 	justify-content: center;
 	align-items: center;
 	gap: 12px;
+	position: fixed;
+	width: 100%;
 `;
 
 const ButtonSwitchNetwork = styled.a`
@@ -91,7 +94,11 @@ const ButtonSwitchNetwork = styled.a`
 	cursor: pointer;
 `;
 
-const ClaimViewContainer = styled.div`
+interface IClaimViewContainer {
+	switchNetwork: boolean;
+}
+
+const ClaimViewContainer = styled.div<IClaimViewContainer>`
 	background-image: url('/images/cardsbg1.png'), url('/images/cardsbg.png');
 	background-repeat: repeat-x, no-repeat;
 	background-position-y: bottom, top;
@@ -126,8 +133,11 @@ const ClaimView = () => {
 
 	return (
 		<>
-			<SwitchNetwork
-				hidden={(isReady && network === 100) || network === 0}
+			{/* <SwitchNetwork
+				hidden={
+					(isReady && network === config.XDAI_NETWORK_NUMBER) ||
+					network === 0
+				}
 			>
 				<Image
 					src='/images/icons/warning.svg'
@@ -136,12 +146,19 @@ const ClaimView = () => {
 					alt='Warning icon'
 				/>
 				<span>Please switch to xDAI network!</span>
-				<ButtonSwitchNetwork onClick={() => switchNetwork(100)}>
+				<ButtonSwitchNetwork
+					onClick={() => switchNetwork(config.XDAI_NETWORK_NUMBER)}
+				>
 					Switch
 				</ButtonSwitchNetwork>
-			</SwitchNetwork>
+			</SwitchNetwork> */}
 			{step < 6 ? (
-				<ClaimViewContainer>
+				<ClaimViewContainer
+					switchNetwork={
+						(isReady && network === config.XDAI_NETWORK_NUMBER) ||
+						network === 0
+					}
+				>
 					<Steps justifyContent='center' alignItems='center'>
 						{stepsTitle.map((title, idx) => (
 							<Step

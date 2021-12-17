@@ -7,6 +7,7 @@ import {
 	brandColors,
 	Button,
 	GLink,
+	Subline,
 } from '@giveth/ui-design-system';
 
 export const StyledHeader = styled(Row)<IHeader>`
@@ -125,4 +126,10 @@ export const NotifButton = styled(HeaderButton)`
 
 export const CreateProject = styled(Button)`
 	white-space: nowrap;
+`;
+
+export const BalanceTooltip = styled(Subline)`
+	color: ${neutralColors.gray[100]};
+	text-align: center;
+	width: 120px;
 `;

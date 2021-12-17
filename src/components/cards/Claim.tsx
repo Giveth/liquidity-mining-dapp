@@ -1,4 +1,4 @@
-import { FC, useContext, useState } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import styled from 'styled-components';
@@ -10,7 +10,7 @@ import {
 	ClaimViewContext,
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
-import { utils, BigNumber } from 'ethers';
+import { utils, BigNumber as EtherBigNumber } from 'ethers';
 import { UserContext } from '../../context/user.context';
 import { toast } from 'react-hot-toast';
 import { networksParams } from '../../helpers/blockchain';
@@ -18,6 +18,16 @@ import { OnboardContext } from '../../context/onboard.context';
 import config from '../../configuration';
 import { claimAirDrop } from '../../lib/claim';
 import { addToken } from '@/lib/metamask';
+import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
+import { GIVdropHarvestModal } from '../modals/GIVdropHarvestModal';
+
+enum ClaimState {
+	UNKNOWN,
+	WAITING,
+	SUBMITTING,
+	CLAIMED,
+	ERROR,
+}
 
 const ClaimedContainer = styled.div`
 	display: flex;
@@ -96,7 +106,7 @@ const ExploreButton = styled(SocialButton)`
 
 const ClaimFromAnother = styled.span`
 	cursor: pointer;
-	text-decoration: underline;
+	color: '#FED670'
 	margin-top: 4px;
 	margin-left: 80px;
 `;
@@ -158,45 +168,83 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 		address,
 	} = useContext(OnboardContext);
 
-	const [txStatus, setTxStatus] = useState(true);
+	const [txStatus, setTxStatus] = useState(false);
+	const [showModal, setShowModal] = useState<boolean>(false);
+	const [showClaimModal, setShowClaimModal] = useState<boolean>(false);
+	const [claimState, setClaimState] = useState<ClaimState>(
+		ClaimState.UNKNOWN,
+	);
 
-	const onClaim = async () => {
+	useEffect(() => {
+		setTxStatus(false);
+	}, [address, userAddress]);
+
+	useEffect(() => {
+		setShowModal(
+			isReady &&
+				network !== config.XDAI_NETWORK_NUMBER &&
+				activeIndex === 5,
+		);
+	}, [network, activeIndex, isReady]);
+
+	const checkNetworkAndWallet = async () => {
 		if (!isReady) {
 			console.log('Wallet is not connected');
 			await connect();
-			return;
+			return false;
 		}
 
 		if (!provider || userAddress !== address) {
 			console.log('Connected wallet is not the claimed address');
 			wrongWallet(userAddress);
 			await changeWallet();
-			return;
+			return false;
 		}
 
 		if (network !== config.XDAI_NETWORK_NUMBER) {
 			await walletCheck();
-			return;
+			return false;
 		}
 
+		return true;
+	};
+
+	const openHarvestModal = async () => {
+		const check = checkNetworkAndWallet();
+		if (!check) return;
+
+		setShowClaimModal(true);
+	};
+
+	const onClaim = async () => {
+		const check = checkNetworkAndWallet();
+		if (!check) return;
+		if (!provider) return;
+
 		try {
+			setClaimState(ClaimState.WAITING);
+			console.log(userAddress);
 			const tx = await claimAirDrop(userAddress, provider);
 
 			showPendingClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
-
+			setClaimState(ClaimState.SUBMITTING);
 			const { status } = await tx.wait();
-			setTxStatus(status);
+
 			if (status) {
+				setTxStatus(status);
+				setClaimState(ClaimState.CLAIMED);
 				showConfirmedClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
 			} else {
+				setClaimState(ClaimState.ERROR);
 				showFailedClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
 			}
 		} catch (e) {
+			setClaimState(ClaimState.ERROR);
 			console.error(e);
 		}
 	};
 
-	const parseEther = (value: BigNumber) =>
+	const parseEther = (value: EtherBigNumber) =>
 		(+utils.formatEther(value)).toLocaleString('en-US', {
 			minimumFractionDigits: 2,
 			maximumFractionDigits: 2,
@@ -208,6 +256,25 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 			index={index}
 			claimed={txStatus}
 		>
+			{showModal && (
+				<WrongNetworkModal
+					showModal={showModal}
+					setShowModal={setShowModal}
+					targetNetworks={[config.XDAI_NETWORK_NUMBER]}
+				/>
+			)}
+			{showClaimModal && (
+				<GIVdropHarvestModal
+					showModal={showClaimModal}
+					setShowModal={setShowClaimModal}
+					network={config.XDAI_NETWORK_NUMBER}
+					claimState={claimState}
+					txStatus={txStatus}
+					givdropAmount={claimableAmount}
+					onClaim={onClaim}
+				/>
+			)}
+
 			{txStatus ? (
 				<>
 					<SunImage>
@@ -306,14 +373,17 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 								</SocialButton>
 							</a>
 							<Link href='/' passHref>
-								<ExploreButton>
-									explore the giveconomy
-								</ExploreButton>
+								<a target='_blank' rel='noreferrer'>
+									<ExploreButton>
+										explore the giveconomy
+									</ExploreButton>
+								</a>
 							</Link>
 							<ClaimFromAnother
 								onClick={() => {
 									goFirstStep();
 									resetWallet();
+									setTxStatus(false);
 								}}
 							>
 								Claim from another address!
@@ -330,7 +400,13 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 						</Desc>
 					</ClaimHeader>
 					<Row alignItems={'center'} justifyContent={'center'}>
-						<ClaimButton secondary onClick={onClaim}>
+						{/* <ClaimButton secondary onClick={onClaim}> */}
+						<ClaimButton
+							secondary
+							onClick={() => {
+								openHarvestModal();
+							}}
+						>
 							CLAIM {utils.formatEther(claimableAmount)} GIV
 						</ClaimButton>
 					</Row>
@@ -428,7 +504,7 @@ export function showConfirmedClaim(network: number, txHash: string): void {
 			>
 				Claimed
 			</a>
-			! Your NODE tokens are in your wallet.
+			Your GIV tokens are in your wallet.
 		</span>,
 	);
 }

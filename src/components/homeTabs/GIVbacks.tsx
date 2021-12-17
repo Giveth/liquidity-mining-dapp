@@ -146,9 +146,9 @@ export const TabGIVbacksBottom = () => {
 							/>
 						}
 					>
-						Empower change-makers and get rewarded for making a
-						difference! When you donate to verified projects, you
-						become eligible to receive GIV from GIVbacks.
+						When you donate to verified projects you qualify to
+						receive GIV tokens. Through GIVbacks, GIV empowers
+						donors with governance rights via the GIVgarden.
 					</GbDataBlock>
 					<GbDataBlock
 						title='Project Verification'
