@@ -19,9 +19,7 @@ import config from '../../configuration';
 import { claimAirDrop } from '../../lib/claim';
 import { addToken } from '@/lib/metamask';
 import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
-import { ClaimModal } from '../modals/ClaimModal';
-import { HarvestAllModal } from '../modals/HarvestAll';
-import BigNumber from 'bignumber.js';
+import { GIVdropHarvestModal } from '../modals/GIVdropHarvestModal';
 
 enum ClaimState {
 	UNKNOWN,
@@ -189,27 +187,41 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 		);
 	}, [network, activeIndex, isReady]);
 
-	const onClaim = async () => {
+	const checkNetworkAndWallet = async () => {
 		if (!isReady) {
 			console.log('Wallet is not connected');
 			await connect();
-			return;
+			return false;
 		}
 
 		if (!provider || userAddress !== address) {
 			console.log('Connected wallet is not the claimed address');
 			wrongWallet(userAddress);
 			await changeWallet();
-			return;
+			return false;
 		}
 
 		if (network !== config.XDAI_NETWORK_NUMBER) {
 			await walletCheck();
-			return;
+			return false;
 		}
 
+		return true;
+	};
+
+	const openHarvestModal = async () => {
+		const check = checkNetworkAndWallet();
+		if (!check) return;
+
+		setShowClaimModal(true);
+	};
+
+	const onClaim = async () => {
+		const check = checkNetworkAndWallet();
+		if (!check) return;
+		if (!provider) return;
+
 		try {
-			setShowClaimModal(true);
 			setClaimState(ClaimState.WAITING);
 			console.log(userAddress);
 			const tx = await claimAirDrop(userAddress, provider);
@@ -251,15 +263,17 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 				/>
 			)}
 			{showClaimModal && (
-				<HarvestAllModal
-					title='GIVdrop'
+				<GIVdropHarvestModal
 					showModal={showClaimModal}
 					setShowModal={setShowClaimModal}
 					network={config.XDAI_NETWORK_NUMBER}
-					claimable={claimableAmount}
-					// claimable={EtherBigNumber.from('25000')}
+					claimState={claimState}
+					txStatus={txStatus}
+					givdropAmount={claimableAmount}
+					onClaim={onClaim}
 				/>
 			)}
+
 			{txStatus ? (
 				<>
 					<SunImage>
@@ -385,7 +399,13 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 						</Desc>
 					</ClaimHeader>
 					<Row alignItems={'center'} justifyContent={'center'}>
-						<ClaimButton secondary onClick={onClaim}>
+						{/* <ClaimButton secondary onClick={onClaim}> */}
+						<ClaimButton
+							secondary
+							onClick={() => {
+								openHarvestModal();
+							}}
+						>
 							CLAIM {utils.formatEther(claimableAmount)} GIV
 						</ClaimButton>
 					</Row>

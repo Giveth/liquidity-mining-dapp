@@ -47,6 +47,7 @@ interface IGIVdropHarvestModal extends IModal {
 	network: number;
 	txStatus: any;
 	givdropAmount: ethers.BigNumber;
+	onClaim: any;
 }
 
 export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
@@ -56,6 +57,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 	network,
 	txStatus,
 	givdropAmount,
+	onClaim,
 }) => {
 	const [price, setPrice] = useState(0);
 	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
@@ -201,7 +203,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 						size='medium'
 						buttonType='primary'
 						onClick={() => {
-							console.log('clicked');
+							onClaim();
 						}}
 					/>
 					<CancelButton
