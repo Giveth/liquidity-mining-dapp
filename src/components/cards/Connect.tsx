@@ -63,7 +63,7 @@ const ChangeWallet = styled.div`
 	color: #fed670;
 	cursor: pointer;
 `;
-const BacktoGIVeconomy = styled.div`
+const BackToGIVeconomy = styled.div`
 	color: #fed670;
 	cursor: pointer;
 	margin-left: 15px;
@@ -302,14 +302,12 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 								/>
 							</InputWithButtonContainer>
 						</Row>
-						{giveDropState === GiveDropStateType.Missed ? (
-							<BacktoGIVeconomy>
-								<Link href='/' passHref>
+						{giveDropState === GiveDropStateType.Missed && (
+							<Link href='/' passHref>
+								<BackToGIVeconomy>
 									Go to GIVeconomy
-								</Link>
-							</BacktoGIVeconomy>
-						) : (
-							<></>
+								</BackToGIVeconomy>
+							</Link>
 						)}
 					</>
 				)}
