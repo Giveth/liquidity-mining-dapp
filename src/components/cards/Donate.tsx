@@ -41,6 +41,7 @@ const Title = styled.span`
 	font-size: 58px;
 	margin: 7px 0px 10px 0px;
 	width: 700px;
+	font-weight: 700;
 `;
 
 const Desc = styled(P)`
