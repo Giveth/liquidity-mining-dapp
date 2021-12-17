@@ -68,6 +68,7 @@ interface IV3StakeCardProps {
 	isConfirming?: boolean;
 	handleStakeStatus: Dispatch<SetStateAction<StakeState>>;
 	handleSelectedNFT: Dispatch<SetStateAction<string>>;
+	setTxStatus: Dispatch<SetStateAction<any>>;
 }
 
 const STARTS_WITH = 'data:application/json;base64,';
@@ -79,6 +80,7 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 	isConfirming,
 	handleStakeStatus,
 	handleSelectedNFT,
+	setTxStatus,
 }) => {
 	const { address, provider } = useOnboard();
 	const { currentIncentive, loadPositions } = useLiquidityPositions();
@@ -121,6 +123,7 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 				currentIncentive,
 				handleStakeStatus,
 			);
+			setTxStatus(tx);
 			if (tx) {
 				handleStakeStatus(StakeState.CONFIRMED);
 			} else {
@@ -137,6 +140,7 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 				currentIncentive,
 				handleStakeStatus,
 			);
+			setTxStatus(tx);
 			if (tx) {
 				handleStakeStatus(StakeState.CONFIRMED);
 			} else {

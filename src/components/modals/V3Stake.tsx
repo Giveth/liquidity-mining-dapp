@@ -65,6 +65,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 						positions.map(position => (
 							<V3StakingCard
 								position={position}
+								setTxStatus={setTxStatus}
 								isUnstaking={isUnstakingModal}
 								key={position.tokenId.toString()}
 								handleStakeStatus={setStakeStatus}
