@@ -1,5 +1,6 @@
 import { FC, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
+import Lottie from 'react-lottie';
 import Image from 'next/image';
 import {
 	IconExternalLink,
@@ -20,8 +21,8 @@ import { LiquidityPosition } from '@/types/nfts';
 import { Row } from '@/components/styled-components/Grid';
 import { useLiquidityPositions, useOnboard } from '@/context';
 import { IconWithTooltip } from '../IconWithToolTip';
-import Lottie from 'react-lottie';
 import LoadingAnimation from '@/animations/loading.json';
+import { StakeState } from '../modals/V3Stake';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -31,15 +32,6 @@ const loadingAnimationOptions = {
 		preserveAspectRatio: 'xMidYMid slice',
 	},
 };
-
-enum StakeState {
-	UNKNOWN,
-	CONFIRMING,
-	CONFIRMED,
-	REJECT,
-	SUBMITTING,
-	ERROR,
-}
 
 const LoadingButtonContainer = styled.span`
 	display: flex;
