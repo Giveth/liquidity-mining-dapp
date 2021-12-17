@@ -17,27 +17,6 @@ import { Title } from '../Header.sc';
 import { IconGIV } from '../Icons/GIV';
 import { Row } from '../styled-components/Grid';
 
-export const GIVBoxWithPriceContainer = styled(Row)`
-	background-color: ${brandColors.giv[500]}66;
-	margin: 16px 0;
-	border-radius: 8px;
-	padding: 24px;
-	gap: 8px;
-`;
-
-export const GIVBoxWithPriceIcon = styled(IconGIV)``;
-
-export const GIVBoxWithPriceAmount = styled(Title)`
-	margin-left: 8px;
-	color: ${neutralColors.gray[100]};
-`;
-
-export const GIVBoxWithPriceUSD = styled(P)`
-	color: ${brandColors.deep[200]};
-	user-select: none;
-	opacity: 0;
-`;
-
 export const HarvestAllModalContainer = styled.div`
 	width: 686px;
 	padding: 24px;

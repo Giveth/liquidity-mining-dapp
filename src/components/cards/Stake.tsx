@@ -17,16 +17,17 @@ import {
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
 import { UserContext } from '../../context/user.context';
-import { utils } from 'ethers';
+import { utils, BigNumber as EthersBigNumber, constants } from 'ethers';
 import { fetchGivStakingInfo } from '../../lib/stakingPool';
 import config from '../../configuration';
 import { APR } from '../../types/poolInfo';
 import BigNumber from 'bignumber.js';
-import { formatEthHelper, Zero } from '../../helpers/number';
+import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
 import { PoolStakingConfig, StakingType } from '@/types/config';
 import { StakePoolInfo } from '@/types/poolInfo';
 import { fetchLPStakingInfo } from '@/lib/stakingPool';
 import { useLiquidityPositions } from '@/context';
+import { useTokenDistro } from '@/context/tokenDistro.context';
 
 const InvestCardContainer = styled(Card)`
 	::before {
@@ -118,16 +119,19 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
 	const { claimableAmount } = useContext(UserContext);
 
-	const [deposit, setDeposit] = useState<any>();
+	const [deposit, setDeposit] = useState<any>(0);
+	const [potentialClaim, setPotentialClaim] = useState<EthersBigNumber>(
+		constants.Zero,
+	);
 	const [earnEstimate, setEarnEstimate] = useState<BigNumber>(Zero);
-	const [APR, setAPR] = useState<any>();
+	const [APR, setAPR] = useState<BigNumber>(Zero);
 	const { apr: univ3apr } = useLiquidityPositions();
-	const [potentialClaim, setPotentialClaim] = useState<BigNumber>(Zero);
+	const { tokenDistroHelper } = useTokenDistro();
 
 	const depositChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
 		const { value } = e.target;
 		if (value.length === 0) {
-			setDeposit(null);
+			setDeposit(undefined);
 		} else if (isNaN(+value)) {
 			setDeposit(deposit);
 		} else {
@@ -143,9 +147,25 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	}, [claimableAmount]);
 
 	useEffect(() => {
-		const stackedWithApr = APR ? APR.times(deposit).div(100).div(12) : Zero;
-		setPotentialClaim(stackedWithApr.times(0.1));
-		setEarnEstimate(stackedWithApr.times(0.9).div(52 * 5));
+		let _deposit = 0;
+		if (!isNaN(deposit)) {
+			_deposit = deposit;
+		}
+		const stackedWithApr = APR ? APR.times(_deposit).div(1200) : Zero;
+		if (stackedWithApr.isNaN()) return;
+		const convertedStackedWithApr = EthersBigNumber.from(
+			stackedWithApr.toFixed(0),
+		).mul(constants.WeiPerEther);
+		setPotentialClaim(
+			tokenDistroHelper.getLiquidPart(convertedStackedWithApr),
+		);
+		setEarnEstimate(
+			tokenDistroHelper.getStreamPartTokenPerWeek(
+				convertedStackedWithApr,
+			),
+		);
+		// setPotentialClaim(stackedWithApr.times(0.1));
+		// setEarnEstimate(stackedWithApr.times(0.9).div(52 * 5));
 	}, [APR, deposit]);
 
 	const mounted = useRef(true);
@@ -163,7 +183,10 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		);
 		APRs.push(univ3apr);
 		const sortedAPRs = APRs.sort((a, b) => (a.gt(b) ? 0 : -1));
-		setAPR(sortedAPRs.pop());
+		const _apr = sortedAPRs.pop();
+		if (_apr) {
+			setAPR(_apr);
+		}
 	};
 
 	useEffect(() => {
@@ -244,13 +267,13 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 							<Row justifyContent='space-between'>
 								<PoolItem>Claimable</PoolItem>
 								<PoolItemBold>
-									{formatEthHelper(potentialClaim, 2)} GIV
+									{formatWeiHelper(potentialClaim)} GIV
 								</PoolItemBold>
 							</Row>
 							<Row justifyContent='space-between'>
 								<PoolItem>Streaming</PoolItem>
 								<PoolItemBold>
-									{formatEthHelper(earnEstimate, 2)} GIV/week
+									{formatWeiHelper(earnEstimate)} GIV/week
 								</PoolItemBold>
 							</Row>
 						</PoolItems>

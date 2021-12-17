@@ -6,9 +6,11 @@ import { Button } from '@giveth/ui-design-system';
 import { switchNetwork } from '@/lib/metamask';
 
 import { chainName } from '@/utils/constants';
+import { Modal, IModal } from './Modal';
+
 import { OnboardContext } from '@/context/onboard.context';
 interface IWrongNetworkInnerModal {
-	text: string;
+	text?: string;
 	targetNetworks: number[];
 }
 
@@ -63,4 +65,37 @@ const ButtonsContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
+`;
+
+interface IWrongNetworkModal extends IModal, IWrongNetworkInnerModal {}
+
+export const WrongNetworkModal: FC<IWrongNetworkModal> = ({
+	text,
+	targetNetworks,
+	showModal,
+	setShowModal,
+}) => {
+	return (
+		<Modal showModal={showModal} setShowModal={setShowModal} hiddenClose>
+			<WrongNetworkModalContainer>
+				<WrongNetworkModalTitle>
+					You&apos;re connected to the wrong network!
+				</WrongNetworkModalTitle>
+				<WrongNetworkInnerModal
+					text={text}
+					targetNetworks={targetNetworks}
+				/>
+			</WrongNetworkModalContainer>
+		</Modal>
+	);
+};
+
+const WrongNetworkModalContainer = styled.div`
+	padding: 20px 30px;
+`;
+
+const WrongNetworkModalTitle = styled.span`
+	font-family: 'Red Hat Text';
+	font-size: 24px;
+	font-bold;
 `;

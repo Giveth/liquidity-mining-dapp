@@ -31,11 +31,7 @@ export const Modal: React.FC<IModal> = ({
 			<ModalWrapper>
 				{children}
 				{!hiddenClose && (
-					<CloseModalButton
-						onClick={() => {
-							setShowModal(false);
-						}}
-					>
+					<CloseModalButton onClick={() => setShowModal(false)}>
 						<IconX size={24} />
 					</CloseModalButton>
 				)}

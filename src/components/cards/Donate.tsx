@@ -10,7 +10,10 @@ import {
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
 import { UserContext } from '../../context/user.context';
-import { utils } from 'ethers';
+import { utils, BigNumber as EthersBigNumber, constants } from 'ethers';
+import { useTokenDistro } from '@/context/tokenDistro.context';
+import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
+import BigNumber from 'bignumber.js';
 
 const DonateCardContainer = styled(Card)`
 	::before {
@@ -50,6 +53,10 @@ const DonateLabel = styled.span`
 
 const DonateInput = styled.div`
 	width: 392px;
+`;
+
+const MaxDonateGIV = styled(MaxGIV)`
+	cursor: pointer;
 `;
 
 const GetBack = styled(DonateRow)`
@@ -116,12 +123,15 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { claimableAmount } = useContext(UserContext);
 
 	const [donation, setDonation] = useState<any>(0);
-	const [potentialClaim, setPotentialClaim] = useState<number>(0);
-	const [earnEstimate, setEarnEstimate] = useState<number>(0);
+	const [potentialClaim, setPotentialClaim] = useState<EthersBigNumber>(
+		constants.Zero,
+	);
+	const [earnEstimate, setEarnEstimate] = useState<BigNumber>(Zero);
+	const { tokenDistroHelper } = useTokenDistro();
 
 	const stackedChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
 		if (e.target.value.length === 0) {
-			setDonation(null);
+			setDonation(undefined);
 		} else if (isNaN(+e.target.value)) {
 			setDonation(donation);
 		} else {
@@ -137,9 +147,24 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 	}, [claimableAmount]);
 
 	useEffect(() => {
-		const donationWithGivBacks = donation * 0.75;
-		setPotentialClaim(donationWithGivBacks * 0.1);
-		setEarnEstimate((donationWithGivBacks * 0.9) / (52 * 5));
+		let _donation = 0;
+		if (!isNaN(donation)) {
+			_donation = donation;
+		}
+		const donationWithGivBacks = _donation * 0.75;
+		const convertedStackedWithApr = EthersBigNumber.from(
+			donationWithGivBacks.toFixed(0),
+		).mul(constants.WeiPerEther);
+		setPotentialClaim(
+			tokenDistroHelper.getLiquidPart(convertedStackedWithApr),
+		);
+		setEarnEstimate(
+			tokenDistroHelper.getStreamPartTokenPerWeek(
+				convertedStackedWithApr,
+			),
+		);
+		// setPotentialClaim(donationWithGivBacks * 0.1);
+		// setEarnEstimate((donationWithGivBacks * 0.9) / (52 * 5));
 	}, [donation]);
 
 	return (
@@ -164,7 +189,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 							justifyContent={'space-between'}
 						>
 							<DonateLabel>Your donation</DonateLabel>
-							<MaxGIV
+							<MaxDonateGIV
 								onClick={() =>
 									setDonation(
 										Number(
@@ -174,7 +199,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 								}
 							>{`Max ${utils.formatEther(
 								claimableAmount,
-							)} GIV`}</MaxGIV>
+							)} GIV`}</MaxDonateGIV>
 						</Row>
 						<DonateInput>
 							<InputWithUnit
@@ -204,13 +229,13 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 							<Row justifyContent='space-between'>
 								<PoolItem>Claimable</PoolItem>
 								<PoolItemBold>
-									{potentialClaim.toFixed(2)} GIV
+									{formatWeiHelper(potentialClaim)} GIV
 								</PoolItemBold>
 							</Row>
 							<Row justifyContent='space-between'>
 								<PoolItem>Streaming</PoolItem>
 								<PoolItemBold>
-									{earnEstimate.toFixed(2)} GIV/week
+									{formatWeiHelper(earnEstimate)} GIV/week
 								</PoolItemBold>
 							</Row>
 						</PoolItems>
