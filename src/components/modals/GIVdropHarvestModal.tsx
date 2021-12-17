@@ -96,31 +96,34 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 
 	return (
 		<Modal showModal={showModal} setShowModal={setShowModal}>
-			{claimState === ClaimState.UNKNOWN && (
-				<HarvestAllModalContainer>
-					<HarvestAllModalTitleRow alignItems='center'>
-						<HarvestAllModalTitle weight={700}>
-							GIVdrop
-						</HarvestAllModalTitle>
-					</HarvestAllModalTitleRow>
-					{givdropAmount && givdropAmount.gt(0) && (
-						<>
-							<HelpRow alignItems='center'>
-								<B>Claimable from GIVdrop</B>
-								{/* <IconHelp
+			<HarvestAllModalContainer>
+				{claimState === ClaimState.UNKNOWN && (
+					<>
+						<HarvestAllModalTitleRow alignItems='center'>
+							<HarvestAllModalTitle weight={700}>
+								GIVdrop
+							</HarvestAllModalTitle>
+						</HarvestAllModalTitleRow>
+						{givdropAmount && givdropAmount.gt(0) && (
+							<>
+								<HelpRow alignItems='center'>
+									<B>Claimable from GIVdrop</B>
+									{/* <IconHelp
 									size={16}
 									color={brandColors.deep[100]}
 								/> */}
-							</HelpRow>
-							<GIVBoxWithPrice
-								amount={givdropAmount}
-								price={calcUSD(formatWeiHelper(givdropAmount))}
-							/>
-							<HelpRow alignItems='center'>
-								<Caption>
-									Your initial GIVstream flowrate
-								</Caption>
-								{/* <IconWithTooltip
+								</HelpRow>
+								<GIVBoxWithPrice
+									amount={givdropAmount}
+									price={calcUSD(
+										formatWeiHelper(givdropAmount),
+									)}
+								/>
+								<HelpRow alignItems='center'>
+									<Caption>
+										Your initial GIVstream flowrate
+									</Caption>
+									{/* <IconWithTooltip
 									icon={
 										<IconHelp
 											size={16}
@@ -134,116 +137,119 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 										claim liquid rewards!
 									</TooltipContent>
 								</IconWithTooltip> */}
-							</HelpRow>
-							<RateRow alignItems='center'>
-								<IconGIVStream size={24} />
-								<GIVRate>
-									{formatWeiHelper(givDropStream)}
-								</GIVRate>
-								<Lead>GIV/week</Lead>
-							</RateRow>
-						</>
-					)}
-					{!currentBalance.givback.isZero() && (
-						<>
-							<HelpRow alignItems='center'>
-								<B>Claimable from GIVbacks</B>
-							</HelpRow>
-							<GIVBoxWithPrice
-								amount={givBackLiquidPart}
-								price={calcUSD(
-									formatWeiHelper(givBackLiquidPart),
-								)}
-							/>
-							<HelpRow alignItems='center'>
-								<Caption>
-									Added to your GIVstream flowrate
-								</Caption>
-								<IconWithTooltip
-									icon={
-										<IconHelp
-											size={16}
-											color={brandColors.deep[100]}
-										/>
-									}
-									direction={'top'}
-								>
-									<TooltipContent>
-										Increase you GIVstream flowrate when you
-										claim liquid rewards!
-									</TooltipContent>
-								</IconWithTooltip>
-							</HelpRow>
-							<RateRow alignItems='center'>
-								<IconGIVStream size={24} />
-								<GIVRate>
-									{formatWeiHelper(givBackStream)}
-								</GIVRate>
-								<Lead>GIV/week</Lead>
-							</RateRow>
-						</>
-					)}
-					{!claimableNow.isZero() && (
-						<>
-							<HelpRow alignItems='center'>
-								<B>Claimable from GIVstream</B>
-							</HelpRow>
-							<GIVBoxWithPrice
-								amount={claimableNow.sub(givBackLiquidPart)}
-								price={calcUSD(formatWeiHelper(claimableNow))}
-							/>
-						</>
-					)}
-					<HarvestAllDesc>
-						When you harvest GIV rewards, all liquid GIV allocated
-						to you is sent to your wallet.
-					</HarvestAllDesc>
-					<HarvestButton
-						label='HARVEST'
-						size='medium'
-						buttonType='primary'
-						onClick={() => {
-							onClaim();
-						}}
+								</HelpRow>
+								<RateRow alignItems='center'>
+									<IconGIVStream size={24} />
+									<GIVRate>
+										{formatWeiHelper(givDropStream)}
+									</GIVRate>
+									<Lead>GIV/week</Lead>
+								</RateRow>
+							</>
+						)}
+						{!currentBalance.givback.isZero() && (
+							<>
+								<HelpRow alignItems='center'>
+									<B>Claimable from GIVbacks</B>
+								</HelpRow>
+								<GIVBoxWithPrice
+									amount={givBackLiquidPart}
+									price={calcUSD(
+										formatWeiHelper(givBackLiquidPart),
+									)}
+								/>
+								<HelpRow alignItems='center'>
+									<Caption>
+										Added to your GIVstream flowrate
+									</Caption>
+									<IconWithTooltip
+										icon={
+											<IconHelp
+												size={16}
+												color={brandColors.deep[100]}
+											/>
+										}
+										direction={'top'}
+									>
+										<TooltipContent>
+											Increase you GIVstream flowrate when
+											you claim liquid rewards!
+										</TooltipContent>
+									</IconWithTooltip>
+								</HelpRow>
+								<RateRow alignItems='center'>
+									<IconGIVStream size={24} />
+									<GIVRate>
+										{formatWeiHelper(givBackStream)}
+									</GIVRate>
+									<Lead>GIV/week</Lead>
+								</RateRow>
+							</>
+						)}
+						{!claimableNow.isZero() && (
+							<>
+								<HelpRow alignItems='center'>
+									<B>Claimable from GIVstream</B>
+								</HelpRow>
+								<GIVBoxWithPrice
+									amount={claimableNow.sub(givBackLiquidPart)}
+									price={calcUSD(
+										formatWeiHelper(claimableNow),
+									)}
+								/>
+							</>
+						)}
+						<HarvestAllDesc>
+							When you harvest GIV rewards, all liquid GIV
+							allocated to you is sent to your wallet.
+						</HarvestAllDesc>
+						<HarvestButton
+							label='HARVEST'
+							size='medium'
+							buttonType='primary'
+							onClick={() => {
+								onClaim();
+							}}
+						/>
+						<CancelButton
+							label='CANCEL'
+							size='medium'
+							buttonType='texty'
+							onClick={() => {
+								setShowModal(false);
+							}}
+						/>
+					</>
+				)}
+				{claimState === ClaimState.WAITING && (
+					<SubmittedInnerModal
+						title='Waiting confirmation.'
+						walletNetwork={network}
+						txHash={txStatus?.hash}
 					/>
-					<CancelButton
-						label='CANCEL'
-						size='medium'
-						buttonType='texty'
-						onClick={() => {
-							setShowModal(false);
-						}}
+				)}
+				{claimState === ClaimState.SUBMITTING && (
+					<SubmittedInnerModal
+						title='Submitting transaction.'
+						walletNetwork={network}
+						txHash={txStatus?.hash}
 					/>
-				</HarvestAllModalContainer>
-			)}
-			{claimState === ClaimState.WAITING && (
-				<SubmittedInnerModal
-					title='Waiting confirmation.'
-					walletNetwork={network}
-					txHash={txStatus?.hash}
-				/>
-			)}
-			{claimState === ClaimState.SUBMITTING && (
-				<SubmittedInnerModal
-					title='Submitting transaction.'
-					walletNetwork={network}
-					txHash={txStatus?.hash}
-				/>
-			)}
-			{claimState === ClaimState.CLAIMED && (
-				<ConfirmedInnerModal
-					title='Successful transaction.'
-					walletNetwork={network}
-					txHash={txStatus?.hash}
-				/>
-			)}
-			{claimState === ClaimState.ERROR && (
-				<ErrorInnerModal
-					title='Something went wrong.'
-					walletNetwork={network}
-					txHash={txStatus?.hash}
-				/>
-			)}
+				)}
+				{claimState === ClaimState.CLAIMED && (
+					<ConfirmedInnerModal
+						title='Successful transaction.'
+						walletNetwork={network}
+						txHash={txStatus?.hash}
+					/>
+				)}
+				{claimState === ClaimState.ERROR && (
+					<ErrorInnerModal
+						title='Something went wrong.'
+						walletNetwork={network}
+						txHash={txStatus?.hash}
+					/>
+				)}
+			</HarvestAllModalContainer>
 		</Modal>
 	);
 };
