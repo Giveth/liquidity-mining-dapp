@@ -203,7 +203,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			break;
 		case GiveDropStateType.Success:
 			title = `You have ${utils.formatEther(
-				claimableAmount,
+				claimableAmount.div(10),
 			)} GIV to claim.`;
 			desc = 'Congrats, your GIVdrop awaits. Go claim it!';
 			bg = {
