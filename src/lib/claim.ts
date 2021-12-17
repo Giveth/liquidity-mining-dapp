@@ -49,11 +49,9 @@ export const getERC20Contract = (
 export const fetchAirDropClaimData = async (
 	address: string,
 ): Promise<ClaimData | undefined> => {
+	if (!address) return undefined;
 	try {
-		const data = {
-			address: address.toLowerCase(),
-		};
-		console.log(`data`, data);
+		const data = { address };
 		const response = await fetch('/api/airdrop', {
 			method: 'POST',
 			mode: 'cors',
