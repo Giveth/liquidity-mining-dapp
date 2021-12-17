@@ -72,6 +72,7 @@ const config: EnvConfig = {
 				LM_ADDRESS: '0x1aD46D40648639f84a396Fef32132888038c5aA8',
 				type: StakingType.UNISWAP,
 				title: 'GIV / ETH',
+				description: '0.3% tier only',
 				provideLiquidityLink: `https://app.uniswap.org/#/add/ETH/0x900d7e4985461ef158f04ca2Ef1aBd136c620DA0/3000`,
 				unit: 'NFT',
 			},
