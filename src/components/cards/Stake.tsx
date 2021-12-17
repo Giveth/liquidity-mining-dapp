@@ -166,7 +166,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		);
 		// setPotentialClaim(stackedWithApr.times(0.1));
 		// setEarnEstimate(stackedWithApr.times(0.9).div(52 * 5));
-	}, [APR, deposit]);
+	}, [APR, deposit, claimableAmount, tokenDistroHelper]);
 
 	const mounted = useRef(true);
 	useEffect(

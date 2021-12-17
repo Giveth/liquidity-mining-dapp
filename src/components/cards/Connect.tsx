@@ -16,6 +16,9 @@ import {
 } from '../views/claim/Claim.view';
 import next from 'next';
 import { addToken } from '@/lib/metamask';
+import config from '@/config/development';
+import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
+
 interface IConnectCardContainerProps {
 	data: any;
 }
@@ -146,7 +149,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep, goFirstStep } =
 		useContext(ClaimViewContext);
 
-	const { address, connect } = useContext(OnboardContext);
+	const { address, isReady, connect, network } = useContext(OnboardContext);
 	const { submitUserAddress, claimableAmount, giveDropState, resetWallet } =
 		useContext(UserContext);
 
@@ -154,6 +157,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const [addressSubmitted, setAddressSubmitted] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [connectWallet, setConnectionWallet] = useState<boolean>(false);
+	const [networkModal, setNetworkModal] = useState<boolean>(false);
 
 	useEffect(() => {
 		setWalletAddress(address);
@@ -175,6 +179,12 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 		await submitUserAddress(value);
 		setAddressSubmitted(true);
 	};
+
+	const parseEther = (value: BigNumber) =>
+		(+utils.formatEther(value)).toLocaleString('en-US', {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2,
+		});
 
 	let title;
 	let desc;
@@ -202,7 +212,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			};
 			break;
 		case GiveDropStateType.Success:
-			title = `You have ${utils.formatEther(
+			title = `You have ${parseEther(
 				claimableAmount.div(10),
 			)} GIV to claim.`;
 			desc = 'Congrats, your GIVdrop awaits. Go claim it!';
@@ -248,157 +258,178 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			break;
 	}
 
-	const parseEther = (value: BigNumber) =>
-		(+utils.formatEther(value)).toLocaleString('en-US', {
-			minimumFractionDigits: 2,
-			maximumFractionDigits: 2,
-		});
+	const checkConnection = async () => {
+		if (!isReady) await connect();
+		goNextStep();
+	};
+
+	useEffect(() => {
+		setNetworkModal(network !== config.XDAI_NETWORK_NUMBER && isReady);
+	}, [network, isReady]);
 
 	return (
-		<ConnectCardContainer activeIndex={activeIndex} index={index} data={bg}>
-			{giveDropState !== GiveDropStateType.Claimed && (
-				<Header>
-					<Title as='h1'>{title}</Title>
-					<Desc size='small' color={'#CABAFF'}>
-						{desc}
-					</Desc>
-				</Header>
+		<>
+			{networkModal && (
+				<WrongNetworkModal
+					showModal={networkModal}
+					setShowModal={setNetworkModal}
+					targetNetworks={[config.XDAI_NETWORK_NUMBER]}
+				/>
 			)}
-			{giveDropState !== GiveDropStateType.Success &&
-				giveDropState !== GiveDropStateType.Claimed && (
-					<Row alignItems={'center'} justifyContent={'space-between'}>
-						<ConnectButton
-							secondary
-							onClick={async () => {
-								await connect();
-								setConnectionWallet(true);
-							}}
-						>
-							{btnLabel}
-						</ConnectButton>
-						<Span>or</Span>
-						<InputWithButtonContainer>
-							<WalletAddressInputWithButton
-								btnLable='Check'
-								placeholder='Enter an address to check your GIVdrop'
-								walletAddress={walletAddress}
-								onSubmit={submitAddress}
-								disabled={loading}
-								onUpdate={() => {
-									resetWallet();
-								}}
-							/>
-						</InputWithButtonContainer>
-					</Row>
+			<ConnectCardContainer
+				activeIndex={activeIndex}
+				index={index}
+				data={bg}
+			>
+				{giveDropState !== GiveDropStateType.Claimed && (
+					<Header>
+						<Title as='h1'>{title}</Title>
+						<Desc size='small' color={'#CABAFF'}>
+							{desc}
+						</Desc>
+					</Header>
 				)}
-			{giveDropState === GiveDropStateType.Success &&
-				activeIndex === index && <ArrowButton onClick={goNextStep} />}
-			{giveDropState === GiveDropStateType.Claimed && (
-				<>
-					<SunImage>
-						<Image
-							src='/images/claimed_logo.svg'
-							height='225'
-							width='255'
-							alt='Claimed sun'
-						/>
-					</SunImage>
-					<StarsImage>
-						<Image
-							src='/images/claimed_stars.svg'
-							height='105'
-							width='105'
-							alt='Yellow stars.'
-						/>
-					</StarsImage>
-					<ClaimedContainer>
-						<ClaimedTitle>Congratulations!</ClaimedTitle>
-						<ClaimedSubtitleContainer>
-							<ClaimedSubtitleA>
-								You already claimed your GIV!
-								<AddGivButton
-									onClick={() =>
-										addToken(
-											'0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3',
-											'TestGIV',
-											18,
-											'',
-										)
-									}
-								>
-									<Image
-										src='/images/icons/metamask.svg'
-										height='24'
-										width='24'
-										alt='Metamask logo.'
-									/>
-								</AddGivButton>
-							</ClaimedSubtitleA>
-							<a
-								href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
-								target='_blank'
-								rel='noreferrer'
-							>
-								<SocialButton>
-									share on twitter
-									<Image
-										src='/images/icons/twitter.svg'
-										height='15'
-										width='15'
-										alt='Twitter logo.'
-									/>
-								</SocialButton>
-							</a>
-							<a
-								href='https://swag.giveth.io/'
-								target='_blank'
-								rel='noreferrer'
-							>
-								<SocialButton>
-									claim your free swag
-									<Image
-										src='/images/icons/tshirt.svg'
-										height='15'
-										width='15'
-										alt='T shirt.'
-									/>
-								</SocialButton>
-							</a>
-							<a
-								href='https://discord.giveth.io/'
-								target='_blank'
-								rel='noreferrer'
-							>
-								<SocialButton>
-									join our discord
-									<Image
-										src='/images/icons/discord.svg'
-										height='15'
-										width='15'
-										alt='discord logo.'
-									/>
-								</SocialButton>
-							</a>
-							<Link href='/' passHref>
-								<a target='_blank' rel='noreferrer'>
-									<ExploreButton>
-										explore the giveconomy
-									</ExploreButton>
-								</a>
-							</Link>
-							<ClaimFromAnother
-								onClick={() => {
-									goFirstStep();
-									resetWallet();
+				{giveDropState !== GiveDropStateType.Success &&
+					giveDropState !== GiveDropStateType.Claimed && (
+						<Row
+							alignItems={'center'}
+							justifyContent={'space-between'}
+						>
+							<ConnectButton
+								secondary
+								onClick={async () => {
+									await connect();
+									setConnectionWallet(true);
 								}}
 							>
-								Claim from another address!
-							</ClaimFromAnother>
-						</ClaimedSubtitleContainer>
-					</ClaimedContainer>
-				</>
-			)}
-		</ConnectCardContainer>
+								{btnLabel}
+							</ConnectButton>
+							<Span>or</Span>
+							<InputWithButtonContainer>
+								<WalletAddressInputWithButton
+									btnLable='Check'
+									placeholder='Enter an address to check your GIVdrop'
+									walletAddress={walletAddress}
+									onSubmit={submitAddress}
+									disabled={loading}
+									onUpdate={() => {
+										resetWallet();
+									}}
+								/>
+							</InputWithButtonContainer>
+						</Row>
+					)}
+				{giveDropState === GiveDropStateType.Success &&
+					activeIndex === index && (
+						<ArrowButton onClick={checkConnection} />
+					)}
+				{giveDropState === GiveDropStateType.Claimed && (
+					<>
+						<SunImage>
+							<Image
+								src='/images/claimed_logo.svg'
+								height='225'
+								width='255'
+								alt='Claimed sun'
+							/>
+						</SunImage>
+						<StarsImage>
+							<Image
+								src='/images/claimed_stars.svg'
+								height='105'
+								width='105'
+								alt='Yellow stars.'
+							/>
+						</StarsImage>
+						<ClaimedContainer>
+							<ClaimedTitle>Congratulations!</ClaimedTitle>
+							<ClaimedSubtitleContainer>
+								<ClaimedSubtitleA>
+									You already claimed your GIV!
+									<AddGivButton
+										onClick={() =>
+											addToken(
+												'0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3',
+												'TestGIV',
+												18,
+												'',
+											)
+										}
+									>
+										<Image
+											src='/images/icons/metamask.svg'
+											height='24'
+											width='24'
+											alt='Metamask logo.'
+										/>
+									</AddGivButton>
+								</ClaimedSubtitleA>
+								<a
+									href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
+									target='_blank'
+									rel='noreferrer'
+								>
+									<SocialButton>
+										share on twitter
+										<Image
+											src='/images/icons/twitter.svg'
+											height='15'
+											width='15'
+											alt='Twitter logo.'
+										/>
+									</SocialButton>
+								</a>
+								<a
+									href='https://swag.giveth.io/'
+									target='_blank'
+									rel='noreferrer'
+								>
+									<SocialButton>
+										claim your free swag
+										<Image
+											src='/images/icons/tshirt.svg'
+											height='15'
+											width='15'
+											alt='T shirt.'
+										/>
+									</SocialButton>
+								</a>
+								<a
+									href='https://discord.giveth.io/'
+									target='_blank'
+									rel='noreferrer'
+								>
+									<SocialButton>
+										join our discord
+										<Image
+											src='/images/icons/discord.svg'
+											height='15'
+											width='15'
+											alt='discord logo.'
+										/>
+									</SocialButton>
+								</a>
+								<Link href='/' passHref>
+									<a target='_blank' rel='noreferrer'>
+										<ExploreButton>
+											explore the giveconomy
+										</ExploreButton>
+									</a>
+								</Link>
+								<ClaimFromAnother
+									onClick={() => {
+										goFirstStep();
+										resetWallet();
+									}}
+								>
+									Claim from another address!
+								</ClaimFromAnother>
+							</ClaimedSubtitleContainer>
+						</ClaimedContainer>
+					</>
+				)}
+			</ConnectCardContainer>
+		</>
 	);
 };
 

@@ -108,7 +108,7 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 				tokenDistroHelper.getStreamPartTokenPerWeek(claimableAmount),
 			),
 		);
-	}, [claimableAmount]);
+	}, [claimableAmount, claimableAmount, tokenDistroHelper]);
 
 	return (
 		<StreamCardContainer activeIndex={activeIndex} index={index}>
