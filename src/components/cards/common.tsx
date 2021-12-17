@@ -21,15 +21,47 @@ export const Card = styled.div<ICardProps>`
 			return '50%';
 		}
 		if (props.index - props.activeIndex === 1) {
-			return `calc(100% + ${1120 / 2 - 120}px)`;
+			return `calc(100% + ${1120 / 2 - 60}px)`;
 		}
 		if (props.index - props.activeIndex === -1) {
-			return `-${1120 / 2 - 120}px;`;
+			return `-${1120 / 2 - 60}px;`;
 		}
 		return `${(props.index - props.activeIndex) * 100 + 50}%`;
 	}};
 	transform: translate(-50%, -60%);
 	transition: left 0.3s ease-out;
+	@media only screen and (max-width: 1360px) {
+		width: 944px;
+		padding: 87px 57px;
+		left: ${props => {
+			if (props.index - props.activeIndex === 0) {
+				return '50%';
+			}
+			if (props.index - props.activeIndex === 1) {
+				return `calc(100% + ${944 / 2 - 40}px)`;
+			}
+			if (props.index - props.activeIndex === -1) {
+				return `-${944 / 2 - 40}px;`;
+			}
+			return `${(props.index - props.activeIndex) * 100 + 50}%`;
+		}};
+	}
+	@media only screen and (max-width: 1120px) {
+		width: 705px;
+		padding: 87px 24px;
+		left: ${props => {
+			if (props.index - props.activeIndex === 0) {
+				return '50%';
+			}
+			if (props.index - props.activeIndex === 1) {
+				return `calc(100% + ${705 / 2 - 20}px)`;
+			}
+			if (props.index - props.activeIndex === -1) {
+				return `-${705 / 2 - 20}px;`;
+			}
+			return `${(props.index - props.activeIndex) * 100 + 50}%`;
+		}};
+	}
 `;
 
 export const Header = styled.div`
