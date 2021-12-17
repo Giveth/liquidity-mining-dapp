@@ -105,9 +105,7 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 	useEffect(() => {
 		setStreamValue(
 			formatWeiHelper(
-				tokenDistroHelper.getStreamPartTokenPerWeek(
-					claimableAmount.mul(9).div(10),
-				),
+				tokenDistroHelper.getStreamPartTokenPerWeek(claimableAmount),
 			),
 		);
 	}, [claimableAmount]);
