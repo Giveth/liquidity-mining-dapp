@@ -135,14 +135,14 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		} else if (isNaN(+value)) {
 			setDeposit(deposit);
 		} else {
-			if (claimableAmount.gte(utils.parseEther(value)))
+			if (claimableAmount.div(10).gte(utils.parseEther(value)))
 				setDeposit(+value);
 		}
 	};
 
 	useEffect(() => {
 		if (claimableAmount) {
-			setDeposit(utils.formatEther(claimableAmount));
+			setDeposit(utils.formatEther(claimableAmount.div(10)));
 		}
 	}, [claimableAmount]);
 
@@ -230,12 +230,14 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 								onClick={() =>
 									setDeposit(
 										Number(
-											utils.formatEther(claimableAmount),
+											utils.formatEther(
+												claimableAmount.div(10),
+											),
 										),
 									)
 								}
 							>{`Max ${utils.formatEther(
-								claimableAmount,
+								claimableAmount.div(10),
 							)} GIV`}</MaxStakeGIV>
 						</Row>
 						<DepositInput>

@@ -65,7 +65,8 @@ export const CongratulationsCard = () => {
 					<Description>
 						<P>
 							You have successfully claimed{' '}
-							{utils.formatEther(claimableAmount)} GIV tokens.
+							{utils.formatEther(claimableAmount.div(10))} GIV
+							tokens.
 						</P>
 						<P>Add GIV to Metamask</P>
 					</Description>

@@ -298,7 +298,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 						<ClaimedSubtitleContainer>
 							<ClaimedSubtitleA>
 								You have successfully claimed{' '}
-								{parseEther(claimableAmount)} GIV.{' '}
+								{parseEther(claimableAmount.div(10))} GIV.{' '}
 								<AddGivButton
 									onClick={() =>
 										addToken(
@@ -321,7 +321,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 								Plus you&apos;re getting an additional{' '}
 								<span style={{ color: '#FED670' }}>
 									{parseEther(
-										claimableAmount.mul(9).div(52 * 5),
+										claimableAmount.mul(9).div(10 * 52 * 5),
 									)}{' '}
 									GIV
 								</span>{' '}
@@ -407,7 +407,8 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 								openHarvestModal();
 							}}
 						>
-							CLAIM {utils.formatEther(claimableAmount)} GIV
+							CLAIM {utils.formatEther(claimableAmount.div(10))}
+							GIV
 						</ClaimButton>
 					</Row>
 					<Row alignItems={'center'} justifyContent={'center'}>

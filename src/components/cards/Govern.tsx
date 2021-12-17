@@ -154,7 +154,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 		} else if (isNaN(+e.target.value)) {
 			setStacked(stacked);
 		} else {
-			if (claimableAmount.gte(utils.parseEther(e.target.value)))
+			if (claimableAmount.div(10).gte(utils.parseEther(e.target.value)))
 				setStacked(+e.target.value);
 		}
 	};
@@ -182,7 +182,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	useEffect(() => {
 		if (claimableAmount) {
-			setStacked(utils.formatEther(claimableAmount));
+			setStacked(utils.formatEther(claimableAmount.div(10)));
 		}
 	}, [claimableAmount]);
 
@@ -249,12 +249,14 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 								onClick={() =>
 									setStacked(
 										Number(
-											utils.formatEther(claimableAmount),
+											utils.formatEther(
+												claimableAmount.div(10),
+											),
 										),
 									)
 								}
 							>{`Max ${utils.formatEther(
-								claimableAmount,
+								claimableAmount.div(10),
 							)} GIV`}</MaxStakeGIV>
 						</Row>
 						<GovernInput>

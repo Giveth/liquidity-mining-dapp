@@ -142,7 +142,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	useEffect(() => {
 		if (claimableAmount) {
-			setDonation(utils.formatEther(claimableAmount));
+			setDonation(utils.formatEther(claimableAmount.div(10)));
 		}
 	}, [claimableAmount]);
 
@@ -193,12 +193,14 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 								onClick={() =>
 									setDonation(
 										Number(
-											utils.formatEther(claimableAmount),
+											utils.formatEther(
+												claimableAmount.div(10),
+											),
 										),
 									)
 								}
 							>{`Max ${utils.formatEther(
-								claimableAmount,
+								claimableAmount.div(10),
 							)} GIV`}</MaxDonateGIV>
 						</Row>
 						<DonateInput>
