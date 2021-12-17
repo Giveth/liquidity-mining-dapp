@@ -239,6 +239,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 				showFailedClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
 			}
 		} catch (e) {
+			setClaimState(ClaimState.ERROR);
 			console.error(e);
 		}
 	};
