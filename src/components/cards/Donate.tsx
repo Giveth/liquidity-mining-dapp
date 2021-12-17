@@ -147,7 +147,11 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 	}, [claimableAmount]);
 
 	useEffect(() => {
-		const donationWithGivBacks = donation * 0.75;
+		let _donation = 0;
+		if (!isNaN(donation)) {
+			_donation = donation;
+		}
+		const donationWithGivBacks = _donation * 0.75;
 		const convertedStackedWithApr = EthersBigNumber.from(
 			donationWithGivBacks.toFixed(0),
 		).mul(constants.WeiPerEther);

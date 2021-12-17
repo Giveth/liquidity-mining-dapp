@@ -160,7 +160,11 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 	};
 
 	useEffect(() => {
-		const stackedWithApr = apr ? apr.times(stacked).div(1200) : Zero;
+		let _stacked = 0;
+		if (!isNaN(stacked)) {
+			_stacked = stacked;
+		}
+		const stackedWithApr = apr ? apr.times(_stacked).div(1200) : Zero;
 		const convertedStackedWithApr = EthersBigNumber.from(
 			stackedWithApr.toFixed(0),
 		).mul(constants.WeiPerEther);
