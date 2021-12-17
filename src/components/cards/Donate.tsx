@@ -3,7 +3,7 @@ import Image from 'next/image';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
-import { H2, H4, P } from '../styled-components/Typography';
+import { H2, H3, H4, P } from '../styled-components/Typography';
 import { ArrowButton, Card, ICardProps, MaxGIV } from './common';
 import {
 	ClaimViewContext,
@@ -14,7 +14,8 @@ import { utils, BigNumber as EthersBigNumber, constants } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
 import BigNumber from 'bignumber.js';
-
+import { Subline, neutralColors, IconHelp } from '@giveth/ui-design-system';
+import { IconWithTooltip } from '../IconWithToolTip';
 const DonateCardContainer = styled(Card)`
 	::before {
 		content: '';
@@ -27,17 +28,24 @@ const DonateCardContainer = styled(Card)`
 		z-index: 0;
 	}
 `;
-
-const Header = styled.div`
-	margin-bottom: 60px;
+const GdropDonateTooltip = styled(Subline)`
+	color: ${neutralColors.gray[100]};
+	width: 260px;
 `;
 
-const Title = styled(H2)`
+const Header = styled.div`
+	margin-bottom: 15px;
+`;
+
+const Title = styled.span`
+	font-size: 58px;
+	margin: 7px 0px 10px 0px;
 	width: 700px;
 `;
 
 const Desc = styled(P)`
 	margin-top: 22px;
+	width: 700px;
 `;
 
 const DonateRow = styled(Row)`
@@ -84,7 +92,7 @@ const PoolCardTitle = styled.div`
 
 const PoolCard = styled.div`
 	width: 350px;
-	height: 164px;
+	height: 124px;
 	padding: 10px 30px;
 
 	background: #211985;
@@ -170,11 +178,11 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 	return (
 		<DonateCardContainer activeIndex={activeIndex} index={index}>
 			<Header>
-				<Title as='h1'>How to use your GIV</Title>
+				<Title as='h3'>Donate & get GIV back</Title>
 				<Desc size='small' color={'#CABAFF'}>
 					Donate to verified projects to get GIV with GIVbacks. The
-					project gets 100% of your donation, and you get GIV back
-					from Giveth!
+					project gets 100% of your donation, and you get rewarded by
+					Giveth with GIV!
 				</Desc>
 			</Header>
 			<Row alignItems={'center'} justifyContent={'space-between'}>
@@ -182,13 +190,21 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 					flexDirection='column'
 					justifyContent='space-between'
 				>
-					<H4 as='h2'>If you donate GIV</H4>
+					<H4 as='h2'>If you donate your GIVdrop</H4>
 					<div>
-						<Row
-							alignItems={'center'}
-							justifyContent={'space-between'}
-						>
-							<DonateLabel>Your donation</DonateLabel>
+						<Row justifyContent={'space-between'}>
+							<DonateLabel alignItems={'baseline'} gap={'8px'}>
+								Your donation
+								<IconWithTooltip
+									icon={<IconHelp size={16} />}
+									direction={'top'}
+								>
+									<GdropDonateTooltip>
+										Donations made in most tokens are
+										eligible for GIVbacks.
+									</GdropDonateTooltip>
+								</IconWithTooltip>
+							</DonateLabel>
 							<MaxDonateGIV
 								onClick={() =>
 									setDonation(
@@ -216,18 +232,6 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 						<PoolItems>
 							<Row justifyContent='space-between'>
 								<PoolItem>GIVbacks</PoolItem>
-								<PoolItemBold>
-									<Image
-										src='/images/icons/star.svg'
-										height='16'
-										width='16'
-										alt='Star icon'
-									/>
-									75%
-								</PoolItemBold>
-							</Row>
-							<Row justifyContent='space-between'>
-								<PoolItem>Claimable</PoolItem>
 								<PoolItemBold>
 									{formatWeiHelper(potentialClaim)} GIV
 								</PoolItemBold>
