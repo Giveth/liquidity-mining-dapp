@@ -124,7 +124,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		constants.Zero,
 	);
 	const [earnEstimate, setEarnEstimate] = useState<BigNumber>(Zero);
-	const [APR, setAPR] = useState<any>();
+	const [APR, setAPR] = useState<BigNumber>(Zero);
 	const { apr: univ3apr } = useLiquidityPositions();
 	const { tokenDistroHelper } = useTokenDistro();
 
@@ -147,7 +147,12 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	}, [claimableAmount]);
 
 	useEffect(() => {
-		const stackedWithApr = APR ? APR.times(deposit).div(1200) : Zero;
+		let _deposit = 0;
+		if (!isNaN(deposit)) {
+			_deposit = deposit;
+		}
+		const stackedWithApr = APR ? APR.times(_deposit).div(1200) : Zero;
+		if (stackedWithApr.isNaN()) return;
 		const convertedStackedWithApr = EthersBigNumber.from(
 			stackedWithApr.toFixed(0),
 		).mul(constants.WeiPerEther);
@@ -178,7 +183,10 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		);
 		APRs.push(univ3apr);
 		const sortedAPRs = APRs.sort((a, b) => (a.gt(b) ? 0 : -1));
-		setAPR(sortedAPRs.pop());
+		const _apr = sortedAPRs.pop();
+		if (_apr) {
+			setAPR(_apr);
+		}
 	};
 
 	useEffect(() => {
