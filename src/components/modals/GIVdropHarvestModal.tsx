@@ -78,14 +78,8 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 	}, [currentBalance, tokenDistroHelper]);
 
 	useEffect(() => {
-		const { totalTokens, initialAmount } = tokenDistroHelper;
-		if (initialAmount.isZero()) return;
-
-		const rate = totalTokens.div(initialAmount);
 		setGivDropStream(
-			tokenDistroHelper.getStreamPartTokenPerWeek(
-				givdropAmount.mul(rate),
-			),
+			tokenDistroHelper.getStreamPartTokenPerWeek(givdropAmount),
 		);
 	}, [givdropAmount, currentBalance, tokenDistroHelper]);
 
@@ -114,9 +108,9 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 								/> */}
 								</HelpRow>
 								<GIVBoxWithPrice
-									amount={givdropAmount}
+									amount={givdropAmount.div(10)}
 									price={calcUSD(
-										formatWeiHelper(givdropAmount),
+										formatWeiHelper(givdropAmount.div(10)),
 									)}
 								/>
 								<HelpRow alignItems='center'>
