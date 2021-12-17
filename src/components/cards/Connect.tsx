@@ -31,17 +31,41 @@ const ConnectCardContainer = styled(Card)<IConnectCardContainerProps>`
 		right: ${props => props.data.right};
 		z-index: -1;
 	}
+	// @media only screen and (max-width: 1360px) {}
+	// @media only screen and (max-width: 1120px) {}
+	@media only screen and (max-width: 1120px) {
+		::before {
+			background-image: none;
+		}
+	}
 `;
 const Title = styled(H2)`
 	width: 800px;
+	@media only screen and (max-width: 1360px) {
+		width: none;
+	}
+	@media only screen and (max-width: 1120px) {
+	}
 `;
 
 const Desc = styled(P)`
 	margin-top: 22px;
 `;
 
+const ConnectRow = styled(Row)`
+	flex-direction: row;
+	gap: 16px;
+	// @media only screen and (max-width: 1360px) {}
+	@media only screen and (max-width: 1120px) {
+		flex-direction: column;
+	}
+`;
+
 const ConnectButton = styled(Button)`
 	width: 300px;
+	@media only screen and (max-width: 1360px) {
+		width: 257px;
+	}
 `;
 
 const Span = styled.div`
@@ -266,7 +290,10 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			)}
 			{giveDropState !== GiveDropStateType.Success &&
 				giveDropState !== GiveDropStateType.Claimed && (
-					<Row alignItems={'center'} justifyContent={'space-between'}>
+					<ConnectRow
+						alignItems={'center'}
+						justifyContent={'space-between'}
+					>
 						<ConnectButton
 							secondary
 							onClick={async () => {
@@ -291,7 +318,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 								}}
 							/>
 						</InputWithButtonContainer>
-					</Row>
+					</ConnectRow>
 				)}
 			{giveDropState === GiveDropStateType.Success &&
 				activeIndex === index && <ArrowButton onClick={goNextStep} />}
