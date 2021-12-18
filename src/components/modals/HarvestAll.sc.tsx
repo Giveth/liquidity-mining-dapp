@@ -18,7 +18,8 @@ import { IconGIV } from '../Icons/GIV';
 import { Row } from '../styled-components/Grid';
 
 export const HarvestAllModalContainer = styled.div`
-	width: 686px;
+	// width: 686px;
+	min-width: 380px;
 	padding: 24px;
 `;
 

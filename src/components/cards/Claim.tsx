@@ -168,7 +168,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 		address,
 	} = useContext(OnboardContext);
 
-	const [txStatus, setTxStatus] = useState(false);
+	const [txStatus, setTxStatus] = useState();
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [showClaimModal, setShowClaimModal] = useState<boolean>(false);
 	const [claimState, setClaimState] = useState<ClaimState>(
@@ -176,7 +176,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 	);
 
 	useEffect(() => {
-		setTxStatus(false);
+		setClaimState(ClaimState.UNKNOWN);
 	}, [address, userAddress]);
 
 	useEffect(() => {
@@ -223,15 +223,14 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 		try {
 			setClaimState(ClaimState.WAITING);
-			console.log(userAddress);
 			const tx = await claimAirDrop(userAddress, provider);
+			setTxStatus(tx);
 
-			showPendingClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
 			setClaimState(ClaimState.SUBMITTING);
-			const { status } = await tx.wait();
+			showPendingClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
+			await tx.wait();
 
-			if (status) {
-				setTxStatus(status);
+			if (tx.status) {
 				setClaimState(ClaimState.CLAIMED);
 				showConfirmedClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
 			} else {
@@ -275,7 +274,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 				/>
 			)}
 
-			{txStatus ? (
+			{claimState === ClaimState.CLAIMED ? (
 				<>
 					<SunImage>
 						<Image
@@ -383,7 +382,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 								onClick={() => {
 									goFirstStep();
 									resetWallet();
-									setTxStatus(false);
+									setClaimState(ClaimState.UNKNOWN);
 								}}
 							>
 								Claim from another address!

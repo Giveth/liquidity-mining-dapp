@@ -14,6 +14,7 @@ import {
 	HarvestAllModalTitleRow,
 	HarvestButton,
 	HelpRow,
+	Pending,
 	RateRow,
 	TooltipContent,
 } from './HarvestAll.sc';
@@ -27,12 +28,23 @@ import {
 	Lead,
 } from '@giveth/ui-design-system';
 import { IconWithTooltip } from '../IconWithToolTip';
-import { ethers } from 'ethers';
+import { ethers, constants } from 'ethers';
 import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
-import BigNumber from 'bignumber.js';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { useBalances } from '@/context';
 import { Zero } from '@ethersproject/constants';
+import BigNumber from 'bignumber.js';
+import Lottie from 'react-lottie';
+import LoadingAnimation from '@/animations/loading.json';
+
+const loadingAnimationOptions = {
+	loop: true,
+	autoplay: true,
+	animationData: LoadingAnimation,
+	rendererSettings: {
+		preserveAspectRatio: 'xMidYMid slice',
+	},
+};
 
 enum ClaimState {
 	UNKNOWN,
@@ -63,6 +75,9 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
 	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
 	const [givDropStream, setGivDropStream] = useState<BigNumber.Value>(0);
+	const [givDropAccStream, setGivDropAccStream] = useState<ethers.BigNumber>(
+		constants.Zero,
+	);
 	const [claimableNow, setClaimableNow] = useState(Zero);
 	const { tokenDistroHelper } = useTokenDistro();
 	const { currentBalance } = useBalances();
@@ -81,6 +96,16 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 		setGivDropStream(
 			tokenDistroHelper.getStreamPartTokenPerWeek(givdropAmount),
 		);
+		const amount = new BigNumber(givdropAmount.mul(9).div(10).toString());
+		const percent = new BigNumber(tokenDistroHelper.percent / 100);
+		const givDropAcc = amount
+			.times(percent)
+			.toFixed(0, BigNumber.ROUND_DOWN);
+		let _givDropAcc = ethers.BigNumber.from(givDropAcc);
+		if (!claimableNow.isZero()) {
+			_givDropAcc = _givDropAcc.add(claimableNow).sub(givBackLiquidPart);
+		}
+		setGivDropAccStream(_givDropAcc);
 	}, [givdropAmount, currentBalance, tokenDistroHelper]);
 
 	const calcUSD = (amount: string) => {
@@ -91,7 +116,8 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 	return (
 		<Modal showModal={showModal} setShowModal={setShowModal}>
 			<HarvestAllModalContainer>
-				{claimState === ClaimState.UNKNOWN && (
+				{(claimState === ClaimState.UNKNOWN ||
+					claimState === ClaimState.WAITING) && (
 					<>
 						<HarvestAllModalTitleRow alignItems='center'>
 							<HarvestAllModalTitle weight={700}>
@@ -102,10 +128,6 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 							<>
 								<HelpRow alignItems='center'>
 									<B>Claimable from GIVdrop</B>
-									{/* <IconHelp
-									size={16}
-									color={brandColors.deep[100]}
-								/> */}
 								</HelpRow>
 								<GIVBoxWithPrice
 									amount={givdropAmount.div(10)}
@@ -117,20 +139,6 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 									<Caption>
 										Your initial GIVstream flowrate
 									</Caption>
-									{/* <IconWithTooltip
-									icon={
-										<IconHelp
-											size={16}
-											color={brandColors.deep[100]}
-										/>
-									}
-									direction={'top'}
-								>
-									<TooltipContent>
-										Increase you GIVstream flowrate when you
-										claim liquid rewards!
-									</TooltipContent>
-								</IconWithTooltip> */}
 								</HelpRow>
 								<RateRow alignItems='center'>
 									<IconGIVStream size={24} />
@@ -139,6 +147,15 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 									</GIVRate>
 									<Lead>GIV/week</Lead>
 								</RateRow>
+								<HelpRow alignItems='center'>
+									<B>Claimable from GIVstream</B>
+								</HelpRow>
+								<GIVBoxWithPrice
+									amount={givDropAccStream}
+									price={calcUSD(
+										formatWeiHelper(givDropAccStream),
+									)}
+								/>
 							</>
 						)}
 						{!currentBalance.givback.isZero() && (
@@ -180,31 +197,30 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 								</RateRow>
 							</>
 						)}
-						{!claimableNow.isZero() && (
-							<>
-								<HelpRow alignItems='center'>
-									<B>Claimable from GIVstream</B>
-								</HelpRow>
-								<GIVBoxWithPrice
-									amount={claimableNow.sub(givBackLiquidPart)}
-									price={calcUSD(
-										formatWeiHelper(claimableNow),
-									)}
-								/>
-							</>
-						)}
 						<HarvestAllDesc>
 							When you harvest GIV rewards, all liquid GIV
 							allocated to you is sent to your wallet.
 						</HarvestAllDesc>
-						<HarvestButton
-							label='HARVEST'
-							size='medium'
-							buttonType='primary'
-							onClick={() => {
-								onClaim();
-							}}
-						/>
+						{claimState === ClaimState.WAITING ? (
+							<Pending>
+								<Lottie
+									options={loadingAnimationOptions}
+									height={40}
+									width={40}
+								/>
+								&nbsp;HARVEST PENDING
+							</Pending>
+						) : (
+							<HarvestButton
+								label='HARVEST'
+								size='medium'
+								buttonType='primary'
+								onClick={() => {
+									onClaim();
+								}}
+							/>
+						)}
+
 						<CancelButton
 							label='CANCEL'
 							size='medium'
@@ -212,33 +228,27 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 							onClick={() => {
 								setShowModal(false);
 							}}
+							disabled={claimState === ClaimState.WAITING}
 						/>
 					</>
 				)}
-				{claimState === ClaimState.WAITING && (
-					<SubmittedInnerModal
-						title='Waiting confirmation.'
-						walletNetwork={network}
-						txHash={txStatus?.hash}
-					/>
-				)}
 				{claimState === ClaimState.SUBMITTING && (
 					<SubmittedInnerModal
-						title='Submitting transaction.'
+						title='GIV'
 						walletNetwork={network}
 						txHash={txStatus?.hash}
 					/>
 				)}
 				{claimState === ClaimState.CLAIMED && (
 					<ConfirmedInnerModal
-						title='Successful transaction.'
+						title='GIV'
 						walletNetwork={network}
 						txHash={txStatus?.hash}
 					/>
 				)}
 				{claimState === ClaimState.ERROR && (
 					<ErrorInnerModal
-						title='Something went wrong.'
+						title='GIV'
 						walletNetwork={network}
 						txHash={txStatus?.hash}
 					/>
