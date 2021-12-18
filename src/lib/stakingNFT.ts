@@ -44,7 +44,6 @@ export const transfer = async (
 		](walletAddress, uniswapV3StakerContract.address, tokenId, data);
 
 		handleStakeStatus(StakeState.SUBMITTING);
-		await tx.wait();
 		return tx;
 	} catch (e) {
 		console.warn(e);
@@ -96,7 +95,6 @@ export const exit = async (
 			withdrawTokenCalldata,
 		]);
 		handleStakeStatus(StakeState.SUBMITTING);
-		await tx.wait();
 		return tx;
 	} catch (e) {
 		console.warn(e);

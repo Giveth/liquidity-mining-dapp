@@ -1,4 +1,4 @@
-import { FC, Dispatch, SetStateAction } from 'react';
+import { FC, Dispatch, SetStateAction, useEffect } from 'react';
 import styled from 'styled-components';
 import Lottie from 'react-lottie';
 import Image from 'next/image';
@@ -23,6 +23,7 @@ import { useLiquidityPositions, useOnboard } from '@/context';
 import { IconWithTooltip } from '../IconWithToolTip';
 import LoadingAnimation from '@/animations/loading.json';
 import { StakeState } from '../modals/V3Stake';
+import { Pending } from '../modals/HarvestAll.sc';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -78,6 +79,8 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 	const { currentIncentive, loadPositions } = useLiquidityPositions();
 	const { pool, tickLower, tickUpper } = position._position || {};
 
+	const buttonLabel = isUnstaking ? 'UNSTAKE' : 'STAKE';
+
 	// Check price range
 	const below =
 		pool && typeof tickLower === 'number'
@@ -116,7 +119,8 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 				handleStakeStatus,
 			);
 			setTxStatus(tx);
-			if (tx) {
+			const { status } = await tx.wait();
+			if (status) {
 				handleStakeStatus(StakeState.CONFIRMED);
 			} else {
 				handleStakeStatus(StakeState.ERROR);
@@ -133,7 +137,8 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 				handleStakeStatus,
 			);
 			setTxStatus(tx);
-			if (tx) {
+			const { status } = await tx.wait();
+			if (status) {
 				handleStakeStatus(StakeState.CONFIRMED);
 			} else {
 				handleStakeStatus(StakeState.ERROR);
@@ -210,31 +215,22 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 				</TokenAmountRow>
 			</PositionInfo>
 			<PositionActions>
-				{isUnstaking ? (
-					<OulineButton
-						label=''
-						onClick={handleAction}
-						disabled={isConfirming}
-					>
-						{isConfirming && selectedPosition ? (
-							<LoadingButton label='UNSTAKING' />
-						) : (
-							'UNSTAKE'
-						)}
-					</OulineButton>
+				{isConfirming && selectedPosition ? (
+					<PendingStyled>
+						<Lottie
+							options={loadingAnimationOptions}
+							height={40}
+							width={40}
+						/>
+						&nbsp;PENDING
+					</PendingStyled>
 				) : (
 					<FullWidthButton
-						label=''
+						label={buttonLabel}
 						buttonType='primary'
 						onClick={handleAction}
 						disabled={isConfirming}
-					>
-						{isConfirming && selectedPosition ? (
-							<LoadingButton label='STAKING' />
-						) : (
-							'STAKE'
-						)}
-					</FullWidthButton>
+					/>
 				)}
 				<FullWidthButton
 					label='VIEW POSITION'
@@ -337,6 +333,10 @@ export const RangeTooltip = styled(Subline)`
 
 export const PositionLink = styled.a`
 	color: ${brandColors.cyan[500]};
+`;
+
+const PendingStyled = styled(Pending)`
+	margin: auto;
 `;
 
 export default V3StakingCard;

@@ -53,12 +53,15 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	return (
 		<Modal showModal={showModal} setShowModal={setShowModal}>
 			<StakeModalContainer>
-				<StakeModalTitle alignItems='center'>
-					<StakingPoolImages title={title} />
-					<StakeModalTitleText weight={700}>
-						{title}
-					</StakeModalTitleText>
-				</StakeModalTitle>
+				{(stakeStatus === StakeState.UNKNOWN ||
+					stakeStatus === StakeState.CONFIRMING) && (
+					<StakeModalTitle alignItems='center'>
+						<StakingPoolImages title={title} />
+						<StakeModalTitleText weight={700}>
+							{title}
+						</StakeModalTitleText>
+					</StakeModalTitle>
+				)}
 				<InnerModal>
 					{(stakeStatus === StakeState.UNKNOWN ||
 						stakeStatus === StakeState.CONFIRMING) &&
@@ -87,7 +90,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 					)}
 					{stakeStatus === StakeState.SUBMITTING && (
 						<SubmittedInnerModal
-							title='Submitting transaction'
+							title={title}
 							walletNetwork={network}
 							txHash={txStatus?.hash}
 						/>
