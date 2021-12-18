@@ -14,6 +14,7 @@ import {
 	IconETH,
 	semanticColors,
 	Subline,
+	P,
 } from '@giveth/ui-design-system';
 
 import { transfer, exit } from '@/lib/stakingNFT';
@@ -119,13 +120,17 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 				handleStakeStatus,
 			);
 			setTxStatus(tx);
-			const { status } = await tx.wait();
-			if (status) {
-				handleStakeStatus(StakeState.CONFIRMED);
-			} else {
-				handleStakeStatus(StakeState.ERROR);
+			try {
+				const { status } = await tx.wait();
+				if (status) {
+					handleStakeStatus(StakeState.CONFIRMED);
+				} else {
+					handleStakeStatus(StakeState.ERROR);
+				}
+				loadPositions();
+			} catch {
+				handleStakeStatus(StakeState.UNKNOWN);
 			}
-			loadPositions();
 		} else {
 			handleSelectedNFT(position.tokenId.toString());
 			handleStakeStatus(StakeState.CONFIRMING);
@@ -137,13 +142,17 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 				handleStakeStatus,
 			);
 			setTxStatus(tx);
-			const { status } = await tx.wait();
-			if (status) {
-				handleStakeStatus(StakeState.CONFIRMED);
-			} else {
-				handleStakeStatus(StakeState.ERROR);
+			try {
+				const { status } = await tx.wait();
+				if (status) {
+					handleStakeStatus(StakeState.CONFIRMED);
+				} else {
+					handleStakeStatus(StakeState.ERROR);
+				}
+				loadPositions();
+			} catch {
+				handleStakeStatus(StakeState.UNKNOWN);
 			}
-			loadPositions();
 		}
 	};
 
