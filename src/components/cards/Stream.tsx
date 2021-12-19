@@ -33,11 +33,12 @@ const Header = styled.div`
 `;
 
 const Title = styled(H2)`
-	width: 700px;
+	width: 720px;
+	font-size: 3em;
 `;
 
 const Desc = styled(P)`
-	width: 760px;
+	width: 740px;
 	margin-top: 22px;
 `;
 
@@ -113,11 +114,12 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 	return (
 		<StreamCardContainer activeIndex={activeIndex} index={index}>
 			<Header>
-				<Title as='h1'>How to use your GIV</Title>
+				<Title as='h1'>Enjoy a continuous flow of GIV</Title>
 				<Desc size='small' color={'#CABAFF'}>
-					Welcome to the expanding GIViverse! The GIVstream aligns
-					community members with the long-term success of Giveth and
-					the GIVeconomy.
+					Welcome to the expanding GIViverse! Your GIVeconomy rewards
+					are continuously streamed to you via the <b>GIVstream</b>,
+					this aligns community members with the long-term success of
+					Giveth and the GIVeconomy.
 				</Desc>
 			</Header>
 			<StreamRow alignItems={'center'}>

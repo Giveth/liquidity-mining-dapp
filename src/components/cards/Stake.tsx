@@ -11,7 +11,7 @@ import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
 import { H2, H4, P } from '../styled-components/Typography';
-import { ArrowButton, Card, Header, MaxGIV } from './common';
+import { ArrowButton, Card, MaxGIV } from './common';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
@@ -41,9 +41,13 @@ const InvestCardContainer = styled(Card)`
 		z-index: 0;
 	}
 `;
+const Header = styled.div`
+	margin-bottom: 60px;
+`;
 
 const Title = styled(H2)`
-	width: 700px;
+	font-size: 3.2em;
+	width: 750px;
 `;
 
 const Desc = styled(P)`
@@ -211,9 +215,10 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	return (
 		<InvestCardContainer activeIndex={activeIndex} index={index}>
 			<Header>
-				<Title as='h1'>How to use your GIV</Title>
+				<Title as='h1'>Grow your Rewards</Title>
 				<Desc size='small' color={'#CABAFF'}>
-					Stake tokens in the GIVfarm to earn up to{' '}
+					Provide liquidity and get rewarded. Stake tokens in the{' '}
+					<b>GIVfarm</b> to earn up to{' '}
 					{APR ? `${formatEthHelper(APR, 2)}% APR` : ' ? '}
 				</Desc>
 			</Header>

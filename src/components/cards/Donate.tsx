@@ -37,11 +37,9 @@ const Header = styled.div`
 	margin-bottom: 15px;
 `;
 
-const Title = styled.span`
-	font-size: 58px;
-	margin: 7px 0px 10px 0px;
+const Title = styled(H2)`
+	font-size: 3.2em;
 	width: 700px;
-	font-weight: 700;
 `;
 
 const Desc = styled(P)`
@@ -179,11 +177,11 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 	return (
 		<DonateCardContainer activeIndex={activeIndex} index={index}>
 			<Header>
-				<Title>Donate & get GIV back</Title>
+				<Title>Donate to get GIV back</Title>
 				<Desc size='small' color={'#CABAFF'}>
-					Donate to verified projects to get GIV with GIVbacks. The
-					project gets 100% of your donation, and you get rewarded by
-					Giveth with GIV!
+					Donate to verified projects to get GIV with <b>GIVbacks</b>.
+					The project gets 100% of your donation, and you get rewarded
+					by Giveth with GIV!
 				</Desc>
 			</Header>
 			<Row alignItems={'center'} justifyContent={'space-between'}>

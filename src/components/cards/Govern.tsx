@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import { ArrowButton, Card, MaxGIV } from './common';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
-import { H2, H4, P } from '../styled-components/Typography';
+import { H2, H3, H4, P } from '../styled-components/Typography';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
@@ -43,6 +43,7 @@ const Header = styled.div`
 `;
 
 const Title = styled(H2)`
+	font-size: 2.7em;
 	width: 750px;
 	margin-left: 15%;
 `;
@@ -230,10 +231,10 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 				/>
 			</div>
 			<Header>
-				<Title as='h1'>How to use your GIV</Title>
+				<Title as='h1'>Engage in Community Governance</Title>
 				<Desc size='small' color={'#CABAFF'}>
-					Participate in Giveth governance using the GIVgarden. Govern
-					on proposals with GIV and earn rewards.
+					Participate in Giveth governance using the <b>GIVgarden</b>.
+					Govern on proposals with GIV and earn rewards.
 				</Desc>
 			</Header>
 			<Row alignItems={'center'} justifyContent={'flex-end'}>
