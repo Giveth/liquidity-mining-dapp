@@ -14,8 +14,7 @@ import {
 	ClaimViewContext,
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
-import next from 'next';
-import { addToken } from '@/lib/metamask';
+import { addGIVToken } from '@/lib/metamask';
 interface IConnectCardContainerProps {
 	data: any;
 }
@@ -152,7 +151,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep, goFirstStep } =
 		useContext(ClaimViewContext);
 
-	const { address, connect } = useContext(OnboardContext);
+	const { address, connect, network } = useContext(OnboardContext);
 	const { submitUserAddress, claimableAmount, giveDropState, resetWallet } =
 		useContext(UserContext);
 
@@ -337,14 +336,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 							<ClaimedSubtitleA>
 								You already claimed your GIV!
 								<AddGivButton
-									onClick={() =>
-										addToken(
-											'0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3',
-											'TestGIV',
-											18,
-											'',
-										)
-									}
+									onClick={() => addGIVToken(network)}
 								>
 									<Image
 										src='/images/icons/metamask.svg'
