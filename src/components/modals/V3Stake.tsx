@@ -48,34 +48,39 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 		StakeState.UNKNOWN,
 	);
 	const [txStatus, setTxStatus] = useState<any>();
+	const [tokenId, setTokenId] = useState<string>('');
 
 	return (
 		<Modal showModal={showModal} setShowModal={setShowModal}>
 			<StakeModalContainer>
-				<StakeModalTitle alignItems='center'>
-					<StakingPoolImages title={title} />
-					<StakeModalTitleText weight={700}>
-						{title}
-					</StakeModalTitleText>
-				</StakeModalTitle>
+				{(stakeStatus === StakeState.UNKNOWN ||
+					stakeStatus === StakeState.CONFIRMING) && (
+					<StakeModalTitle alignItems='center'>
+						<StakingPoolImages title={title} />
+						<StakeModalTitleText weight={700}>
+							{title}
+						</StakeModalTitleText>
+					</StakeModalTitle>
+				)}
 				<InnerModal>
-					{stakeStatus === StakeState.UNKNOWN &&
+					{(stakeStatus === StakeState.UNKNOWN ||
+						stakeStatus === StakeState.CONFIRMING) &&
 						positions.map(position => (
 							<V3StakingCard
 								position={position}
+								setTxStatus={setTxStatus}
 								isUnstaking={isUnstakingModal}
 								key={position.tokenId.toString()}
 								handleStakeStatus={setStakeStatus}
-								setTxStatus={setTxStatus}
+								handleSelectedNFT={setTokenId}
+								selectedPosition={
+									position.tokenId.toString() === tokenId
+								}
+								isConfirming={
+									stakeStatus === StakeState.CONFIRMING
+								}
 							/>
 						))}
-					{stakeStatus === StakeState.CONFIRMING && (
-						<SubmittedInnerModal
-							title='Waiting for confirmation.'
-							walletNetwork={network}
-							txHash={txStatus?.hash}
-						/>
-					)}
 					{stakeStatus === StakeState.REJECT && (
 						<ErrorInnerModal
 							title='You rejected the transaction.'
@@ -85,7 +90,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 					)}
 					{stakeStatus === StakeState.SUBMITTING && (
 						<SubmittedInnerModal
-							title='Submitting transaction'
+							title={title}
 							walletNetwork={network}
 							txHash={txStatus?.hash}
 						/>

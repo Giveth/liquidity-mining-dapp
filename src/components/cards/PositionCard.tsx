@@ -1,5 +1,6 @@
-import { FC, Dispatch, SetStateAction } from 'react';
+import { FC, Dispatch, SetStateAction, useEffect } from 'react';
 import styled from 'styled-components';
+import Lottie from 'react-lottie';
 import Image from 'next/image';
 import {
 	IconExternalLink,
@@ -13,6 +14,7 @@ import {
 	IconETH,
 	semanticColors,
 	Subline,
+	P,
 } from '@giveth/ui-design-system';
 
 import { transfer, exit } from '@/lib/stakingNFT';
@@ -20,12 +22,46 @@ import { LiquidityPosition } from '@/types/nfts';
 import { Row } from '@/components/styled-components/Grid';
 import { useLiquidityPositions, useOnboard } from '@/context';
 import { IconWithTooltip } from '../IconWithToolTip';
+import LoadingAnimation from '@/animations/loading.json';
 import { StakeState } from '../modals/V3Stake';
+import { Pending } from '../modals/HarvestAll.sc';
 
+const loadingAnimationOptions = {
+	loop: true,
+	autoplay: true,
+	animationData: LoadingAnimation,
+	rendererSettings: {
+		preserveAspectRatio: 'xMidYMid slice',
+	},
+};
+
+const LoadingButtonContainer = styled.span`
+	display: flex;
+	place-items: center;
+`;
+
+const DummyDiv = styled.div`
+	width: 24px;
+`;
+
+interface ILoadingButton {
+	label: string;
+}
+
+const LoadingButton: FC<ILoadingButton> = ({ label }) => (
+	<LoadingButtonContainer>
+		<Lottie options={loadingAnimationOptions} height={24} width={24} />
+		{label}
+		<DummyDiv />
+	</LoadingButtonContainer>
+);
 interface IV3StakeCardProps {
 	position: LiquidityPosition;
 	isUnstaking?: boolean;
+	selectedPosition?: boolean;
+	isConfirming?: boolean;
 	handleStakeStatus: Dispatch<SetStateAction<StakeState>>;
+	handleSelectedNFT: Dispatch<SetStateAction<string>>;
 	setTxStatus: Dispatch<SetStateAction<any>>;
 }
 
@@ -34,12 +70,17 @@ const STARTS_WITH = 'data:application/json;base64,';
 const V3StakingCard: FC<IV3StakeCardProps> = ({
 	position,
 	isUnstaking,
+	selectedPosition,
+	isConfirming,
 	handleStakeStatus,
+	handleSelectedNFT,
 	setTxStatus,
 }) => {
 	const { address, provider } = useOnboard();
 	const { currentIncentive, loadPositions } = useLiquidityPositions();
 	const { pool, tickLower, tickUpper } = position._position || {};
+
+	const buttonLabel = isUnstaking ? 'UNSTAKE' : 'STAKE';
 
 	// Check price range
 	const below =
@@ -68,37 +109,35 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 
 	const handleAction = async () => {
 		if (!provider) return;
-		if (isUnstaking) {
-			handleStakeStatus(StakeState.CONFIRMING);
-			const tx = await exit(
-				position.tokenId,
-				address,
-				provider,
-				currentIncentive,
-				handleStakeStatus,
-			);
-			if (tx) {
+
+		handleSelectedNFT(position.tokenId.toString());
+		handleStakeStatus(StakeState.CONFIRMING);
+		const tx = isUnstaking
+			? await exit(
+					position.tokenId,
+					address,
+					provider,
+					currentIncentive,
+					handleStakeStatus,
+			  )
+			: await transfer(
+					position.tokenId,
+					address,
+					provider,
+					currentIncentive,
+					handleStakeStatus,
+			  );
+		setTxStatus(tx);
+		try {
+			const { status } = await tx.wait();
+			if (status) {
 				handleStakeStatus(StakeState.CONFIRMED);
 			} else {
 				handleStakeStatus(StakeState.ERROR);
 			}
 			loadPositions();
-		} else {
-			handleStakeStatus(StakeState.CONFIRMING);
-			const tx = await transfer(
-				position.tokenId,
-				address,
-				provider,
-				currentIncentive,
-				handleStakeStatus,
-			);
-			if (tx) {
-				handleStakeStatus(StakeState.CONFIRMED);
-				setTxStatus(tx);
-			} else {
-				handleStakeStatus(StakeState.ERROR);
-			}
-			loadPositions();
+		} catch {
+			handleStakeStatus(StakeState.UNKNOWN);
 		}
 	};
 
@@ -170,13 +209,21 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 				</TokenAmountRow>
 			</PositionInfo>
 			<PositionActions>
-				{isUnstaking ? (
-					<OulineButton label='UNSTAKE' onClick={handleAction} />
+				{isConfirming && selectedPosition ? (
+					<PendingStyled>
+						<Lottie
+							options={loadingAnimationOptions}
+							height={40}
+							width={40}
+						/>
+						&nbsp;PENDING
+					</PendingStyled>
 				) : (
 					<FullWidthButton
+						label={buttonLabel}
 						buttonType='primary'
-						label='STAKE'
 						onClick={handleAction}
+						disabled={isConfirming}
 					/>
 				)}
 				<FullWidthButton
@@ -280,6 +327,10 @@ export const RangeTooltip = styled(Subline)`
 
 export const PositionLink = styled.a`
 	color: ${brandColors.cyan[500]};
+`;
+
+const PendingStyled = styled(Pending)`
+	margin: auto;
 `;
 
 export default V3StakingCard;
