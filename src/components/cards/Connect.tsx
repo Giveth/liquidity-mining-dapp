@@ -63,6 +63,12 @@ const ChangeWallet = styled.div`
 	color: #fed670;
 	cursor: pointer;
 `;
+const BackToGIVeconomy = styled.div`
+	color: #fed670;
+	cursor: pointer;
+	margin-left: 15px;
+	text-decoration: underline;
+`;
 
 const ClickableStrong = styled.strong`
 	cursor: pointer;
@@ -266,32 +272,44 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			)}
 			{giveDropState !== GiveDropStateType.Success &&
 				giveDropState !== GiveDropStateType.Claimed && (
-					<Row alignItems={'center'} justifyContent={'space-between'}>
-						<ConnectButton
-							secondary
-							onClick={async () => {
-								await connect();
-								setConnectionWallet(true);
-							}}
+					<>
+						<Row
+							alignItems={'center'}
+							justifyContent={'space-between'}
 						>
-							{btnLabel}
-						</ConnectButton>
-						<Span onClick={() => console.log(walletAddress)}>
-							or
-						</Span>
-						<InputWithButtonContainer>
-							<WalletAddressInputWithButton
-								btnLable='Check'
-								placeholder='Enter an address to check your GIVdrop'
-								walletAddress={walletAddress}
-								onSubmit={submitAddress}
-								disabled={loading}
-								onUpdate={() => {
-									resetWallet();
+							<ConnectButton
+								secondary
+								onClick={async () => {
+									await connect();
+									setConnectionWallet(true);
 								}}
-							/>
-						</InputWithButtonContainer>
-					</Row>
+							>
+								{btnLabel}
+							</ConnectButton>
+							<Span onClick={() => console.log(walletAddress)}>
+								or
+							</Span>
+							<InputWithButtonContainer>
+								<WalletAddressInputWithButton
+									btnLable='Check'
+									placeholder='Enter an address to check your GIVdrop'
+									walletAddress={walletAddress}
+									onSubmit={submitAddress}
+									disabled={loading}
+									onUpdate={() => {
+										resetWallet();
+									}}
+								/>
+							</InputWithButtonContainer>
+						</Row>
+						{giveDropState === GiveDropStateType.Missed && (
+							<Link href='/' passHref>
+								<BackToGIVeconomy>
+									Go to GIVeconomy
+								</BackToGIVeconomy>
+							</Link>
+						)}
+					</>
 				)}
 			{giveDropState === GiveDropStateType.Success &&
 				activeIndex === index && <ArrowButton onClick={goNextStep} />}
