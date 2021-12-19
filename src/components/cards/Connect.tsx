@@ -14,9 +14,7 @@ import {
 	ClaimViewContext,
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
-import next from 'next';
-import { addGIVToken, addToken } from '@/lib/metamask';
-import config from '@/configuration';
+import { addGIVToken } from '@/lib/metamask';
 interface IConnectCardContainerProps {
 	data: any;
 }
@@ -153,7 +151,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep, goFirstStep } =
 		useContext(ClaimViewContext);
 
-	const { address, connect } = useContext(OnboardContext);
+	const { address, connect, network } = useContext(OnboardContext);
 	const { submitUserAddress, claimableAmount, giveDropState, resetWallet } =
 		useContext(UserContext);
 
@@ -339,7 +337,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 								You already claimed your GIV!
 								<AddGivButton
 									onClick={() =>
-										addGIVToken(config.XDAI_NETWORK_NUMBER)
+										addGIVToken(network)
 									}
 								>
 									<Image
