@@ -109,50 +109,35 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 
 	const handleAction = async () => {
 		if (!provider) return;
-		if (isUnstaking) {
-			handleSelectedNFT(position.tokenId.toString());
-			handleStakeStatus(StakeState.CONFIRMING);
-			const tx = await exit(
-				position.tokenId,
-				address,
-				provider,
-				currentIncentive,
-				handleStakeStatus,
-			);
-			setTxStatus(tx);
-			try {
-				const { status } = await tx.wait();
-				if (status) {
-					handleStakeStatus(StakeState.CONFIRMED);
-				} else {
-					handleStakeStatus(StakeState.ERROR);
-				}
-				loadPositions();
-			} catch {
-				handleStakeStatus(StakeState.UNKNOWN);
+
+		handleSelectedNFT(position.tokenId.toString());
+		handleStakeStatus(StakeState.CONFIRMING);
+		const tx = isUnstaking
+			? await exit(
+					position.tokenId,
+					address,
+					provider,
+					currentIncentive,
+					handleStakeStatus,
+			  )
+			: await transfer(
+					position.tokenId,
+					address,
+					provider,
+					currentIncentive,
+					handleStakeStatus,
+			  );
+		setTxStatus(tx);
+		try {
+			const { status } = await tx.wait();
+			if (status) {
+				handleStakeStatus(StakeState.CONFIRMED);
+			} else {
+				handleStakeStatus(StakeState.ERROR);
 			}
-		} else {
-			handleSelectedNFT(position.tokenId.toString());
-			handleStakeStatus(StakeState.CONFIRMING);
-			const tx = await transfer(
-				position.tokenId,
-				address,
-				provider,
-				currentIncentive,
-				handleStakeStatus,
-			);
-			setTxStatus(tx);
-			try {
-				const { status } = await tx.wait();
-				if (status) {
-					handleStakeStatus(StakeState.CONFIRMED);
-				} else {
-					handleStakeStatus(StakeState.ERROR);
-				}
-				loadPositions();
-			} catch {
-				handleStakeStatus(StakeState.UNKNOWN);
-			}
+			loadPositions();
+		} catch {
+			handleStakeStatus(StakeState.UNKNOWN);
 		}
 	};
 
