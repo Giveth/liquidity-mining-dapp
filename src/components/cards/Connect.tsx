@@ -18,6 +18,7 @@ import next from 'next';
 import { addToken } from '@/lib/metamask';
 import config from '@/config/development';
 import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
+import { formatWeiHelper } from '@/helpers/number';
 
 interface IConnectCardContainerProps {
 	data: any;
@@ -180,12 +181,6 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 		setAddressSubmitted(true);
 	};
 
-	const parseEther = (value: BigNumber) =>
-		(+utils.formatEther(value)).toLocaleString('en-US', {
-			minimumFractionDigits: 2,
-			maximumFractionDigits: 2,
-		});
-
 	let title;
 	let desc;
 	let btnLabel;
@@ -212,7 +207,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			};
 			break;
 		case GiveDropStateType.Success:
-			title = `You have ${parseEther(
+			title = `You have ${formatWeiHelper(
 				claimableAmount.div(10),
 			)} GIV to claim.`;
 			desc = 'Congrats, your GIVdrop awaits. Go claim it!';

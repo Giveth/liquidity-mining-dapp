@@ -20,6 +20,7 @@ import { claimAirDrop } from '../../lib/claim';
 import { addToken } from '@/lib/metamask';
 import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
 import { GIVdropHarvestModal } from '../modals/GIVdropHarvestModal';
+import { formatWeiHelper } from '@/helpers/number';
 
 enum ClaimState {
 	UNKNOWN,
@@ -243,12 +244,6 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 		}
 	};
 
-	const parseEther = (value: EtherBigNumber) =>
-		(+utils.formatEther(value)).toLocaleString('en-US', {
-			minimumFractionDigits: 2,
-			maximumFractionDigits: 2,
-		});
-
 	return (
 		<ClaimCardContainer
 			activeIndex={activeIndex}
@@ -297,7 +292,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 						<ClaimedSubtitleContainer>
 							<ClaimedSubtitleA>
 								You have successfully claimed{' '}
-								{parseEther(claimableAmount.div(10))} GIV.{' '}
+								{formatWeiHelper(claimableAmount.div(10))} GIV.{' '}
 								<AddGivButton
 									onClick={() =>
 										addToken(
@@ -319,7 +314,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 							<ClaimedSubtitleB>
 								Plus you&apos;re getting an additional{' '}
 								<span style={{ color: '#FED670' }}>
-									{parseEther(
+									{formatWeiHelper(
 										claimableAmount.mul(9).div(10 * 52 * 5),
 									)}{' '}
 									GIV
@@ -406,7 +401,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 								openHarvestModal();
 							}}
 						>
-							CLAIM {parseEther(claimableAmount.div(10))} GIV
+							CLAIM {formatWeiHelper(claimableAmount.div(10))} GIV
 						</ClaimButton>
 					</Row>
 					<Row alignItems={'center'} justifyContent={'center'}>
