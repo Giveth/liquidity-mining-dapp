@@ -336,9 +336,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 							<ClaimedSubtitleA>
 								You already claimed your GIV!
 								<AddGivButton
-									onClick={() =>
-										addGIVToken(network)
-									}
+									onClick={() => addGIVToken(network)}
 								>
 									<Image
 										src='/images/icons/metamask.svg'
