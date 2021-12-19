@@ -29,7 +29,7 @@ const StreamCardContainer = styled(Card)`
 `;
 
 const Header = styled.div`
-	margin-bottom: 60px;
+	margin-bottom: 48px;
 `;
 
 const Title = styled(H2)`
