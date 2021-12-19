@@ -17,7 +17,7 @@ import { networksParams } from '../../helpers/blockchain';
 import { OnboardContext } from '../../context/onboard.context';
 import config from '../../configuration';
 import { claimAirDrop } from '../../lib/claim';
-import { addToken } from '@/lib/metamask';
+import { addGIVToken } from '@/lib/metamask';
 import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
 import { GIVdropHarvestModal } from '../modals/GIVdropHarvestModal';
 
@@ -301,12 +301,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 								{parseEther(claimableAmount)} GIV.{' '}
 								<AddGivButton
 									onClick={() =>
-										addToken(
-											'0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3',
-											'TestGIV',
-											18,
-											'',
-										)
+										addGIVToken(config.XDAI_NETWORK_NUMBER)
 									}
 								>
 									<Image
@@ -413,12 +408,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 					<Row alignItems={'center'} justifyContent={'center'}>
 						<MetamaskButton
 							onClick={() =>
-								addToken(
-									'0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3',
-									'TestGIV',
-									18,
-									'',
-								)
+								addGIVToken(config.XDAI_NETWORK_NUMBER)
 							}
 						>
 							<Image
