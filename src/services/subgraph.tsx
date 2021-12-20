@@ -139,6 +139,7 @@ export const fetchBalances = async (
 		const givStaked = BN(info.givStaked || 0);
 		const allocationCount = Number(info.allocationCount || 0);
 		const givDropClaimed = Boolean(info.givDropClaimed || true);
+		console.log(`info.givDropClaimed`, network, info.givDropClaimed);
 
 		return {
 			balance,
