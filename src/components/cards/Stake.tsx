@@ -89,7 +89,7 @@ const Desc = styled(P)`
 const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep, goPreviousStep } =
 		useContext(ClaimViewContext);
-	const { claimableAmount } = useContext(UserContext);
+	const { totalAmount } = useContext(UserContext);
 
 	const [deposit, setDeposit] = useState<any>(0);
 	const [potentialClaim, setPotentialClaim] = useState<EthersBigNumber>(
@@ -107,16 +107,16 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		} else if (isNaN(+value)) {
 			setDeposit(deposit);
 		} else {
-			if (claimableAmount.div(10).gte(utils.parseEther(value)))
+			if (totalAmount.div(10).gte(utils.parseEther(value)))
 				setDeposit(+value);
 		}
 	};
 
 	useEffect(() => {
-		if (claimableAmount) {
-			setDeposit(utils.formatEther(claimableAmount.div(10)));
+		if (totalAmount) {
+			setDeposit(utils.formatEther(totalAmount.div(10)));
 		}
-	}, [claimableAmount]);
+	}, [totalAmount]);
 
 	useEffect(() => {
 		let _deposit = 0;
@@ -138,7 +138,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		);
 		// setPotentialClaim(stackedWithApr.times(0.1));
 		// setEarnEstimate(stackedWithApr.times(0.9).div(52 * 5));
-	}, [APR, deposit, claimableAmount, tokenDistroHelper]);
+	}, [APR, deposit, totalAmount, tokenDistroHelper]);
 
 	const mounted = useRef(true);
 	useEffect(
@@ -203,13 +203,13 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 									setDeposit(
 										Number(
 											utils.formatEther(
-												claimableAmount.div(10),
+												totalAmount.div(10),
 											),
 										),
 									)
 								}
 							>{`Max ${utils.formatEther(
-								claimableAmount.div(10),
+								totalAmount.div(10),
 							)} GIV`}</MaxStakeGIV>
 						</Row>
 						<ImpactCardInput>

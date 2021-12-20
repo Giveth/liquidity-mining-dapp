@@ -118,7 +118,7 @@ const GovernFooter = styled.div`
 const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep, goPreviousStep } =
 		useContext(ClaimViewContext);
-	const { claimableAmount } = useContext(UserContext);
+	const { totalAmount } = useContext(UserContext);
 
 	const [stacked, setStacked] = useState<any>(0);
 	const [potentialClaim, setPotentialClaim] = useState<EthersBigNumber>(
@@ -134,7 +134,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 		} else if (isNaN(+e.target.value)) {
 			setStacked(stacked);
 		} else {
-			if (claimableAmount.div(10).gte(utils.parseEther(e.target.value)))
+			if (totalAmount.div(10).gte(utils.parseEther(e.target.value)))
 				setStacked(+e.target.value);
 		}
 	};
@@ -158,13 +158,13 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 		);
 		// setPotentialClaim(stackedWithApr.times(0.1));
 		// setEarnEstimate((stackedWithApr.toNumber() * 0.9) / (52 * 5));
-	}, [apr, stacked, claimableAmount, tokenDistroHelper]);
+	}, [apr, stacked, totalAmount, tokenDistroHelper]);
 
 	useEffect(() => {
-		if (claimableAmount) {
-			setStacked(utils.formatEther(claimableAmount.div(10)));
+		if (totalAmount) {
+			setStacked(utils.formatEther(totalAmount.div(10)));
 		}
-	}, [claimableAmount]);
+	}, [totalAmount]);
 
 	const mounted = useRef(true);
 	useEffect(
@@ -225,13 +225,13 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 									setStacked(
 										Number(
 											utils.formatEther(
-												claimableAmount.div(10),
+												totalAmount.div(10),
 											),
 										),
 									)
 								}
 							>{`Max ${utils.formatEther(
-								claimableAmount.div(10),
+								totalAmount.div(10),
 							)} GIV`}</MaxStakeGIV>
 						</Row>
 						<ImpactCardInput>

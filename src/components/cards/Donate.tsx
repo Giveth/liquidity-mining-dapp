@@ -115,7 +115,7 @@ const Desc = styled(P)`
 export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep, goPreviousStep } =
 		useContext(ClaimViewContext);
-	const { claimableAmount } = useContext(UserContext);
+	const { totalAmount } = useContext(UserContext);
 
 	const [donation, setDonation] = useState<any>(0);
 	const [potentialClaim, setPotentialClaim] = useState<EthersBigNumber>(
@@ -130,16 +130,16 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 		} else if (isNaN(+e.target.value)) {
 			setDonation(donation);
 		} else {
-			if (claimableAmount.gte(utils.parseEther(e.target.value)))
+			if (totalAmount.gte(utils.parseEther(e.target.value)))
 				setDonation(+e.target.value);
 		}
 	};
 
 	useEffect(() => {
-		if (claimableAmount) {
-			setDonation(utils.formatEther(claimableAmount.div(10)));
+		if (totalAmount) {
+			setDonation(utils.formatEther(totalAmount.div(10)));
 		}
-	}, [claimableAmount]);
+	}, [totalAmount]);
 
 	useEffect(() => {
 		let _donation = 0;
@@ -194,13 +194,13 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 									setDonation(
 										Number(
 											utils.formatEther(
-												claimableAmount.div(10),
+												totalAmount.div(10),
 											),
 										),
 									)
 								}
 							>{`Max ${utils.formatEther(
-								claimableAmount.div(10),
+								totalAmount.div(10),
 							)} GIV`}</MaxStakeGIV>
 						</Row>
 						<ImpactCardInput>

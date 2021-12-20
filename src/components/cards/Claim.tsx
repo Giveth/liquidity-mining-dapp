@@ -158,8 +158,7 @@ const MetamaskButton = styled.a`
 const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goFirstStep, goPreviousStep } =
 		useContext(ClaimViewContext);
-	const { userAddress, claimableAmount, resetWallet } =
-		useContext(UserContext);
+	const { userAddress, totalAmount, resetWallet } = useContext(UserContext);
 	const {
 		isReady,
 		changeWallet,
@@ -266,7 +265,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 					claimState={claimState}
 					setClaimState={setClaimState}
 					txStatus={txStatus}
-					givdropAmount={claimableAmount}
+					givdropAmount={totalAmount}
 					onClaim={onClaim}
 				/>
 			)}
@@ -294,7 +293,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 						<ClaimedSubtitleContainer>
 							<ClaimedSubtitleA>
 								You have successfully claimed{' '}
-								{formatWeiHelper(claimableAmount.div(10))} GIV.{' '}
+								{formatWeiHelper(totalAmount.div(10))} GIV.{' '}
 								<AddGivButton
 									onClick={() =>
 										addGIVToken(config.XDAI_NETWORK_NUMBER)
@@ -312,7 +311,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 								Plus you&apos;re getting an additional{' '}
 								<span style={{ color: '#FED670' }}>
 									{formatWeiHelper(
-										claimableAmount.mul(9).div(10 * 52 * 5),
+										totalAmount.mul(9).div(10 * 52 * 5),
 									)}{' '}
 									GIV
 								</span>{' '}
@@ -398,7 +397,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 								openHarvestModal();
 							}}
 						>
-							CLAIM {formatWeiHelper(claimableAmount.div(10))} GIV
+							CLAIM {formatWeiHelper(totalAmount.div(10))} GIV
 						</ClaimButton>
 					</Row>
 					<Row alignItems={'center'} justifyContent={'center'}>

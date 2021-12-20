@@ -56,7 +56,7 @@ const CongratsButton = styled(Button)`
 `;
 
 export const CongratulationsCard = () => {
-	const { claimableAmount } = useContext(UserContext);
+	const { totalAmount } = useContext(UserContext);
 	return (
 		<CongratulationsView>
 			<CongratulationsContainer>
@@ -65,8 +65,7 @@ export const CongratulationsCard = () => {
 					<Description>
 						<P>
 							You have successfully claimed{' '}
-							{utils.formatEther(claimableAmount.div(10))} GIV
-							tokens.
+							{utils.formatEther(totalAmount.div(10))} GIV tokens.
 						</P>
 						<P>Add GIV to Metamask</P>
 					</Description>

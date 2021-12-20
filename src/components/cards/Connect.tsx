@@ -196,7 +196,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 		useContext(ClaimViewContext);
 
 	const { address, isReady, connect, network } = useContext(OnboardContext);
-	const { submitUserAddress, claimableAmount, giveDropState, resetWallet } =
+	const { submitUserAddress, totalAmount, giveDropState, resetWallet } =
 		useContext(UserContext);
 
 	const [walletAddress, setWalletAddress] = useState<string>('');
@@ -218,7 +218,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			setLoading(false);
 			setAddressSubmitted(false);
 		}
-	}, [addressSubmitted, claimableAmount]);
+	}, [addressSubmitted, totalAmount]);
 
 	const submitAddress = async (value: string): Promise<void> => {
 		setLoading(true);
@@ -253,7 +253,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			break;
 		case GiveDropStateType.Success:
 			title = `You have ${formatWeiHelper(
-				claimableAmount.div(10),
+				totalAmount.div(10),
 			)} GIV to claim.`;
 			desc = 'Congrats, your GIVdrop awaits. Go claim it!';
 			bg = {

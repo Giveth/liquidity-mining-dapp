@@ -98,7 +98,7 @@ const StreamPlaceholder = styled(Row)`
 export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep, goPreviousStep } =
 		useContext(ClaimViewContext);
-	const { claimableAmount } = useContext(UserContext);
+	const { totalAmount } = useContext(UserContext);
 	const [streamValue, setStreamValue] = useState<string>('0');
 
 	const { tokenDistroHelper } = useTokenDistro();
@@ -106,10 +106,10 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 	useEffect(() => {
 		setStreamValue(
 			formatWeiHelper(
-				tokenDistroHelper.getStreamPartTokenPerWeek(claimableAmount),
+				tokenDistroHelper.getStreamPartTokenPerWeek(totalAmount),
 			),
 		);
-	}, [claimableAmount, claimableAmount, tokenDistroHelper]);
+	}, [totalAmount, tokenDistroHelper]);
 
 	return (
 		<StreamCardContainer activeIndex={activeIndex} index={index}>
