@@ -109,6 +109,10 @@ export const PoolCardContainer = styled.div`
 export const PoolCardTitle = styled.div`
 	font-size: 16px;
 	padding-bottom: 12px;
+	@media only screen and (max-width: 1120px) {
+		padding-top: 8px;
+		padding-bottom: 4px;
+	}
 `;
 
 export const PoolCard = styled.div`
