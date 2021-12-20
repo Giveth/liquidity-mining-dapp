@@ -4,7 +4,23 @@ import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
 import { H2, H4, P } from '../styled-components/Typography';
-import { ArrowButton, Card, ICardProps, MaxGIV } from './common';
+import {
+	APRRow,
+	ArrowButton,
+	Card,
+	ICardProps,
+	ImpactCard,
+	ImpactCardInput,
+	ImpactCardLabel,
+	MaxGIV,
+	MaxStakeGIV,
+	PoolCard,
+	PoolCardContainer,
+	PoolCardFooter,
+	PoolItem,
+	PoolItemBold,
+	PoolItems,
+} from './common';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
@@ -38,84 +54,6 @@ const Title = styled(H2)`
 
 const Desc = styled(P)`
 	margin-top: 22px;
-`;
-
-const DonateRow = styled(Row)`
-	padding: 20px 0;
-	height: 208px;
-`;
-
-const DonateLabel = styled.span`
-	color: #cabaff;
-	display: flex;
-	gap: 6px;
-`;
-
-const DonateInput = styled.div`
-	width: 392px;
-`;
-
-const MaxDonateGIV = styled(MaxGIV)`
-	cursor: pointer;
-`;
-
-const GetBack = styled(DonateRow)`
-	padding-left: 124px;
-`;
-
-const DonateGIVEarn = styled.div`
-	font-family: Red Hat Text;
-	font-size: 48px;
-	font-style: normal;
-	font-weight: 700;
-	line-height: 80px;
-	letter-spacing: 0em;
-	text-align: left;
-`;
-
-const PoolCardContainer = styled.div`
-	z-index: 1;
-`;
-
-const PoolCardTitle = styled.div`
-	font-size: 16px;
-	padding-bottom: 12px;
-`;
-
-const PoolCard = styled.div`
-	width: 350px;
-	height: 164px;
-	padding: 10px 30px;
-
-	background: #211985;
-	border-radius: 16px;
-	z-index: 1;
-`;
-
-const PoolItems = styled.div`
-	padding: 12px 0;
-`;
-
-const PoolItem = styled.div`
-	font-size: 14px;
-	height: 40px;
-	line-height: 40px;
-	display: flex;
-	gap: 6px;
-`;
-
-const PoolItemBold = styled.div`
-	font-size: 16px;
-	font-weight: 500;
-	line-height: 40px;
-	display: flex;
-	gap: 6px;
-`;
-
-const DonateFooter = styled.div`
-	max-width: 500px;
-	font-size: 12px;
-	line-height: 18px;
 `;
 
 export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
@@ -177,19 +115,16 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 					from Giveth!
 				</Desc>
 			</Header>
-			<Row alignItems={'center'} justifyContent={'space-between'}>
-				<DonateRow
-					flexDirection='column'
-					justifyContent='space-between'
-				>
+			<APRRow alignItems={'center'} justifyContent={'space-between'}>
+				<ImpactCard>
 					<H4 as='h2'>If you donate GIV</H4>
 					<div>
 						<Row
 							alignItems={'center'}
 							justifyContent={'space-between'}
 						>
-							<DonateLabel>Your donation</DonateLabel>
-							<MaxDonateGIV
+							<ImpactCardLabel>Your donation</ImpactCardLabel>
+							<MaxStakeGIV
 								onClick={() =>
 									setDonation(
 										Number(
@@ -199,18 +134,18 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 								}
 							>{`Max ${utils.formatEther(
 								claimableAmount,
-							)} GIV`}</MaxDonateGIV>
+							)} GIV`}</MaxStakeGIV>
 						</Row>
-						<DonateInput>
+						<ImpactCardInput>
 							<InputWithUnit
 								type='number'
 								value={donation}
 								unit={'GIV'}
 								onChange={stackedChangeHandler}
 							/>
-						</DonateInput>
+						</ImpactCardInput>
 					</div>
-				</DonateRow>
+				</ImpactCard>
 				<PoolCardContainer>
 					<PoolCard>
 						<PoolItems>
@@ -241,15 +176,13 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 						</PoolItems>
 					</PoolCard>
 				</PoolCardContainer>
-			</Row>
-			<Row>
-				<DonateFooter>
-					The following calculators demonstrate how you can use GIV to
-					participate in the GIVeconomy!{' '}
-					<b>These are just simulations.</b> To participate for real,
-					claim your GIV.
-				</DonateFooter>
-			</Row>
+			</APRRow>
+			<PoolCardFooter>
+				The following calculators demonstrate how you can use GIV to
+				participate in the GIVeconomy!{' '}
+				<b>These are just simulations.</b> To participate for real,
+				claim your GIV.
+			</PoolCardFooter>
 			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
 		</DonateCardContainer>
 	);
