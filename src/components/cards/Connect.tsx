@@ -16,7 +16,12 @@ import config from '@/config/development';
 import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
 import { formatWeiHelper } from '@/helpers/number';
 import { addGIVToken } from '@/lib/metamask';
-import { H2, Lead } from '@giveth/ui-design-system';
+import {
+	ButtonLink,
+	H2,
+	Lead,
+	OulineLinkButton,
+} from '@giveth/ui-design-system';
 interface IConnectCardContainerProps {
 	data: any;
 }
@@ -144,25 +149,11 @@ const AddGivButton = styled.div`
 	cursor: pointer;
 `;
 
-const SocialButton = styled(Button)`
-	font-family: 'Red Hat Text';
-	font-size: 14px;
-	font-weight: bold;
-	text-transform: uppercase;
-	background-color: transparent;
-	border: 2px solid white;
-	height: 50px;
+const SocialButton = styled(OulineLinkButton)`
 	width: 265px;
-	margin: 12px 0 0 0;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	gap: 4px;
 `;
 
-const ExploreButton = styled(SocialButton)`
-	background-color: #e1458d;
-	border: none;
+const ExploreButton = styled(ButtonLink)`
 	width: 285px;
 `;
 
@@ -170,6 +161,13 @@ const ClaimFromAnother = styled.span`
 	cursor: pointer;
 	color: '#FED670'
 	margin-top: 4px;
+`;
+
+const BackToGIVeconomy = styled.div`
+	color: #fed670;
+	cursor: pointer;
+	margin-left: 15px;
+	text-decoration: underline;
 `;
 
 export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
@@ -289,32 +287,19 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 	}, [network, isReady]);
 
 	return (
-		<>
-			{networkModal && (
-				<WrongNetworkModal
-					showModal={networkModal}
-					setShowModal={setNetworkModal}
-					targetNetworks={[config.XDAI_NETWORK_NUMBER]}
-				/>
+		<ConnectCardContainer activeIndex={activeIndex} index={index} data={bg}>
+			{giveDropState !== GiveDropStateType.Claimed && (
+				<Header>
+					<Title as='h1'>{title}</Title>
+					<Desc size='small' color={'#CABAFF'}>
+						{desc}
+					</Desc>
+				</Header>
 			)}
-			<ConnectCardContainer
-				activeIndex={activeIndex}
-				index={index}
-				data={bg}
-			>
-				{giveDropState !== GiveDropStateType.Claimed && (
-					<Header>
-						<Title as='h1' weight={700}>
-							{title}
-						</Title>
-						<Desc size='small' color={'#CABAFF'}>
-							{desc}
-						</Desc>
-					</Header>
-				)}
-				{giveDropState !== GiveDropStateType.Success &&
-					giveDropState !== GiveDropStateType.Claimed && (
-						<Row
+			{giveDropState !== GiveDropStateType.Success &&
+				giveDropState !== GiveDropStateType.Claimed && (
+					<>
+						<ConnectRow
 							alignItems={'center'}
 							justifyContent={'space-between'}
 						>
@@ -327,7 +312,9 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 							>
 								{btnLabel}
 							</ConnectButton>
-							<Span>or</Span>
+							<Span onClick={() => console.log(walletAddress)}>
+								or
+							</Span>
 							<InputWithButtonContainer>
 								<WalletAddressInputWithButton
 									btnLable='Check'
@@ -340,118 +327,110 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 									}}
 								/>
 							</InputWithButtonContainer>
-						</Row>
-					)}
-				{giveDropState === GiveDropStateType.Success &&
-					activeIndex === index && (
-						<ArrowButton onClick={checkConnection} />
-					)}
-				{giveDropState === GiveDropStateType.Claimed && (
-					<>
-						<SunImage>
-							<Image
-								src='/images/claimed_logo.svg'
-								height='225'
-								width='255'
-								alt='Claimed sun'
-							/>
-						</SunImage>
-						<StarsImage>
-							<Image
-								src='/images/claimed_stars.svg'
-								height='105'
-								width='105'
-								alt='Yellow stars.'
-							/>
-						</StarsImage>
-						<ClaimedContainer>
-							<ClaimedTitle>Congratulations!</ClaimedTitle>
-							<ClaimedSubtitleContainer>
-								<ClaimedSubtitleA>
-									You already claimed your GIV!
-									<AddGivButton
-										onClick={() =>
-											addGIVToken(
-												config.XDAI_NETWORK_NUMBER,
-											)
-										}
-									>
-										<Image
-											src='/images/icons/metamask.svg'
-											height='24'
-											width='24'
-											alt='Metamask logo.'
-										/>
-									</AddGivButton>
-								</ClaimedSubtitleA>
-								<a
-									href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
-									target='_blank'
-									rel='noreferrer'
-								>
-									<SocialButton>
-										<>
-											share on twitter
-											<Image
-												src='/images/icons/twitter.svg'
-												height='15'
-												width='15'
-												alt='Twitter logo.'
-											/>
-										</>
-									</SocialButton>
-								</a>
-								<a
-									href='https://swag.giveth.io/'
-									target='_blank'
-									rel='noreferrer'
-								>
-									<SocialButton>
-										claim your free swag
-										<Image
-											src='/images/icons/tshirt.svg'
-											height='15'
-											width='15'
-											alt='T shirt.'
-										/>
-									</SocialButton>
-								</a>
-								<a
-									href='https://discord.giveth.io/'
-									target='_blank'
-									rel='noreferrer'
-								>
-									<SocialButton>
-										join our discord
-										<Image
-											src='/images/icons/discord.svg'
-											height='15'
-											width='15'
-											alt='discord logo.'
-										/>
-									</SocialButton>
-								</a>
-								<Link href='/' passHref>
-									<a target='_blank' rel='noreferrer'>
-										<ExploreButton>
-											explore the giveconomy
-										</ExploreButton>
-									</a>
-								</Link>
-								<ClaimFromAnother
-									onClick={() => {
-										goFirstStep();
-										resetWallet();
-									}}
-								>
-									Claim from another address!
-								</ClaimFromAnother>
-							</ClaimedSubtitleContainer>
-						</ClaimedContainer>
+						</ConnectRow>
+						{giveDropState === GiveDropStateType.Missed && (
+							<Link href='/' passHref>
+								<BackToGIVeconomy>
+									Go to GIVeconomy
+								</BackToGIVeconomy>
+							</Link>
+						)}
 					</>
 				)}
-			</ConnectCardContainer>
-		</>
+			{giveDropState === GiveDropStateType.Success &&
+				activeIndex === index && <ArrowButton onClick={goNextStep} />}
+			{giveDropState === GiveDropStateType.Claimed && (
+				<>
+					<SunImage>
+						<Image
+							src='/images/claimed_logo.svg'
+							height='225'
+							width='255'
+							alt='Claimed sun'
+						/>
+					</SunImage>
+					<StarsImage>
+						<Image
+							src='/images/claimed_stars.svg'
+							height='105'
+							width='105'
+							alt='Yellow stars.'
+						/>
+					</StarsImage>
+					<ClaimedContainer>
+						<ClaimedTitle>Congratulations!</ClaimedTitle>
+						<ClaimedSubtitleContainer>
+							<ClaimedSubtitleA>
+								You already claimed your GIV!
+								<AddGivButton
+									onClick={() => addGIVToken(network)}
+								>
+									<Image
+										src='/images/icons/metamask.svg'
+										height='24'
+										width='24'
+										alt='Metamask logo.'
+									/>
+								</AddGivButton>
+							</ClaimedSubtitleA>
+							<SocialButton
+								label='SHARE ON TWITTER '
+								target='_blank'
+								href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
+								icon={
+									<Image
+										src='/images/icons/twitter.svg'
+										height='15'
+										width='15'
+										alt='Twitter logo.'
+									/>
+								}
+							/>
+							<SocialButton
+								label='CLAIM YOUR FREE SWAG '
+								target='_blank'
+								href='https://swag.giveth.io/'
+								icon={
+									<Image
+										src='/images/icons/tshirt.svg'
+										height='15'
+										width='15'
+										alt='T shirt.'
+									/>
+								}
+							/>
+							<SocialButton
+								label='JOIN OUR DISCORD '
+								target='_blank'
+								href='https://swag.giveth.io/'
+								icon={
+									<Image
+										src='/images/icons/discord.svg'
+										height='15'
+										width='15'
+										alt='discord logo.'
+									/>
+								}
+							/>
+							<Link href='/' passHref>
+								<ExploreButton
+									label='EXPLORE THE GIVECONOMY'
+									linkType='primary'
+								/>
+							</Link>
+							<ClaimFromAnother
+								onClick={() => {
+									goFirstStep();
+									resetWallet();
+								}}
+							>
+								Claim from another address!
+							</ClaimFromAnother>
+						</ClaimedSubtitleContainer>
+					</ClaimedContainer>
+				</>
+			)}
+		</ConnectCardContainer>
 	);
 };
 
