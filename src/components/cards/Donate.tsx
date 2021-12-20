@@ -8,7 +8,6 @@ import {
 	APRRow,
 	ArrowButton,
 	Card,
-	Header,
 	ICardProps,
 	ImpactCard,
 	ImpactCardInput,
