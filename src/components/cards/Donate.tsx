@@ -77,7 +77,6 @@ const Title = styled.span`
 
 const Desc = styled(P)`
 	width: 700px;
-	margin-top: 22px;
 	@media only screen and (max-width: 1120px) {
 		width: 100%;
 	}
