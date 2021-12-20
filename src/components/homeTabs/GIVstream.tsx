@@ -358,7 +358,7 @@ export const GIVstreamProgress: FC<IGIVstreamProgressProps> = ({
 					>
 						<GsPTooltip>
 							Time left for all GIVstreams to flow & for the
-							GIViverse to become in full power!
+							GIViverse to reach full power!
 						</GsPTooltip>
 					</IconWithTooltip>
 				</GsPTitle>

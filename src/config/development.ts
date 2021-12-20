@@ -72,6 +72,7 @@ const config: EnvConfig = {
 				LM_ADDRESS: '0x1aD46D40648639f84a396Fef32132888038c5aA8',
 				type: StakingType.UNISWAP,
 				title: 'GIV / ETH',
+				description: '0.3% tier only',
 				provideLiquidityLink: `https://app.uniswap.org/#/add/ETH/0x900d7e4985461ef158f04ca2Ef1aBd136c620DA0/3000`,
 				unit: 'NFT',
 			},
@@ -101,7 +102,7 @@ const config: EnvConfig = {
 			LM_ADDRESS: '0x0Aec14Fb84f1bE403E77232E8462106136179f98',
 			GARDEN_ADDRESS: '0x0d455538c9b6f9a699272a9bd44f6a36a93adf9b',
 			BUY_LINK:
-				'https://app.honeyswap.org/#/swap?outputCurrency=0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3',
+				'https://app.honeyswap.org/#/swap?outputCurrency=0x7aAde4907a8e2412BEACbE42E51aaeE5B6085f24',
 		},
 
 		pools: [
@@ -112,7 +113,7 @@ const config: EnvConfig = {
 				title: 'GIV / HNY',
 				description: '50% GIV, 50% HNY',
 				provideLiquidityLink:
-					'https://app.honeyswap.org/#/add/0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3/0x69F79C9eA174d4659B18c7993c7EFbBbB58cF068',
+					'https://app.honeyswap.org/#/add/0x7aAde4907a8e2412BEACbE42E51aaeE5B6085f24/0x69F79C9eA174d4659B18c7993c7EFbBbB58cF068',
 				unit: 'LP',
 			},
 			{
@@ -122,7 +123,7 @@ const config: EnvConfig = {
 				title: 'GIV / ETH',
 				description: '50% ETH, 50% GIV',
 				provideLiquidityLink:
-					'https://app.sushi.com/add/0x736a98655049433f79dCcF5e54b887E8890b63D1/0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3',
+					'https://app.sushi.com/add/0x7aAde4907a8e2412BEACbE42E51aaeE5B6085f24/0x736a98655049433f79dCcF5e54b887E8890b63D1',
 				unit: 'LP',
 			},
 		],
