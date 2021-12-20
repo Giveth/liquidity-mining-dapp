@@ -41,10 +41,11 @@ import {
 import { Zero } from '@ethersproject/constants';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
-import { claimReward } from '@/lib/claim';
+import { claimReward, fetchAirDropClaimData } from '@/lib/claim';
 import config from '@/configuration';
 import { IconWithTooltip } from '../IconWithToolTip';
 import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
+import Link from 'next/link';
 
 interface IHarvestAllModalProps extends IModal {
 	title: string;
@@ -89,6 +90,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	const [txHash, setTxHash] = useState('');
 
 	const [price, setPrice] = useState(0);
+	const [givDrop, setGIVdrop] = useState(Zero);
 	const [rewardLiquidPart, setRewardLiquidPart] = useState(Zero);
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
 	const [claimableNow, setClaimableNow] = useState(Zero);
@@ -128,6 +130,20 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 			setPrice(price);
 		});
 	}, [network]);
+
+	useEffect(() => {
+		if (
+			network === config.XDAI_NETWORK_NUMBER &&
+			!currentBalance.givDropClaimed
+		) {
+			fetchAirDropClaimData(address).then(claimData => {
+				if (claimData) {
+					const givDrop = ethers.BigNumber.from(claimData.amount);
+					setGIVdrop(givDrop.div(10));
+				}
+			});
+		}
+	}, [address, network, currentBalance]);
 
 	const onHarvest = () => {
 		if (!provider) return;
@@ -211,6 +227,9 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 							<NothingToHarvest>
 								You have nothing to claim
 							</NothingToHarvest>
+							{givDrop.gt(Zero) && (
+								<GIVdropAlert givDrop={givDrop} />
+							)}
 							<CancelButton
 								disabled={state !== HarvestStates.HARVEST}
 								label='OK'
@@ -337,6 +356,9 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 									/>
 								</>
 							)}
+							{givDrop.gt(Zero) && (
+								<GIVdropAlert givDrop={givDrop} />
+							)}
 							<HarvestAllDesc>
 								When you harvest GIV rewards, all liquid GIV
 								allocated to you is sent to your wallet.
@@ -392,3 +414,15 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		</Modal>
 	);
 };
+
+interface IGIVdropAlert {
+	givDrop: ethers.BigNumber;
+}
+
+const GIVdropAlert: FC<IGIVdropAlert> = ({ givDrop }) => (
+	<Link href='/claim' passHref>
+		<NothingToHarvest>
+			{`Your Have ${formatWeiHelper(givDrop)} GIV from GIVdrop.`}
+		</NothingToHarvest>
+	</Link>
+);
