@@ -10,25 +10,15 @@ import {
 	ClaimViewContext,
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
-import { utils, BigNumber as EtherBigNumber } from 'ethers';
-import { UserContext } from '../../context/user.context';
-import { toast } from 'react-hot-toast';
-import { networksParams } from '../../helpers/blockchain';
+import useUser from '../../context/user.context';
 import { OnboardContext } from '../../context/onboard.context';
 import config from '../../configuration';
-import { claimAirDrop } from '../../lib/claim';
 import { addGIVToken } from '@/lib/metamask';
 import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
 import { GIVdropHarvestModal } from '../modals/GIVdropHarvestModal';
 import { formatWeiHelper } from '@/helpers/number';
-
-enum ClaimState {
-	UNKNOWN,
-	WAITING,
-	SUBMITTING,
-	CLAIMED,
-	ERROR,
-}
+import type { TransactionResponse } from '@ethersproject/providers';
+import { wrongWallet } from '../toasts/claim';
 
 const ClaimedContainer = styled.div`
 	display: flex;
@@ -158,7 +148,7 @@ const MetamaskButton = styled.a`
 const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goFirstStep, goPreviousStep } =
 		useContext(ClaimViewContext);
-	const { userAddress, totalAmount, resetWallet } = useContext(UserContext);
+	const { userAddress, totalAmount, resetWallet } = useUser();
 	const {
 		isReady,
 		changeWallet,
@@ -169,15 +159,13 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 		address,
 	} = useContext(OnboardContext);
 
-	const [txStatus, setTxStatus] = useState();
+	const [txStatus, setTxStatus] = useState<TransactionResponse | undefined>();
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [showClaimModal, setShowClaimModal] = useState<boolean>(false);
-	const [claimState, setClaimState] = useState<ClaimState>(
-		ClaimState.UNKNOWN,
-	);
+	const [isClaimed, setIsClaimed] = useState(false);
 
 	useEffect(() => {
-		setClaimState(ClaimState.UNKNOWN);
+		setIsClaimed(false);
 	}, [address, userAddress]);
 
 	useEffect(() => {
@@ -217,31 +205,9 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 		setShowClaimModal(true);
 	};
 
-	const onClaim = async () => {
-		const check = checkNetworkAndWallet();
-		if (!check) return;
-		if (!provider) return;
-
-		try {
-			setClaimState(ClaimState.WAITING);
-			const tx = await claimAirDrop(userAddress, provider);
-			setTxStatus(tx);
-
-			setClaimState(ClaimState.SUBMITTING);
-			showPendingClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
-			const { status } = await tx.wait();
-
-			if (status) {
-				setClaimState(ClaimState.CLAIMED);
-				showConfirmedClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
-			} else {
-				setClaimState(ClaimState.ERROR);
-				showFailedClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
-			}
-		} catch (e) {
-			setClaimState(ClaimState.ERROR);
-			console.error(e);
-		}
+	const onSuccess = (tx: TransactionResponse) => {
+		setIsClaimed(true);
+		setTxStatus(tx);
 	};
 
 	return (
@@ -251,7 +217,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 				index={index}
 				claimed={txStatus}
 			>
-				{claimState === ClaimState.CLAIMED ? (
+				{isClaimed ? (
 					<>
 						<SunImage>
 							<Image
@@ -356,7 +322,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 									onClick={() => {
 										goFirstStep();
 										resetWallet();
-										setClaimState(ClaimState.UNKNOWN);
+										setIsClaimed(false);
 									}}
 								>
 									Claim from another address!
@@ -417,88 +383,14 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 					showModal={showClaimModal}
 					setShowModal={setShowClaimModal}
 					network={config.XDAI_NETWORK_NUMBER}
-					claimState={claimState}
-					setClaimState={setClaimState}
 					txStatus={txStatus}
 					givdropAmount={totalAmount}
-					onClaim={onClaim}
+					checkNetworkAndWallet={checkNetworkAndWallet}
+					onSuccess={onSuccess}
 				/>
 			)}
 		</>
 	);
 };
 
-export function showPendingClaim(network: number, txHash: string): void {
-	const transactionExplorer = `${networksParams[network].blockExplorerUrls[0]}/tx/${txHash}`;
-
-	toast.success(
-		<span>
-			Claim submitted! Check the status{' '}
-			<a
-				target='_blank'
-				href={transactionExplorer}
-				rel='noreferrer'
-				style={{ color: 'white' }}
-			>
-				here
-			</a>
-			.
-		</span>,
-	);
-}
-
-export function wrongWallet(address: string): void {
-	toast(
-		<span>
-			Please connect to the eligible wallet address on xDai: {address}
-		</span>,
-		{
-			duration: 3000,
-			position: 'bottom-center',
-			style: {
-				minWidth: '450px',
-				textAlign: 'center',
-				color: 'white',
-				backgroundColor: '#E1458D',
-			},
-		},
-	);
-}
-
-export function showFailedClaim(network: number, txHash: string): void {
-	const transactionExplorer = `${networksParams[network].blockExplorerUrls[0]}/tx/${txHash}`;
-
-	toast.error(
-		<span>
-			Your claim failed! Check your transaction{' '}
-			<a
-				target='_blank'
-				href={transactionExplorer}
-				rel='noreferrer'
-				style={{ color: 'white' }}
-			>
-				here
-			</a>
-			.
-		</span>,
-	);
-}
-
-export function showConfirmedClaim(network: number, txHash: string): void {
-	const transactionExplorer = `${networksParams[network].blockExplorerUrls[0]}/tx/${txHash}`;
-
-	toast.success(
-		<span>
-			<a
-				target='_blank'
-				href={transactionExplorer}
-				rel='noreferrer'
-				style={{ color: 'white' }}
-			>
-				Claimed
-			</a>
-			Your GIV tokens are in your wallet.
-		</span>,
-	);
-}
 export default ClaimCard;

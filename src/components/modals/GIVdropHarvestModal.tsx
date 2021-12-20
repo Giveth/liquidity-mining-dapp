@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, Dispatch, SetStateAction } from 'react';
+import { FC, useState, useEffect, useContext } from 'react';
 import { IModal, Modal } from './Modal';
 import {
 	ConfirmedInnerModal,
@@ -38,6 +38,16 @@ import { Zero } from '@ethersproject/constants';
 import BigNumber from 'bignumber.js';
 import Lottie from 'react-lottie';
 import LoadingAnimation from '@/animations/loading.json';
+import { claimAirDrop } from '@/lib/claim';
+import type { TransactionResponse } from '@ethersproject/providers';
+import useUser from '@/context/user.context';
+import { OnboardContext } from '@/context/onboard.context';
+import {
+	showPendingClaim,
+	showConfirmedClaim,
+	showFailedClaim,
+} from '../toasts/claim';
+import config from '@/configuration';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -57,23 +67,21 @@ enum ClaimState {
 }
 
 interface IGIVdropHarvestModal extends IModal {
-	claimState: ClaimState;
 	network: number;
 	txStatus: any;
 	givdropAmount: ethers.BigNumber;
-	onClaim: any;
-	setClaimState: Dispatch<SetStateAction<ClaimState>>;
+	checkNetworkAndWallet: () => Promise<boolean>;
+	onSuccess: (tx: TransactionResponse) => void;
 }
 
 export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 	showModal,
 	setShowModal,
-	claimState,
-	setClaimState,
 	network,
 	txStatus,
 	givdropAmount,
-	onClaim,
+	checkNetworkAndWallet,
+	onSuccess,
 }) => {
 	const [price, setPrice] = useState(0);
 	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
@@ -83,8 +91,15 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 		constants.Zero,
 	);
 	const [claimableNow, setClaimableNow] = useState(Zero);
+	const [claimState, setClaimState] = useState<ClaimState>(
+		ClaimState.UNKNOWN,
+	);
 	const { tokenDistroHelper } = useTokenDistro();
 	const { currentBalance } = useBalances();
+
+	const { userAddress } = useUser();
+
+	const { provider } = useContext(OnboardContext);
 
 	useEffect(() => {
 		setClaimableNow(tokenDistroHelper.getUserClaimableNow(currentBalance));
@@ -115,6 +130,34 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 	const calcUSD = (amount: string) => {
 		const usd = (parseInt(amount.toString()) * price).toFixed(2);
 		return usd;
+	};
+
+	const onClaim = async () => {
+		const check = checkNetworkAndWallet();
+		if (!check) return;
+		if (!provider) return;
+
+		try {
+			setClaimState(ClaimState.WAITING);
+			const tx = await claimAirDrop(userAddress, provider);
+			if (tx) {
+				setClaimState(ClaimState.SUBMITTING);
+				showPendingClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
+				const { status } = await tx.wait();
+
+				if (status) {
+					setClaimState(ClaimState.CLAIMED);
+					onSuccess(tx);
+					showConfirmedClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
+				} else {
+					setClaimState(ClaimState.ERROR);
+					showFailedClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
+				}
+			}
+		} catch (e) {
+			setClaimState(ClaimState.ERROR);
+			console.error(e);
+		}
 	};
 
 	return (
@@ -233,6 +276,15 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 										onClaim();
 									}}
 								/>
+								<CancelButton
+									label='CANCEL'
+									size='medium'
+									buttonType='texty'
+									onClick={() => {
+										setShowModal(false);
+									}}
+									disabled={claimState === ClaimState.WAITING}
+								/>
 							</HarvestBoxes>
 						</StyledScrollbars>
 						{claimState === ClaimState.WAITING && (
@@ -245,16 +297,6 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 								&nbsp;HARVEST PENDING
 							</Pending>
 						)}
-
-						<CancelButton
-							label='CANCEL'
-							size='medium'
-							buttonType='texty'
-							onClick={() => {
-								setShowModal(false);
-							}}
-							disabled={claimState === ClaimState.WAITING}
-						/>
 					</>
 				)}
 				{claimState === ClaimState.SUBMITTING && (
