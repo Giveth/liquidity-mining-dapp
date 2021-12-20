@@ -12,10 +12,12 @@ import {
 	HarvestAllModalContainer,
 	HarvestAllModalTitle,
 	HarvestAllModalTitleRow,
+	HarvestBoxes,
 	HarvestButton,
 	HelpRow,
 	Pending,
 	RateRow,
+	StyledScrollbars,
 	TooltipContent,
 } from './HarvestAll.sc';
 import { formatWeiHelper } from '@/helpers/number';
@@ -126,88 +128,114 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 								GIVdrop
 							</HarvestAllModalTitle>
 						</HarvestAllModalTitleRow>
-						{givdropAmount && givdropAmount.gt(0) && (
-							<>
-								{/* <HelpRow alignItems='center'>
+						<StyledScrollbars
+							autoHeight
+							autoHeightMin={'20Vh'}
+							autoHeightMax={'70Vh'}
+						>
+							<HarvestBoxes>
+								{givdropAmount && givdropAmount.gt(0) && (
+									<>
+										{/* <HelpRow alignItems='center'>
 									<B>Claimable from GIVdrop</B>
 								</HelpRow> */}
-								<GIVBoxWithPrice
-									amount={givdropAmount.div(10)}
-									price={calcUSD(
-										formatWeiHelper(givdropAmount.div(10)),
-									)}
+										<GIVBoxWithPrice
+											amount={givdropAmount.div(10)}
+											price={calcUSD(
+												formatWeiHelper(
+													givdropAmount.div(10),
+												),
+											)}
+										/>
+										<HelpRow alignItems='center'>
+											<Caption>
+												Your initial GIVstream flowrate
+											</Caption>
+										</HelpRow>
+										<RateRow alignItems='center'>
+											<IconGIVStream size={24} />
+											<GIVRate>
+												{formatWeiHelper(givDropStream)}
+											</GIVRate>
+											<Lead>GIV/week</Lead>
+										</RateRow>
+									</>
+								)}
+								{!currentBalance.givback.isZero() && (
+									<>
+										<HelpRow alignItems='center'>
+											<B>Claimable from GIVbacks</B>
+										</HelpRow>
+										<GIVBoxWithPrice
+											amount={givBackLiquidPart}
+											price={calcUSD(
+												formatWeiHelper(
+													givBackLiquidPart,
+												),
+											)}
+										/>
+										<HelpRow alignItems='center'>
+											<Caption>
+												Added to your GIVstream flowrate
+											</Caption>
+											<IconWithTooltip
+												icon={
+													<IconHelp
+														size={16}
+														color={
+															brandColors
+																.deep[100]
+														}
+													/>
+												}
+												direction={'top'}
+											>
+												<TooltipContent>
+													Increase you GIVstream
+													flowrate when you claim
+													liquid rewards!
+												</TooltipContent>
+											</IconWithTooltip>
+										</HelpRow>
+										<RateRow alignItems='center'>
+											<IconGIVStream size={24} />
+											<GIVRate>
+												{formatWeiHelper(givBackStream)}
+											</GIVRate>
+											<Lead>GIV/week</Lead>
+										</RateRow>
+									</>
+								)}
+								{givdropAmount && givdropAmount.gt(0) && (
+									<>
+										<HelpRow alignItems='center'>
+											<B>Claimable from GIVstream</B>
+										</HelpRow>
+										<GIVBoxWithPrice
+											amount={givDropAccStream}
+											price={calcUSD(
+												formatWeiHelper(
+													givDropAccStream,
+												),
+											)}
+										/>
+									</>
+								)}
+								<HarvestAllDesc>
+									When you harvest GIV rewards, all liquid GIV
+									allocated to you is sent to your wallet.
+								</HarvestAllDesc>
+								<HarvestButton
+									label='HARVEST'
+									size='medium'
+									buttonType='primary'
+									onClick={() => {
+										onClaim();
+									}}
 								/>
-								<HelpRow alignItems='center'>
-									<Caption>
-										Your initial GIVstream flowrate
-									</Caption>
-								</HelpRow>
-								<RateRow alignItems='center'>
-									<IconGIVStream size={24} />
-									<GIVRate>
-										{formatWeiHelper(givDropStream)}
-									</GIVRate>
-									<Lead>GIV/week</Lead>
-								</RateRow>
-							</>
-						)}
-						{!currentBalance.givback.isZero() && (
-							<>
-								<HelpRow alignItems='center'>
-									<B>Claimable from GIVbacks</B>
-								</HelpRow>
-								<GIVBoxWithPrice
-									amount={givBackLiquidPart}
-									price={calcUSD(
-										formatWeiHelper(givBackLiquidPart),
-									)}
-								/>
-								<HelpRow alignItems='center'>
-									<Caption>
-										Added to your GIVstream flowrate
-									</Caption>
-									<IconWithTooltip
-										icon={
-											<IconHelp
-												size={16}
-												color={brandColors.deep[100]}
-											/>
-										}
-										direction={'top'}
-									>
-										<TooltipContent>
-											Increase you GIVstream flowrate when
-											you claim liquid rewards!
-										</TooltipContent>
-									</IconWithTooltip>
-								</HelpRow>
-								<RateRow alignItems='center'>
-									<IconGIVStream size={24} />
-									<GIVRate>
-										{formatWeiHelper(givBackStream)}
-									</GIVRate>
-									<Lead>GIV/week</Lead>
-								</RateRow>
-							</>
-						)}
-						{givdropAmount && givdropAmount.gt(0) && (
-							<>
-								<HelpRow alignItems='center'>
-									<B>Claimable from GIVstream</B>
-								</HelpRow>
-								<GIVBoxWithPrice
-									amount={givDropAccStream}
-									price={calcUSD(
-										formatWeiHelper(givDropAccStream),
-									)}
-								/>
-							</>
-						)}
-						<HarvestAllDesc>
-							When you harvest GIV rewards, all liquid GIV
-							allocated to you is sent to your wallet.
-						</HarvestAllDesc>
-						{claimState === ClaimState.WAITING ? (
+							</HarvestBoxes>
+						</StyledScrollbars>
+						{claimState === ClaimState.WAITING && (
 							<Pending>
 								<Lottie
 									options={loadingAnimationOptions}
@@ -216,15 +244,6 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 								/>
 								&nbsp;HARVEST PENDING
 							</Pending>
-						) : (
-							<HarvestButton
-								label='HARVEST'
-								size='medium'
-								buttonType='primary'
-								onClick={() => {
-									onClaim();
-								}}
-							/>
 						)}
 
 						<CancelButton
