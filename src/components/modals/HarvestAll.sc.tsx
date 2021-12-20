@@ -54,7 +54,7 @@ export const HelpRow = styled(Row)`
 
 export const RateRow = styled(Row)`
 	gap: 4px;
-	margin-bottom: 16px;
+	margin-bottom: 32px;
 `;
 
 export const GIVRate = styled(Lead)`
