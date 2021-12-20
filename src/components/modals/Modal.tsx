@@ -65,6 +65,8 @@ const ModalWrapper = styled.div`
 	// padding: 24px;
 	z-index: 10;
 	text-align: center;
+	max-height: 90vh;
+	overflow: hidden;
 `;
 
 const CloseModalButton = styled.div`
