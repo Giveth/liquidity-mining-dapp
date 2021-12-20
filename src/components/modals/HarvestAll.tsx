@@ -245,13 +245,6 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 							)}
 							{claimable && claimable.gt(0) && (
 								<>
-									<HelpRow alignItems='center'>
-										<B>Claimable from GIVdrop</B>
-										<IconHelp
-											size={16}
-											color={brandColors.deep[100]}
-										/>
-									</HelpRow>
 									<GIVBoxWithPrice
 										amount={rewardLiquidPart}
 										price={calcUSD(
