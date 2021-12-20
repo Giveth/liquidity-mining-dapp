@@ -113,6 +113,7 @@ const GovernFooter = styled.div`
 	max-width: 500px;
 	font-size: 12px;
 	line-height: 18px;
+	margin-left: 3%;
 `;
 
 const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
