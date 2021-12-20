@@ -20,6 +20,7 @@ import {
 	MaxGIV,
 	PoolCard,
 	PoolCardContainer,
+	PoolCardFooter,
 	PoolCardTitle,
 	PoolItem,
 	PoolItemBold,
@@ -107,12 +108,6 @@ const GovernGIVToken = styled.div`
 
 const MaxStakeGIV = styled(MaxGIV)`
 	cursor: pointer;
-`;
-
-const GovernFooter = styled.div`
-	max-width: 500px;
-	font-size: 12px;
-	line-height: 18px;
 `;
 
 const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
@@ -278,14 +273,12 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 					</PoolCard>
 				</PoolCardContainer>
 			</APRRow>
-			<Row>
-				<GovernFooter>
-					The following calculators demonstrate how you can use GIV to
-					participate in the GIVeconomy!{' '}
-					<b>These are just simulations.</b> To participate for real,
-					claim your GIV.
-				</GovernFooter>
-			</Row>
+			<PoolCardFooter>
+				The following calculators demonstrate how you can use GIV to
+				participate in the GIVeconomy!{' '}
+				<b>These are just simulations.</b> To participate for real,
+				claim your GIV.
+			</PoolCardFooter>
 			{activeIndex === index && (
 				<>
 					<ArrowButton onClick={goNextStep} />

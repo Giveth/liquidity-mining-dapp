@@ -40,7 +40,7 @@ import { StakePoolInfo } from '@/types/poolInfo';
 import { fetchLPStakingInfo } from '@/lib/stakingPool';
 import { useLiquidityPositions } from '@/context';
 import { useTokenDistro } from '@/context/tokenDistro.context';
-import { H2, Lead, H4 } from '@giveth/ui-design-system';
+import { H2, Lead, H5 } from '@giveth/ui-design-system';
 
 const InvestCardContainer = styled(Card)`
 	::before {
@@ -189,7 +189,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 			</Header>
 			<APRRow alignItems={'flex-start'} justifyContent={'space-between'}>
 				<ImpactCard>
-					<H4 as='h2'>See how much you could earn</H4>
+					<H5 as='h2'>See how much you could earn</H5>
 					<div>
 						<Row
 							alignItems={'center'}

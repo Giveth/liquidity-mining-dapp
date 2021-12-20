@@ -159,7 +159,8 @@ export const PoolCardFooter = styled.div`
 	line-height: 18px;
 	z-index: 1;
 	@media only screen and (max-width: 1120px) {
-		margin-top: 8px;
+		text-align: center;
+		margin: 16px auto;
 	}
 `;
 

@@ -32,6 +32,12 @@ const SunImage = styled.div`
 	position: relative;
 	height: 0px;
 	left: -5%;
+	@media only screen and (max-width: 1360px) {
+		top: 90px;
+	}
+	@media only screen and (max-width: 1120px) {
+		display: none;
+	}
 `;
 
 const StarsImage = styled(SunImage)`
@@ -70,7 +76,6 @@ const ClaimedSubtitleB = styled.div`
 	font-family: 'Red Hat Text';
 	font-size: 20px;
 	text-align: center;
-	padding-left: 64px;
 `;
 
 const SocialButton = styled(Button)`

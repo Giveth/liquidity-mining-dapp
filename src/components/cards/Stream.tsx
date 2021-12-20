@@ -81,6 +81,9 @@ const StreamContainer = styled(Row)`
 const StreamValueContainer = styled(Row)`
 	padding: 20px 60px;
 	gap: 12px;
+	@media only screen and (max-width: 1120px) {
+		padding: 20px;
+	}
 `;
 
 const StreamValue = styled.div`
