@@ -62,13 +62,17 @@ const DonateCardContainer = styled(Card)`
 
 const Title = styled(H2)`
 	width: 700px;
-	@media only screen and (max-width: 1360px) {
+	@media only screen and (max-width: 1120px) {
+		width: 100%;
 	}
 `;
 
 const Desc = styled(P)`
 	width: 700px;
 	margin-top: 22px;
+	@media only screen and (max-width: 1120px) {
+		width: 100%;
+	}
 `;
 
 export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
