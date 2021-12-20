@@ -64,7 +64,7 @@ const GdropDonateTooltip = styled(Subline)`
 	width: 260px;
 `;
 
-const Header = styled.div`
+const DonateHeader = styled.div`
 	margin-bottom: 15px;
 `;
 
@@ -135,14 +135,14 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	return (
 		<DonateCardContainer activeIndex={activeIndex} index={index}>
-			<Header>
+			<DonateHeader>
 				<Title>Donate & get GIV back</Title>
 				<Desc size='small' color={'#CABAFF'}>
 					Donate to verified projects to get GIV with <b>GIVbacks</b>.
 					The project gets 100% of your donation, and you get rewarded
 					by Giveth with GIV!
 				</Desc>
-			</Header>
+			</DonateHeader>
 			<APRRow alignItems={'center'} justifyContent={'space-between'}>
 				<ImpactCard>
 					<H4 as='h2'>If you donate your GIVdrop</H4>

@@ -68,7 +68,7 @@ export const Header = styled.div`
 		margin-bottom: 8px;
 	}
 `;
-const Header = styled.div`
+const StakeHeader = styled.div`
 	margin-bottom: 60px;
 `;
 
@@ -185,14 +185,14 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	return (
 		<InvestCardContainer activeIndex={activeIndex} index={index}>
-			<Header>
+			<StakeHeader>
 				<Title as='h1'>Grow your Rewards</Title>
 				<Desc size='small' color={'#CABAFF'}>
 					Provide liquidity and get rewarded. Stake tokens in the{' '}
 					<b>GIVfarm</b> to earn up to{' '}
 					{APR ? `${formatEthHelper(APR, 2)}% APR` : ' ? '}
 				</Desc>
-			</Header>
+			</StakeHeader>
 			<APRRow alignItems={'flex-start'} justifyContent={'space-between'}>
 				<ImpactCard>
 					<H4 as='h2'>See how much you could earn</H4>

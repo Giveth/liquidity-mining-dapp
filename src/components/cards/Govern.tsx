@@ -80,7 +80,7 @@ const BeeImage = styled.div`
 	}
 `;
 
-const Header = styled.div`
+const GovernHeader = styled.div`
 	margin-bottom: 60px;
 	@media only screen and (max-width: 1120px) {
 		margin-bottom: 16px;
@@ -201,13 +201,13 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 					alt='Image of a happy bee'
 				/>
 			</BeeImage>
-			<Header>
+			<GovernHeader>
 				<Title as='h1'>Engage in Governance</Title>
 				<Desc size='small' color={'#CABAFF'}>
 					Participate in Giveth governance using the <b>GIVgarden</b>.
 					Wrap GIV to vote on proposals and earn rewards.
 				</Desc>
-			</Header>
+			</GovernHeader>
 			<APRRow alignItems={'center'} justifyContent={'flex-end'}>
 				<ImpactCard>
 					<H4 as='h2'>If you vote with GIV tokens</H4>
