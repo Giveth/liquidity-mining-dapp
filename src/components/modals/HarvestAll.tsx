@@ -137,7 +137,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	useEffect(() => {
 		if (
 			network === config.XDAI_NETWORK_NUMBER &&
-			currentBalance.givDropClaimed
+			!currentBalance.givDropClaimed
 		) {
 			fetchAirDropClaimData(address).then(claimData => {
 				if (claimData) {
