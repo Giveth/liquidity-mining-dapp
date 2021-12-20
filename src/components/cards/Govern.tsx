@@ -10,7 +10,21 @@ import Image from 'next/image';
 import BigNumber from 'bignumber.js';
 import { utils, BigNumber as EthersBigNumber, constants } from 'ethers';
 import styled from 'styled-components';
-import { ArrowButton, Card, MaxGIV } from './common';
+import {
+	APRRow,
+	ArrowButton,
+	Card,
+	ImpactCard,
+	ImpactCardInput,
+	ImpactCardLabel,
+	MaxGIV,
+	PoolCard,
+	PoolCardContainer,
+	PoolCardTitle,
+	PoolItem,
+	PoolItemBold,
+	PoolItems,
+} from './common';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
 import { H2, H4, P } from '../styled-components/Typography';
@@ -26,6 +40,7 @@ import { APR } from '../../types/poolInfo';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 
 const GovernCardContainer = styled(Card)`
+	padding-left: 254px;
 	::before {
 		content: '';
 		background-image: url('/images/vote.png');
@@ -34,23 +49,51 @@ const GovernCardContainer = styled(Card)`
 		height: 313px;
 		bottom: 0;
 		left: 0;
-		z-index: 0;
+		z-index: -1;
+	}
+	@media only screen and (max-width: 1360px) {
+		padding-left: 112px;
+		::before {
+			width: 170px;
+			height: 150px;
+			background-size: contain;
+			background-repeat: no-repeat;
+		}
+	}
+	@media only screen and (max-width: 1120px) {
+		padding: 8px;
+		::before {
+			background-image: none;
+		}
+	}
+`;
+
+const BeeImage = styled.div`
+	position: absolute;
+	left: 40px;
+	@media only screen and (max-width: 1360px) {
+		left: 10px;
+		width: 80px;
+	}
+	@media only screen and (max-width: 1120px) {
+		display: none;
 	}
 `;
 
 const Header = styled.div`
 	margin-bottom: 60px;
+	@media only screen and (max-width: 1120px) {
+		margin-bottom: 16px;
+	}
 `;
 
 const Title = styled(H2)`
 	width: 750px;
-	margin-left: 15%;
 `;
 
 const Desc = styled(P)`
 	max-width: 650px;
 	margin-top: 22px;
-	margin-left: 15%;
 `;
 
 const GovernGIVToken = styled.div`
@@ -61,79 +104,14 @@ const GovernGIVToken = styled.div`
 	justify-content: space-between;
 `;
 
-const GovernLabel = styled.span`
-	color: #cabaff;
-	display: flex;
-	gap: 6px;
-`;
-
 const MaxStakeGIV = styled(MaxGIV)`
 	cursor: pointer;
-`;
-
-const GovernInput = styled.div`
-	width: 392px;
-`;
-
-const YouCanEarn = styled(GovernGIVToken)`
-	padding: 20px 5px;
-	max-width: 380px;
-`;
-
-const GovernGIVEarn = styled.div`
-	font-family: Red Hat Text;
-	font-size: 48px;
-	font-style: normal;
-	font-weight: 700;
-	line-height: 80px;
-	letter-spacing: 0em;
-	text-align: left;
-`;
-
-const PoolCardContainer = styled.div`
-	z-index: 1;
-`;
-
-const PoolCardTitle = styled.div`
-	font-size: 16px;
-	padding-bottom: 12px;
-`;
-
-const PoolCard = styled.div`
-	width: 350px;
-	height: 164px;
-	padding: 10px 30px;
-
-	background: #211985;
-	border-radius: 16px;
-	z-index: 1;
-`;
-
-const PoolItems = styled.div`
-	padding: 12px 0;
-`;
-
-const PoolItem = styled.div`
-	font-size: 14px;
-	height: 40px;
-	line-height: 40px;
-	display: flex;
-	gap: 6px;
-`;
-
-const PoolItemBold = styled.div`
-	font-size: 16px;
-	font-weight: 500;
-	line-height: 40px;
-	display: flex;
-	gap: 6px;
 `;
 
 const GovernFooter = styled.div`
 	max-width: 500px;
 	font-size: 12px;
 	line-height: 18px;
-	margin-left: 20%;
 `;
 
 const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
@@ -214,21 +192,14 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	return (
 		<GovernCardContainer activeIndex={activeIndex} index={index}>
-			<div
-				style={{
-					position: 'relative',
-					height: 0,
-					top: '15%',
-					left: '-6%',
-				}}
-			>
+			<BeeImage>
 				<Image
 					src='/images/bee1.svg'
 					height='81'
 					width='112'
 					alt='Image of a happy bee'
 				/>
-			</div>
+			</BeeImage>
 			<Header>
 				<Title as='h1'>How to use your GIV</Title>
 				<Desc size='small' color={'#CABAFF'}>
@@ -236,15 +207,17 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 					on proposals with GIV and earn rewards.
 				</Desc>
 			</Header>
-			<Row alignItems={'center'} justifyContent={'flex-end'}>
-				<GovernGIVToken>
+			<APRRow alignItems={'center'} justifyContent={'flex-end'}>
+				<ImpactCard>
 					<H4 as='h2'>If you vote with GIV tokens</H4>
 					<div>
 						<Row
 							alignItems={'center'}
 							justifyContent={'space-between'}
 						>
-							<GovernLabel>Amount of GIV wrapped</GovernLabel>
+							<ImpactCardLabel>
+								Amount of GIV wrapped
+							</ImpactCardLabel>
 							<MaxStakeGIV
 								onClick={() =>
 									setStacked(
@@ -257,16 +230,16 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 								claimableAmount,
 							)} GIV`}</MaxStakeGIV>
 						</Row>
-						<GovernInput>
+						<ImpactCardInput>
 							<InputWithUnit
 								type='number'
 								value={stacked}
 								unit={'GIV'}
 								onChange={stackedChangeHandler}
 							/>
-						</GovernInput>
+						</ImpactCardInput>
 					</div>
-				</GovernGIVToken>
+				</ImpactCard>
 				<PoolCardContainer>
 					<PoolCardTitle>If you wrap for 1 month:</PoolCardTitle>
 					<PoolCard>
@@ -298,7 +271,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 						</PoolItems>
 					</PoolCard>
 				</PoolCardContainer>
-			</Row>
+			</APRRow>
 			<Row>
 				<GovernFooter>
 					The following calculators demonstrate how you can use GIV to
