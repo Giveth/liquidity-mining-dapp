@@ -66,7 +66,7 @@ export const Card = styled.div<ICardProps>`
 `;
 
 export const Header = styled.div`
-	margin-bottom: 92px;
+	margin-bottom: 60px;
 	@media only screen and (max-width: 1120px) {
 		margin-bottom: 8px;
 	}
@@ -93,6 +93,7 @@ export const ArrowButton = styled.div`
 
 export const APRRow = styled(Row)`
 	flex-direction: row;
+	justify-content: space-between;
 	@media only screen and (max-width: 1360px) {
 	}
 	@media only screen and (max-width: 1120px) {
@@ -114,10 +115,16 @@ export const PoolCard = styled.div`
 	width: 399px;
 	height: 164px;
 	padding: 10px 30px;
-
 	background: #211985;
 	border-radius: 16px;
 	z-index: 1;
+	@media only screen and (max-width: 1360px) {
+		width: 320px;
+	}
+	@media only screen and (max-width: 1120px) {
+		flex-direction: column;
+		align-items: center;
+	}
 `;
 
 export const PoolItems = styled.div`
@@ -155,7 +162,7 @@ export const ImpactCardLabel = styled.span`
 `;
 
 export const ImpactCardInput = styled.div`
-	width: 392px;
+	width: 360px;
 `;
 
 export const ImpactCard = styled.div`
