@@ -104,33 +104,8 @@ const GovernGIVToken = styled.div`
 	justify-content: space-between;
 `;
 
-const GovernLabel = styled.span`
-	color: #cabaff;
-	display: flex;
-	gap: 6px;
-`;
-
 const MaxStakeGIV = styled(MaxGIV)`
 	cursor: pointer;
-`;
-
-const GovernInput = styled.div`
-	width: 392px;
-`;
-
-const YouCanEarn = styled(GovernGIVToken)`
-	padding: 20px 5px;
-	max-width: 380px;
-`;
-
-const GovernGIVEarn = styled.div`
-	font-family: Red Hat Text;
-	font-size: 48px;
-	font-style: normal;
-	font-weight: 700;
-	line-height: 80px;
-	letter-spacing: 0em;
-	text-align: left;
 `;
 
 const GovernFooter = styled.div`
