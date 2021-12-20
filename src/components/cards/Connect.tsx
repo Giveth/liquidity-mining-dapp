@@ -6,7 +6,7 @@ import { WalletAddressInputWithButton } from '../input';
 import { Button } from '../styled-components/Button';
 import { Row } from '../styled-components/Grid';
 import { H2, P } from '../styled-components/Typography';
-import { ArrowButton, Card, Header } from './common';
+import { ArrowButton, Card } from './common';
 import { OnboardContext } from '../../context/onboard.context';
 import { UserContext, GiveDropStateType } from '../../context/user.context';
 import { utils, BigNumber } from 'ethers';
@@ -34,11 +34,20 @@ const ConnectCardContainer = styled(Card)<IConnectCardContainerProps>`
 	// @media only screen and (max-width: 1360px) {}
 	// @media only screen and (max-width: 1120px) {}
 	@media only screen and (max-width: 1120px) {
+		padding: 32px;
 		::before {
 			background-image: none;
 		}
 	}
 `;
+
+export const Header = styled.div`
+	margin-bottom: 92px;
+	@media only screen and (max-width: 1120px) {
+		margin-bottom: 32px;
+	}
+`;
+
 const Title = styled(H2)`
 	width: 800px;
 	@media only screen and (max-width: 1360px) {
