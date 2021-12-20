@@ -123,11 +123,7 @@ export const PoolCard = styled.div`
 	border-radius: 16px;
 	z-index: 1;
 	@media only screen and (max-width: 1360px) {
-		width: 320px;
-	}
-	@media only screen and (max-width: 1120px) {
 		width: 360px;
-		align-items: center;
 	}
 `;
 
