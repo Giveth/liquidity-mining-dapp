@@ -6,7 +6,7 @@ import { WalletAddressInputWithButton } from '../input';
 import { Button } from '../styled-components/Button';
 import { Row } from '../styled-components/Grid';
 import { H2, P } from '../styled-components/Typography';
-import { ArrowButton, Card, Header } from './common';
+import { ArrowButton, Card } from './common';
 import { OnboardContext } from '../../context/onboard.context';
 import { UserContext, GiveDropStateType } from '../../context/user.context';
 import { utils, BigNumber } from 'ethers';
@@ -14,8 +14,8 @@ import {
 	ClaimViewContext,
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
-import next from 'next';
-import { addToken } from '@/lib/metamask';
+import { addGIVToken } from '@/lib/metamask';
+import { ButtonLink, OulineLinkButton } from '@giveth/ui-design-system';
 interface IConnectCardContainerProps {
 	data: any;
 }
@@ -31,17 +31,51 @@ const ConnectCardContainer = styled(Card)<IConnectCardContainerProps>`
 		right: ${props => props.data.right};
 		z-index: -1;
 	}
+	// @media only screen and (max-width: 1360px) {}
+	// @media only screen and (max-width: 1120px) {}
+	@media only screen and (max-width: 1120px) {
+		padding: 32px;
+		::before {
+			background-image: none;
+		}
+	}
 `;
+
+export const Header = styled.div`
+	margin-bottom: 92px;
+	@media only screen and (max-width: 1120px) {
+		margin-bottom: 32px;
+	}
+`;
+
 const Title = styled(H2)`
 	width: 800px;
+	@media only screen and (max-width: 1360px) {
+		width: 700px;
+	}
+	@media only screen and (max-width: 1120px) {
+		width: 100%;
+	}
 `;
 
 const Desc = styled(P)`
 	margin-top: 22px;
 `;
 
+const ConnectRow = styled(Row)`
+	flex-direction: row;
+	gap: 16px;
+	// @media only screen and (max-width: 1360px) {}
+	@media only screen and (max-width: 1120px) {
+		flex-direction: column;
+	}
+`;
+
 const ConnectButton = styled(Button)`
 	width: 300px;
+	@media only screen and (max-width: 1360px) {
+		width: 257px;
+	}
 `;
 
 const Span = styled.div`
@@ -79,11 +113,17 @@ const ClaimedContainer = styled.div`
 	flex-direction: column;
 	justify-content: center;
 	position: relative;
+	@media only screen and (max-width: 1120px) {
+		margin-top: 64px;
+	}
 `;
 
 const SunImage = styled.div`
 	position: relative;
 	height: 0px;
+	@media only screen and (max-width: 1120px) {
+		display: none;
+	}
 `;
 
 const StarsImage = styled(SunImage)`
@@ -103,7 +143,7 @@ const ClaimedSubtitleContainer = styled.div`
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	gap: 4px;
+	gap: 8px;
 `;
 
 const ClaimedSubtitleA = styled.div`
@@ -118,26 +158,11 @@ const AddGivButton = styled.div`
 	cursor: pointer;
 `;
 
-const SocialButton = styled(Button)`
-	font-family: 'Red Hat Text';
-	font-size: 14px;
-	font-weight: bold;
-	text-transform: uppercase;
-	background-color: transparent;
-	border: 2px solid white;
-	height: 50px;
+const SocialButton = styled(OulineLinkButton)`
 	width: 265px;
-	margin: 12px 0 0 0;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	gap: 4px;
 `;
 
-const ExploreButton = styled(SocialButton)`
-	background-color: #e1458d;
-	border: none;
-	margin-left: 80px;
+const ExploreButton = styled(ButtonLink)`
 	width: 285px;
 `;
 
@@ -145,14 +170,13 @@ const ClaimFromAnother = styled.span`
 	cursor: pointer;
 	color: '#FED670'
 	margin-top: 4px;
-	margin-left: 80px;
 `;
 
 export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep, goFirstStep } =
 		useContext(ClaimViewContext);
 
-	const { address, connect } = useContext(OnboardContext);
+	const { address, connect, network } = useContext(OnboardContext);
 	const { submitUserAddress, claimableAmount, giveDropState, resetWallet } =
 		useContext(UserContext);
 
@@ -273,7 +297,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			{giveDropState !== GiveDropStateType.Success &&
 				giveDropState !== GiveDropStateType.Claimed && (
 					<>
-						<Row
+						<ConnectRow
 							alignItems={'center'}
 							justifyContent={'space-between'}
 						>
@@ -301,7 +325,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 									}}
 								/>
 							</InputWithButtonContainer>
-						</Row>
+						</ConnectRow>
 						{giveDropState === GiveDropStateType.Missed && (
 							<Link href='/' passHref>
 								<BackToGIVeconomy>
@@ -337,14 +361,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 							<ClaimedSubtitleA>
 								You already claimed your GIV!
 								<AddGivButton
-									onClick={() =>
-										addToken(
-											'0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3',
-											'TestGIV',
-											18,
-											'',
-										)
-									}
+									onClick={() => addGIVToken(network)}
 								>
 									<Image
 										src='/images/icons/metamask.svg'
@@ -354,57 +371,50 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 									/>
 								</AddGivButton>
 							</ClaimedSubtitleA>
-							<a
-								href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
+							<SocialButton
+								label='share on twitter '
 								target='_blank'
-								rel='noreferrer'
-							>
-								<SocialButton>
-									share on twitter
+								href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
+								icon={
 									<Image
 										src='/images/icons/twitter.svg'
 										height='15'
 										width='15'
 										alt='Twitter logo.'
 									/>
-								</SocialButton>
-							</a>
-							<a
-								href='https://swag.giveth.io/'
+								}
+							/>
+							<SocialButton
+								label='CLAIM YOUR FREE SWAG '
 								target='_blank'
-								rel='noreferrer'
-							>
-								<SocialButton>
-									claim your free swag
+								href='https://swag.giveth.io/'
+								icon={
 									<Image
 										src='/images/icons/tshirt.svg'
 										height='15'
 										width='15'
 										alt='T shirt.'
 									/>
-								</SocialButton>
-							</a>
-							<a
-								href='https://discord.giveth.io/'
+								}
+							/>
+							<SocialButton
+								label='join our discord '
 								target='_blank'
-								rel='noreferrer'
-							>
-								<SocialButton>
-									join our discord
+								href='https://swag.giveth.io/'
+								icon={
 									<Image
 										src='/images/icons/discord.svg'
 										height='15'
 										width='15'
 										alt='discord logo.'
 									/>
-								</SocialButton>
-							</a>
+								}
+							/>
 							<Link href='/' passHref>
-								<a target='_blank' rel='noreferrer'>
-									<ExploreButton>
-										explore the giveconomy
-									</ExploreButton>
-								</a>
+								<ExploreButton
+									label='explore the giveconomy'
+									linkType='primary'
+								/>
 							</Link>
 							<ClaimFromAnother
 								onClick={() => {
