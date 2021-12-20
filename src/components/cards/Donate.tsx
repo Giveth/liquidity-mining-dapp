@@ -146,8 +146,8 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 					<H4 as='h2'>If you donate your GIVdrop</H4>
 					<div>
 						<Row justifyContent={'space-between'}>
-							<ImpactCardLabel>
-								Your donation
+							<Row gap='4px' alignItems='center'>
+								<ImpactCardLabel>Your donation</ImpactCardLabel>
 								<IconWithTooltip
 									icon={<IconHelp size={16} />}
 									direction={'top'}
@@ -157,7 +157,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 										eligible for GIVbacks.
 									</GdropDonateTooltip>
 								</IconWithTooltip>
-							</ImpactCardLabel>
+							</Row>
 							<MaxStakeGIV
 								onClick={() =>
 									setDonation(
