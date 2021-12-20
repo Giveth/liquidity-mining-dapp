@@ -135,25 +135,12 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	}, [network]);
 
 	useEffect(() => {
-		console.log('==================================');
-		console.log('givDropClaimed', currentBalance.givDropClaimed);
-		console.log(
-			'network === config.XDAI_NETWORK_NUMBER ',
-			network === config.XDAI_NETWORK_NUMBER,
-		);
-		console.log(
-			'condition',
-			network === config.XDAI_NETWORK_NUMBER &&
-				!currentBalance.givDropClaimed,
-		);
-
 		if (
 			network === config.XDAI_NETWORK_NUMBER &&
 			!currentBalance.givDropClaimed
 		) {
 			fetchAirDropClaimData(address).then(claimData => {
 				if (claimData) {
-					console.log(`claimData`, claimData);
 					const givDrop = ethers.BigNumber.from(claimData.amount);
 					setGIVdrop(givDrop.div(10));
 					setGIVdropStream(
@@ -162,7 +149,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 				}
 			});
 		}
-	}, [address, network, currentBalance]);
+	}, [address, network, currentBalance, tokenDistroHelper]);
 
 	const onHarvest = () => {
 		if (!provider) return;

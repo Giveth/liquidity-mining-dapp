@@ -139,7 +139,6 @@ export const fetchBalances = async (
 		const givStaked = BN(info.givStaked || 0);
 		const allocationCount = Number(info.allocationCount || 0);
 		const givDropClaimed = Boolean(info.givDropClaimed);
-		console.log(`info.givDropClaimed`, network, info.givDropClaimed);
 
 		return {
 			balance,
@@ -306,16 +305,9 @@ export const getTokenDistroInfo = async (
 		const duration = +(_duration.toString() + '000');
 
 		const endTime = new Date(startTime.getTime() + duration);
-		// console.log(`endTime`, endTime);
-
 		const initialAmount = BN(info.initialAmount);
-		// console.log(`initialAmount`, initialAmount.toString());
-
 		const lockedAmount = BN(info.lockedAmount);
-		// console.log(`lockedAmount`, lockedAmount.toString());
-
 		const totalTokens = BN(info.totalTokens);
-		// console.log(`totalTokens`, totalTokens.toString());
 
 		return {
 			initialAmount,
