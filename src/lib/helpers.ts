@@ -1,12 +1,16 @@
 // HRM: Human Readable Date.
-export const convertMSToHRD = (ms: number) => {
-	let rem = ms / 1000;
-	const y = Math.floor(rem / 31536000);
-	rem -= y * 31536000;
-	const m = Math.floor(rem / 2592000);
-	rem -= m * 2592000;
-	const d = Math.floor(rem / 86400);
-	return { y, m, d };
+export const DurationToYMDhms = (ms: number) => {
+	let baseTime = new Date(0);
+	let duration = new Date(ms);
+
+	let Y = duration.getUTCFullYear() - baseTime.getUTCFullYear();
+	let M = duration.getUTCMonth() - baseTime.getUTCMonth();
+	let D = duration.getUTCDate() - baseTime.getUTCDate();
+	let h = duration.getUTCHours() - baseTime.getUTCHours();
+	let m = duration.getUTCMinutes() - baseTime.getUTCMinutes();
+	let s = duration.getUTCSeconds() - baseTime.getUTCSeconds();
+
+	return { Y: Y, M, D, h, m, s };
 };
 
 export const formatDate = (date: Date) => {
