@@ -4,7 +4,6 @@ import { utils } from 'ethers';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
-import { H2, H4, P } from '../styled-components/Typography';
 import {
 	ArrowButton,
 	Card,
@@ -22,6 +21,7 @@ import {
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { formatWeiHelper } from '@/helpers/number';
 import { DurationToString } from '@/lib/helpers';
+import { H2, Lead, H5 } from '@giveth/ui-design-system';
 
 const StreamCardContainer = styled(Card)`
 	::before {
@@ -57,7 +57,7 @@ const Title = styled(H2)`
 	}
 `;
 
-const Desc = styled(P)`
+const Desc = styled(Lead)`
 	width: 700px;
 	margin-top: 22px;
 	@media only screen and (max-width: 1120px) {
@@ -121,7 +121,9 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 	return (
 		<StreamCardContainer activeIndex={activeIndex} index={index}>
 			<Header>
-				<Title as='h1'>How to use your GIV</Title>
+				<Title as='h1' weight={700}>
+					How to use your GIV
+				</Title>
 				<Desc size='small' color={'#CABAFF'}>
 					Welcome to the expanding GIViverse! The GIVstream aligns
 					community members with the long-term success of Giveth and
@@ -130,7 +132,9 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 			</Header>
 			<StreamRow alignItems={'center'}>
 				<StreamContainer flexDirection='column'>
-					<H4 as='h2'>Your flowrate</H4>
+					<H5 as='h2' weight={700}>
+						Your flowrate
+					</H5>
 					<StreamSubtitle>Time remaining: {remain}</StreamSubtitle>
 				</StreamContainer>
 				<StreamValueContainer alignItems={'center'}>

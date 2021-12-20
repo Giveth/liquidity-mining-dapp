@@ -28,7 +28,6 @@ import {
 } from './common';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
-import { H2, H4, P } from '../styled-components/Typography';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
@@ -39,6 +38,7 @@ import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
 import { fetchGivStakingInfo } from '../../lib/stakingPool';
 import { APR } from '../../types/poolInfo';
 import { useTokenDistro } from '@/context/tokenDistro.context';
+import { H2, H5, Lead, P } from '@giveth/ui-design-system';
 
 const GovernCardContainer = styled(Card)`
 	padding-left: 254px;
@@ -92,7 +92,7 @@ const Title = styled(H2)`
 	width: 750px;
 `;
 
-const Desc = styled(P)`
+const Desc = styled(Lead)`
 	max-width: 650px;
 	margin-top: 22px;
 `;
@@ -203,7 +203,9 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 				/>
 			</BeeImage>
 			<Header>
-				<Title as='h1'>How to use your GIV</Title>
+				<Title as='h1' weight={700}>
+					How to use your GIV
+				</Title>
 				<Desc size='small' color={'#CABAFF'}>
 					Participate in Giveth governance using the GIVgarden. Govern
 					on proposals with GIV and earn rewards.
@@ -211,7 +213,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 			</Header>
 			<APRRow alignItems={'center'} justifyContent={'flex-end'}>
 				<ImpactCard>
-					<H4 as='h2'>If you vote with GIV tokens</H4>
+					<H5 as='h2'>If you vote with GIV tokens</H5>
 					<div>
 						<Row
 							alignItems={'center'}

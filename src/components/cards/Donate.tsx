@@ -3,7 +3,6 @@ import Image from 'next/image';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
-import { H2, H4, P } from '../styled-components/Typography';
 import {
 	APRRow,
 	ArrowButton,
@@ -30,9 +29,20 @@ import {
 import { UserContext } from '../../context/user.context';
 import { utils, BigNumber as EthersBigNumber, constants } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
-import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
+import { formatWeiHelper, Zero } from '../../helpers/number';
 import BigNumber from 'bignumber.js';
-import { Subline, neutralColors, IconHelp } from '@giveth/ui-design-system';
+import {
+	Subline,
+	neutralColors,
+	IconHelp,
+	H2,
+	H4,
+	P,
+	Caption,
+	H5,
+	Lead,
+	H6,
+} from '@giveth/ui-design-system';
 import { IconWithTooltip } from '../IconWithToolTip';
 
 const DonateCardContainer = styled(Card)`
@@ -55,7 +65,8 @@ const DonateCardContainer = styled(Card)`
 			background-repeat: no-repeat;
 		}
 	}
-	@media only screen and (max-width: 1120px) {
+	@media only screen and (max-width: 1360px) {
+		@media only screen and (max-width: 1120px) {
 		padding: 8px;
 		::before {
 			background-image: none;
@@ -69,42 +80,12 @@ const GdropDonateTooltip = styled(Subline)`
 
 const Title = styled(H2)`
 	width: 750px;
-`;
-
-const DonateRow = styled(Row)`
-	padding: 20px 0;
-	height: 208px;
-`;
-
-const DonateLabel = styled.span`
-	color: #cabaff;
-	display: flex;
-	gap: 6px;
-`;
-
-const DonateInput = styled.div`
-	width: 392px;
-`;
-
-const MaxDonateGIV = styled(MaxGIV)`
-	cursor: pointer;
-`;
-
-const GetBack = styled(DonateRow)`
-	padding-left: 124px;
-`;
-
-const DonateGIVEarn = styled.div`
-	font-family: Red Hat Text;
-	font-size: 48px;
-	font-style: normal;
-	@media only screen and (max-width: 1120px) {
+	@media only screen and (max-width: 1360px) {
 		width: 100%;
 	}
-	font-weight: 700;
 `;
 
-const Desc = styled(P)`
+const Desc = styled(Lead)`
 	width: 750px;
 	margin-top: 22px;
 	@media only screen and (max-width: 1120px) {
@@ -165,7 +146,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 	return (
 		<DonateCardContainer activeIndex={activeIndex} index={index}>
 			<Header>
-				<Title>Donate &amp; get GIV back</Title>
+				<Title weight={700}>Donate &amp; get GIVback</Title>
 				<Desc size='small' color={'#CABAFF'}>
 					Donate to verified projects to get GIV with GIVbacks. The
 					project gets 100% of your donation, and you get rewarded by
@@ -174,7 +155,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 			</Header>
 			<APRRow alignItems={'center'} justifyContent={'space-between'}>
 				<ImpactCard>
-					<H4 as='h2'>If you donate your GIVdrop</H4>
+					<H5 as='h2'>If you donate your GIVdrop</H5>
 					<div>
 						<Row justifyContent={'space-between'}>
 							<Row gap='4px' alignItems='center'>

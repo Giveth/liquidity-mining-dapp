@@ -5,21 +5,18 @@ import styled from 'styled-components';
 import { WalletAddressInputWithButton } from '../input';
 import { Button } from '../styled-components/Button';
 import { Row } from '../styled-components/Grid';
-import { H2, P } from '../styled-components/Typography';
 import { ArrowButton, Card } from './common';
 import { OnboardContext } from '../../context/onboard.context';
 import { UserContext, GiveDropStateType } from '../../context/user.context';
-import { utils, BigNumber } from 'ethers';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
-import next from 'next';
 import config from '@/config/development';
 import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
 import { formatWeiHelper } from '@/helpers/number';
 import { addGIVToken } from '@/lib/metamask';
-import { ButtonLink, OulineLinkButton } from '@giveth/ui-design-system';
+import { H2, Lead } from '@giveth/ui-design-system';
 interface IConnectCardContainerProps {
 	data: any;
 }
@@ -62,7 +59,7 @@ const Title = styled(H2)`
 	}
 `;
 
-const Desc = styled(P)`
+const Desc = styled(Lead)`
 	margin-top: 22px;
 `;
 
@@ -307,7 +304,9 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			>
 				{giveDropState !== GiveDropStateType.Claimed && (
 					<Header>
-						<Title as='h1'>{title}</Title>
+						<Title as='h1' weight={700}>
+							{title}
+						</Title>
 						<Desc size='small' color={'#CABAFF'}>
 							{desc}
 						</Desc>

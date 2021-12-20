@@ -4,7 +4,6 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
 import { Row } from '../styled-components/Grid';
-import { H2, P } from '../styled-components/Typography';
 import { Card, Header, PreviousArrowButton } from './common';
 import {
 	ClaimViewContext,
@@ -20,6 +19,7 @@ import { formatWeiHelper } from '@/helpers/number';
 import type { TransactionResponse } from '@ethersproject/providers';
 import { wrongWallet } from '../toasts/claim';
 import { useTokenDistro } from '@/context/tokenDistro.context';
+import { H2, Lead } from '@giveth/ui-design-system';
 
 const ClaimedContainer = styled.div`
 	display: flex;
@@ -82,7 +82,7 @@ const SocialButton = styled(Button)`
 	border: 2px solid white;
 	height: 50px;
 	width: 265px;
-	margin: 12px 0 0 0;
+	margin-top: 12px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -92,7 +92,6 @@ const SocialButton = styled(Button)`
 const ExploreButton = styled(SocialButton)`
 	background-color: #e1458d;
 	border: none;
-	margin-left: 80px;
 	width: 285px;
 `;
 
@@ -100,7 +99,6 @@ const ClaimFromAnother = styled.span`
 	cursor: pointer;
 	color: '#FED670'
 	margin-top: 4px;
-	margin-left: 80px;
 `;
 
 interface IClaimCardContainer {
@@ -124,7 +122,7 @@ const ClaimCardContainer = styled(Card)<IClaimCardContainer>`
 
 const Title = styled(H2)``;
 
-const Desc = styled(P)`
+const Desc = styled(Lead)`
 	margin-top: 22px;
 `;
 

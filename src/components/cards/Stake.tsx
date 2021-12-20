@@ -10,7 +10,6 @@ import Image from 'next/image';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
-import { H2, H4, P } from '../styled-components/Typography';
 import {
 	APRRow,
 	ArrowButton,
@@ -18,7 +17,6 @@ import {
 	ImpactCard,
 	ImpactCardInput,
 	ImpactCardLabel,
-	MaxGIV,
 	MaxStakeGIV,
 	PoolCard,
 	PoolCardContainer,
@@ -35,16 +33,14 @@ import {
 } from '../views/claim/Claim.view';
 import { UserContext } from '../../context/user.context';
 import { utils, BigNumber as EthersBigNumber, constants } from 'ethers';
-import { fetchGivStakingInfo } from '../../lib/stakingPool';
 import config from '../../configuration';
-import { APR } from '../../types/poolInfo';
 import BigNumber from 'bignumber.js';
 import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
-import { PoolStakingConfig, StakingType } from '@/types/config';
 import { StakePoolInfo } from '@/types/poolInfo';
 import { fetchLPStakingInfo } from '@/lib/stakingPool';
 import { useLiquidityPositions } from '@/context';
 import { useTokenDistro } from '@/context/tokenDistro.context';
+import { H2, Lead, H4 } from '@giveth/ui-design-system';
 
 const InvestCardContainer = styled(Card)`
 	::before {
@@ -79,7 +75,7 @@ const Title = styled(H2)`
 	}
 `;
 
-const Desc = styled(P)`
+const Desc = styled(Lead)`
 	margin-top: 22px;
 	@media only screen and (max-width: 1120px) {
 		margin-top: 8px;
@@ -183,7 +179,9 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	return (
 		<InvestCardContainer activeIndex={activeIndex} index={index}>
 			<Header>
-				<Title as='h1'>How to use your GIV</Title>
+				<Title as='h1' weight={700}>
+					How to use your GIV
+				</Title>
 				<Desc size='small' color={'#CABAFF'}>
 					Stake tokens in the GIVfarm to earn up to{' '}
 					{APR ? `${formatEthHelper(APR, 2)}% APR` : ' ? '}
