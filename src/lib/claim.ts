@@ -99,7 +99,7 @@ export const hasClaimedAirDrop = async (
 export const claimAirDrop = async (
 	address: string,
 	provider: Web3Provider,
-): Promise<any> => {
+): Promise<TransactionResponse | undefined> => {
 	const merkleAddress = config.XDAI_CONFIG.MERKLE_ADDRESS;
 	if (!isAddress(merkleAddress)) throw new Error('No MerkleAddress');
 	if (!provider) throw new Error('No Provider');
