@@ -119,6 +119,7 @@ export const TabGIVbacksBottom = () => {
 			const TwoWeek = 1209600000;
 			const _round = Math.floor(deltaT / TwoWeek) + 1;
 			setRound(_round);
+			tokenDistroHelper.endTime.setDate(tokenDistroHelper.startTime.getDate() + 14);
 		}
 	}, [tokenDistroHelper]);
 
@@ -191,7 +192,7 @@ export const TabGIVbacksBottom = () => {
 									<P>
 										{tokenDistroHelper
 											? formatDate(
-													tokenDistroHelper.endTime,
+												tokenDistroHelper.endTime,
 											  )
 											: '-'}
 									</P>
