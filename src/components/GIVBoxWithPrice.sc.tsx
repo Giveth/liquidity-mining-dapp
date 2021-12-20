@@ -5,9 +5,9 @@ import { Row } from './styled-components/Grid';
 
 export const GIVBoxWithPriceContainer = styled(Row)`
 	background-color: ${brandColors.giv[500]}66;
-	margin: 16px 0;
+	margin: 8px 0;
 	border-radius: 8px;
-	padding: 24px;
+	padding: 16px;
 	gap: 8px;
 `;
 
