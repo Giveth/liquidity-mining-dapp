@@ -372,7 +372,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 								</AddGivButton>
 							</ClaimedSubtitleA>
 							<SocialButton
-								label='share on twitter '
+								label='SHARE ON TWITTER '
 								target='_blank'
 								href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
 								icon={
@@ -398,7 +398,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 								}
 							/>
 							<SocialButton
-								label='join our discord '
+								label='JOIN OUR DISCORD '
 								target='_blank'
 								href='https://swag.giveth.io/'
 								icon={
@@ -412,7 +412,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 							/>
 							<Link href='/' passHref>
 								<ExploreButton
-									label='explore the giveconomy'
+									label='EXPLORE THE GIVECONOMY'
 									linkType='primary'
 								/>
 							</Link>
