@@ -93,21 +93,6 @@ const InputWithButtonContainer = styled.div`
 	width: 588px;
 `;
 
-const ClaimedRow = styled(Row)`
-	gap: 50px;
-`;
-
-const ChangeWallet = styled.div`
-	color: #fed670;
-	cursor: pointer;
-`;
-const BackToGIVeconomy = styled.div`
-	color: #fed670;
-	cursor: pointer;
-	margin-left: 15px;
-	text-decoration: underline;
-`;
-
 const ClickableStrong = styled.strong`
 	cursor: pointer;
 `;
