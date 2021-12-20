@@ -21,6 +21,7 @@ import {
 
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { formatWeiHelper } from '@/helpers/number';
+import { DurationToString } from '@/lib/helpers';
 
 const StreamCardContainer = styled(Card)`
 	::before {
@@ -100,6 +101,7 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 		useContext(ClaimViewContext);
 	const { totalAmount } = useContext(UserContext);
 	const [streamValue, setStreamValue] = useState<string>('0');
+	const [remain, setRemain] = useState('');
 
 	const { tokenDistroHelper } = useTokenDistro();
 
@@ -110,6 +112,11 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 			),
 		);
 	}, [totalAmount, tokenDistroHelper]);
+
+	useEffect(() => {
+		const _remain = DurationToString(tokenDistroHelper.remain);
+		setRemain(_remain);
+	}, [tokenDistroHelper]);
 
 	return (
 		<StreamCardContainer activeIndex={activeIndex} index={index}>
@@ -124,7 +131,7 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 			<StreamRow alignItems={'center'}>
 				<StreamContainer flexDirection='column'>
 					<H4 as='h2'>Your flowrate</H4>
-					<StreamSubtitle>Time remaining: 4y 23d 16h</StreamSubtitle>
+					<StreamSubtitle>Time remaining: {remain}</StreamSubtitle>
 				</StreamContainer>
 				<StreamValueContainer alignItems={'center'}>
 					<Image
