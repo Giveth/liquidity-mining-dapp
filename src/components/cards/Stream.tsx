@@ -116,10 +116,9 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 			<Header>
 				<Title as='h1'>Enjoy a continuous flow of GIV</Title>
 				<Desc size='small' color={'#CABAFF'}>
-					Welcome to the expanding GIViverse! Your GIVeconomy rewards
-					are continuously streamed to you via the <b>GIVstream</b>,
-					this aligns community members with the long-term success of
-					Giveth and the GIVeconomy.
+					Welcome to the expanding GIViverse! The <b>GIVstream</b>{' '}
+					offers continuous rewards for GIVeconomy participants. As
+					the GIVeconomy grows, so does your GIV!
 				</Desc>
 			</Header>
 			<StreamRow alignItems={'center'}>

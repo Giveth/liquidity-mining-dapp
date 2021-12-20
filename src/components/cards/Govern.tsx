@@ -231,10 +231,10 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 				/>
 			</div>
 			<Header>
-				<Title as='h1'>Engage in Community Governance</Title>
+				<Title as='h1'>Engage in Governance</Title>
 				<Desc size='small' color={'#CABAFF'}>
 					Participate in Giveth governance using the <b>GIVgarden</b>.
-					Govern on proposals with GIV and earn rewards.
+					Wrap GIV to vote on proposals and earn rewards.
 				</Desc>
 			</Header>
 			<Row alignItems={'center'} justifyContent={'flex-end'}>
