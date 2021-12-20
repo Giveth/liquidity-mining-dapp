@@ -38,6 +38,8 @@ export default class MyDocument extends Document {
 		return (
 			<Html>
 				<Head>
+					<link rel='shortcut icon' href='/favicon.svg' />
+
 					<meta name='title' content='GIVeconomy' />
 					<meta
 						name='description'

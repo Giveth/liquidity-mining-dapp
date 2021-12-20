@@ -356,7 +356,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 						// add values of all tokens in ETH
 						return acc?.add(ethValueGIV).add(wethAmount);
-					}, allPositions[0]._position?.amount1.multiply('0'));
+					}, allStaked[0]._position?.amount1.multiply('0'));
 
 				if (totalETHValue) {
 					const totalLiquidityEth = totalETHValue.toFixed(18);
@@ -381,23 +381,6 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 					setApr(currentApr);
 				}
-				// unstakedPositions.forEach((p: LiquidityPosition) => {
-				// 	console.log('token id:', p.tokenId);
-				// 	console.log(
-				// 		'GIV amount:',
-				// 		p._position?.amount0?.toFixed(10),
-				// 	);
-				// 	console.log(
-				// 		'ETH amount:',
-				// 		p._position?.amount1?.toFixed(10),
-				// 	);
-				// 	console.log(
-				// 		'price:',
-				// 		p._position?.pool
-				// 			.priceOf(p._position?.pool.token1)
-				// 			.toFixed(10),
-				// 	);
-				// });
 
 				setLoadingNftPositions(false);
 			} catch (e) {

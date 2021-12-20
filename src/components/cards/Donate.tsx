@@ -31,7 +31,8 @@ import { utils, BigNumber as EthersBigNumber, constants } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
 import BigNumber from 'bignumber.js';
-
+import { Subline, neutralColors, IconHelp } from '@giveth/ui-design-system';
+import { IconWithTooltip } from '../IconWithToolTip';
 const DonateCardContainer = styled(Card)`
 	padding-right: 154px;
 	::before {
@@ -59,12 +60,19 @@ const DonateCardContainer = styled(Card)`
 		}
 	}
 `;
+const GdropDonateTooltip = styled(Subline)`
+	color: ${neutralColors.gray[100]};
+	width: 260px;
+`;
 
-const Title = styled(H2)`
+const Title = styled.span`
+	font-size: 58px;
+	margin: 7px 0px 10px 0px;
 	width: 700px;
 	@media only screen and (max-width: 1120px) {
 		width: 100%;
 	}
+	font-weight: 700;
 `;
 
 const Desc = styled(P)`
@@ -127,22 +135,30 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 	return (
 		<DonateCardContainer activeIndex={activeIndex} index={index}>
 			<Header>
-				<Title as='h1'>How to use your GIV</Title>
+				<Title>Donate & get GIV back</Title>
 				<Desc size='small' color={'#CABAFF'}>
 					Donate to verified projects to get GIV with GIVbacks. The
-					project gets 100% of your donation, and you get GIV back
-					from Giveth!
+					project gets 100% of your donation, and you get rewarded by
+					Giveth with GIV!
 				</Desc>
 			</Header>
 			<APRRow alignItems={'center'} justifyContent={'space-between'}>
 				<ImpactCard>
-					<H4 as='h2'>If you donate GIV</H4>
+					<H4 as='h2'>If you donate your GIVdrop</H4>
 					<div>
-						<Row
-							alignItems={'center'}
-							justifyContent={'space-between'}
-						>
-							<ImpactCardLabel>Your donation</ImpactCardLabel>
+						<Row justifyContent={'space-between'}>
+							<ImpactCardLabel>
+								Your donation
+								<IconWithTooltip
+									icon={<IconHelp size={16} />}
+									direction={'top'}
+								>
+									<GdropDonateTooltip>
+										Donations made in most tokens are
+										eligible for GIVbacks.
+									</GdropDonateTooltip>
+								</IconWithTooltip>
+							</ImpactCardLabel>
 							<MaxStakeGIV
 								onClick={() =>
 									setDonation(
@@ -170,18 +186,6 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 						<PoolItems>
 							<Row justifyContent='space-between'>
 								<PoolItem>GIVbacks</PoolItem>
-								<PoolItemBold>
-									<Image
-										src='/images/icons/star.svg'
-										height='16'
-										width='16'
-										alt='Star icon'
-									/>
-									75%
-								</PoolItemBold>
-							</Row>
-							<Row justifyContent='space-between'>
-								<PoolItem>Claimable</PoolItem>
 								<PoolItemBold>
 									{formatWeiHelper(potentialClaim)} GIV
 								</PoolItemBold>

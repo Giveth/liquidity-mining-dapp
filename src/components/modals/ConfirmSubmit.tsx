@@ -63,9 +63,7 @@ export const SubmittedInnerModal: FC<IConfirmSubmitProps> = ({
 				height={100}
 				width={100}
 			/>
-			<TxSubmit weight={700}>
-				{txHash && 'Transaction submitted'}
-			</TxSubmit>
+			<TxSubmit weight={700}>{txHash && 'Transaction pending'}</TxSubmit>
 			{txHash && (
 				<BlockExplorerLink
 					href={`${
