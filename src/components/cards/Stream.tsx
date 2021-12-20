@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
 import { H2, H4, P } from '../styled-components/Typography';
-import { ArrowButton, Card, ICardProps, MaxGIV } from './common';
+import { ArrowButton, Card, Header, ICardProps, MaxGIV } from './common';
 import { UserContext } from '../../context/user.context';
 import {
 	ClaimViewContext,
@@ -26,21 +26,36 @@ const StreamCardContainer = styled(Card)`
 		right: 0;
 		z-index: 0;
 	}
-`;
-
-const Header = styled.div`
-	margin-bottom: 60px;
+	@media only screen and (max-width: 1360px) {
+		padding-right: 112px;
+		::before {
+			width: 240px;
+			background-size: contain;
+			background-repeat: no-repeat;
+		}
+	}
+	@media only screen and (max-width: 1120px) {
+		padding: 8px;
+		::before {
+			background-image: none;
+		}
+	}
 `;
 
 const Title = styled(H2)`
 	width: 700px;
+	@media only screen and (max-width: 1120px) {
+		width: 100%;
+	}
 `;
 
 const Desc = styled(P)`
-	width: 760px;
+	width: 700px;
 	margin-top: 22px;
+	@media only screen and (max-width: 1120px) {
+		width: 100%;
+	}
 `;
-
 const StreamRow = styled(Row)`
 	padding: 20px 0;
 	height: 208px;
@@ -71,28 +86,6 @@ const StreamPlaceholder = styled(Row)`
 	color: #b9a7ff;
 	align-self: flex-end;
 	gap: 6px;
-`;
-
-const StreamLabel = styled.span`
-	color: #cabaff;
-`;
-
-const StreamInput = styled.div`
-	width: 392px;
-`;
-
-const GetBack = styled(StreamRow)`
-	padding-left: 124px;
-`;
-
-const StreamGIVEarn = styled.div`
-	font-family: Red Hat Text;
-	font-size: 48px;
-	font-style: normal;
-	font-weight: 700;
-	line-height: 80px;
-	letter-spacing: 0em;
-	text-align: left;
 `;
 
 export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
