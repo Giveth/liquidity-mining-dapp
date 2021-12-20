@@ -128,9 +128,9 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 						</HarvestAllModalTitleRow>
 						{givdropAmount && givdropAmount.gt(0) && (
 							<>
-								<HelpRow alignItems='center'>
+								{/* <HelpRow alignItems='center'>
 									<B>Claimable from GIVdrop</B>
-								</HelpRow>
+								</HelpRow> */}
 								<GIVBoxWithPrice
 									amount={givdropAmount.div(10)}
 									price={calcUSD(
@@ -149,15 +149,6 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 									</GIVRate>
 									<Lead>GIV/week</Lead>
 								</RateRow>
-								<HelpRow alignItems='center'>
-									<B>Claimable from GIVstream</B>
-								</HelpRow>
-								<GIVBoxWithPrice
-									amount={givDropAccStream}
-									price={calcUSD(
-										formatWeiHelper(givDropAccStream),
-									)}
-								/>
 							</>
 						)}
 						{!currentBalance.givback.isZero() && (
@@ -197,6 +188,19 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 									</GIVRate>
 									<Lead>GIV/week</Lead>
 								</RateRow>
+							</>
+						)}
+						{givdropAmount && givdropAmount.gt(0) && (
+							<>
+								<HelpRow alignItems='center'>
+									<B>Claimable from GIVstream</B>
+								</HelpRow>
+								<GIVBoxWithPrice
+									amount={givDropAccStream}
+									price={calcUSD(
+										formatWeiHelper(givDropAccStream),
+									)}
+								/>
 							</>
 						)}
 						<HarvestAllDesc>

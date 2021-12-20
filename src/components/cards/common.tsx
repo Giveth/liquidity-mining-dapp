@@ -92,6 +92,7 @@ export const ArrowButton = styled.div`
 `;
 
 export const PreviousArrowButton = styled(ArrowButton)`
+	background-color: #211985;
 	left: -32px;
 	transform: rotate(180deg);
 `;
