@@ -113,11 +113,17 @@ const ClaimedContainer = styled.div`
 	flex-direction: column;
 	justify-content: center;
 	position: relative;
+	@media only screen and (max-width: 1120px) {
+		margin-top: 64px;
+	}
 `;
 
 const SunImage = styled.div`
 	position: relative;
 	height: 0px;
+	@media only screen and (max-width: 1120px) {
+		display: none;
+	}
 `;
 
 const StarsImage = styled(SunImage)`
@@ -164,7 +170,6 @@ const ClaimFromAnother = styled.span`
 	cursor: pointer;
 	color: '#FED670'
 	margin-top: 4px;
-	margin-left: 80px;
 `;
 
 export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
