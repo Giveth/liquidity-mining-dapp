@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Row } from '../styled-components/Grid';
 
 export interface ICardProps {
 	activeIndex: number;
@@ -88,4 +89,87 @@ export const ArrowButton = styled.div`
 	position: absolute;
 	right: -32px;
 	bottom: 48px;
+`;
+
+export const APRRow = styled(Row)`
+	flex-direction: row;
+	@media only screen and (max-width: 1360px) {
+	}
+	@media only screen and (max-width: 1120px) {
+		flex-direction: column;
+		align-items: center;
+	}
+`;
+
+export const PoolCardContainer = styled.div`
+	z-index: 1;
+`;
+
+export const PoolCardTitle = styled.div`
+	font-size: 16px;
+	padding-bottom: 12px;
+`;
+
+export const PoolCard = styled.div`
+	width: 399px;
+	height: 164px;
+	padding: 10px 30px;
+
+	background: #211985;
+	border-radius: 16px;
+	z-index: 1;
+`;
+
+export const PoolItems = styled.div`
+	padding: 12px 0;
+`;
+
+export const PoolItem = styled.div`
+	font-size: 14px;
+	height: 40px;
+	line-height: 40px;
+	display: flex;
+	gap: 6px;
+`;
+
+export const PoolItemBold = styled.div`
+	font-size: 16px;
+	font-weight: 500;
+	line-height: 40px;
+	display: flex;
+	gap: 6px;
+`;
+
+export const PoolCardFooter = styled.div`
+	max-width: 500px;
+	font-size: 12px;
+	line-height: 18px;
+	z-index: 1;
+	@media only screen and (max-width: 1120px) {
+		margin-top: 8px;
+	}
+`;
+
+export const ImpactCardLabel = styled.span`
+	color: #cabaff;
+`;
+
+export const ImpactCardInput = styled.div`
+	width: 392px;
+`;
+
+export const ImpactCard = styled.div`
+	padding: 20px 0px;
+	height: 208px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	@media only screen and (max-width: 1120px) {
+		padding: 0;
+		height: 140px;
+	}
+`;
+
+export const MaxStakeGIV = styled(MaxGIV)`
+	cursor: pointer;
 `;
