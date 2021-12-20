@@ -66,6 +66,9 @@ export const Card = styled.div<ICardProps>`
 
 export const Header = styled.div`
 	margin-bottom: 92px;
+	@media only screen and (max-width: 1120px) {
+		margin-bottom: 8px;
+	}
 `;
 
 export const MaxGIV = styled.span`
