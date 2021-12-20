@@ -113,6 +113,7 @@ const ClaimCarouselContainer = styled.div`
 interface IClaimViewContext {
 	activeIndex: number;
 	goNextStep: () => void;
+	goPreviousStep: () => void;
 	goFirstStep: () => void;
 }
 
@@ -123,6 +124,7 @@ export interface IClaimViewCardProps {
 export const ClaimViewContext = React.createContext<IClaimViewContext>({
 	activeIndex: 0,
 	goNextStep: () => {},
+	goPreviousStep: () => {},
 	goFirstStep: () => {},
 });
 
@@ -185,6 +187,9 @@ const ClaimView = () => {
 								activeIndex: step,
 								goNextStep: () => {
 									setStep(step + 1);
+								},
+								goPreviousStep: () => {
+									setStep(step - 1);
 								},
 								goFirstStep: () => {
 									setStep(0);

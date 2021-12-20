@@ -24,6 +24,7 @@ import {
 	PoolItem,
 	PoolItemBold,
 	PoolItems,
+	PreviousArrowButton,
 } from './common';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
@@ -115,7 +116,8 @@ const GovernFooter = styled.div`
 `;
 
 const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
+	const { activeIndex, goNextStep, goPreviousStep } =
+		useContext(ClaimViewContext);
 	const { claimableAmount } = useContext(UserContext);
 
 	const [stacked, setStacked] = useState<any>(0);
@@ -282,7 +284,12 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 					claim your GIV.
 				</GovernFooter>
 			</Row>
-			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
+			{activeIndex === index && (
+				<>
+					<ArrowButton onClick={goNextStep} />
+					<PreviousArrowButton onClick={goPreviousStep} />
+				</>
+			)}
 		</GovernCardContainer>
 	);
 };

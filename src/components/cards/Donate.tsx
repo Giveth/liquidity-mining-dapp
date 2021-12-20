@@ -21,6 +21,7 @@ import {
 	PoolItem,
 	PoolItemBold,
 	PoolItems,
+	PreviousArrowButton,
 } from './common';
 import {
 	ClaimViewContext,
@@ -33,6 +34,7 @@ import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
 import BigNumber from 'bignumber.js';
 import { Subline, neutralColors, IconHelp } from '@giveth/ui-design-system';
 import { IconWithTooltip } from '../IconWithToolTip';
+
 const DonateCardContainer = styled(Card)`
 	padding-right: 154px;
 	::before {
@@ -111,7 +113,8 @@ const Desc = styled(P)`
 `;
 
 export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
+	const { activeIndex, goNextStep, goPreviousStep } =
+		useContext(ClaimViewContext);
 	const { claimableAmount } = useContext(UserContext);
 
 	const [donation, setDonation] = useState<any>(0);
@@ -235,7 +238,12 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 				<b>These are just simulations.</b> To participate for real,
 				claim your GIV.
 			</PoolCardFooter>
-			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
+			{activeIndex === index && (
+				<>
+					<ArrowButton onClick={goNextStep} />
+					<PreviousArrowButton onClick={goPreviousStep} />
+				</>
+			)}
 		</DonateCardContainer>
 	);
 };

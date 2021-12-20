@@ -5,7 +5,14 @@ import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
 import { H2, H4, P } from '../styled-components/Typography';
-import { ArrowButton, Card, Header, ICardProps, MaxGIV } from './common';
+import {
+	ArrowButton,
+	Card,
+	Header,
+	ICardProps,
+	MaxGIV,
+	PreviousArrowButton,
+} from './common';
 import { UserContext } from '../../context/user.context';
 import {
 	ClaimViewContext,
@@ -89,7 +96,8 @@ const StreamPlaceholder = styled(Row)`
 `;
 
 export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
+	const { activeIndex, goNextStep, goPreviousStep } =
+		useContext(ClaimViewContext);
 	const { claimableAmount } = useContext(UserContext);
 	const [streamValue, setStreamValue] = useState<string>('0');
 
@@ -129,7 +137,12 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 					<StreamPlaceholder>GIV/week</StreamPlaceholder>
 				</StreamValueContainer>
 			</StreamRow>
-			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
+			{activeIndex === index && (
+				<>
+					<ArrowButton onClick={goNextStep} />
+					<PreviousArrowButton onClick={goPreviousStep} />
+				</>
+			)}
 		</StreamCardContainer>
 	);
 };

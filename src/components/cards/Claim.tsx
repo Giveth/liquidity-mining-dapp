@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
 import { Row } from '../styled-components/Grid';
 import { H2, P } from '../styled-components/Typography';
-import { Card, Header } from './common';
+import { Card, Header, PreviousArrowButton } from './common';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
@@ -156,7 +156,8 @@ const MetamaskButton = styled.a`
 `;
 
 const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goFirstStep } = useContext(ClaimViewContext);
+	const { activeIndex, goFirstStep, goPreviousStep } =
+		useContext(ClaimViewContext);
 	const { userAddress, claimableAmount, resetWallet } =
 		useContext(UserContext);
 	const {
@@ -414,6 +415,11 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 							/>
 						</MetamaskButton>
 					</Row>
+				</>
+			)}
+			{activeIndex === index && (
+				<>
+					<PreviousArrowButton onClick={goPreviousStep} />
 				</>
 			)}
 		</ClaimCardContainer>

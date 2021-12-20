@@ -27,6 +27,7 @@ import {
 	PoolItem,
 	PoolItemBold,
 	PoolItems,
+	PreviousArrowButton,
 } from './common';
 import {
 	ClaimViewContext,
@@ -86,7 +87,8 @@ const Desc = styled(P)`
 `;
 
 const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
+	const { activeIndex, goNextStep, goPreviousStep } =
+		useContext(ClaimViewContext);
 	const { claimableAmount } = useContext(UserContext);
 
 	const [deposit, setDeposit] = useState<any>(0);
@@ -258,7 +260,12 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 				<b>These are just simulations.</b> To participate for real,
 				claim your GIV.
 			</PoolCardFooter>
-			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
+			{activeIndex === index && (
+				<>
+					<ArrowButton onClick={goNextStep} />
+					<PreviousArrowButton onClick={goPreviousStep} />{' '}
+				</>
+			)}
 		</InvestCardContainer>
 	);
 };

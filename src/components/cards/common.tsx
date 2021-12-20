@@ -91,6 +91,11 @@ export const ArrowButton = styled.div`
 	bottom: 48px;
 `;
 
+export const PreviousArrowButton = styled(ArrowButton)`
+	left: -32px;
+	transform: rotate(180deg);
+`;
+
 export const APRRow = styled(Row)`
 	flex-direction: row;
 	justify-content: space-between;
