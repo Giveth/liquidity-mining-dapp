@@ -29,6 +29,7 @@ export interface IBalances {
 	honeyswapLpStaked: ethers.BigNumber;
 	givStaked: ethers.BigNumber;
 	allocationCount: number;
+	givDropClaimed: boolean;
 }
 export const zeroBalances: IBalances = {
 	balance: constants.Zero,
@@ -53,6 +54,7 @@ export const zeroBalances: IBalances = {
 	honeyswapLpStaked: constants.Zero,
 	givStaked: constants.Zero,
 	allocationCount: 0,
+	givDropClaimed: true,
 };
 
 export const fetchBalances = async (
@@ -83,6 +85,7 @@ export const fetchBalances = async (
 			honeyswapLpStaked 
 			givStaked
 			allocationCount
+			givDropClaimed
 		}
 	}`;
 	const reqBody = { query };
@@ -135,6 +138,7 @@ export const fetchBalances = async (
 		const honeyswapLpStaked = BN(info.honeyswapLpStaked || 0);
 		const givStaked = BN(info.givStaked || 0);
 		const allocationCount = Number(info.allocationCount || 0);
+		const givDropClaimed = Boolean(info.givDropClaimed);
 
 		return {
 			balance,
@@ -159,6 +163,7 @@ export const fetchBalances = async (
 			honeyswapLpStaked,
 			givStaked,
 			allocationCount,
+			givDropClaimed,
 		};
 	} catch (error) {
 		console.error('Error in fetching Balances', error);
@@ -300,16 +305,9 @@ export const getTokenDistroInfo = async (
 		const duration = +(_duration.toString() + '000');
 
 		const endTime = new Date(startTime.getTime() + duration);
-		// console.log(`endTime`, endTime);
-
 		const initialAmount = BN(info.initialAmount);
-		// console.log(`initialAmount`, initialAmount.toString());
-
 		const lockedAmount = BN(info.lockedAmount);
-		// console.log(`lockedAmount`, lockedAmount.toString());
-
 		const totalTokens = BN(info.totalTokens);
-		// console.log(`totalTokens`, totalTokens.toString());
 
 		return {
 			initialAmount,

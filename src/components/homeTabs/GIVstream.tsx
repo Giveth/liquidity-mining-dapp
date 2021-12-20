@@ -65,7 +65,7 @@ import {
 import { OnboardContext } from '@/context/onboard.context';
 import { formatWeiHelper } from '@/helpers/number';
 import config from '@/configuration';
-import { convertMSToHRD } from '@/lib/helpers';
+import { DurationToString } from '@/lib/helpers';
 import { NetworkSelector } from '@/components/NetworkSelector';
 import { useBalances } from '@/context/balance.context';
 import { constants, ethers } from 'ethers';
@@ -173,12 +173,9 @@ export const TabGIVstreamBottom = () => {
 	]);
 
 	useEffect(() => {
-		const _remain = convertMSToHRD(tokenDistroHelper.remain);
-		const _HRremain = `${_remain.y ? _remain.y + 'y' : ''} ${
-			_remain.m ? _remain.m + 'm' : ''
-		} ${_remain.d ? _remain.d + 'd' : ''} `;
 		setPercent(tokenDistroHelper.percent);
-		setRemain(_HRremain);
+		const _remain = DurationToString(tokenDistroHelper.remain);
+		setRemain(_remain);
 	}, [tokenDistroHelper]);
 	return (
 		<GIVbacksBottomContainer>

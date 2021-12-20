@@ -37,14 +37,17 @@ import {
 	StakingPoolSubtitle,
 	NothingToHarvest,
 	TooltipContent,
+	StyledScrollbars,
+	HarvestBoxes,
 } from './HarvestAll.sc';
 import { Zero } from '@ethersproject/constants';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
-import { claimReward } from '@/lib/claim';
+import { claimReward, fetchAirDropClaimData } from '@/lib/claim';
 import config from '@/configuration';
 import { IconWithTooltip } from '../IconWithToolTip';
 import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
+import Link from 'next/link';
 
 interface IHarvestAllModalProps extends IModal {
 	title: string;
@@ -89,6 +92,8 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	const [txHash, setTxHash] = useState('');
 
 	const [price, setPrice] = useState(0);
+	const [givDrop, setGIVdrop] = useState(Zero);
+	const [givDropStream, setGIVdropStream] = useState<BigNumber.Value>(0);
 	const [rewardLiquidPart, setRewardLiquidPart] = useState(Zero);
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
 	const [claimableNow, setClaimableNow] = useState(Zero);
@@ -128,6 +133,23 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 			setPrice(price);
 		});
 	}, [network]);
+
+	useEffect(() => {
+		if (
+			network === config.XDAI_NETWORK_NUMBER &&
+			!currentBalance.givDropClaimed
+		) {
+			fetchAirDropClaimData(address).then(claimData => {
+				if (claimData) {
+					const givDrop = ethers.BigNumber.from(claimData.amount);
+					setGIVdrop(givDrop.div(10));
+					setGIVdropStream(
+						tokenDistroHelper.getStreamPartTokenPerWeek(givDrop),
+					);
+				}
+			});
+		}
+	}, [address, network, currentBalance, tokenDistroHelper]);
 
 	const onHarvest = () => {
 		if (!provider) return;
@@ -228,146 +250,205 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 								</HarvestAllModalTitle>
 								{/* <TitleIcon size={24} /> */}
 							</HarvestAllModalTitleRow>
-							{poolStakingConfig && (
-								<SPTitle alignItems='center' gap='16px'>
-									<StakingPoolImages
-										title={poolStakingConfig.title}
-									/>
-									<div>
-										<StakingPoolLabel weight={900}>
-											{poolStakingConfig.title}
-										</StakingPoolLabel>
-										<StakingPoolSubtitle>
-											{poolStakingConfig.description}
-										</StakingPoolSubtitle>
-									</div>
-								</SPTitle>
-							)}
-							{claimable && claimable.gt(0) && (
-								<>
-									<GIVBoxWithPrice
-										amount={rewardLiquidPart}
-										price={calcUSD(
-											formatWeiHelper(rewardLiquidPart),
-										)}
-									/>
-									<HelpRow alignItems='center'>
-										<Caption>
-											Added to your GIVstream flowrate
-										</Caption>
-										<IconWithTooltip
-											icon={
-												<IconHelp
-													size={16}
-													color={
-														brandColors.deep[100]
+							<StyledScrollbars
+								autoHeight
+								autoHeightMin={'20Vh'}
+								autoHeightMax={'70Vh'}
+							>
+								<HarvestBoxes>
+									{poolStakingConfig && (
+										<SPTitle alignItems='center' gap='16px'>
+											<StakingPoolImages
+												title={poolStakingConfig.title}
+											/>
+											<div>
+												<StakingPoolLabel weight={900}>
+													{poolStakingConfig.title}
+												</StakingPoolLabel>
+												<StakingPoolSubtitle>
+													{
+														poolStakingConfig.description
 													}
-												/>
-											}
-											direction={'top'}
-										>
-											<TooltipContent>
-												Increase you GIVstream flowrate
-												when you claim liquid rewards!
-											</TooltipContent>
-										</IconWithTooltip>
-									</HelpRow>
-									<RateRow alignItems='center'>
-										<IconGIVStream size={24} />
-										<GIVRate>
-											{formatWeiHelper(rewardStream)}
-										</GIVRate>
-										<Lead>GIV/week</Lead>
-									</RateRow>
-								</>
-							)}
-							{currentBalance.givback.gt(0) && (
-								<>
-									<HelpRow alignItems='center'>
-										<B>Claimable from GIVbacks</B>
-									</HelpRow>
-									<GIVBoxWithPrice
-										amount={givBackLiquidPart}
-										price={calcUSD(
-											formatWeiHelper(givBackLiquidPart),
-										)}
-									/>
-									<HelpRow alignItems='center'>
-										<Caption>
-											Added to your GIVstream flowrate
-										</Caption>
-										<IconWithTooltip
-											icon={
-												<IconHelp
-													size={16}
-													color={
-														brandColors.deep[100]
+												</StakingPoolSubtitle>
+											</div>
+										</SPTitle>
+									)}
+									{claimable && claimable.gt(0) && (
+										<>
+											<GIVBoxWithPrice
+												amount={rewardLiquidPart}
+												price={calcUSD(
+													formatWeiHelper(
+														rewardLiquidPart,
+													),
+												)}
+											/>
+											<HelpRow alignItems='center'>
+												<Caption>
+													Added to your GIVstream
+													flowrate
+												</Caption>
+												<IconWithTooltip
+													icon={
+														<IconHelp
+															size={16}
+															color={
+																brandColors
+																	.deep[100]
+															}
+														/>
 													}
-												/>
-											}
-											direction={'top'}
-										>
-											<TooltipContent>
-												Increase you GIVstream flowrate
-												when you claim liquid rewards!
-											</TooltipContent>
-										</IconWithTooltip>
-									</HelpRow>
-									<RateRow alignItems='center'>
-										<IconGIVStream size={24} />
-										<GIVRate>
-											{formatWeiHelper(givBackStream)}
-										</GIVRate>
-										<Lead>GIV/week</Lead>
-									</RateRow>
-								</>
-							)}
-							{!claimableNow.isZero() && (
-								<>
-									<HelpRow alignItems='center'>
-										<B>Claimable from GIVstream</B>
-									</HelpRow>
-									<GIVBoxWithPrice
-										amount={claimableNow.sub(
-											givBackLiquidPart,
-										)}
-										price={calcUSD(
-											formatWeiHelper(claimableNow),
-										)}
+													direction={'top'}
+												>
+													<TooltipContent>
+														Increase you GIVstream
+														flowrate when you claim
+														liquid rewards!
+													</TooltipContent>
+												</IconWithTooltip>
+											</HelpRow>
+											<RateRow alignItems='center'>
+												<IconGIVStream size={24} />
+												<GIVRate>
+													{formatWeiHelper(
+														rewardStream,
+													)}
+												</GIVRate>
+												<Lead>GIV/week</Lead>
+											</RateRow>
+										</>
+									)}
+									{currentBalance.givback.gt(0) && (
+										<>
+											<HelpRow alignItems='center'>
+												<B>Claimable from GIVbacks</B>
+											</HelpRow>
+											<GIVBoxWithPrice
+												amount={givBackLiquidPart}
+												price={calcUSD(
+													formatWeiHelper(
+														givBackLiquidPart,
+													),
+												)}
+											/>
+											<HelpRow alignItems='center'>
+												<Caption>
+													Added to your GIVstream
+													flowrate
+												</Caption>
+												<IconWithTooltip
+													icon={
+														<IconHelp
+															size={16}
+															color={
+																brandColors
+																	.deep[100]
+															}
+														/>
+													}
+													direction={'top'}
+												>
+													<TooltipContent>
+														Increase you GIVstream
+														flowrate when you claim
+														liquid rewards!
+													</TooltipContent>
+												</IconWithTooltip>
+											</HelpRow>
+											<RateRow alignItems='center'>
+												<IconGIVStream size={24} />
+												<GIVRate>
+													{formatWeiHelper(
+														givBackStream,
+													)}
+												</GIVRate>
+												<Lead>GIV/week</Lead>
+											</RateRow>
+										</>
+									)}
+									{givDrop.gt(Zero) && (
+										<>
+											<HelpRow alignItems='center'>
+												<B>Claimable from GIVdrop</B>
+											</HelpRow>
+											<GIVBoxWithPrice
+												amount={givDrop}
+												price={calcUSD(
+													formatWeiHelper(givDrop),
+												)}
+											/>
+											<HelpRow alignItems='center'>
+												<Caption>
+													Your initial GIVstream
+													flowrate
+												</Caption>
+											</HelpRow>
+											<RateRow alignItems='center'>
+												<IconGIVStream size={24} />
+												<GIVRate>
+													{formatWeiHelper(
+														givDropStream,
+													)}
+												</GIVRate>
+												<Lead>GIV/week</Lead>
+											</RateRow>
+										</>
+									)}
+									{!claimableNow.isZero() && (
+										<>
+											<HelpRow alignItems='center'>
+												<B>Claimable from GIVstream</B>
+											</HelpRow>
+											<GIVBoxWithPrice
+												amount={claimableNow.sub(
+													givBackLiquidPart,
+												)}
+												price={calcUSD(
+													formatWeiHelper(
+														claimableNow,
+													),
+												)}
+											/>
+										</>
+									)}
+									<HarvestAllDesc>
+										When you harvest GIV rewards, all liquid
+										GIV allocated to you is sent to your
+										wallet.
+									</HarvestAllDesc>
+									{state === HarvestStates.HARVEST && (
+										<HarvestButton
+											label='HARVEST'
+											size='medium'
+											buttonType='primary'
+											onClick={onHarvest}
+										/>
+									)}
+									{state === HarvestStates.HARVESTING && (
+										<Pending>
+											<Lottie
+												options={
+													loadingAnimationOptions
+												}
+												height={40}
+												width={40}
+											/>
+											&nbsp;HARVEST PENDING
+										</Pending>
+									)}
+									<CancelButton
+										disabled={
+											state !== HarvestStates.HARVEST
+										}
+										label='CANCEL'
+										size='medium'
+										buttonType='texty'
+										onClick={() => {
+											setShowModal(false);
+										}}
 									/>
-								</>
-							)}
-							<HarvestAllDesc>
-								When you harvest GIV rewards, all liquid GIV
-								allocated to you is sent to your wallet.
-							</HarvestAllDesc>
-							{state === HarvestStates.HARVEST && (
-								<HarvestButton
-									label='HARVEST'
-									size='medium'
-									buttonType='primary'
-									onClick={onHarvest}
-								/>
-							)}
-							{state === HarvestStates.HARVESTING && (
-								<Pending>
-									<Lottie
-										options={loadingAnimationOptions}
-										height={40}
-										width={40}
-									/>
-									&nbsp;HARVEST PENDING
-								</Pending>
-							)}
-							<CancelButton
-								disabled={state !== HarvestStates.HARVEST}
-								label='CANCEL'
-								size='medium'
-								buttonType='texty'
-								onClick={() => {
-									setShowModal(false);
-								}}
-							/>
+								</HarvestBoxes>
+							</StyledScrollbars>
 						</HarvestAllModalContainer>
 					))}
 				{state === HarvestStates.SUBMITTED && (
