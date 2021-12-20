@@ -32,6 +32,10 @@ import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
 import BigNumber from 'bignumber.js';
 import { Subline, neutralColors, IconHelp } from '@giveth/ui-design-system';
 import { IconWithTooltip } from '../IconWithToolTip';
+
+const DonatePoolCard = styled(PoolCard)`
+	height: 127px;
+`;
 const DonateCardContainer = styled(Card)`
 	padding-right: 154px;
 	::before {
@@ -183,7 +187,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 					</div>
 				</ImpactCard>
 				<PoolCardContainer>
-					<PoolCard>
+					<DonatePoolCard>
 						<PoolItems>
 							<Row justifyContent='space-between'>
 								<PoolItem>GIVbacks</PoolItem>
@@ -198,7 +202,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 								</PoolItemBold>
 							</Row>
 						</PoolItems>
-					</PoolCard>
+					</DonatePoolCard>
 				</PoolCardContainer>
 			</APRRow>
 			<PoolCardFooter>
