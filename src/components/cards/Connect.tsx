@@ -162,11 +162,11 @@ const AddGivButton = styled.div`
 	cursor: pointer;
 `;
 
-const SocialButton = styled(OulineLinkButton)`
+const SocialButton = styled(Button)`
 	width: 265px;
 `;
 
-const ExploreButton = styled(ButtonLink)`
+const ExploreButton = styled(Button)`
 	width: 285px;
 `;
 
@@ -392,13 +392,15 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 									rel='noreferrer'
 								>
 									<SocialButton>
-										share on twitter
-										<Image
-											src='/images/icons/twitter.svg'
-											height='15'
-											width='15'
-											alt='Twitter logo.'
-										/>
+										<>
+											share on twitter
+											<Image
+												src='/images/icons/twitter.svg'
+												height='15'
+												width='15'
+												alt='Twitter logo.'
+											/>
+										</>
 									</SocialButton>
 								</a>
 								<a

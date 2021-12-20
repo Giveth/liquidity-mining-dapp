@@ -65,10 +65,8 @@ const GdropDonateTooltip = styled(Subline)`
 	width: 260px;
 `;
 
-const Title = styled.span`
-	font-size: 58px;
-	margin: 7px 0px 10px 0px;
-	width: 700px;
+const Title = styled(H2)`
+	width: 750px;
 `;
 
 const DonateRow = styled(Row)`
@@ -105,7 +103,8 @@ const DonateGIVEarn = styled.div`
 `;
 
 const Desc = styled(P)`
-	width: 700px;
+	width: 750px;
+	margin-top: 22px;
 	@media only screen and (max-width: 1120px) {
 		width: 100%;
 	}
@@ -163,7 +162,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 	return (
 		<DonateCardContainer activeIndex={activeIndex} index={index}>
 			<Header>
-				<Title>Donate & get GIV back</Title>
+				<Title>Donate &amp; get GIV back</Title>
 				<Desc size='small' color={'#CABAFF'}>
 					Donate to verified projects to get GIV with GIVbacks. The
 					project gets 100% of your donation, and you get rewarded by
