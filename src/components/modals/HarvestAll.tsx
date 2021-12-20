@@ -230,7 +230,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 								</HarvestAllModalTitle>
 								{/* <TitleIcon size={24} /> */}
 							</HarvestAllModalTitleRow>
-							<StyledScrollbars style={{ height: '70vh' }}>
+							<StyledScrollbars style={{ minHeight: '70vh' }}>
 								<HarvestBoxes>
 									{poolStakingConfig && (
 										<SPTitle alignItems='center' gap='16px'>
