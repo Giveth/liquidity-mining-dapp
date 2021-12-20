@@ -42,9 +42,10 @@ const ConnectCardContainer = styled(Card)<IConnectCardContainerProps>`
 const Title = styled(H2)`
 	width: 800px;
 	@media only screen and (max-width: 1360px) {
-		width: none;
+		width: 700px;
 	}
 	@media only screen and (max-width: 1120px) {
+		width: 100%;
 	}
 `;
 
