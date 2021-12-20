@@ -245,11 +245,166 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 	};
 
 	return (
-		<ClaimCardContainer
-			activeIndex={activeIndex}
-			index={index}
-			claimed={txStatus}
-		>
+		<>
+			<ClaimCardContainer
+				activeIndex={activeIndex}
+				index={index}
+				claimed={txStatus}
+			>
+				{claimState === ClaimState.CLAIMED ? (
+					<>
+						<SunImage>
+							<Image
+								src='/images/claimed_logo.svg'
+								height='225'
+								width='255'
+								alt='Claimed sun'
+							/>
+						</SunImage>
+						<StarsImage>
+							<Image
+								src='/images/claimed_stars.svg'
+								height='105'
+								width='105'
+								alt='Yellow stars.'
+							/>
+						</StarsImage>
+						<ClaimedContainer>
+							<ClaimedTitle>Congratulations!</ClaimedTitle>
+							<ClaimedSubtitleContainer>
+								<ClaimedSubtitleA>
+									You have successfully claimed{' '}
+									{formatWeiHelper(totalAmount.div(10))} GIV.{' '}
+									<AddGivButton
+										onClick={() =>
+											addGIVToken(
+												config.XDAI_NETWORK_NUMBER,
+											)
+										}
+									>
+										<Image
+											src='/images/icons/metamask.svg'
+											height='24'
+											width='24'
+											alt='Metamask logo.'
+										/>
+									</AddGivButton>
+								</ClaimedSubtitleA>
+								<ClaimedSubtitleB>
+									Plus you&apos;re getting an additional{' '}
+									<span style={{ color: '#FED670' }}>
+										{formatWeiHelper(
+											totalAmount.mul(9).div(10 * 52 * 5),
+										)}{' '}
+										GIV
+									</span>{' '}
+									per week.
+								</ClaimedSubtitleB>
+								<a
+									href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
+									target='_blank'
+									rel='noreferrer'
+								>
+									<SocialButton>
+										share on twitter
+										<Image
+											src='/images/icons/twitter.svg'
+											height='15'
+											width='15'
+											alt='Twitter logo.'
+										/>
+									</SocialButton>
+								</a>
+								<a
+									href='https://swag.giveth.io/'
+									target='_blank'
+									rel='noreferrer'
+								>
+									<SocialButton>
+										claim your free swag
+										<Image
+											src='/images/icons/tshirt.svg'
+											height='15'
+											width='15'
+											alt='T shirt.'
+										/>
+									</SocialButton>
+								</a>
+								<a
+									href='https://discord.giveth.io/'
+									target='_blank'
+									rel='noreferrer'
+								>
+									<SocialButton>
+										join our discord
+										<Image
+											src='/images/icons/discord.svg'
+											height='15'
+											width='15'
+											alt='discord logo.'
+										/>
+									</SocialButton>
+								</a>
+								<Link href='/' passHref>
+									<a target='_blank' rel='noreferrer'>
+										<ExploreButton>
+											explore the giveconomy
+										</ExploreButton>
+									</a>
+								</Link>
+								<ClaimFromAnother
+									onClick={() => {
+										goFirstStep();
+										resetWallet();
+										setClaimState(ClaimState.UNKNOWN);
+									}}
+								>
+									Claim from another address!
+								</ClaimFromAnother>
+							</ClaimedSubtitleContainer>
+						</ClaimedContainer>
+					</>
+				) : (
+					<>
+						<ClaimHeader>
+							<Title as='h1'>Claim your GIV now!</Title>
+							<Desc size='small' color={'#CABAFF'}>
+								Join the giving economy.
+							</Desc>
+						</ClaimHeader>
+						<Row alignItems={'center'} justifyContent={'center'}>
+							{/* <ClaimButton secondary onClick={onClaim}> */}
+							<ClaimButton
+								secondary
+								onClick={() => {
+									openHarvestModal();
+								}}
+							>
+								CLAIM {formatWeiHelper(totalAmount.div(10))} GIV
+							</ClaimButton>
+						</Row>
+						<Row alignItems={'center'} justifyContent={'center'}>
+							<MetamaskButton
+								onClick={() =>
+									addGIVToken(config.XDAI_NETWORK_NUMBER)
+								}
+							>
+								<Image
+									src='/images/metamask.png'
+									height='32'
+									width='215'
+									alt='Metamask button'
+								/>
+							</MetamaskButton>
+						</Row>
+					</>
+				)}
+				{activeIndex === index && (
+					<>
+						<PreviousArrowButton onClick={goPreviousStep} />
+					</>
+				)}
+			</ClaimCardContainer>
 			{showModal && (
 				<WrongNetworkModal
 					showModal={showModal}
@@ -269,159 +424,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 					onClaim={onClaim}
 				/>
 			)}
-
-			{claimState === ClaimState.CLAIMED ? (
-				<>
-					<SunImage>
-						<Image
-							src='/images/claimed_logo.svg'
-							height='225'
-							width='255'
-							alt='Claimed sun'
-						/>
-					</SunImage>
-					<StarsImage>
-						<Image
-							src='/images/claimed_stars.svg'
-							height='105'
-							width='105'
-							alt='Yellow stars.'
-						/>
-					</StarsImage>
-					<ClaimedContainer>
-						<ClaimedTitle>Congratulations!</ClaimedTitle>
-						<ClaimedSubtitleContainer>
-							<ClaimedSubtitleA>
-								You have successfully claimed{' '}
-								{formatWeiHelper(totalAmount.div(10))} GIV.{' '}
-								<AddGivButton
-									onClick={() =>
-										addGIVToken(config.XDAI_NETWORK_NUMBER)
-									}
-								>
-									<Image
-										src='/images/icons/metamask.svg'
-										height='24'
-										width='24'
-										alt='Metamask logo.'
-									/>
-								</AddGivButton>
-							</ClaimedSubtitleA>
-							<ClaimedSubtitleB>
-								Plus you&apos;re getting an additional{' '}
-								<span style={{ color: '#FED670' }}>
-									{formatWeiHelper(
-										totalAmount.mul(9).div(10 * 52 * 5),
-									)}{' '}
-									GIV
-								</span>{' '}
-								per week.
-							</ClaimedSubtitleB>
-							<a
-								href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
-								target='_blank'
-								rel='noreferrer'
-							>
-								<SocialButton>
-									share on twitter
-									<Image
-										src='/images/icons/twitter.svg'
-										height='15'
-										width='15'
-										alt='Twitter logo.'
-									/>
-								</SocialButton>
-							</a>
-							<a
-								href='https://swag.giveth.io/'
-								target='_blank'
-								rel='noreferrer'
-							>
-								<SocialButton>
-									claim your free swag
-									<Image
-										src='/images/icons/tshirt.svg'
-										height='15'
-										width='15'
-										alt='T shirt.'
-									/>
-								</SocialButton>
-							</a>
-							<a
-								href='https://discord.giveth.io/'
-								target='_blank'
-								rel='noreferrer'
-							>
-								<SocialButton>
-									join our discord
-									<Image
-										src='/images/icons/discord.svg'
-										height='15'
-										width='15'
-										alt='discord logo.'
-									/>
-								</SocialButton>
-							</a>
-							<Link href='/' passHref>
-								<a target='_blank' rel='noreferrer'>
-									<ExploreButton>
-										explore the giveconomy
-									</ExploreButton>
-								</a>
-							</Link>
-							<ClaimFromAnother
-								onClick={() => {
-									goFirstStep();
-									resetWallet();
-									setClaimState(ClaimState.UNKNOWN);
-								}}
-							>
-								Claim from another address!
-							</ClaimFromAnother>
-						</ClaimedSubtitleContainer>
-					</ClaimedContainer>
-				</>
-			) : (
-				<>
-					<ClaimHeader>
-						<Title as='h1'>Claim your GIV now!</Title>
-						<Desc size='small' color={'#CABAFF'}>
-							Join the giving economy.
-						</Desc>
-					</ClaimHeader>
-					<Row alignItems={'center'} justifyContent={'center'}>
-						{/* <ClaimButton secondary onClick={onClaim}> */}
-						<ClaimButton
-							secondary
-							onClick={() => {
-								openHarvestModal();
-							}}
-						>
-							CLAIM {formatWeiHelper(totalAmount.div(10))} GIV
-						</ClaimButton>
-					</Row>
-					<Row alignItems={'center'} justifyContent={'center'}>
-						<MetamaskButton
-							onClick={() =>
-								addGIVToken(config.XDAI_NETWORK_NUMBER)
-							}
-						>
-							<Image
-								src='/images/metamask.png'
-								height='32'
-								width='215'
-								alt='Metamask button'
-							/>
-						</MetamaskButton>
-					</Row>
-				</>
-			)}
-			{activeIndex === index && (
-				<>
-					<PreviousArrowButton onClick={goPreviousStep} />
-				</>
-			)}
-		</ClaimCardContainer>
+		</>
 	);
 };
 
