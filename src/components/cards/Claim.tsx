@@ -229,9 +229,9 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 			setClaimState(ClaimState.SUBMITTING);
 			showPendingClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
-			await tx.wait();
+			const { status } = await tx.wait();
 
-			if (tx.status) {
+			if (status) {
 				setClaimState(ClaimState.CLAIMED);
 				showConfirmedClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
 			} else {
@@ -263,6 +263,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 					setShowModal={setShowClaimModal}
 					network={config.XDAI_NETWORK_NUMBER}
 					claimState={claimState}
+					setClaimState={setClaimState}
 					txStatus={txStatus}
 					givdropAmount={claimableAmount}
 					onClaim={onClaim}
@@ -296,8 +297,8 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 								<AddGivButton
 									onClick={() =>
 										addToken(
-											'0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3',
-											'TestGIV',
+											'0x7aAde4907a8e2412BEACbE42E51aaeE5B6085f24',
+											'DRGIV',
 											18,
 											'',
 										)
@@ -408,8 +409,8 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 						<MetamaskButton
 							onClick={() =>
 								addToken(
-									'0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3',
-									'TestGIV',
+									'0x7aAde4907a8e2412BEACbE42E51aaeE5B6085f24',
+									'DRGIV',
 									18,
 									'',
 								)

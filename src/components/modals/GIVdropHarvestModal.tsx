@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect, Dispatch, SetStateAction } from 'react';
 import { IModal, Modal } from './Modal';
 import {
 	ConfirmedInnerModal,
@@ -60,12 +60,14 @@ interface IGIVdropHarvestModal extends IModal {
 	txStatus: any;
 	givdropAmount: ethers.BigNumber;
 	onClaim: any;
+	setClaimState: Dispatch<SetStateAction<ClaimState>>;
 }
 
 export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 	showModal,
 	setShowModal,
 	claimState,
+	setClaimState,
 	network,
 	txStatus,
 	givdropAmount,
@@ -247,11 +249,23 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 					/>
 				)}
 				{claimState === ClaimState.ERROR && (
-					<ErrorInnerModal
-						title='GIV'
-						walletNetwork={network}
-						txHash={txStatus?.hash}
-					/>
+					<>
+						{' '}
+						<ErrorInnerModal
+							title='GIV'
+							walletNetwork={network}
+							txHash={txStatus?.hash}
+						/>
+						<CancelButton
+							label='CLOSE'
+							size='medium'
+							buttonType='texty'
+							onClick={() => {
+								setShowModal(false);
+								setClaimState(ClaimState.UNKNOWN);
+							}}
+						/>
+					</>
 				)}
 			</HarvestAllModalContainer>
 		</Modal>

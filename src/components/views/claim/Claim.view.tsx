@@ -15,7 +15,7 @@ import { GiveDropStateType, UserContext } from '@/context/user.context';
 import { OnboardContext } from '@/context/onboard.context';
 import { switchNetwork } from '@/lib/metamask';
 
-const stepsTitle = ['Connect', 'Stake', 'Govern', 'Donate', 'Stream', 'Claim'];
+const stepsTitle = ['Connect', 'Donate', 'Govern', 'Stake', 'Stream', 'Claim'];
 
 const Steps = styled(Row)`
 	height: 80px;
@@ -192,9 +192,9 @@ const ClaimView = () => {
 							}}
 						>
 							<ConnectCard index={0} />
-							<InvestCard index={1} />
+							<DonateCard index={1} />
 							<GovernCard index={2} />
-							<DonateCard index={3} />
+							<InvestCard index={3} />
 							<StreamCard index={4} />
 							<ClaimCard index={5} />
 						</ClaimViewContext.Provider>
