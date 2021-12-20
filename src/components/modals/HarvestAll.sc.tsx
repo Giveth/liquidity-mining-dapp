@@ -16,15 +16,15 @@ import styled from 'styled-components';
 import { Title } from '../Header.sc';
 import { IconGIV } from '../Icons/GIV';
 import { Row } from '../styled-components/Grid';
+import Scrollbars from 'react-custom-scrollbars';
 
 export const HarvestAllModalContainer = styled.div`
 	width: 686px;
-	padding: 24px;
 `;
 
 export const HarvestAllModalTitleRow = styled(Row)`
 	gap: 14px;
-	margin-bottom: 32px;
+	padding: 24px;
 `;
 
 export const HarvestAllModalTitle = styled(H6)`
@@ -174,4 +174,10 @@ export const Pending = styled(Row)`
 
 export const TooltipContent = styled(Subline)`
 	width: 200px;
+`;
+
+export const StyledScrollbars = styled(Scrollbars)``;
+
+export const HarvestBoxes = styled.div`
+	padding: 24px;
 `;
