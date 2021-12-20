@@ -122,7 +122,7 @@ export const PoolCard = styled.div`
 		width: 320px;
 	}
 	@media only screen and (max-width: 1120px) {
-		flex-direction: column;
+		width: 360px;
 		align-items: center;
 	}
 `;
