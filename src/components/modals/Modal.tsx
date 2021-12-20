@@ -2,7 +2,6 @@ import { brandColors, IconX } from '@giveth/ui-design-system';
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
-
 export interface IModal {
 	showModal: boolean;
 	setShowModal: (value: boolean) => void;
@@ -19,11 +18,14 @@ export const Modal: React.FC<IModal> = ({
 	useEffect(() => {
 		const current = el.current;
 		const modalRoot = document.querySelector('body') as HTMLElement;
-
+		modalRoot.style.overflow = 'hidden';
 		if (modalRoot) {
 			modalRoot.appendChild(current);
 		}
-		return () => void modalRoot!.removeChild(current);
+		return () => {
+			modalRoot.style.overflow = 'unset';
+			modalRoot!.removeChild(current);
+		};
 	}, []);
 
 	return createPortal(
