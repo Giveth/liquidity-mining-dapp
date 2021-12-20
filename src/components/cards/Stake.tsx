@@ -176,20 +176,20 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		[],
 	);
 
-	const getAPRs = async (promises: Promise<StakePoolInfo>[]) => {
-		const promiseResult = await Promise.all(promises);
-		const APRs: BigNumber[] = promiseResult.map(elem =>
-			elem.apr ? elem.apr : Zero,
-		);
-		APRs.push(univ3apr);
-		const sortedAPRs = APRs.sort((a, b) => (a.gt(b) ? 0 : -1));
-		const _apr = sortedAPRs.pop();
-		if (_apr) {
-			setAPR(_apr);
-		}
-	};
-
 	useEffect(() => {
+		const getAPRs = async (promises: Promise<StakePoolInfo>[]) => {
+			const promiseResult = await Promise.all(promises);
+			const APRs: BigNumber[] = promiseResult.map(elem =>
+				elem.apr ? elem.apr : Zero,
+			);
+			APRs.push(univ3apr);
+			const sortedAPRs = APRs.sort((a, b) => (a.gt(b) ? 0 : -1));
+			const _apr = sortedAPRs.pop();
+			if (_apr) {
+				setAPR(_apr);
+			}
+		};
+
 		const promiseQueue: Promise<StakePoolInfo>[] = [];
 		config.XDAI_CONFIG.pools.forEach(poolStakingConfig => {
 			const promise: Promise<StakePoolInfo> = fetchLPStakingInfo(
@@ -206,7 +206,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 			promiseQueue.push(promise);
 		});
 		getAPRs(promiseQueue);
-	}, []);
+	}, [univ3apr]);
 
 	return (
 		<InvestCardContainer activeIndex={activeIndex} index={index}>

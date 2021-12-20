@@ -166,7 +166,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 		);
 		// setPotentialClaim(donationWithGivBacks * 0.1);
 		// setEarnEstimate((donationWithGivBacks * 0.9) / (52 * 5));
-	}, [donation, claimableAmount, tokenDistroHelper]);
+	}, [donation, tokenDistroHelper]);
 
 	return (
 		<DonateCardContainer activeIndex={activeIndex} index={index}>
