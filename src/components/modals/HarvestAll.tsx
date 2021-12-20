@@ -93,6 +93,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 
 	const [price, setPrice] = useState(0);
 	const [givDrop, setGIVdrop] = useState(Zero);
+	const [givDropStream, setGIVdropStream] = useState<BigNumber.Value>(0);
 	const [rewardLiquidPart, setRewardLiquidPart] = useState(Zero);
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
 	const [claimableNow, setClaimableNow] = useState(Zero);
@@ -136,12 +137,15 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	useEffect(() => {
 		if (
 			network === config.XDAI_NETWORK_NUMBER &&
-			!currentBalance.givDropClaimed
+			currentBalance.givDropClaimed
 		) {
 			fetchAirDropClaimData(address).then(claimData => {
 				if (claimData) {
 					const givDrop = ethers.BigNumber.from(claimData.amount);
 					setGIVdrop(givDrop.div(10));
+					setGIVdropStream(
+						tokenDistroHelper.getStreamPartTokenPerWeek(givDrop),
+					);
 				}
 			});
 		}
@@ -229,9 +233,6 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 							<NothingToHarvest>
 								You have nothing to claim
 							</NothingToHarvest>
-							{givDrop.gt(Zero) && (
-								<GIVdropAlert givDrop={givDrop} />
-							)}
 							<CancelButton
 								disabled={state !== HarvestStates.HARVEST}
 								label='OK'
@@ -365,6 +366,34 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 											</RateRow>
 										</>
 									)}
+									{givDrop.gt(Zero) && (
+										<>
+											<HelpRow alignItems='center'>
+												<B>Claimable from GIVdrop</B>
+											</HelpRow>
+											<GIVBoxWithPrice
+												amount={givDrop}
+												price={calcUSD(
+													formatWeiHelper(givDrop),
+												)}
+											/>
+											<HelpRow alignItems='center'>
+												<Caption>
+													Your initial GIVstream
+													flowrate
+												</Caption>
+											</HelpRow>
+											<RateRow alignItems='center'>
+												<IconGIVStream size={24} />
+												<GIVRate>
+													{formatWeiHelper(
+														givDropStream,
+													)}
+												</GIVRate>
+												<Lead>GIV/week</Lead>
+											</RateRow>
+										</>
+									)}
 									{!claimableNow.isZero() && (
 										<>
 											<HelpRow alignItems='center'>
@@ -444,15 +473,3 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		</Modal>
 	);
 };
-
-interface IGIVdropAlert {
-	givDrop: ethers.BigNumber;
-}
-
-const GIVdropAlert: FC<IGIVdropAlert> = ({ givDrop }) => (
-	<Link href='/claim' passHref>
-		<NothingToHarvest>
-			{`Your Have ${formatWeiHelper(givDrop)} GIV from GIVdrop.`}
-		</NothingToHarvest>
-	</Link>
-);
