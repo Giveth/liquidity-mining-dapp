@@ -19,6 +19,7 @@ import { GIVdropHarvestModal } from '../modals/GIVdropHarvestModal';
 import { formatWeiHelper } from '@/helpers/number';
 import type { TransactionResponse } from '@ethersproject/providers';
 import { wrongWallet } from '../toasts/claim';
+import { useTokenDistro } from '@/context/tokenDistro.context';
 
 const ClaimedContainer = styled.div`
 	display: flex;
@@ -163,6 +164,17 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [showClaimModal, setShowClaimModal] = useState<boolean>(false);
 	const [isClaimed, setIsClaimed] = useState(false);
+	const [streamValue, setStreamValue] = useState<string>('0');
+
+	const { tokenDistroHelper } = useTokenDistro();
+
+	useEffect(() => {
+		setStreamValue(
+			formatWeiHelper(
+				tokenDistroHelper.getStreamPartTokenPerWeek(totalAmount),
+			),
+		);
+	}, [totalAmount, tokenDistroHelper]);
 
 	useEffect(() => {
 		setIsClaimed(false);
@@ -217,7 +229,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 				index={index}
 				claimed={txStatus}
 			>
-				{isClaimed ? (
+				{!isClaimed ? (
 					<>
 						<SunImage>
 							<Image
@@ -259,10 +271,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 								<ClaimedSubtitleB>
 									Plus you&apos;re getting an additional{' '}
 									<span style={{ color: '#FED670' }}>
-										{formatWeiHelper(
-											totalAmount.mul(9).div(10 * 52 * 5),
-										)}{' '}
-										GIV
+										{streamValue} GIV
 									</span>{' '}
 									per week.
 								</ClaimedSubtitleB>
