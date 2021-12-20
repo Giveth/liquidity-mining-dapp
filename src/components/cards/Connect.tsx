@@ -163,10 +163,25 @@ const AddGivButton = styled.div`
 `;
 
 const SocialButton = styled(Button)`
+	font-family: 'Red Hat Text';
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	background-color: transparent;
+	border: 2px solid white;
+	height: 50px;
 	width: 265px;
+	margin: 12px 0 0 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 4px;
 `;
 
-const ExploreButton = styled(Button)`
+const ExploreButton = styled(SocialButton)`
+	background-color: #e1458d;
+	border: none;
+	margin-left: 80px;
 	width: 285px;
 `;
 
