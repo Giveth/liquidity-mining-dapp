@@ -11,7 +11,7 @@ import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
 import { H2, H4, P } from '../styled-components/Typography';
-import { ArrowButton, Card, Header, MaxGIV } from './common';
+import { ArrowButton, Card, MaxGIV } from './common';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
@@ -38,16 +38,45 @@ const InvestCardContainer = styled(Card)`
 		height: 361px;
 		bottom: 0;
 		right: 0;
-		z-index: 0;
+		z-index: -1;
+	}
+	@media only screen and (max-width: 1120px) {
+		padding: 8px 16px;
+	}
+`;
+
+export const Header = styled.div`
+	margin-bottom: 92px;
+	@media only screen and (max-width: 1120px) {
+		margin-bottom: 8px;
 	}
 `;
 
 const Title = styled(H2)`
 	width: 700px;
+	@media only screen and (max-width: 1360px) {
+		width: 700px;
+	}
+	@media only screen and (max-width: 1120px) {
+		width: 100%;
+	}
 `;
 
 const Desc = styled(P)`
 	margin-top: 22px;
+	@media only screen and (max-width: 1120px) {
+		margin-top: 8px;
+	}
+`;
+
+const APRRow = styled(Row)`
+	flex-direction: row;
+	@media only screen and (max-width: 1360px) {
+	}
+	@media only screen and (max-width: 1120px) {
+		flex-direction: column;
+		align-items: center;
+	}
 `;
 
 const DepositLabel = styled.span`
@@ -64,6 +93,10 @@ const ImpactCard = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+	@media only screen and (max-width: 1120px) {
+		padding: 0;
+		height: 140px;
+	}
 `;
 
 const MaxStakeGIV = styled(MaxGIV)`
@@ -113,6 +146,10 @@ const PoolCardFooter = styled.div`
 	max-width: 500px;
 	font-size: 12px;
 	line-height: 18px;
+	z-index: 1;
+	@media only screen and (max-width: 1120px) {
+		margin-top: 8px;
+	}
 `;
 
 const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
@@ -217,7 +254,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 					{APR ? `${formatEthHelper(APR, 2)}% APR` : ' ? '}
 				</Desc>
 			</Header>
-			<Row alignItems={'flex-start'} justifyContent={'space-between'}>
+			<APRRow alignItems={'flex-start'} justifyContent={'space-between'}>
 				<ImpactCard>
 					<H4 as='h2'>See how much you could earn</H4>
 					<div>
@@ -279,15 +316,13 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 						</PoolItems>
 					</PoolCard>
 				</PoolCardContainer>
-			</Row>
-			<Row>
-				<PoolCardFooter>
-					The following calculators demonstrate how you can use GIV to
-					participate in the GIVeconomy!{' '}
-					<b>These are just simulations.</b> To participate for real,
-					claim your GIV.
-				</PoolCardFooter>
-			</Row>
+			</APRRow>
+			<PoolCardFooter>
+				The following calculators demonstrate how you can use GIV to
+				participate in the GIVeconomy!{' '}
+				<b>These are just simulations.</b> To participate for real,
+				claim your GIV.
+			</PoolCardFooter>
 			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
 		</InvestCardContainer>
 	);
