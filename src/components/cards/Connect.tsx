@@ -6,7 +6,7 @@ import { WalletAddressInputWithButton } from '../input';
 import { Button } from '../styled-components/Button';
 import { Row } from '../styled-components/Grid';
 import { H2, P } from '../styled-components/Typography';
-import { ArrowButton, Card, Header } from './common';
+import { ArrowButton, Card } from './common';
 import { OnboardContext } from '../../context/onboard.context';
 import { UserContext, GiveDropStateType } from '../../context/user.context';
 import { utils, BigNumber } from 'ethers';
@@ -15,11 +15,11 @@ import {
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
 import next from 'next';
-import { addToken } from '@/lib/metamask';
 import config from '@/config/development';
 import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
 import { formatWeiHelper } from '@/helpers/number';
-
+import { addGIVToken } from '@/lib/metamask';
+import { ButtonLink, OulineLinkButton } from '@giveth/ui-design-system';
 interface IConnectCardContainerProps {
 	data: any;
 }
@@ -35,17 +35,51 @@ const ConnectCardContainer = styled(Card)<IConnectCardContainerProps>`
 		right: ${props => props.data.right};
 		z-index: -1;
 	}
+	// @media only screen and (max-width: 1360px) {}
+	// @media only screen and (max-width: 1120px) {}
+	@media only screen and (max-width: 1120px) {
+		padding: 32px;
+		::before {
+			background-image: none;
+		}
+	}
 `;
+
+export const Header = styled.div`
+	margin-bottom: 92px;
+	@media only screen and (max-width: 1120px) {
+		margin-bottom: 32px;
+	}
+`;
+
 const Title = styled(H2)`
 	width: 800px;
+	@media only screen and (max-width: 1360px) {
+		width: 700px;
+	}
+	@media only screen and (max-width: 1120px) {
+		width: 100%;
+	}
 `;
 
 const Desc = styled(P)`
 	margin-top: 22px;
 `;
 
+const ConnectRow = styled(Row)`
+	flex-direction: row;
+	gap: 16px;
+	// @media only screen and (max-width: 1360px) {}
+	@media only screen and (max-width: 1120px) {
+		flex-direction: column;
+	}
+`;
+
 const ConnectButton = styled(Button)`
 	width: 300px;
+	@media only screen and (max-width: 1360px) {
+		width: 257px;
+	}
 `;
 
 const Span = styled.div`
@@ -83,11 +117,17 @@ const ClaimedContainer = styled.div`
 	flex-direction: column;
 	justify-content: center;
 	position: relative;
+	@media only screen and (max-width: 1120px) {
+		margin-top: 64px;
+	}
 `;
 
 const SunImage = styled.div`
 	position: relative;
 	height: 0px;
+	@media only screen and (max-width: 1120px) {
+		display: none;
+	}
 `;
 
 const StarsImage = styled(SunImage)`
@@ -107,7 +147,7 @@ const ClaimedSubtitleContainer = styled.div`
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	gap: 4px;
+	gap: 8px;
 `;
 
 const ClaimedSubtitleA = styled.div`
@@ -122,26 +162,11 @@ const AddGivButton = styled.div`
 	cursor: pointer;
 `;
 
-const SocialButton = styled(Button)`
-	font-family: 'Red Hat Text';
-	font-size: 14px;
-	font-weight: bold;
-	text-transform: uppercase;
-	background-color: transparent;
-	border: 2px solid white;
-	height: 50px;
+const SocialButton = styled(OulineLinkButton)`
 	width: 265px;
-	margin: 12px 0 0 0;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	gap: 4px;
 `;
 
-const ExploreButton = styled(SocialButton)`
-	background-color: #e1458d;
-	border: none;
-	margin-left: 80px;
+const ExploreButton = styled(ButtonLink)`
 	width: 285px;
 `;
 
@@ -149,7 +174,6 @@ const ClaimFromAnother = styled.span`
 	cursor: pointer;
 	color: '#FED670'
 	margin-top: 4px;
-	margin-left: 80px;
 `;
 
 export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
@@ -349,11 +373,8 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 									You already claimed your GIV!
 									<AddGivButton
 										onClick={() =>
-											addToken(
-												'0x5d32A9BaF31A793dBA7275F77856A47A0F5d09b3',
-												'TestGIV',
-												18,
-												'',
+											addGIVToken(
+												config.XDAI_NETWORK_NUMBER,
 											)
 										}
 									>

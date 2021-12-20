@@ -4,7 +4,24 @@ import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
 import { H2, H4, P } from '../styled-components/Typography';
-import { ArrowButton, Card, ICardProps, MaxGIV } from './common';
+import {
+	APRRow,
+	ArrowButton,
+	Card,
+	Header,
+	ICardProps,
+	ImpactCard,
+	ImpactCardInput,
+	ImpactCardLabel,
+	MaxGIV,
+	MaxStakeGIV,
+	PoolCard,
+	PoolCardContainer,
+	PoolCardFooter,
+	PoolItem,
+	PoolItemBold,
+	PoolItems,
+} from './common';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
@@ -14,8 +31,10 @@ import { utils, BigNumber as EthersBigNumber, constants } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
 import BigNumber from 'bignumber.js';
-
+import { Subline, neutralColors, IconHelp } from '@giveth/ui-design-system';
+import { IconWithTooltip } from '../IconWithToolTip';
 const DonateCardContainer = styled(Card)`
+	padding-right: 154px;
 	::before {
 		content: '';
 		background-image: url('/images/donate.png');
@@ -26,19 +45,30 @@ const DonateCardContainer = styled(Card)`
 		right: 0;
 		z-index: 0;
 	}
+	@media only screen and (max-width: 1360px) {
+		padding-right: 112px;
+		::before {
+			width: 240px;
+			background-size: contain;
+			background-repeat: no-repeat;
+		}
+	}
+	@media only screen and (max-width: 1120px) {
+		padding: 8px;
+		::before {
+			background-image: none;
+		}
+	}
+`;
+const GdropDonateTooltip = styled(Subline)`
+	color: ${neutralColors.gray[100]};
+	width: 260px;
 `;
 
-const Header = styled.div`
-	margin-bottom: 60px;
-`;
-
-const Title = styled(H2)`
+const Title = styled.span`
+	font-size: 58px;
+	margin: 7px 0px 10px 0px;
 	width: 700px;
-`;
-
-const Desc = styled(P)`
-	max-width: 700px;
-	margin-top: 22px;
 `;
 
 const DonateRow = styled(Row)`
@@ -68,55 +98,17 @@ const DonateGIVEarn = styled.div`
 	font-family: Red Hat Text;
 	font-size: 48px;
 	font-style: normal;
+	@media only screen and (max-width: 1120px) {
+		width: 100%;
+	}
 	font-weight: 700;
-	line-height: 80px;
-	letter-spacing: 0em;
-	text-align: left;
 `;
 
-const PoolCardContainer = styled.div`
-	z-index: 1;
-`;
-
-const PoolCardTitle = styled.div`
-	font-size: 16px;
-	padding-bottom: 12px;
-`;
-
-const PoolCard = styled.div`
-	width: 350px;
-	height: 164px;
-	padding: 10px 30px;
-
-	background: #211985;
-	border-radius: 16px;
-	z-index: 1;
-`;
-
-const PoolItems = styled.div`
-	padding: 12px 0;
-`;
-
-const PoolItem = styled.div`
-	font-size: 14px;
-	height: 40px;
-	line-height: 40px;
-	display: flex;
-	gap: 6px;
-`;
-
-const PoolItemBold = styled.div`
-	font-size: 16px;
-	font-weight: 500;
-	line-height: 40px;
-	display: flex;
-	gap: 6px;
-`;
-
-const DonateFooter = styled.div`
-	max-width: 500px;
-	font-size: 12px;
-	line-height: 18px;
+const Desc = styled(P)`
+	width: 700px;
+	@media only screen and (max-width: 1120px) {
+		width: 100%;
+	}
 `;
 
 export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
@@ -171,26 +163,31 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 	return (
 		<DonateCardContainer activeIndex={activeIndex} index={index}>
 			<Header>
-				<Title as='h1'>How to use your GIV</Title>
+				<Title>Donate & get GIV back</Title>
 				<Desc size='small' color={'#CABAFF'}>
 					Donate to verified projects to get GIV with GIVbacks. The
-					project gets 100% of your donation, and you get GIV back
-					from Giveth!
+					project gets 100% of your donation, and you get rewarded by
+					Giveth with GIV!
 				</Desc>
 			</Header>
-			<Row alignItems={'center'} justifyContent={'space-between'}>
-				<DonateRow
-					flexDirection='column'
-					justifyContent='space-between'
-				>
-					<H4 as='h2'>If you donate GIV</H4>
+			<APRRow alignItems={'center'} justifyContent={'space-between'}>
+				<ImpactCard>
+					<H4 as='h2'>If you donate your GIVdrop</H4>
 					<div>
-						<Row
-							alignItems={'center'}
-							justifyContent={'space-between'}
-						>
-							<DonateLabel>Your donation</DonateLabel>
-							<MaxDonateGIV
+						<Row justifyContent={'space-between'}>
+							<Row gap='4px' alignItems='center'>
+								<ImpactCardLabel>Your donation</ImpactCardLabel>
+								<IconWithTooltip
+									icon={<IconHelp size={16} />}
+									direction={'top'}
+								>
+									<GdropDonateTooltip>
+										Donations made in most tokens are
+										eligible for GIVbacks.
+									</GdropDonateTooltip>
+								</IconWithTooltip>
+							</Row>
+							<MaxStakeGIV
 								onClick={() =>
 									setDonation(
 										Number(
@@ -202,35 +199,23 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 								}
 							>{`Max ${utils.formatEther(
 								claimableAmount.div(10),
-							)} GIV`}</MaxDonateGIV>
+							)} GIV`}</MaxStakeGIV>
 						</Row>
-						<DonateInput>
+						<ImpactCardInput>
 							<InputWithUnit
 								type='number'
 								value={donation}
 								unit={'GIV'}
 								onChange={stackedChangeHandler}
 							/>
-						</DonateInput>
+						</ImpactCardInput>
 					</div>
-				</DonateRow>
+				</ImpactCard>
 				<PoolCardContainer>
 					<PoolCard>
 						<PoolItems>
 							<Row justifyContent='space-between'>
 								<PoolItem>GIVbacks</PoolItem>
-								<PoolItemBold>
-									<Image
-										src='/images/icons/star.svg'
-										height='16'
-										width='16'
-										alt='Star icon'
-									/>
-									75%
-								</PoolItemBold>
-							</Row>
-							<Row justifyContent='space-between'>
-								<PoolItem>Claimable</PoolItem>
 								<PoolItemBold>
 									{formatWeiHelper(potentialClaim)} GIV
 								</PoolItemBold>
@@ -244,15 +229,13 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 						</PoolItems>
 					</PoolCard>
 				</PoolCardContainer>
-			</Row>
-			<Row>
-				<DonateFooter>
-					The following calculators demonstrate how you can use GIV to
-					participate in the GIVeconomy!{' '}
-					<b>These are just simulations.</b> To participate for real,
-					claim your GIV.
-				</DonateFooter>
-			</Row>
+			</APRRow>
+			<PoolCardFooter>
+				The following calculators demonstrate how you can use GIV to
+				participate in the GIVeconomy!{' '}
+				<b>These are just simulations.</b> To participate for real,
+				claim your GIV.
+			</PoolCardFooter>
 			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
 		</DonateCardContainer>
 	);

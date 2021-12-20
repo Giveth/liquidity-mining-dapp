@@ -11,7 +11,23 @@ import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
 import { H2, H4, P } from '../styled-components/Typography';
-import { ArrowButton, Card, Header, MaxGIV } from './common';
+import {
+	APRRow,
+	ArrowButton,
+	Card,
+	ImpactCard,
+	ImpactCardInput,
+	ImpactCardLabel,
+	MaxGIV,
+	MaxStakeGIV,
+	PoolCard,
+	PoolCardContainer,
+	PoolCardFooter,
+	PoolCardTitle,
+	PoolItem,
+	PoolItemBold,
+	PoolItems,
+} from './common';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
@@ -38,81 +54,35 @@ const InvestCardContainer = styled(Card)`
 		height: 361px;
 		bottom: 0;
 		right: 0;
-		z-index: 0;
+		z-index: -1;
+	}
+	@media only screen and (max-width: 1120px) {
+		padding: 8px 16px;
+	}
+`;
+
+export const Header = styled.div`
+	margin-bottom: 92px;
+	@media only screen and (max-width: 1120px) {
+		margin-bottom: 8px;
 	}
 `;
 
 const Title = styled(H2)`
 	width: 700px;
+	@media only screen and (max-width: 1360px) {
+		width: 700px;
+	}
+	@media only screen and (max-width: 1120px) {
+		width: 100%;
+	}
 `;
 
 const Desc = styled(P)`
 	margin-top: 22px;
-`;
-
-const DepositLabel = styled.span`
-	color: #cabaff;
-`;
-
-const DepositInput = styled.div`
-	width: 392px;
-`;
-
-const ImpactCard = styled.div`
-	padding: 20px 0px;
-	height: 208px;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-`;
-
-const MaxStakeGIV = styled(MaxGIV)`
-	cursor: pointer;
-`;
-
-const PoolCardContainer = styled.div`
-	z-index: 1;
-`;
-
-const PoolCardTitle = styled.div`
-	font-size: 16px;
-	padding-bottom: 12px;
-`;
-
-const PoolCard = styled.div`
-	width: 399px;
-	height: 164px;
-	padding: 10px 30px;
-
-	background: #211985;
-	border-radius: 16px;
-	z-index: 1;
-`;
-
-const PoolItems = styled.div`
-	padding: 12px 0;
-`;
-
-const PoolItem = styled.div`
-	font-size: 14px;
-	height: 40px;
-	line-height: 40px;
-	display: flex;
-	gap: 6px;
-`;
-
-const PoolItemBold = styled.div`
-	font-size: 16px;
-	font-weight: 500;
-	line-height: 40px;
-	display: flex;
-	gap: 6px;
-`;
-
-const PoolCardFooter = styled.div`
-	max-width: 500px;
-	font-size: 12px;
-	line-height: 18px;
+	@media only screen and (max-width: 1120px) {
+		margin-top: 8px;
+	}
 `;
 
 const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
@@ -217,7 +187,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 					{APR ? `${formatEthHelper(APR, 2)}% APR` : ' ? '}
 				</Desc>
 			</Header>
-			<Row alignItems={'flex-start'} justifyContent={'space-between'}>
+			<APRRow alignItems={'flex-start'} justifyContent={'space-between'}>
 				<ImpactCard>
 					<H4 as='h2'>See how much you could earn</H4>
 					<div>
@@ -225,7 +195,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 							alignItems={'center'}
 							justifyContent={'space-between'}
 						>
-							<DepositLabel>If you deposit</DepositLabel>
+							<ImpactCardLabel>If you deposit</ImpactCardLabel>
 							<MaxStakeGIV
 								onClick={() =>
 									setDeposit(
@@ -240,14 +210,14 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 								claimableAmount.div(10),
 							)} GIV`}</MaxStakeGIV>
 						</Row>
-						<DepositInput>
+						<ImpactCardInput>
 							<InputWithUnit
 								type='number'
 								value={deposit}
 								unit={'GIV'}
 								onChange={depositChangeHandler}
 							/>
-						</DepositInput>
+						</ImpactCardInput>
 					</div>
 				</ImpactCard>
 				<PoolCardContainer>
@@ -281,15 +251,13 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 						</PoolItems>
 					</PoolCard>
 				</PoolCardContainer>
-			</Row>
-			<Row>
-				<PoolCardFooter>
-					The following calculators demonstrate how you can use GIV to
-					participate in the GIVeconomy!{' '}
-					<b>These are just simulations.</b> To participate for real,
-					claim your GIV.
-				</PoolCardFooter>
-			</Row>
+			</APRRow>
+			<PoolCardFooter>
+				The following calculators demonstrate how you can use GIV to
+				participate in the GIVeconomy!{' '}
+				<b>These are just simulations.</b> To participate for real,
+				claim your GIV.
+			</PoolCardFooter>
 			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
 		</InvestCardContainer>
 	);
