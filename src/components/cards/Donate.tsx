@@ -8,6 +8,7 @@ import {
 	APRRow,
 	ArrowButton,
 	Card,
+	Header,
 	ICardProps,
 	ImpactCard,
 	ImpactCardInput,
@@ -32,6 +33,7 @@ import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
 import BigNumber from 'bignumber.js';
 
 const DonateCardContainer = styled(Card)`
+	padding-right: 154px;
 	::before {
 		content: '';
 		background-image: url('/images/donate.png');
@@ -42,17 +44,30 @@ const DonateCardContainer = styled(Card)`
 		right: 0;
 		z-index: 0;
 	}
-`;
-
-const Header = styled.div`
-	margin-bottom: 60px;
+	@media only screen and (max-width: 1360px) {
+		padding-right: 112px;
+		::before {
+			width: 240px;
+			background-size: contain;
+			background-repeat: no-repeat;
+		}
+	}
+	@media only screen and (max-width: 1120px) {
+		padding: 8px;
+		::before {
+			background-image: none;
+		}
+	}
 `;
 
 const Title = styled(H2)`
 	width: 700px;
+	@media only screen and (max-width: 1360px) {
+	}
 `;
 
 const Desc = styled(P)`
+	width: 700px;
 	margin-top: 22px;
 `;
 
