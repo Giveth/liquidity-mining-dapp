@@ -166,7 +166,6 @@ const SocialButton = styled(Button)`
 const ExploreButton = styled(SocialButton)`
 	background-color: #e1458d;
 	border: none;
-	margin-left: 80px;
 	width: 285px;
 `;
 
