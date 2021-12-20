@@ -1,8 +1,7 @@
 import React, { FC, useContext, useState } from 'react';
-import Image from 'next/image';
 import config from '@/configuration';
 import styled from 'styled-components';
-import CongratulationsCard from '../../cards/Congratulations';
+import { CongratulationsCard } from '../../cards/Congratulations';
 import ClaimCard from '../../cards/Claim';
 import { ConnectCard } from '../../cards/Connect';
 import { DonateCard } from '../../cards/Donate';
@@ -10,10 +9,8 @@ import { StreamCard } from '../../cards/Stream';
 import GovernCard from '../../cards/Govern';
 import InvestCard from '../../cards/Stake';
 import { Row } from '../../styled-components/Grid';
-import { number } from 'prop-types';
 import { GiveDropStateType, UserContext } from '@/context/user.context';
 import { OnboardContext } from '@/context/onboard.context';
-import { switchNetwork } from '@/lib/metamask';
 
 const stepsTitle = ['Connect', 'Donate', 'Govern', 'Stake', 'Stream', 'Claim'];
 
@@ -132,7 +129,6 @@ const ClaimView = () => {
 	const [step, setStep] = useState(0);
 	const { giveDropState } = useContext(UserContext);
 	const { network, isReady } = useContext(OnboardContext);
-
 	return (
 		<>
 			{/* <SwitchNetwork

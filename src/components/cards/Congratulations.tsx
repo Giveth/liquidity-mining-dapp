@@ -81,5 +81,3 @@ export const CongratulationsCard = () => {
 		</CongratulationsView>
 	);
 };
-
-export default CongratulationsCard;
