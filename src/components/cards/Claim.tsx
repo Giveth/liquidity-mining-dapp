@@ -232,7 +232,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 				index={index}
 				claimed={txStatus}
 			>
-				{!isClaimed ? (
+				{isClaimed ? (
 					<>
 						<SunImage>
 							<Image
