@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { utils } from 'ethers';
-import { TransactionReponse, Web3Provider } from '@ethersproject/providers';
+import { TransactionResponse, Web3Provider } from '@ethersproject/providers';
 
 import { LiquidityPosition } from '@/types/nfts';
 import {
@@ -106,7 +106,7 @@ export const claimUnstakeStake = async (
 	provider: Web3Provider,
 	currentIncentive: { key?: (string | number)[] | null },
 	stakedPositions: LiquidityPosition[],
-): Promise<TransactionReponse> => {
+): Promise<TransactionResponse | undefined> => {
 	const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
 
 	if (
