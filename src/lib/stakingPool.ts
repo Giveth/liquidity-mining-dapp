@@ -95,52 +95,58 @@ const fetchBalancerPoolStakingInfo = async (
 		balances: Array<ethers.BigNumber>;
 		tokens: Array<string>;
 	}
+	let apr = null;
 
-	const [_poolTokens, _poolTotalSupply, _poolNormalizedWeights, lmInfo]: [
-		PoolTokens,
-		ethers.BigNumber,
-		Array<ethers.BigNumber>,
-		IUnipool | undefined,
-	] = await Promise.all([
-		vaultContract.getPoolTokens(POOL_ID),
-		poolContract.totalSupply(),
-		poolContract.getNormalizedWeights(),
-		getUnipoolInfo(network, LM_ADDRESS),
-	]);
-
-	let totalSupply: ethers.BigNumber;
-	let rewardRate: ethers.BigNumber;
-
-	if (lmInfo) {
-		totalSupply = lmInfo.totalSupply;
-		rewardRate = lmInfo.rewardRate;
-	} else {
-		[totalSupply, rewardRate] = await Promise.all([
-			lmContract.totalSupply(),
-			lmContract.rewardRate(),
+	try {
+		const [_poolTokens, _poolTotalSupply, _poolNormalizedWeights, lmInfo]: [
+			PoolTokens,
+			ethers.BigNumber,
+			Array<ethers.BigNumber>,
+			IUnipool | undefined,
+		] = await Promise.all([
+			vaultContract.getPoolTokens(POOL_ID),
+			poolContract.totalSupply(),
+			poolContract.getNormalizedWeights(),
+			getUnipoolInfo(network, LM_ADDRESS),
 		]);
+
+		let totalSupply: ethers.BigNumber;
+		let rewardRate: ethers.BigNumber;
+
+		if (lmInfo) {
+			totalSupply = lmInfo.totalSupply;
+			rewardRate = lmInfo.rewardRate;
+		} else {
+			[totalSupply, rewardRate] = await Promise.all([
+				lmContract.totalSupply(),
+				lmContract.rewardRate(),
+			]);
+		}
+
+		const weights = _poolNormalizedWeights.map(toBigNumber);
+		const balances = _poolTokens.balances.map(toBigNumber);
+
+		if (
+			_poolTokens.tokens[0].toLowerCase() !== tokenAddress.toLowerCase()
+		) {
+			balances.reverse();
+			weights.reverse();
+		}
+
+		const lp = toBigNumber(_poolTotalSupply)
+			.div(BigNumber.sum(...weights).div(weights[0]))
+			.div(balances[0]);
+
+		apr = totalSupply.isZero()
+			? null
+			: toBigNumber(rewardRate)
+					.div(totalSupply.toString())
+					.times('31536000')
+					.times('100')
+					.times(lp);
+	} catch (e) {
+		console.error('error on fetching balancer apr:', e);
 	}
-
-	const weights = _poolNormalizedWeights.map(toBigNumber);
-	const balances = _poolTokens.balances.map(toBigNumber);
-
-	if (_poolTokens.tokens[0].toLowerCase() !== tokenAddress.toLowerCase()) {
-		balances.reverse();
-		weights.reverse();
-	}
-
-	const lp = toBigNumber(_poolTotalSupply)
-		.div(BigNumber.sum(...weights).div(weights[0]))
-		.div(balances[0]);
-
-	const apr = totalSupply.isZero()
-		? null
-		: toBigNumber(rewardRate)
-				.div(totalSupply.toString())
-				.times('31536000')
-				.times('100')
-				.times(lp);
-
 	return {
 		apr,
 	};
@@ -159,41 +165,47 @@ const fetchSimplePoolStakingInfo = async (
 	let rewardRate: ethers.BigNumber;
 
 	const poolContract = new Contract(POOL_ADDRESS, UNI_ABI, provider);
-	const [_reserves, _token0, _poolTotalSupply, lmInfo]: [
-		Array<ethers.BigNumber>,
-		string,
-		ethers.BigNumber,
-		IUnipool | undefined,
-	] = await Promise.all([
-		poolContract.getReserves(),
-		poolContract.token0(),
-		poolContract.totalSupply(),
-		getUnipoolInfo(network, LM_ADDRESS),
-	]);
-	if (lmInfo) {
-		totalSupply = lmInfo.totalSupply;
-		rewardRate = lmInfo.rewardRate;
-	} else {
-		[totalSupply, rewardRate] = await Promise.all([
-			lmContract.totalSupply(),
-			lmContract.rewardRate(),
+	let apr = null;
+	try {
+		const [_reserves, _token0, _poolTotalSupply, lmInfo]: [
+			Array<ethers.BigNumber>,
+			string,
+			ethers.BigNumber,
+			IUnipool | undefined,
+		] = await Promise.all([
+			poolContract.getReserves(),
+			poolContract.token0(),
+			poolContract.totalSupply(),
+			getUnipoolInfo(network, LM_ADDRESS),
 		]);
+		if (lmInfo) {
+			totalSupply = lmInfo.totalSupply;
+			rewardRate = lmInfo.rewardRate;
+		} else {
+			[totalSupply, rewardRate] = await Promise.all([
+				lmContract.totalSupply(),
+				lmContract.rewardRate(),
+			]);
+		}
+		reserves = _reserves.map(toBigNumber);
+		if (_token0.toLowerCase() !== tokenAddress.toLowerCase())
+			reserves.reverse();
+		const lp = toBigNumber(_poolTotalSupply)
+			.times(10 ** 18)
+			.div(2)
+			.div(reserves[0]);
+		apr = totalSupply.isZero()
+			? null
+			: toBigNumber(rewardRate)
+					.div(totalSupply.toString())
+					.times('31536000')
+					.times('100')
+					.times(lp)
+					.div(10 ** 18);
+	} catch (e) {
+		console.error('error on fetching apr:', e);
 	}
-	reserves = _reserves.map(toBigNumber);
-	if (_token0.toLowerCase() !== tokenAddress.toLowerCase())
-		reserves.reverse();
-	const lp = toBigNumber(_poolTotalSupply)
-		.times(10 ** 18)
-		.div(2)
-		.div(reserves[0]);
-	const apr = totalSupply.isZero()
-		? null
-		: toBigNumber(rewardRate)
-				.div(totalSupply.toString())
-				.times('31536000')
-				.times('100')
-				.times(lp)
-				.div(10 ** 18);
+
 	return {
 		apr,
 	};

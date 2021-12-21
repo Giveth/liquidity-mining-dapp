@@ -24,9 +24,8 @@ export const useStakingPool = (
 	stakedAmount: ethers.BigNumber;
 	notStakedAmount: ethers.BigNumber;
 } => {
-	const { address, provider } = useOnboard();
+	const { address, provider, network: walletNetwork } = useOnboard();
 	const { currentBalance } = useBalances();
-	// const { mainnetBalance, xDaiBalance } = useBalances();
 
 	const [apr, setApr] = useState<BigNumber | null>(null);
 	const [userStakeInfo, setUserStakeInfo] = useState<UserStakeInfo>({
@@ -42,7 +41,13 @@ export const useStakingPool = (
 
 	useEffect(() => {
 		const cb = () => {
-			if (provider && provider?.network?.chainId === network) {
+			const providerNetwork = provider?.network?.chainId;
+			if (
+				provider &&
+				walletNetwork === network &&
+				// When switching to another network, the provider may still be connected to wrong one
+				(providerNetwork === undefined || providerNetwork === network)
+			) {
 				const promise: Promise<StakePoolInfo> =
 					type === StakingType.GIV_LM
 						? fetchGivStakingInfo(LM_ADDRESS, network)
@@ -69,7 +74,7 @@ export const useStakingPool = (
 				stakePoolInfoPoll.current = null;
 			}
 		};
-	}, [provider]);
+	}, [provider, walletNetwork]);
 
 	const isMounted = useRef(true);
 	useEffect(() => {
