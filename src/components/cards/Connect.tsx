@@ -290,7 +290,9 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 		<ConnectCardContainer activeIndex={activeIndex} index={index} data={bg}>
 			{giveDropState !== GiveDropStateType.Claimed && (
 				<Header>
-					<Title as='h1'>{title}</Title>
+					<Title as='h1' weight={700}>
+						{title}
+					</Title>
 					<Desc size='small' color={'#CABAFF'}>
 						{desc}
 					</Desc>
