@@ -86,7 +86,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
 	const { claimableAmount } = useContext(UserContext);
 
-	const [donation, setDonation] = useState<any>(0);
+	const [donation, setDonation] = useState<string>('0');
 	const [potentialClaim, setPotentialClaim] = useState<EthersBigNumber>(
 		constants.Zero,
 	);
@@ -112,8 +112,8 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	useEffect(() => {
 		let _donation = 0;
-		if (!isNaN(donation)) {
-			_donation = donation;
+		if (donation) {
+			_donation = parseFloat(donation);
 		}
 		const donationWithGivBacks = _donation * 0.75;
 		const convertedStackedWithApr = EthersBigNumber.from(
@@ -161,9 +161,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 							<MaxStakeGIV
 								onClick={() =>
 									setDonation(
-										Number(
-											utils.formatEther(claimableAmount),
-										),
+										utils.formatEther(claimableAmount),
 									)
 								}
 							>{`Max ${utils.formatEther(
@@ -175,7 +173,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 								type='number'
 								value={donation}
 								unit={'GIV'}
-								onChange={stackedChangeHandler}
+								onChange={setDonation}
 							/>
 						</ImpactCardInput>
 					</div>

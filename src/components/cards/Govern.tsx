@@ -118,7 +118,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
 	const { claimableAmount } = useContext(UserContext);
 
-	const [stacked, setStacked] = useState<any>(0);
+	const [stacked, setStacked] = useState<string>('0');
 	const [potentialClaim, setPotentialClaim] = useState<EthersBigNumber>(
 		constants.Zero,
 	);
@@ -126,21 +126,10 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const [apr, setApr] = useState<APR>(null);
 	const { tokenDistroHelper } = useTokenDistro();
 
-	const stackedChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-		if (e.target.value.length === 0) {
-			setStacked(undefined);
-		} else if (isNaN(+e.target.value)) {
-			setStacked(stacked);
-		} else {
-			if (claimableAmount.gte(utils.parseEther(e.target.value)))
-				setStacked(+e.target.value);
-		}
-	};
-
 	useEffect(() => {
 		let _stacked = 0;
-		if (!isNaN(stacked)) {
-			_stacked = stacked;
+		if (stacked) {
+			_stacked = parseFloat(stacked);
 		}
 		const stackedWithApr = apr ? apr.times(_stacked).div(1200) : Zero;
 		const convertedStackedWithApr = EthersBigNumber.from(
@@ -221,9 +210,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 							<MaxStakeGIV
 								onClick={() =>
 									setStacked(
-										Number(
-											utils.formatEther(claimableAmount),
-										),
+										utils.formatEther(claimableAmount),
 									)
 								}
 							>{`Max ${utils.formatEther(
@@ -235,7 +222,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 								type='number'
 								value={stacked}
 								unit={'GIV'}
-								onChange={stackedChangeHandler}
+								onChange={setStacked}
 							/>
 						</ImpactCardInput>
 					</div>
