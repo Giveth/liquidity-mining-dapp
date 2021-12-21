@@ -177,7 +177,7 @@ const SparkleBurstContainer = styled.div`
 `;
 
 const SparkleAnimationOptions = {
-	loop: true,
+	loop: false,
 	autoplay: true,
 	animationData: SparkleAnimation,
 	rendererSettings: {
@@ -186,7 +186,7 @@ const SparkleAnimationOptions = {
 };
 
 const SparkleBurstAnimationOptions = {
-	loop: true,
+	loop: false,
 	autoplay: true,
 	animationData: SparkleBurstAnimation,
 	rendererSettings: {
