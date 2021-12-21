@@ -146,7 +146,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 	return (
 		<DonateCardContainer activeIndex={activeIndex} index={index}>
 			<Header>
-				<Title weight={700}>Donate &amp; get GIVback</Title>
+				<Title weight={700}>Donate &amp; get GIV back</Title>
 				<Desc size='small' color={'#CABAFF'}>
 					Donate to verified projects to get GIV with GIVbacks. The
 					project gets 100% of your donation, and you get rewarded by
@@ -155,7 +155,9 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 			</Header>
 			<APRRow alignItems={'center'} justifyContent={'space-between'}>
 				<ImpactCard>
-					<H5 as='h2'>If you donate your GIVdrop</H5>
+					<H5 as='h2' weight={700}>
+						If you donate your GIVdrop
+					</H5>
 					<div>
 						<Row justifyContent={'space-between'}>
 							<Row gap='4px' alignItems='center'>

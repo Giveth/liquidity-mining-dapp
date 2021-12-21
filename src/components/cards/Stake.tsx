@@ -189,7 +189,9 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 			</Header>
 			<APRRow alignItems={'flex-start'} justifyContent={'space-between'}>
 				<ImpactCard>
-					<H5 as='h2'>See how much you could earn</H5>
+					<H5 as='h2' weight={700}>
+						See how much you could earn
+					</H5>
 					<div>
 						<Row
 							alignItems={'center'}

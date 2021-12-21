@@ -27,6 +27,7 @@ interface IConnectCardContainerProps {
 }
 
 const ConnectCardContainer = styled(Card)<IConnectCardContainerProps>`
+	padding-top: 96px;
 	::before {
 		content: '';
 		background-image: url('${props => props.data.bg}');

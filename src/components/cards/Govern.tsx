@@ -208,7 +208,9 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 			</Header>
 			<APRRow alignItems={'center'} justifyContent={'flex-end'}>
 				<ImpactCard>
-					<H5 as='h2'>If you vote with GIV tokens</H5>
+					<H5 as='h2' weight={700}>
+						If you vote with GIV tokens
+					</H5>
 					<div>
 						<Row
 							alignItems={'center'}
