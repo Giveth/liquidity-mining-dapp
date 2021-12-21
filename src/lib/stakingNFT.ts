@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { utils } from 'ethers';
-import { Web3Provider } from '@ethersproject/providers';
+import { TransactionReponse, Web3Provider } from '@ethersproject/providers';
 
 import { LiquidityPosition } from '@/types/nfts';
 import {
@@ -106,48 +106,47 @@ export const claimUnstakeStake = async (
 	provider: Web3Provider,
 	currentIncentive: { key?: (string | number)[] | null },
 	stakedPositions: LiquidityPosition[],
-) => {
-	try {
-		const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
+): Promise<TransactionReponse> => {
+	const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
 
-		if (
-			!stakedPositions?.length ||
-			!walletAddress ||
-			!uniswapV3StakerContract ||
-			!currentIncentive.key ||
-			stakedPositions.length === 0
-		)
-			return;
+	if (
+		!stakedPositions?.length ||
+		!walletAddress ||
+		!uniswapV3StakerContract ||
+		!currentIncentive.key ||
+		stakedPositions.length === 0
+	)
+		return;
 
-		const unstakeCalldata = ({ tokenId: _tokenId }: LiquidityPosition) =>
-			uniswapV3StakerContract.interface.encodeFunctionData(
-				'unstakeToken',
-				[currentIncentive.key, _tokenId],
-			);
+	const unstakeCalldata = ({ tokenId: _tokenId }: LiquidityPosition) =>
+		uniswapV3StakerContract.interface.encodeFunctionData('unstakeToken', [
+			currentIncentive.key,
+			_tokenId,
+		]);
 
-		const stakeCalldata = ({ tokenId: _tokenId }: LiquidityPosition) =>
-			uniswapV3StakerContract.interface.encodeFunctionData('stakeToken', [
-				currentIncentive.key,
-				_tokenId,
-			]);
+	const stakeCalldata = ({ tokenId: _tokenId }: LiquidityPosition) =>
+		uniswapV3StakerContract.interface.encodeFunctionData('stakeToken', [
+			currentIncentive.key,
+			_tokenId,
+		]);
 
-		const claimRewardCalldata =
-			uniswapV3StakerContract.interface.encodeFunctionData(
-				'claimReward',
-				[currentIncentive.key[0] as string, walletAddress, 0],
-			);
+	const claimRewardCalldata =
+		uniswapV3StakerContract.interface.encodeFunctionData('claimReward', [
+			currentIncentive.key[0] as string,
+			walletAddress,
+			0,
+		]);
 
-		const unstakeMulticall = stakedPositions.map(unstakeCalldata);
-		const stakeMulticall = stakedPositions.map(stakeCalldata);
+	const unstakeMulticall = stakedPositions.map(unstakeCalldata);
+	const stakeMulticall = stakedPositions.map(stakeCalldata);
 
-		const multicallData = unstakeMulticall
-			.concat(stakeMulticall)
-			.concat(claimRewardCalldata);
+	const multicallData = unstakeMulticall
+		.concat(stakeMulticall)
+		.concat(claimRewardCalldata);
 
-		await uniswapV3StakerContract.multicall(multicallData);
-	} catch (e) {
-		console.warn(e);
-	}
+	const tx = await uniswapV3StakerContract.multicall(multicallData);
+
+	return tx;
 };
 
 export const claim = async (
