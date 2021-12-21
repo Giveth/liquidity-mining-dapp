@@ -20,6 +20,9 @@ import type { TransactionResponse } from '@ethersproject/providers';
 import { wrongWallet } from '../toasts/claim';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { H2, Lead } from '@giveth/ui-design-system';
+import SparkleBurstAnimation from '../../animations/sparkle-burst.json';
+import SparkleAnimation from '../../animations/sparkle.json';
+import Lottie from 'react-lottie';
 
 const ClaimedContainer = styled.div`
 	display: flex;
@@ -29,9 +32,10 @@ const ClaimedContainer = styled.div`
 `;
 
 const SunImage = styled.div`
-	position: relative;
+	position: absolute;
 	height: 0px;
-	left: -5%;
+	left: 146px;
+	top: 211px;
 	@media only screen and (max-width: 1360px) {
 		top: 90px;
 	}
@@ -40,12 +44,8 @@ const SunImage = styled.div`
 	}
 `;
 
-const StarsImage = styled(SunImage)`
-	left: 75%;
-	top: -50px;
-`;
-
 const ClaimedTitle = styled.div`
+	padding-top: 60px;
 	font-family: 'Red Hat Text';
 	font-size: 64px;
 	font-weight: 700;
@@ -149,6 +149,35 @@ const MetamaskButton = styled.a`
 	cursor: pointer;
 `;
 
+const SparkleContainer = styled.div`
+	position: absolute;
+	right: 232px;
+	top: 73px;
+`;
+const SparkleBurstContainer = styled.div`
+	position: absolute;
+	left: 54px;
+	top: 70px;
+`;
+
+const SparkleAnimationOptions = {
+	loop: false,
+	autoplay: true,
+	animationData: SparkleAnimation,
+	rendererSettings: {
+		preserveAspectRatio: 'xMidYMid slice',
+	},
+};
+
+const SparkleBurstAnimationOptions = {
+	loop: false,
+	autoplay: true,
+	animationData: SparkleBurstAnimation,
+	rendererSettings: {
+		preserveAspectRatio: 'xMidYMid slice',
+	},
+};
+
 const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goFirstStep, goPreviousStep } =
 		useContext(ClaimViewContext);
@@ -234,22 +263,28 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 			>
 				{isClaimed ? (
 					<>
+						<SparkleBurstContainer>
+							<Lottie
+								options={SparkleBurstAnimationOptions}
+								height={200}
+								width={200}
+							/>
+						</SparkleBurstContainer>
+						<SparkleContainer>
+							<Lottie
+								options={SparkleAnimationOptions}
+								height={100}
+								width={100}
+							/>
+						</SparkleContainer>
 						<SunImage>
 							<Image
-								src='/images/claimed_logo.svg'
-								height='225'
-								width='255'
-								alt='Claimed sun'
+								src='/images/union.svg'
+								height='115'
+								width='194'
+								alt='union'
 							/>
 						</SunImage>
-						<StarsImage>
-							<Image
-								src='/images/claimed_stars.svg'
-								height='105'
-								width='105'
-								alt='Yellow stars.'
-							/>
-						</StarsImage>
 						<ClaimedContainer>
 							<ClaimedTitle>Congratulations!</ClaimedTitle>
 							<ClaimedSubtitleContainer>
