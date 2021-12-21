@@ -44,7 +44,6 @@ import {
 } from '@giveth/ui-design-system';
 import { IconWithTooltip } from '../IconWithToolTip';
 
-
 const DonatePoolCard = styled(PoolCard)`
 	height: 127px;
 `;
@@ -88,7 +87,7 @@ const DonateHeader = styled.div`
 
 const Title = styled(H2)`
 	font-size: 3.2em;
-  font-weight: 700;
+	font-weight: 700;
 	width: 750px;
 	@media only screen and (max-width: 1360px) {
 		width: 100%;

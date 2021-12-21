@@ -57,7 +57,7 @@ const StreamHeader = styled.div`
 const Title = styled(H2)`
 	width: 720px;
 	font-size: 3em;
-  font-weight: 700;
+	font-weight: 700;
 	@media only screen and (max-width: 1120px) {
 		width: 100%;
 	}

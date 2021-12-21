@@ -71,7 +71,7 @@ const StakeHeader = styled.div`
 const Title = styled(H2)`
 	font-size: 3.2em;
 	width: 750px;
-  font-weight: 700;
+	font-weight: 700;
 	@media only screen and (max-width: 1360px) {
 		width: 700px;
 	}

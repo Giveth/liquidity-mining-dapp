@@ -91,7 +91,7 @@ const GovernHeader = styled.div`
 
 const Title = styled(H2)`
 	font-size: 2.7em;
-  font-weight: 700;
+	font-weight: 700;
 	width: 750px;
 `;
 
@@ -111,7 +111,6 @@ const GovernGIVToken = styled.div`
 const MaxStakeGIV = styled(MaxGIV)`
 	cursor: pointer;
 `;
-
 
 const GovernFooter = styled.div`
 	max-width: 500px;
