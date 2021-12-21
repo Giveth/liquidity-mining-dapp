@@ -37,7 +37,8 @@ const SunImage = styled.div`
 	left: 146px;
 	top: 211px;
 	@media only screen and (max-width: 1360px) {
-		top: 90px;
+		left: 71px;
+		top: 180px;
 	}
 	@media only screen and (max-width: 1120px) {
 		display: none;
@@ -50,6 +51,9 @@ const ClaimedTitle = styled.div`
 	font-size: 64px;
 	font-weight: 700;
 	text-align: center;
+	@media only screen and (max-width: 1360px) {
+		padding-top: 30px;
+	}
 `;
 
 const ClaimedSubtitleContainer = styled.div`
@@ -153,15 +157,27 @@ const SparkleContainer = styled.div`
 	position: absolute;
 	right: 232px;
 	top: 73px;
+	@media only screen and (max-width: 1360px) {
+		right: 146px;
+	}
+	@media only screen and (max-width: 1120px) {
+		right: 36px;
+	}
 `;
+
 const SparkleBurstContainer = styled.div`
 	position: absolute;
 	left: 54px;
 	top: 70px;
+	@media only screen and (max-width: 1360px) {
+	}
+	@media only screen and (max-width: 1120px) {
+		display: none;
+	}
 `;
 
 const SparkleAnimationOptions = {
-	loop: false,
+	loop: true,
 	autoplay: true,
 	animationData: SparkleAnimation,
 	rendererSettings: {
@@ -170,7 +186,7 @@ const SparkleAnimationOptions = {
 };
 
 const SparkleBurstAnimationOptions = {
-	loop: false,
+	loop: true,
 	autoplay: true,
 	animationData: SparkleBurstAnimation,
 	rendererSettings: {
