@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
-import { H2, P } from '../styled-components/Typography';
 import { useContext } from 'react';
 import { UserContext } from '../../context/user.context';
 import { utils } from 'ethers';
+import { H2, Lead, P } from '@giveth/ui-design-system';
 
 const CongratulationsView = styled.div`
 	min-height: 100vh;
@@ -56,30 +56,30 @@ const CongratsButton = styled(Button)`
 `;
 
 export const CongratulationsCard = () => {
-	const { claimableAmount } = useContext(UserContext);
+	const { totalAmount } = useContext(UserContext);
 	return (
 		<CongratulationsView>
 			<CongratulationsContainer>
 				<CongHeader>
-					<H2 as='h1'>Congratulations!</H2>
+					<H2 as='h1' weight={700}>
+						Congratulations!
+					</H2>
 					<Description>
-						<P>
+						<Lead>
 							You have successfully claimed{' '}
-							{utils.formatEther(claimableAmount)} GIV tokens.
-						</P>
-						<P>Add GIV to Metamask</P>
+							{utils.formatEther(totalAmount.div(10))} GIV tokens.
+						</Lead>
+						<Lead>Add GIV to Metamask</Lead>
 					</Description>
 				</CongHeader>
-				<P size='medium'>
+				<Lead>
 					And you&apos;re getting an additional
 					<Rate size='xlarge'>{10} GIV</Rate>
 					per second.
-				</P>
-				<P>Watch your GIVstream flow!</P>
+				</Lead>
+				<Lead>Watch your GIVstream flow!</Lead>
 				<CongratsButton secondary>GIV me more</CongratsButton>
 			</CongratulationsContainer>
 		</CongratulationsView>
 	);
 };
-
-export default CongratulationsCard;

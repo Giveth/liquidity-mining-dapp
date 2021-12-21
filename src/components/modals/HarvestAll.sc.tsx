@@ -159,8 +159,8 @@ export const NothingToHarvest = styled(H6)`
 export const Pending = styled(Row)`
 	margin: 0 auto 16px;
 	width: 316px;
-	line-height: 46px;
-	height: 46px;
+	line-height: 50px;
+	height: 50px;
 	border: 2px solid ${neutralColors.gray[100]};
 	border-radius: 48px;
 	color: ${neutralColors.gray[100]};
