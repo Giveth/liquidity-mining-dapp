@@ -93,17 +93,6 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const [earnEstimate, setEarnEstimate] = useState<BigNumber>(Zero);
 	const { tokenDistroHelper } = useTokenDistro();
 
-	const stackedChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-		if (e.target.value.length === 0) {
-			setDonation(undefined);
-		} else if (isNaN(+e.target.value)) {
-			setDonation(donation);
-		} else {
-			if (claimableAmount.gte(utils.parseEther(e.target.value)))
-				setDonation(+e.target.value);
-		}
-	};
-
 	useEffect(() => {
 		if (claimableAmount) {
 			setDonation(utils.formatEther(claimableAmount));
