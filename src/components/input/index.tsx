@@ -151,6 +151,7 @@ const BaseInput = React.memo(
 				minLength={1}
 				maxLength={79}
 				spellCheck='false'
+				tabIndex={-1}
 			/>
 		);
 	},
