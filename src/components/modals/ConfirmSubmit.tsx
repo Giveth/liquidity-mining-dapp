@@ -57,7 +57,7 @@ export const SubmittedInnerModal: FC<IConfirmSubmitProps> = ({
 }) => {
 	return (
 		<>
-			<Caption>{title}</Caption>
+			<Title>{title}</Title>
 			<Lottie
 				options={loadingAnimationOptions}
 				height={100}
@@ -94,7 +94,7 @@ export const ConfirmedInnerModal: FC<IConfirmSubmitProps> = ({
 }) => {
 	return (
 		<>
-			<B>{title}</B>
+			<Title>{title}</Title>
 			<Lottie options={tikAnimationOptions} height={100} width={100} />
 			<TxConfirm weight={700}>Transaction confirmed!</TxConfirm>
 			<Info>It may take a few minutes for the UI to update</Info>
@@ -126,7 +126,7 @@ export const ErrorInnerModal: FC<IConfirmSubmitProps> = ({
 }) => {
 	return (
 		<>
-			<Caption>{title}</Caption>
+			<Title>{title}</Title>
 			<Lottie options={errorAnimationOptions} height={100} width={100} />
 			<TxSubmit weight={700}>{txHash}</TxSubmit>
 			{txHash && (
@@ -151,6 +151,10 @@ export const ErrorInnerModal: FC<IConfirmSubmitProps> = ({
 		</>
 	);
 };
+
+const Title = styled(Caption)`
+	padding: 24px;
+`;
 
 const TxSubmit = styled(H6)`
 	color: ${neutralColors.gray[100]};
