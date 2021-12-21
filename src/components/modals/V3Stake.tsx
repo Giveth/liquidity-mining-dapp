@@ -4,19 +4,46 @@ import {
 	neutralColors,
 	brandColors,
 	Button,
+	Caption,
 	H4,
 	Overline,
 	B,
+	IconHelp,
 } from '@giveth/ui-design-system';
+import {
+	CancelButton,
+	HarvestButton,
+	HelpRow,
+	Pending,
+	TooltipContent,
+} from './HarvestAll.sc';
+import Lottie from 'react-lottie';
 import { Row } from '../styled-components/Grid';
 import styled from 'styled-components';
 import { PoolStakingConfig } from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
 import V3StakingCard from '../cards/PositionCard';
 import { useLiquidityPositions, useOnboard } from '@/context';
+import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
+import { IconWithTooltip } from '../IconWithToolTip';
+import LoadingAnimation from '@/animations/loading.json';
+import { transfer, exit, stake } from '@/lib/stakingNFT';
+import BigNumber from 'bignumber.js';
+import { ethers } from 'ethers';
+
+const loadingAnimationOptions = {
+	loop: true,
+	autoplay: true,
+	animationData: LoadingAnimation,
+	rendererSettings: {
+		preserveAspectRatio: 'xMidYMid slice',
+	},
+};
 
 export enum StakeState {
 	UNKNOWN,
+	UNSTAKING,
+	CONFIRM_UNSTAKE,
 	CONFIRMING,
 	CONFIRMED,
 	REJECT,
@@ -40,47 +67,158 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	showModal,
 	setShowModal,
 }) => {
-	const { network } = useOnboard();
-	const { unstakedPositions, stakedPositions } = useLiquidityPositions();
+	const { network, provider, address } = useOnboard();
+	const {
+		unstakedPositions,
+		stakedPositions,
+		currentIncentive,
+		loadPositions,
+	} = useLiquidityPositions();
 	const positions = isUnstakingModal ? stakedPositions : unstakedPositions;
 	const { title } = poolStakingConfig;
 	const [stakeStatus, setStakeStatus] = useState<StakeState>(
 		StakeState.UNKNOWN,
 	);
 	const [txStatus, setTxStatus] = useState<any>();
-	const [tokenId, setTokenId] = useState<string>('');
+	const [tokenIdState, setTokenId] = useState<number>(0);
+
+	const handleStakeUnstake = async (tokenId: number) => {
+		if (!provider) return;
+
+		if (!isUnstakingModal) {
+			setStakeStatus(StakeState.CONFIRMING);
+			setTokenId(tokenId);
+		} else {
+			setStakeStatus(StakeState.CONFIRM_UNSTAKE);
+		}
+
+		const tx = isUnstakingModal
+			? await exit(
+					tokenIdState,
+					address,
+					provider,
+					currentIncentive,
+					setStakeStatus,
+			  )
+			: await transfer(
+					tokenId,
+					address,
+					provider,
+					currentIncentive,
+					setStakeStatus,
+			  );
+		setTxStatus(tx);
+		try {
+			const { status } = await tx.wait();
+			console.log('as');
+			if (status) {
+				setStakeStatus(StakeState.CONFIRMED);
+			} else {
+				setStakeStatus(StakeState.ERROR);
+			}
+			loadPositions();
+		} catch {
+			setStakeStatus(StakeState.UNKNOWN);
+		}
+	};
+
+	const handleAction = (tokenId: number) => {
+		setTokenId(tokenId);
+		setStakeStatus(StakeState.UNSTAKING);
+	};
 
 	return (
 		<Modal showModal={showModal} setShowModal={setShowModal}>
 			<StakeModalContainer>
 				{(stakeStatus === StakeState.UNKNOWN ||
+					stakeStatus === StakeState.CONFIRMING ||
+					stakeStatus === StakeState.UNSTAKING ||
+					stakeStatus === StakeState.CONFIRM_UNSTAKE) && (
+					<StakeModalTitle alignItems='center'>
+						<StakingPoolImages title={title} />
+						<StakeModalTitleText weight={700}>
+							{title}
+						</StakeModalTitleText>
+					</StakeModalTitle>
+				)}
+				{(stakeStatus === StakeState.UNKNOWN ||
 					stakeStatus === StakeState.CONFIRMING) && (
 					<>
-						<StakeModalTitle alignItems='center'>
-							<StakingPoolImages title={title} />
-							<StakeModalTitleText weight={700}>
-								{title}
-							</StakeModalTitleText>
-						</StakeModalTitle>
 						<InnerModalPositions>
 							{positions.map(position => (
 								<V3StakingCard
-									position={position}
-									setTxStatus={setTxStatus}
-									isUnstaking={isUnstakingModal}
 									key={position.tokenId.toString()}
-									handleStakeStatus={setStakeStatus}
-									handleSelectedNFT={setTokenId}
-									selectedPosition={
-										position.tokenId.toString() === tokenId
+									position={position}
+									isUnstaking={isUnstakingModal}
+									handleAction={
+										isUnstakingModal
+											? handleAction
+											: handleStakeUnstake
 									}
 									isConfirming={
 										stakeStatus === StakeState.CONFIRMING
+									}
+									selectedPosition={
+										position.tokenId === tokenIdState
 									}
 								/>
 							))}
 						</InnerModalPositions>
 					</>
+				)}
+				{(stakeStatus === StakeState.UNSTAKING ||
+					stakeStatus === StakeState.CONFIRM_UNSTAKE) && (
+					<HarvestContainer>
+						<HelpRow alignItems='center'>
+							<Caption>Rewards earned by your NFT</Caption>
+							<IconWithTooltip
+								icon={
+									<IconHelp
+										size={16}
+										color={brandColors.deep[100]}
+									/>
+								}
+								direction={'top'}
+							>
+								<TooltipContent>
+									When you unstake an NFT from this pool, you
+									also harvest any corresponding rewards
+								</TooltipContent>
+							</IconWithTooltip>
+						</HelpRow>
+						<GIVBoxWithPrice
+							amount={ethers.BigNumber.from(10)}
+							price={'10'}
+						/>
+						{stakeStatus === StakeState.CONFIRM_UNSTAKE ? (
+							<Pending>
+								<Lottie
+									options={loadingAnimationOptions}
+									height={40}
+									width={40}
+								/>
+								&nbsp; PENDING
+							</Pending>
+						) : (
+							<HarvestButton
+								label='UNSTAKE &amp; HARVEST'
+								size='medium'
+								buttonType='primary'
+								onClick={() => {
+									handleStakeUnstake(0);
+								}}
+							/>
+						)}
+						<CancelButton
+							label='CANCEL'
+							size='medium'
+							buttonType='texty'
+							onClick={() => {
+								setShowModal(false);
+							}}
+							// disabled={claimState === ClaimState.WAITING}
+						/>
+					</HarvestContainer>
 				)}
 				<InnerModalStates>
 					{stakeStatus === StakeState.REJECT && (
@@ -190,4 +328,10 @@ export const PositionActions = styled.div`
 
 export const FullWidthButton = styled(Button)`
 	width: 100%;
+`;
+
+export const HarvestContainer = styled.div`
+	margin: auto;
+	padding: 0 24px;
+	width: 630px;
 `;
