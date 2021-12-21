@@ -109,7 +109,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	useEffect(() => {
 		let _deposit = 0;
-		if (deposit) {
+		if (deposit !== '.' && deposit !== '') {
 			_deposit = parseFloat(deposit);
 		}
 		const stackedWithApr = APR ? APR.times(_deposit).div(1200) : Zero;

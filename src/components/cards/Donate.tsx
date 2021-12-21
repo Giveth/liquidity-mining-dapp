@@ -122,7 +122,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	useEffect(() => {
 		let _donation = 0;
-		if (donation) {
+		if (donation !== '.' && donation !== '') {
 			_donation = parseFloat(donation);
 		}
 		const donationWithGivBacks = _donation * 0.75;
