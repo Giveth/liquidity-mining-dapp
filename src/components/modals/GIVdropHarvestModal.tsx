@@ -279,7 +279,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 									</Pending>
 								) : (
 									<HarvestButton
-										label='HARVEST'
+										label='CLAIM'
 										size='medium'
 										buttonType='primary'
 										onClick={() => {
