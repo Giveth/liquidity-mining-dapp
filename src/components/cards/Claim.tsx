@@ -178,7 +178,7 @@ const SparkleBurstContainer = styled.div`
 
 const SparkleAnimationOptions = {
 	loop: false,
-	autoplay: true,
+	autoplay: false,
 	animationData: SparkleAnimation,
 	rendererSettings: {
 		preserveAspectRatio: 'xMidYMid slice',
@@ -187,7 +187,7 @@ const SparkleAnimationOptions = {
 
 const SparkleBurstAnimationOptions = {
 	loop: false,
-	autoplay: true,
+	autoplay: false,
 	animationData: SparkleBurstAnimation,
 	rendererSettings: {
 		preserveAspectRatio: 'xMidYMid slice',
