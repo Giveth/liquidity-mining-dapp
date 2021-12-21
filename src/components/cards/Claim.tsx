@@ -4,30 +4,22 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
 import { Row } from '../styled-components/Grid';
-import { H2, P } from '../styled-components/Typography';
-import { Card, Header } from './common';
+import { Card, Header, PreviousArrowButton } from './common';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
-import { utils, BigNumber as EtherBigNumber } from 'ethers';
-import { UserContext } from '../../context/user.context';
-import { toast } from 'react-hot-toast';
-import { networksParams } from '../../helpers/blockchain';
+import useUser from '../../context/user.context';
 import { OnboardContext } from '../../context/onboard.context';
 import config from '../../configuration';
-import { claimAirDrop } from '../../lib/claim';
 import { addGIVToken } from '@/lib/metamask';
 import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
 import { GIVdropHarvestModal } from '../modals/GIVdropHarvestModal';
-
-enum ClaimState {
-	UNKNOWN,
-	WAITING,
-	SUBMITTING,
-	CLAIMED,
-	ERROR,
-}
+import { formatWeiHelper } from '@/helpers/number';
+import type { TransactionResponse } from '@ethersproject/providers';
+import { wrongWallet } from '../toasts/claim';
+import { useTokenDistro } from '@/context/tokenDistro.context';
+import { H2, Lead } from '@giveth/ui-design-system';
 
 const ClaimedContainer = styled.div`
 	display: flex;
@@ -40,6 +32,12 @@ const SunImage = styled.div`
 	position: relative;
 	height: 0px;
 	left: -5%;
+	@media only screen and (max-width: 1360px) {
+		top: 90px;
+	}
+	@media only screen and (max-width: 1120px) {
+		display: none;
+	}
 `;
 
 const StarsImage = styled(SunImage)`
@@ -78,7 +76,6 @@ const ClaimedSubtitleB = styled.div`
 	font-family: 'Red Hat Text';
 	font-size: 20px;
 	text-align: center;
-	padding-left: 64px;
 `;
 
 const SocialButton = styled(Button)`
@@ -90,7 +87,7 @@ const SocialButton = styled(Button)`
 	border: 2px solid white;
 	height: 50px;
 	width: 265px;
-	margin: 12px 0 0 0;
+	margin-top: 12px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -100,7 +97,6 @@ const SocialButton = styled(Button)`
 const ExploreButton = styled(SocialButton)`
 	background-color: #e1458d;
 	border: none;
-	margin-left: 80px;
 	width: 285px;
 `;
 
@@ -108,7 +104,6 @@ const ClaimFromAnother = styled.span`
 	cursor: pointer;
 	color: '#FED670'
 	margin-top: 4px;
-	margin-left: 80px;
 `;
 
 interface IClaimCardContainer {
@@ -132,7 +127,7 @@ const ClaimCardContainer = styled(Card)<IClaimCardContainer>`
 
 const Title = styled(H2)``;
 
-const Desc = styled(P)`
+const Desc = styled(Lead)`
 	margin-top: 22px;
 `;
 
@@ -155,9 +150,9 @@ const MetamaskButton = styled.a`
 `;
 
 const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goFirstStep } = useContext(ClaimViewContext);
-	const { userAddress, claimableAmount, resetWallet } =
-		useContext(UserContext);
+	const { activeIndex, goFirstStep, goPreviousStep } =
+		useContext(ClaimViewContext);
+	const { userAddress, totalAmount, resetWallet } = useUser();
 	const {
 		isReady,
 		changeWallet,
@@ -168,15 +163,24 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 		address,
 	} = useContext(OnboardContext);
 
-	const [txStatus, setTxStatus] = useState(false);
+	const [txStatus, setTxStatus] = useState<TransactionResponse | undefined>();
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [showClaimModal, setShowClaimModal] = useState<boolean>(false);
-	const [claimState, setClaimState] = useState<ClaimState>(
-		ClaimState.UNKNOWN,
-	);
+	const [isClaimed, setIsClaimed] = useState(false);
+	const [streamValue, setStreamValue] = useState<string>('0');
+
+	const { tokenDistroHelper } = useTokenDistro();
 
 	useEffect(() => {
-		setTxStatus(false);
+		setStreamValue(
+			formatWeiHelper(
+				tokenDistroHelper.getStreamPartTokenPerWeek(totalAmount),
+			),
+		);
+	}, [totalAmount, tokenDistroHelper]);
+
+	useEffect(() => {
+		setIsClaimed(false);
 	}, [address, userAddress]);
 
 	useEffect(() => {
@@ -216,46 +220,171 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 		setShowClaimModal(true);
 	};
 
-	const onClaim = async () => {
-		const check = checkNetworkAndWallet();
-		if (!check) return;
-		if (!provider) return;
-
-		try {
-			setClaimState(ClaimState.WAITING);
-			console.log(userAddress);
-			const tx = await claimAirDrop(userAddress, provider);
-
-			showPendingClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
-			setClaimState(ClaimState.SUBMITTING);
-			const { status } = await tx.wait();
-
-			if (status) {
-				setTxStatus(status);
-				setClaimState(ClaimState.CLAIMED);
-				showConfirmedClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
-			} else {
-				setClaimState(ClaimState.ERROR);
-				showFailedClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
-			}
-		} catch (e) {
-			setClaimState(ClaimState.ERROR);
-			console.error(e);
-		}
+	const onSuccess = (tx: TransactionResponse) => {
+		setIsClaimed(true);
+		setTxStatus(tx);
 	};
 
-	const parseEther = (value: EtherBigNumber) =>
-		(+utils.formatEther(value)).toLocaleString('en-US', {
-			minimumFractionDigits: 2,
-			maximumFractionDigits: 2,
-		});
-
 	return (
-		<ClaimCardContainer
-			activeIndex={activeIndex}
-			index={index}
-			claimed={txStatus}
-		>
+		<>
+			<ClaimCardContainer
+				activeIndex={activeIndex}
+				index={index}
+				claimed={txStatus}
+			>
+				{isClaimed ? (
+					<>
+						<SunImage>
+							<Image
+								src='/images/claimed_logo.svg'
+								height='225'
+								width='255'
+								alt='Claimed sun'
+							/>
+						</SunImage>
+						<StarsImage>
+							<Image
+								src='/images/claimed_stars.svg'
+								height='105'
+								width='105'
+								alt='Yellow stars.'
+							/>
+						</StarsImage>
+						<ClaimedContainer>
+							<ClaimedTitle>Congratulations!</ClaimedTitle>
+							<ClaimedSubtitleContainer>
+								<ClaimedSubtitleA>
+									You have successfully claimed{' '}
+									{formatWeiHelper(totalAmount.div(10))} GIV.{' '}
+									<AddGivButton
+										onClick={() =>
+											addGIVToken(
+												config.XDAI_NETWORK_NUMBER,
+											)
+										}
+									>
+										<Image
+											src='/images/icons/metamask.svg'
+											height='24'
+											width='24'
+											alt='Metamask logo.'
+										/>
+									</AddGivButton>
+								</ClaimedSubtitleA>
+								<ClaimedSubtitleB>
+									Plus you&apos;re getting an additional{' '}
+									<span style={{ color: '#FED670' }}>
+										{streamValue} GIV
+									</span>{' '}
+									per week.
+								</ClaimedSubtitleB>
+								<a
+									href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
+									target='_blank'
+									rel='noreferrer'
+								>
+									<SocialButton>
+										share on twitter
+										<Image
+											src='/images/icons/twitter.svg'
+											height='15'
+											width='15'
+											alt='Twitter logo.'
+										/>
+									</SocialButton>
+								</a>
+								<a
+									href='https://swag.giveth.io/'
+									target='_blank'
+									rel='noreferrer'
+								>
+									<SocialButton>
+										claim your free swag
+										<Image
+											src='/images/icons/tshirt.svg'
+											height='15'
+											width='15'
+											alt='T shirt.'
+										/>
+									</SocialButton>
+								</a>
+								<a
+									href='https://discord.giveth.io/'
+									target='_blank'
+									rel='noreferrer'
+								>
+									<SocialButton>
+										join our discord
+										<Image
+											src='/images/icons/discord.svg'
+											height='15'
+											width='15'
+											alt='discord logo.'
+										/>
+									</SocialButton>
+								</a>
+								<Link href='/' passHref>
+									<a target='_blank' rel='noreferrer'>
+										<ExploreButton>
+											explore the giveconomy
+										</ExploreButton>
+									</a>
+								</Link>
+								<ClaimFromAnother
+									onClick={() => {
+										goFirstStep();
+										resetWallet();
+										setIsClaimed(false);
+									}}
+								>
+									Claim from another address!
+								</ClaimFromAnother>
+							</ClaimedSubtitleContainer>
+						</ClaimedContainer>
+					</>
+				) : (
+					<>
+						<ClaimHeader>
+							<Title as='h1' weight={700}>
+								Claim your GIV now!
+							</Title>
+							<Desc size='small' color={'#CABAFF'}>
+								Join the giving economy.
+							</Desc>
+						</ClaimHeader>
+						<Row alignItems={'center'} justifyContent={'center'}>
+							{/* <ClaimButton secondary onClick={onClaim}> */}
+							<ClaimButton
+								secondary
+								onClick={() => {
+									openHarvestModal();
+								}}
+							>
+								CLAIM {formatWeiHelper(totalAmount.div(10))} GIV
+							</ClaimButton>
+						</Row>
+						<Row alignItems={'center'} justifyContent={'center'}>
+							<MetamaskButton
+								onClick={() =>
+									addGIVToken(config.XDAI_NETWORK_NUMBER)
+								}
+							>
+								<Image
+									src='/images/metamask.png'
+									height='32'
+									width='215'
+									alt='Metamask button'
+								/>
+							</MetamaskButton>
+						</Row>
+					</>
+				)}
+				{activeIndex === index && (
+					<>
+						<PreviousArrowButton onClick={goPreviousStep} />
+					</>
+				)}
+			</ClaimCardContainer>
 			{showModal && (
 				<WrongNetworkModal
 					showModal={showModal}
@@ -268,234 +397,14 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 					showModal={showClaimModal}
 					setShowModal={setShowClaimModal}
 					network={config.XDAI_NETWORK_NUMBER}
-					claimState={claimState}
 					txStatus={txStatus}
-					givdropAmount={claimableAmount}
-					onClaim={onClaim}
+					givdropAmount={totalAmount}
+					checkNetworkAndWallet={checkNetworkAndWallet}
+					onSuccess={onSuccess}
 				/>
 			)}
-
-			{txStatus ? (
-				<>
-					<SunImage>
-						<Image
-							src='/images/claimed_logo.svg'
-							height='225'
-							width='255'
-							alt='Claimed sun'
-						/>
-					</SunImage>
-					<StarsImage>
-						<Image
-							src='/images/claimed_stars.svg'
-							height='105'
-							width='105'
-							alt='Yellow stars.'
-						/>
-					</StarsImage>
-					<ClaimedContainer>
-						<ClaimedTitle>Congratulations!</ClaimedTitle>
-						<ClaimedSubtitleContainer>
-							<ClaimedSubtitleA>
-								You have successfully claimed{' '}
-								{parseEther(claimableAmount)} GIV.{' '}
-								<AddGivButton
-									onClick={() =>
-										addGIVToken(config.XDAI_NETWORK_NUMBER)
-									}
-								>
-									<Image
-										src='/images/icons/metamask.svg'
-										height='24'
-										width='24'
-										alt='Metamask logo.'
-									/>
-								</AddGivButton>
-							</ClaimedSubtitleA>
-							<ClaimedSubtitleB>
-								Plus you&apos;re getting an additional{' '}
-								<span style={{ color: '#FED670' }}>
-									{parseEther(
-										claimableAmount.mul(9).div(52 * 5),
-									)}{' '}
-									GIV
-								</span>{' '}
-								per week.
-							</ClaimedSubtitleB>
-							<a
-								href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
-								target='_blank'
-								rel='noreferrer'
-							>
-								<SocialButton>
-									share on twitter
-									<Image
-										src='/images/icons/twitter.svg'
-										height='15'
-										width='15'
-										alt='Twitter logo.'
-									/>
-								</SocialButton>
-							</a>
-							<a
-								href='https://swag.giveth.io/'
-								target='_blank'
-								rel='noreferrer'
-							>
-								<SocialButton>
-									claim your free swag
-									<Image
-										src='/images/icons/tshirt.svg'
-										height='15'
-										width='15'
-										alt='T shirt.'
-									/>
-								</SocialButton>
-							</a>
-							<a
-								href='https://discord.giveth.io/'
-								target='_blank'
-								rel='noreferrer'
-							>
-								<SocialButton>
-									join our discord
-									<Image
-										src='/images/icons/discord.svg'
-										height='15'
-										width='15'
-										alt='discord logo.'
-									/>
-								</SocialButton>
-							</a>
-							<Link href='/' passHref>
-								<a target='_blank' rel='noreferrer'>
-									<ExploreButton>
-										explore the giveconomy
-									</ExploreButton>
-								</a>
-							</Link>
-							<ClaimFromAnother
-								onClick={() => {
-									goFirstStep();
-									resetWallet();
-									setTxStatus(false);
-								}}
-							>
-								Claim from another address!
-							</ClaimFromAnother>
-						</ClaimedSubtitleContainer>
-					</ClaimedContainer>
-				</>
-			) : (
-				<>
-					<ClaimHeader>
-						<Title as='h1'>Claim your GIV now!</Title>
-						<Desc size='small' color={'#CABAFF'}>
-							Join the giving economy.
-						</Desc>
-					</ClaimHeader>
-					<Row alignItems={'center'} justifyContent={'center'}>
-						{/* <ClaimButton secondary onClick={onClaim}> */}
-						<ClaimButton
-							secondary
-							onClick={() => {
-								openHarvestModal();
-							}}
-						>
-							CLAIM {utils.formatEther(claimableAmount)} GIV
-						</ClaimButton>
-					</Row>
-					<Row alignItems={'center'} justifyContent={'center'}>
-						<MetamaskButton
-							onClick={() =>
-								addGIVToken(config.XDAI_NETWORK_NUMBER)
-							}
-						>
-							<Image
-								src='/images/metamask.png'
-								height='32'
-								width='215'
-								alt='Metamask button'
-							/>
-						</MetamaskButton>
-					</Row>
-				</>
-			)}
-		</ClaimCardContainer>
+		</>
 	);
 };
 
-export function showPendingClaim(network: number, txHash: string): void {
-	const transactionExplorer = `${networksParams[network].blockExplorerUrls[0]}/tx/${txHash}`;
-
-	toast.success(
-		<span>
-			Claim submitted! Check the status{' '}
-			<a
-				target='_blank'
-				href={transactionExplorer}
-				rel='noreferrer'
-				style={{ color: 'white' }}
-			>
-				here
-			</a>
-			.
-		</span>,
-	);
-}
-
-export function wrongWallet(address: string): void {
-	toast(
-		<span>
-			Please connect to the eligible wallet address on xDai: {address}
-		</span>,
-		{
-			duration: 3000,
-			position: 'bottom-center',
-			style: {
-				minWidth: '450px',
-				textAlign: 'center',
-				color: 'white',
-				backgroundColor: '#E1458D',
-			},
-		},
-	);
-}
-
-export function showFailedClaim(network: number, txHash: string): void {
-	const transactionExplorer = `${networksParams[network].blockExplorerUrls[0]}/tx/${txHash}`;
-
-	toast.error(
-		<span>
-			Your claim failed! Check your transaction{' '}
-			<a
-				target='_blank'
-				href={transactionExplorer}
-				rel='noreferrer'
-				style={{ color: 'white' }}
-			>
-				here
-			</a>
-			.
-		</span>,
-	);
-}
-
-export function showConfirmedClaim(network: number, txHash: string): void {
-	const transactionExplorer = `${networksParams[network].blockExplorerUrls[0]}/tx/${txHash}`;
-
-	toast.success(
-		<span>
-			<a
-				target='_blank'
-				href={transactionExplorer}
-				rel='noreferrer'
-				style={{ color: 'white' }}
-			>
-				Claimed
-			</a>
-			Your GIV tokens are in your wallet.
-		</span>,
-	);
-}
 export default ClaimCard;

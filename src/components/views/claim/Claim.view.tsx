@@ -1,8 +1,7 @@
 import React, { FC, useContext, useState } from 'react';
-import Image from 'next/image';
 import config from '@/configuration';
 import styled from 'styled-components';
-import CongratulationsCard from '../../cards/Congratulations';
+import { CongratulationsCard } from '../../cards/Congratulations';
 import ClaimCard from '../../cards/Claim';
 import { ConnectCard } from '../../cards/Connect';
 import { DonateCard } from '../../cards/Donate';
@@ -10,12 +9,10 @@ import { StreamCard } from '../../cards/Stream';
 import GovernCard from '../../cards/Govern';
 import InvestCard from '../../cards/Stake';
 import { Row } from '../../styled-components/Grid';
-import { number } from 'prop-types';
 import { GiveDropStateType, UserContext } from '@/context/user.context';
 import { OnboardContext } from '@/context/onboard.context';
-import { switchNetwork } from '@/lib/metamask';
 
-const stepsTitle = ['Connect', 'Stake', 'Govern', 'Donate', 'Stream', 'Claim'];
+const stepsTitle = ['Connect', 'Donate', 'Govern', 'Stake', 'Stream', 'Claim'];
 
 const Steps = styled(Row)`
 	height: 80px;
@@ -113,6 +110,7 @@ const ClaimCarouselContainer = styled.div`
 interface IClaimViewContext {
 	activeIndex: number;
 	goNextStep: () => void;
+	goPreviousStep: () => void;
 	goFirstStep: () => void;
 }
 
@@ -123,6 +121,7 @@ export interface IClaimViewCardProps {
 export const ClaimViewContext = React.createContext<IClaimViewContext>({
 	activeIndex: 0,
 	goNextStep: () => {},
+	goPreviousStep: () => {},
 	goFirstStep: () => {},
 });
 
@@ -130,7 +129,6 @@ const ClaimView = () => {
 	const [step, setStep] = useState(0);
 	const { giveDropState } = useContext(UserContext);
 	const { network, isReady } = useContext(OnboardContext);
-
 	return (
 		<>
 			{/* <SwitchNetwork
@@ -186,15 +184,18 @@ const ClaimView = () => {
 								goNextStep: () => {
 									setStep(step + 1);
 								},
+								goPreviousStep: () => {
+									setStep(step - 1);
+								},
 								goFirstStep: () => {
 									setStep(0);
 								},
 							}}
 						>
 							<ConnectCard index={0} />
-							<InvestCard index={1} />
+							<DonateCard index={1} />
 							<GovernCard index={2} />
-							<DonateCard index={3} />
+							<InvestCard index={3} />
 							<StreamCard index={4} />
 							<ClaimCard index={5} />
 						</ClaimViewContext.Provider>
