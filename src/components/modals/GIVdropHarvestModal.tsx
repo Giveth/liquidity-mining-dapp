@@ -268,14 +268,25 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 									When you harvest GIV rewards, all liquid GIV
 									allocated to you is sent to your wallet.
 								</HarvestAllDesc>
-								<HarvestButton
-									label='HARVEST'
-									size='medium'
-									buttonType='primary'
-									onClick={() => {
-										onClaim();
-									}}
-								/>
+								{claimState === ClaimState.WAITING ? (
+									<Pending>
+										<Lottie
+											options={loadingAnimationOptions}
+											height={40}
+											width={40}
+										/>
+										&nbsp;HARVEST PENDING
+									</Pending>
+								) : (
+									<HarvestButton
+										label='HARVEST'
+										size='medium'
+										buttonType='primary'
+										onClick={() => {
+											onClaim();
+										}}
+									/>
+								)}
 								<CancelButton
 									label='CANCEL'
 									size='medium'
@@ -287,16 +298,6 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 								/>
 							</HarvestBoxes>
 						</StyledScrollbars>
-						{claimState === ClaimState.WAITING && (
-							<Pending>
-								<Lottie
-									options={loadingAnimationOptions}
-									height={40}
-									width={40}
-								/>
-								&nbsp;HARVEST PENDING
-							</Pending>
-						)}
 					</>
 				)}
 				{claimState === ClaimState.SUBMITTING && (
