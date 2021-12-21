@@ -1,6 +1,5 @@
 import { IUnipool } from '@/services/subgraph';
 import { ethers } from 'ethers';
-import { parseEther } from 'ethers/lib/utils';
 import BigNumber from 'bignumber.js';
 import { getNowUnixMS } from '@/helpers/time';
 

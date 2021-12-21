@@ -4,8 +4,14 @@ import { utils } from 'ethers';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
-import { H2, H4, P } from '../styled-components/Typography';
-import { ArrowButton, Card, Header, ICardProps, MaxGIV } from './common';
+import {
+	ArrowButton,
+	Card,
+	Header,
+	ICardProps,
+	MaxGIV,
+	PreviousArrowButton,
+} from './common';
 import { UserContext } from '../../context/user.context';
 import {
 	ClaimViewContext,
@@ -14,6 +20,8 @@ import {
 
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { formatWeiHelper } from '@/helpers/number';
+import { DurationToString } from '@/lib/helpers';
+import { H2, Lead, H5 } from '@giveth/ui-design-system';
 
 const StreamCardContainer = styled(Card)`
 	::before {
@@ -49,12 +57,13 @@ const StreamHeader = styled.div`
 const Title = styled(H2)`
 	width: 720px;
 	font-size: 3em;
+  font-weight: 700;
 	@media only screen and (max-width: 1120px) {
 		width: 100%;
 	}
 `;
 
-const Desc = styled(P)`
+const Desc = styled(Lead)`
 	width: 700px;
 	margin-top: 22px;
 	@media only screen and (max-width: 1120px) {
@@ -78,6 +87,9 @@ const StreamContainer = styled(Row)`
 const StreamValueContainer = styled(Row)`
 	padding: 20px 60px;
 	gap: 12px;
+	@media only screen and (max-width: 1120px) {
+		padding: 20px;
+	}
 `;
 
 const StreamValue = styled.div`
@@ -94,24 +106,32 @@ const StreamPlaceholder = styled(Row)`
 `;
 
 export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
-	const { claimableAmount } = useContext(UserContext);
+	const { activeIndex, goNextStep, goPreviousStep } =
+		useContext(ClaimViewContext);
+	const { totalAmount } = useContext(UserContext);
 	const [streamValue, setStreamValue] = useState<string>('0');
+	const [remain, setRemain] = useState('');
 
 	const { tokenDistroHelper } = useTokenDistro();
 
 	useEffect(() => {
 		setStreamValue(
 			formatWeiHelper(
-				tokenDistroHelper.getStreamPartTokenPerWeek(claimableAmount),
+				tokenDistroHelper.getStreamPartTokenPerWeek(totalAmount),
 			),
 		);
-	}, [claimableAmount]);
+	}, [totalAmount, tokenDistroHelper]);
+
+	useEffect(() => {
+		const _remain = DurationToString(tokenDistroHelper.remain);
+		setRemain(_remain);
+	}, [tokenDistroHelper]);
 
 	return (
 		<StreamCardContainer activeIndex={activeIndex} index={index}>
 			<StreamHeader>
 				<Title as='h1'>Enjoy a continuous flow of GIV</Title>
+
 				<Desc size='small' color={'#CABAFF'}>
 					Welcome to the expanding GIViverse! The <b>GIVstream</b>{' '}
 					offers continuous rewards for GIVeconomy participants. As
@@ -120,8 +140,10 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 			</StreamHeader>
 			<StreamRow alignItems={'center'}>
 				<StreamContainer flexDirection='column'>
-					<H4 as='h2'>Your flowrate</H4>
-					<StreamSubtitle>Time remaining: 4y 23d 16h</StreamSubtitle>
+					<H5 as='h2' weight={700}>
+						Your flowrate
+					</H5>
+					<StreamSubtitle>Time remaining: {remain}</StreamSubtitle>
 				</StreamContainer>
 				<StreamValueContainer alignItems={'center'}>
 					<Image
@@ -134,7 +156,12 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 					<StreamPlaceholder>GIV/week</StreamPlaceholder>
 				</StreamValueContainer>
 			</StreamRow>
-			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
+			{activeIndex === index && (
+				<>
+					<ArrowButton onClick={goNextStep} />
+					<PreviousArrowButton onClick={goPreviousStep} />
+				</>
+			)}
 		</StreamCardContainer>
 	);
 };

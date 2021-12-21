@@ -5,22 +5,29 @@ import styled from 'styled-components';
 import { WalletAddressInputWithButton } from '../input';
 import { Button } from '../styled-components/Button';
 import { Row } from '../styled-components/Grid';
-import { H2, P } from '../styled-components/Typography';
 import { ArrowButton, Card } from './common';
 import { OnboardContext } from '../../context/onboard.context';
 import { UserContext, GiveDropStateType } from '../../context/user.context';
-import { utils, BigNumber } from 'ethers';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
 } from '../views/claim/Claim.view';
+import config from '@/config/development';
+import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
+import { formatWeiHelper } from '@/helpers/number';
 import { addGIVToken } from '@/lib/metamask';
-import { ButtonLink, OulineLinkButton } from '@giveth/ui-design-system';
+import {
+	ButtonLink,
+	H2,
+	Lead,
+	OulineLinkButton,
+} from '@giveth/ui-design-system';
 interface IConnectCardContainerProps {
 	data: any;
 }
 
 const ConnectCardContainer = styled(Card)<IConnectCardContainerProps>`
+	padding-top: 96px;
 	::before {
 		content: '';
 		background-image: url('${props => props.data.bg}');
@@ -58,7 +65,7 @@ const Title = styled(H2)`
 	}
 `;
 
-const Desc = styled(P)`
+const Desc = styled(Lead)`
 	margin-top: 22px;
 `;
 
@@ -87,21 +94,6 @@ const Span = styled.div`
 
 const InputWithButtonContainer = styled.div`
 	width: 588px;
-`;
-
-const ClaimedRow = styled(Row)`
-	gap: 50px;
-`;
-
-const ChangeWallet = styled.div`
-	color: #fed670;
-	cursor: pointer;
-`;
-const BackToGIVeconomy = styled.div`
-	color: #fed670;
-	cursor: pointer;
-	margin-left: 15px;
-	text-decoration: underline;
 `;
 
 const ClickableStrong = styled.strong`
@@ -172,18 +164,26 @@ const ClaimFromAnother = styled.span`
 	margin-top: 4px;
 `;
 
+const BackToGIVeconomy = styled.div`
+	color: #fed670;
+	cursor: pointer;
+	margin-left: 15px;
+	text-decoration: underline;
+`;
+
 export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { activeIndex, goNextStep, goFirstStep } =
 		useContext(ClaimViewContext);
 
-	const { address, connect, network } = useContext(OnboardContext);
-	const { submitUserAddress, claimableAmount, giveDropState, resetWallet } =
+	const { address, isReady, connect, network } = useContext(OnboardContext);
+	const { submitUserAddress, totalAmount, giveDropState, resetWallet } =
 		useContext(UserContext);
 
 	const [walletAddress, setWalletAddress] = useState<string>('');
 	const [addressSubmitted, setAddressSubmitted] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [connectWallet, setConnectionWallet] = useState<boolean>(false);
+	const [networkModal, setNetworkModal] = useState<boolean>(false);
 
 	useEffect(() => {
 		setWalletAddress(address);
@@ -198,7 +198,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			setLoading(false);
 			setAddressSubmitted(false);
 		}
-	}, [addressSubmitted, claimableAmount]);
+	}, [addressSubmitted, totalAmount]);
 
 	const submitAddress = async (value: string): Promise<void> => {
 		setLoading(true);
@@ -232,8 +232,8 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			};
 			break;
 		case GiveDropStateType.Success:
-			title = `You have ${utils.formatEther(
-				claimableAmount,
+			title = `You have ${formatWeiHelper(
+				totalAmount.div(10),
 			)} GIV to claim.`;
 			desc = 'Congrats, your GIVdrop awaits. Go claim it!';
 			bg = {
@@ -278,17 +278,22 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			break;
 	}
 
-	const parseEther = (value: BigNumber) =>
-		(+utils.formatEther(value)).toLocaleString('en-US', {
-			minimumFractionDigits: 2,
-			maximumFractionDigits: 2,
-		});
+	const checkConnection = async () => {
+		if (!isReady) await connect();
+		goNextStep();
+	};
+
+	useEffect(() => {
+		setNetworkModal(network !== config.XDAI_NETWORK_NUMBER && isReady);
+	}, [network, isReady]);
 
 	return (
 		<ConnectCardContainer activeIndex={activeIndex} index={index} data={bg}>
 			{giveDropState !== GiveDropStateType.Claimed && (
 				<Header>
-					<Title as='h1'>{title}</Title>
+					<Title as='h1' weight={700}>
+						{title}
+					</Title>
 					<Desc size='small' color={'#CABAFF'}>
 						{desc}
 					</Desc>
@@ -372,7 +377,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 								</AddGivButton>
 							</ClaimedSubtitleA>
 							<SocialButton
-								label='share on twitter '
+								label='SHARE ON TWITTER '
 								target='_blank'
 								href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
 								icon={
@@ -398,7 +403,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 								}
 							/>
 							<SocialButton
-								label='join our discord '
+								label='JOIN OUR DISCORD '
 								target='_blank'
 								href='https://swag.giveth.io/'
 								icon={
@@ -412,7 +417,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 							/>
 							<Link href='/' passHref>
 								<ExploreButton
-									label='explore the giveconomy'
+									label='EXPLORE THE GIVECONOMY'
 									linkType='primary'
 								/>
 							</Link>

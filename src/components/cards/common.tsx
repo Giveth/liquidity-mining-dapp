@@ -11,7 +11,7 @@ export const Card = styled.div<ICardProps>`
 	width: 1120px;
 	height: 582px;
 	background: #3c14c5;
-	padding: 96px 80px;
+	padding: 57px 80px;
 	background-image: url('/images/GIVGIVGIV.png');
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -91,9 +91,16 @@ export const ArrowButton = styled.div`
 	bottom: 48px;
 `;
 
+export const PreviousArrowButton = styled(ArrowButton)`
+	background-color: #211985;
+	left: -32px;
+	transform: rotate(180deg);
+`;
+
 export const APRRow = styled(Row)`
 	flex-direction: row;
 	justify-content: space-between;
+	align-items: flex-end;
 	@media only screen and (max-width: 1360px) {
 	}
 	@media only screen and (max-width: 1120px) {
@@ -117,7 +124,7 @@ export const PoolCardTitle = styled.div`
 
 export const PoolCard = styled.div`
 	width: 399px;
-	height: 164px;
+	// height: 164px;
 	padding: 10px 30px;
 	background: #211985;
 	border-radius: 16px;
@@ -152,8 +159,10 @@ export const PoolCardFooter = styled.div`
 	font-size: 12px;
 	line-height: 18px;
 	z-index: 1;
+	margin: 16px 0;
 	@media only screen and (max-width: 1120px) {
-		margin-top: 8px;
+		text-align: center;
+		margin: 16px auto;
 	}
 `;
 
@@ -166,8 +175,8 @@ export const ImpactCardInput = styled.div`
 `;
 
 export const ImpactCard = styled.div`
-	padding: 20px 0px;
-	height: 208px;
+	padding: 0px;
+	height: 180px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;

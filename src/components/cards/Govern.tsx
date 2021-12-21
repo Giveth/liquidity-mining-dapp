@@ -20,14 +20,15 @@ import {
 	MaxGIV,
 	PoolCard,
 	PoolCardContainer,
+	PoolCardFooter,
 	PoolCardTitle,
 	PoolItem,
 	PoolItemBold,
 	PoolItems,
+	PreviousArrowButton,
 } from './common';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
-import { H2, H3, H4, P } from '../styled-components/Typography';
 import {
 	ClaimViewContext,
 	IClaimViewCardProps,
@@ -38,6 +39,7 @@ import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
 import { fetchGivStakingInfo } from '../../lib/stakingPool';
 import { APR } from '../../types/poolInfo';
 import { useTokenDistro } from '@/context/tokenDistro.context';
+import { H2, H5, Lead, P } from '@giveth/ui-design-system';
 
 const GovernCardContainer = styled(Card)`
 	padding-left: 254px;
@@ -89,10 +91,11 @@ const GovernHeader = styled.div`
 
 const Title = styled(H2)`
 	font-size: 2.7em;
+  font-weight: 700;
 	width: 750px;
 `;
 
-const Desc = styled(P)`
+const Desc = styled(Lead)`
 	max-width: 650px;
 	margin-top: 22px;
 `;
@@ -109,6 +112,7 @@ const MaxStakeGIV = styled(MaxGIV)`
 	cursor: pointer;
 `;
 
+
 const GovernFooter = styled.div`
 	max-width: 500px;
 	font-size: 12px;
@@ -117,8 +121,9 @@ const GovernFooter = styled.div`
 `;
 
 const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
-	const { claimableAmount } = useContext(UserContext);
+	const { activeIndex, goNextStep, goPreviousStep } =
+		useContext(ClaimViewContext);
+	const { totalAmount } = useContext(UserContext);
 
 	const [stacked, setStacked] = useState<any>(0);
 	const [potentialClaim, setPotentialClaim] = useState<EthersBigNumber>(
@@ -134,7 +139,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 		} else if (isNaN(+e.target.value)) {
 			setStacked(stacked);
 		} else {
-			if (claimableAmount.gte(utils.parseEther(e.target.value)))
+			if (totalAmount.div(10).gte(utils.parseEther(e.target.value)))
 				setStacked(+e.target.value);
 		}
 	};
@@ -158,13 +163,13 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 		);
 		// setPotentialClaim(stackedWithApr.times(0.1));
 		// setEarnEstimate((stackedWithApr.toNumber() * 0.9) / (52 * 5));
-	}, [apr, stacked]);
+	}, [apr, stacked, totalAmount, tokenDistroHelper]);
 
 	useEffect(() => {
-		if (claimableAmount) {
-			setStacked(utils.formatEther(claimableAmount));
+		if (totalAmount) {
+			setStacked(utils.formatEther(totalAmount.div(10)));
 		}
-	}, [claimableAmount]);
+	}, [totalAmount]);
 
 	const mounted = useRef(true);
 	useEffect(
@@ -204,6 +209,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 			</BeeImage>
 			<GovernHeader>
 				<Title as='h1'>Engage in Governance</Title>
+
 				<Desc size='small' color={'#CABAFF'}>
 					Participate in Giveth governance using the <b>GIVgarden</b>.
 					Wrap GIV to vote on proposals and earn rewards.
@@ -211,7 +217,9 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 			</GovernHeader>
 			<APRRow alignItems={'center'} justifyContent={'flex-end'}>
 				<ImpactCard>
-					<H4 as='h2'>If you vote with GIV tokens</H4>
+					<H5 as='h2' weight={700}>
+						If you vote with GIV tokens
+					</H5>
 					<div>
 						<Row
 							alignItems={'center'}
@@ -224,12 +232,14 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 								onClick={() =>
 									setStacked(
 										Number(
-											utils.formatEther(claimableAmount),
+											utils.formatEther(
+												totalAmount.div(10),
+											),
 										),
 									)
 								}
 							>{`Max ${utils.formatEther(
-								claimableAmount,
+								totalAmount.div(10),
 							)} GIV`}</MaxStakeGIV>
 						</Row>
 						<ImpactCardInput>
@@ -274,15 +284,18 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 					</PoolCard>
 				</PoolCardContainer>
 			</APRRow>
-			<Row>
-				<GovernFooter>
-					The following calculators demonstrate how you can use GIV to
-					participate in the GIVeconomy!{' '}
-					<b>These are just simulations.</b> To participate for real,
-					claim your GIV.
-				</GovernFooter>
-			</Row>
-			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
+			<PoolCardFooter>
+				The following calculators demonstrate how you can use GIV to
+				participate in the GIVeconomy!{' '}
+				<b>These are just simulations.</b> To participate for real,
+				claim your GIV.
+			</PoolCardFooter>
+			{activeIndex === index && (
+				<>
+					<ArrowButton onClick={goNextStep} />
+					<PreviousArrowButton onClick={goPreviousStep} />
+				</>
+			)}
 		</GovernCardContainer>
 	);
 };

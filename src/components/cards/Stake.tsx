@@ -10,8 +10,6 @@ import Image from 'next/image';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
-import { H2, H4, P } from '../styled-components/Typography';
-
 import {
 	APRRow,
 	ArrowButton,
@@ -19,7 +17,6 @@ import {
 	ImpactCard,
 	ImpactCardInput,
 	ImpactCardLabel,
-	MaxGIV,
 	MaxStakeGIV,
 	PoolCard,
 	PoolCardContainer,
@@ -28,6 +25,7 @@ import {
 	PoolItem,
 	PoolItemBold,
 	PoolItems,
+	PreviousArrowButton,
 } from './common';
 import {
 	ClaimViewContext,
@@ -35,16 +33,14 @@ import {
 } from '../views/claim/Claim.view';
 import { UserContext } from '../../context/user.context';
 import { utils, BigNumber as EthersBigNumber, constants } from 'ethers';
-import { fetchGivStakingInfo } from '../../lib/stakingPool';
 import config from '../../configuration';
-import { APR } from '../../types/poolInfo';
 import BigNumber from 'bignumber.js';
 import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
-import { PoolStakingConfig, StakingType } from '@/types/config';
 import { StakePoolInfo } from '@/types/poolInfo';
 import { fetchLPStakingInfo } from '@/lib/stakingPool';
 import { useLiquidityPositions } from '@/context';
 import { useTokenDistro } from '@/context/tokenDistro.context';
+import { H2, Lead, H5 } from '@giveth/ui-design-system';
 
 const InvestCardContainer = styled(Card)`
 	::before {
@@ -75,6 +71,7 @@ const StakeHeader = styled.div`
 const Title = styled(H2)`
 	font-size: 3.2em;
 	width: 750px;
+  font-weight: 700;
 	@media only screen and (max-width: 1360px) {
 		width: 700px;
 	}
@@ -83,7 +80,7 @@ const Title = styled(H2)`
 	}
 `;
 
-const Desc = styled(P)`
+const Desc = styled(Lead)`
 	margin-top: 22px;
 	@media only screen and (max-width: 1120px) {
 		margin-top: 8px;
@@ -91,8 +88,9 @@ const Desc = styled(P)`
 `;
 
 const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
-	const { claimableAmount } = useContext(UserContext);
+	const { activeIndex, goNextStep, goPreviousStep } =
+		useContext(ClaimViewContext);
+	const { totalAmount } = useContext(UserContext);
 
 	const [deposit, setDeposit] = useState<any>(0);
 	const [potentialClaim, setPotentialClaim] = useState<EthersBigNumber>(
@@ -110,16 +108,16 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		} else if (isNaN(+value)) {
 			setDeposit(deposit);
 		} else {
-			if (claimableAmount.gte(utils.parseEther(value)))
+			if (totalAmount.div(10).gte(utils.parseEther(value)))
 				setDeposit(+value);
 		}
 	};
 
 	useEffect(() => {
-		if (claimableAmount) {
-			setDeposit(utils.formatEther(claimableAmount));
+		if (totalAmount) {
+			setDeposit(utils.formatEther(totalAmount.div(10)));
 		}
-	}, [claimableAmount]);
+	}, [totalAmount]);
 
 	useEffect(() => {
 		let _deposit = 0;
@@ -141,7 +139,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		);
 		// setPotentialClaim(stackedWithApr.times(0.1));
 		// setEarnEstimate(stackedWithApr.times(0.9).div(52 * 5));
-	}, [APR, deposit]);
+	}, [APR, deposit, totalAmount, tokenDistroHelper]);
 
 	const mounted = useRef(true);
 	useEffect(
@@ -151,20 +149,20 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		[],
 	);
 
-	const getAPRs = async (promises: Promise<StakePoolInfo>[]) => {
-		const promiseResult = await Promise.all(promises);
-		const APRs: BigNumber[] = promiseResult.map(elem =>
-			elem.apr ? elem.apr : Zero,
-		);
-		APRs.push(univ3apr);
-		const sortedAPRs = APRs.sort((a, b) => (a.gt(b) ? 0 : -1));
-		const _apr = sortedAPRs.pop();
-		if (_apr) {
-			setAPR(_apr);
-		}
-	};
-
 	useEffect(() => {
+		const getAPRs = async (promises: Promise<StakePoolInfo>[]) => {
+			const promiseResult = await Promise.all(promises);
+			const APRs: BigNumber[] = promiseResult.map(elem =>
+				elem.apr ? elem.apr : Zero,
+			);
+			APRs.push(univ3apr);
+			const sortedAPRs = APRs.sort((a, b) => (a.gt(b) ? 0 : -1));
+			const _apr = sortedAPRs.pop();
+			if (_apr) {
+				setAPR(_apr);
+			}
+		};
+
 		const promiseQueue: Promise<StakePoolInfo>[] = [];
 		config.XDAI_CONFIG.pools.forEach(poolStakingConfig => {
 			const promise: Promise<StakePoolInfo> = fetchLPStakingInfo(
@@ -181,7 +179,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 			promiseQueue.push(promise);
 		});
 		getAPRs(promiseQueue);
-	}, []);
+	}, [univ3apr]);
 
 	return (
 		<InvestCardContainer activeIndex={activeIndex} index={index}>
@@ -195,7 +193,9 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 			</StakeHeader>
 			<APRRow alignItems={'flex-start'} justifyContent={'space-between'}>
 				<ImpactCard>
-					<H4 as='h2'>See how much you could earn</H4>
+					<H5 as='h2' weight={700}>
+						See how much you could earn
+					</H5>
 					<div>
 						<Row
 							alignItems={'center'}
@@ -206,12 +206,14 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 								onClick={() =>
 									setDeposit(
 										Number(
-											utils.formatEther(claimableAmount),
+											utils.formatEther(
+												totalAmount.div(10),
+											),
 										),
 									)
 								}
 							>{`Max ${utils.formatEther(
-								claimableAmount,
+								totalAmount.div(10),
 							)} GIV`}</MaxStakeGIV>
 						</Row>
 						<ImpactCardInput>
@@ -262,7 +264,12 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 				<b>These are just simulations.</b> To participate for real,
 				claim your GIV.
 			</PoolCardFooter>
-			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
+			{activeIndex === index && (
+				<>
+					<ArrowButton onClick={goNextStep} />
+					<PreviousArrowButton onClick={goPreviousStep} />{' '}
+				</>
+			)}
 		</InvestCardContainer>
 	);
 };

@@ -43,10 +43,11 @@ import {
 import { Zero } from '@ethersproject/constants';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
-import { claimReward } from '@/lib/claim';
+import { claimReward, fetchAirDropClaimData } from '@/lib/claim';
 import config from '@/configuration';
 import { IconWithTooltip } from '../IconWithToolTip';
 import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
+import Link from 'next/link';
 
 interface IHarvestAllModalProps extends IModal {
 	title: string;
@@ -91,6 +92,8 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	const [txHash, setTxHash] = useState('');
 
 	const [price, setPrice] = useState(0);
+	const [givDrop, setGIVdrop] = useState(Zero);
+	const [givDropStream, setGIVdropStream] = useState<BigNumber.Value>(0);
 	const [rewardLiquidPart, setRewardLiquidPart] = useState(Zero);
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
 	const [claimableNow, setClaimableNow] = useState(Zero);
@@ -130,6 +133,23 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 			setPrice(price);
 		});
 	}, [network]);
+
+	useEffect(() => {
+		if (
+			network === config.XDAI_NETWORK_NUMBER &&
+			!currentBalance.givDropClaimed
+		) {
+			fetchAirDropClaimData(address).then(claimData => {
+				if (claimData) {
+					const givDrop = ethers.BigNumber.from(claimData.amount);
+					setGIVdrop(givDrop.div(10));
+					setGIVdropStream(
+						tokenDistroHelper.getStreamPartTokenPerWeek(givDrop),
+					);
+				}
+			});
+		}
+	}, [address, network, currentBalance, tokenDistroHelper]);
 
 	const onHarvest = () => {
 		if (!provider) return;
@@ -340,6 +360,34 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 												<GIVRate>
 													{formatWeiHelper(
 														givBackStream,
+													)}
+												</GIVRate>
+												<Lead>GIV/week</Lead>
+											</RateRow>
+										</>
+									)}
+									{givDrop.gt(Zero) && (
+										<>
+											<HelpRow alignItems='center'>
+												<B>Claimable from GIVdrop</B>
+											</HelpRow>
+											<GIVBoxWithPrice
+												amount={givDrop}
+												price={calcUSD(
+													formatWeiHelper(givDrop),
+												)}
+											/>
+											<HelpRow alignItems='center'>
+												<Caption>
+													Your initial GIVstream
+													flowrate
+												</Caption>
+											</HelpRow>
+											<RateRow alignItems='center'>
+												<IconGIVStream size={24} />
+												<GIVRate>
+													{formatWeiHelper(
+														givDropStream,
 													)}
 												</GIVRate>
 												<Lead>GIV/week</Lead>
