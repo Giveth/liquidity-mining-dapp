@@ -433,8 +433,6 @@ export const unwrapToken = async (
 		.connect(signer.connectUnchecked())
 		.unwrap(amount);
 
-	const { status } = await txResponse.wait();
-
 	return txResponse;
 };
 
@@ -521,19 +519,7 @@ export const withdrawTokens = async (
 
 	try {
 		const tx = await lmContract.withdraw(ethers.BigNumber.from(amount));
-		const network = provider.network.chainId;
-
-		withdrawToast.showPendingWithdraw(network, tx.hash);
-
-		const { status } = await tx.wait();
-
-		if (status) {
-			withdrawToast.showConfirmedWithdraw(network, tx.hash);
-			return tx;
-		} else {
-			withdrawToast.showFailedWithdraw(network, tx.hash);
-			return;
-		}
+		return tx;
 	} catch (e) {
 		console.error('Error on withdrawing:', e);
 	}

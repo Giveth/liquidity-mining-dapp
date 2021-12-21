@@ -9,8 +9,14 @@ import { StakingPoolImages } from '../StakingPoolImages';
 import { BigNumber } from 'ethers';
 import { AmountInput } from '../AmountInput';
 import { unwrapToken, withdrawTokens } from '../../lib/stakingPool';
-import { OnboardContext } from '../../context/onboard.context';
+import { useOnboard } from '@/context/onboard.context';
 import LoadingAnimation from '@/animations/loading.json';
+import {
+	ConfirmedInnerModal,
+	ErrorInnerModal,
+	SubmittedInnerModal,
+} from './ConfirmSubmit';
+import { StakeState } from './V3Stake';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -31,74 +37,117 @@ export const UnStakeModal: FC<IUnStakeModalProps> = ({
 	showModal,
 	setShowModal,
 }) => {
+	const [txHash, setTxHash] = useState('');
 	const [amount, setAmount] = useState('0');
 	const [label, setLabel] = useState('UNSTAKE');
-	const { provider } = useContext(OnboardContext);
+	const [stakeState, setStakeState] = useState(StakeState.UNKNOWN);
+	const { provider, network } = useOnboard();
 
 	const { title, LM_ADDRESS, GARDEN_ADDRESS } = poolStakingConfig;
 
-	const onWithdraw = () => {
-		console.log('onApprove called');
+	const onWithdraw = async () => {
 		setLabel('PENDING UNSTAKE');
-		const promise = GARDEN_ADDRESS
-			? unwrapToken(amount, GARDEN_ADDRESS, provider)
-			: withdrawTokens(amount, LM_ADDRESS, provider);
-		promise
-			.then(data => {
-				console.log('data: ', data);
-				if (data) {
-					setShowModal(false);
-				} else {
-					setLabel('UNSTAKE');
-				}
-			})
-			.catch(err => {
-				setLabel('UNSTAKE');
-			});
+
+		const tx = GARDEN_ADDRESS
+			? await unwrapToken(amount, GARDEN_ADDRESS, provider)
+			: await withdrawTokens(amount, LM_ADDRESS, provider);
+
+		if (!tx) {
+			setStakeState(StakeState.UNKNOWN);
+			setLabel('UNSTAKE');
+			return;
+		}
+
+		setTxHash(tx.hash);
+		setStakeState(StakeState.SUBMITTING);
+
+		const { status } = await tx.wait();
+
+		if (status) {
+			setStakeState(StakeState.CONFIRMED);
+		} else {
+			setStakeState(StakeState.ERROR);
+		}
 	};
 
 	return (
 		<Modal showModal={showModal} setShowModal={setShowModal}>
 			<UnStakeModalContainer>
-				<UnStakeModalTitle alignItems='center'>
-					<StakingPoolImages title={title} />
-					<UnStakeModalTitleText weight={700}>
-						Unstake
-					</UnStakeModalTitleText>
-				</UnStakeModalTitle>
-				<InnerModal>
-					<AmountInput
-						setAmount={setAmount}
-						maxAmount={maxAmount}
-						poolStakingConfig={poolStakingConfig}
-					/>
-					{label === 'UNSTAKE' && (
-						<UnStakeButton
-							label={label}
-							onClick={onWithdraw}
-							buttonType='primary'
-							disabled={amount == '0' || maxAmount.lt(amount)}
-						/>
-					)}
+				{(stakeState === StakeState.UNKNOWN ||
+					stakeState === StakeState.CONFIRMING) && (
+					<>
+						<UnStakeModalTitle alignItems='center'>
+							<StakingPoolImages title={title} />
+							<UnStakeModalTitleText weight={700}>
+								Unstake
+							</UnStakeModalTitleText>
+						</UnStakeModalTitle>
 
-					{label === 'PENDING UNSTAKE' && (
-						<Pending>
-							<Lottie
-								options={loadingAnimationOptions}
-								height={40}
-								width={40}
+						<InnerModal>
+							<AmountInput
+								setAmount={setAmount}
+								maxAmount={maxAmount}
+								poolStakingConfig={poolStakingConfig}
 							/>
-							&nbsp;UNSTAKE PENDING
-						</Pending>
-					)}
-					<CancelButton
-						buttonType='texty'
-						label='CANCEL'
-						onClick={() => {
-							setShowModal(false);
-						}}
+							{label === 'UNSTAKE' && (
+								<UnStakeButton
+									label={label}
+									onClick={onWithdraw}
+									buttonType='primary'
+									disabled={
+										amount == '0' || maxAmount.lt(amount)
+									}
+								/>
+							)}
+
+							{label === 'PENDING UNSTAKE' && (
+								<Pending>
+									<Lottie
+										options={loadingAnimationOptions}
+										height={40}
+										width={40}
+									/>
+									&nbsp;UNSTAKE PENDING
+								</Pending>
+							)}
+							<CancelButton
+								buttonType='texty'
+								label='CANCEL'
+								onClick={() => {
+									setShowModal(false);
+								}}
+							/>
+						</InnerModal>
+					</>
+				)}
+				{stakeState === StakeState.REJECT && (
+					<ErrorInnerModal
+						title='You rejected the transaction.'
+						walletNetwork={network}
+						txHash={txHash}
 					/>
-				</InnerModal>
+				)}
+				{stakeState === StakeState.SUBMITTING && (
+					<SubmittedInnerModal
+						title={title}
+						walletNetwork={network}
+						txHash={txHash}
+					/>
+				)}
+				{stakeState === StakeState.CONFIRMED && (
+					<ConfirmedInnerModal
+						title='Successful transaction.'
+						walletNetwork={network}
+						txHash={txHash}
+					/>
+				)}
+				{stakeState === StakeState.ERROR && (
+					<ErrorInnerModal
+						title='Something went wrong!'
+						walletNetwork={network}
+						txHash={txHash}
+					/>
+				)}
 			</UnStakeModalContainer>
 		</Modal>
 	);
