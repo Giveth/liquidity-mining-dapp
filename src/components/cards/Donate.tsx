@@ -7,7 +7,6 @@ import {
 	APRRow,
 	ArrowButton,
 	Card,
-	Header,
 	ICardProps,
 	ImpactCard,
 	ImpactCardInput,
@@ -45,6 +44,10 @@ import {
 } from '@giveth/ui-design-system';
 import { IconWithTooltip } from '../IconWithToolTip';
 
+const DonatePoolCard = styled(PoolCard)`
+	height: 127px;
+`;
+
 const DonateCardContainer = styled(Card)`
 	padding-right: 154px;
 	::before {
@@ -78,7 +81,13 @@ const GdropDonateTooltip = styled(Subline)`
 	width: 260px;
 `;
 
+const DonateHeader = styled.div`
+	margin-bottom: 15px;
+`;
+
 const Title = styled(H2)`
+	font-size: 3.2em;
+	font-weight: 700;
 	width: 750px;
 	@media only screen and (max-width: 1360px) {
 		width: 100%;
@@ -145,14 +154,14 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	return (
 		<DonateCardContainer activeIndex={activeIndex} index={index}>
-			<Header>
-				<Title weight={700}>Donate &amp; get GIV back</Title>
+			<DonateHeader>
+				<Title>Donate &amp; get GIV back</Title>
 				<Desc size='small' color={'#CABAFF'}>
-					Donate to verified projects to get GIV with GIVbacks. The
-					project gets 100% of your donation, and you get rewarded by
-					Giveth with GIV!
+					Donate to verified projects to get GIV with <b>GIVbacks</b>.
+					The project gets 100% of your donation, and you get rewarded
+					by Giveth with GIV!
 				</Desc>
-			</Header>
+			</DonateHeader>
 			<APRRow alignItems={'center'} justifyContent={'space-between'}>
 				<ImpactCard>
 					<H5 as='h2' weight={700}>
@@ -197,7 +206,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 					</div>
 				</ImpactCard>
 				<PoolCardContainer>
-					<PoolCard>
+					<DonatePoolCard>
 						<PoolItems>
 							<Row justifyContent='space-between'>
 								<PoolItem>GIVbacks</PoolItem>
@@ -212,7 +221,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 								</PoolItemBold>
 							</Row>
 						</PoolItems>
-					</PoolCard>
+					</DonatePoolCard>
 				</PoolCardContainer>
 			</APRRow>
 			<PoolCardFooter>

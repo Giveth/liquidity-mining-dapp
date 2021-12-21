@@ -82,7 +82,7 @@ const BeeImage = styled.div`
 	}
 `;
 
-const Header = styled.div`
+const GovernHeader = styled.div`
 	margin-bottom: 60px;
 	@media only screen and (max-width: 1120px) {
 		margin-bottom: 16px;
@@ -90,6 +90,8 @@ const Header = styled.div`
 `;
 
 const Title = styled(H2)`
+	font-size: 2.7em;
+	font-weight: 700;
 	width: 750px;
 `;
 
@@ -108,6 +110,13 @@ const GovernGIVToken = styled.div`
 
 const MaxStakeGIV = styled(MaxGIV)`
 	cursor: pointer;
+`;
+
+const GovernFooter = styled.div`
+	max-width: 500px;
+	font-size: 12px;
+	line-height: 18px;
+	margin-left: 3%;
 `;
 
 const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
@@ -197,15 +206,14 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 					alt='Image of a happy bee'
 				/>
 			</BeeImage>
-			<Header>
-				<Title as='h1' weight={700}>
-					How to use your GIV
-				</Title>
+			<GovernHeader>
+				<Title as='h1'>Engage in Governance</Title>
+
 				<Desc size='small' color={'#CABAFF'}>
-					Participate in Giveth governance using the GIVgarden. Govern
-					on proposals with GIV and earn rewards.
+					Participate in Giveth governance using the <b>GIVgarden</b>.
+					Wrap GIV to vote on proposals and earn rewards.
 				</Desc>
-			</Header>
+			</GovernHeader>
 			<APRRow alignItems={'center'} justifyContent={'flex-end'}>
 				<ImpactCard>
 					<H5 as='h2' weight={700}>

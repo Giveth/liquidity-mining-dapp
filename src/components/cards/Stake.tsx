@@ -64,9 +64,14 @@ export const Header = styled.div`
 		margin-bottom: 8px;
 	}
 `;
+const StakeHeader = styled.div`
+	margin-bottom: 60px;
+`;
 
 const Title = styled(H2)`
-	width: 700px;
+	font-size: 3.2em;
+	width: 750px;
+	font-weight: 700;
 	@media only screen and (max-width: 1360px) {
 		width: 700px;
 	}
@@ -178,15 +183,14 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	return (
 		<InvestCardContainer activeIndex={activeIndex} index={index}>
-			<Header>
-				<Title as='h1' weight={700}>
-					How to use your GIV
-				</Title>
+			<StakeHeader>
+				<Title as='h1'>Grow your Rewards</Title>
 				<Desc size='small' color={'#CABAFF'}>
-					Stake tokens in the GIVfarm to earn up to{' '}
+					Provide liquidity and get rewarded. Stake tokens in the{' '}
+					<b>GIVfarm</b> to earn up to{' '}
 					{APR ? `${formatEthHelper(APR, 2)}% APR` : ' ? '}
 				</Desc>
-			</Header>
+			</StakeHeader>
 			<APRRow alignItems={'flex-start'} justifyContent={'space-between'}>
 				<ImpactCard>
 					<H5 as='h2' weight={700}>

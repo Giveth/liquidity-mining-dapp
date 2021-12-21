@@ -50,8 +50,14 @@ const StreamCardContainer = styled(Card)`
 	}
 `;
 
+const StreamHeader = styled.div`
+	margin-bottom: 48px;
+`;
+
 const Title = styled(H2)`
-	width: 700px;
+	width: 720px;
+	font-size: 3em;
+	font-weight: 700;
 	@media only screen and (max-width: 1120px) {
 		width: 100%;
 	}
@@ -123,16 +129,15 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	return (
 		<StreamCardContainer activeIndex={activeIndex} index={index}>
-			<Header>
-				<Title as='h1' weight={700}>
-					How to use your GIV
-				</Title>
+			<StreamHeader>
+				<Title as='h1'>Enjoy a continuous flow of GIV</Title>
+
 				<Desc size='small' color={'#CABAFF'}>
-					Welcome to the expanding GIViverse! The GIVstream aligns
-					community members with the long-term success of Giveth and
-					the GIVeconomy.
+					Welcome to the expanding GIViverse! The <b>GIVstream</b>{' '}
+					offers continuous rewards for GIVeconomy participants. As
+					the GIVeconomy grows, so does your GIV!
 				</Desc>
-			</Header>
+			</StreamHeader>
 			<StreamRow alignItems={'center'}>
 				<StreamContainer flexDirection='column'>
 					<H5 as='h2' weight={700}>
