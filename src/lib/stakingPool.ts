@@ -8,7 +8,6 @@ import { abi as TOKEN_MANAGER_ABI } from '../artifacts/HookedTokenManager.json';
 import { abi as ERC20_ABI } from '../artifacts/ERC20.json';
 
 import { StakePoolInfo } from '@/types/poolInfo';
-import { networkProviders } from '@/helpers/networkProvider';
 import BigNumber from 'bignumber.js';
 import config from '../configuration';
 import {
@@ -17,12 +16,15 @@ import {
 	SimplePoolStakingConfig,
 	StakingType,
 } from '@/types/config';
-import * as withdrawToast from './notifications/withdraw';
 
-import { Zero } from '@ethersproject/constants';
-import { TransactionResponse, Web3Provider } from '@ethersproject/providers';
+import {
+	JsonRpcProvider,
+	TransactionResponse,
+	Web3Provider,
+} from '@ethersproject/providers';
 import { getUnipoolInfo, IBalances, IUnipool } from '@/services/subgraph';
 import { UnipoolHelper } from '@/lib/contractHelper/UnipoolHelper';
+import { Zero } from '@/helpers/number';
 
 const toBigNumber = (eb: ethers.BigNumber): BigNumber =>
 	new BigNumber(eb.toString());
@@ -31,67 +33,54 @@ export const fetchGivStakingInfo = async (
 	lmAddress: string,
 	network: number,
 ): Promise<StakePoolInfo> => {
-	let apr: BigNumber | null;
-	let totalSupply: BigNumber;
-	let rewardRate;
+	let apr: BigNumber = Zero;
 
 	const subGraphInfo = await getUnipoolInfo(network, lmAddress);
 	if (subGraphInfo) {
-		totalSupply = new BigNumber(subGraphInfo.totalSupply.toString());
-		rewardRate = subGraphInfo.rewardRate;
-	} else {
-		console.log(`subGraph info was ${subGraphInfo}!`);
-		const provider = networkProviders[network];
-		const lmContract = new Contract(lmAddress, LM_ABI, provider);
+		const totalSupply = subGraphInfo.totalSupply;
+		const rewardRate = subGraphInfo.rewardRate;
 
-		const [_totalSupply, _rewardRate]: [
-			ethers.BigNumber,
-			ethers.BigNumber,
-		] = await Promise.all([
-			lmContract.totalSupply(),
-			lmContract.rewardRate(),
-		]);
-
-		totalSupply = new BigNumber(_totalSupply.toString());
-		rewardRate = _rewardRate;
+		apr = totalSupply.isZero()
+			? Zero
+			: toBigNumber(rewardRate)
+					.div(totalSupply.toString())
+					.times('31536000')
+					.times('100');
 	}
 
-	const rewardRatePerToken = toBigNumber(rewardRate).div(
-		totalSupply.toString(),
-	);
-
-	apr = totalSupply.isZero()
-		? null
-		: rewardRatePerToken.times('31536000').times('100');
-
 	return {
-		tokensInPool: totalSupply,
 		apr,
-		rewardRatePerToken: rewardRatePerToken,
 	};
 };
 
 export const fetchLPStakingInfo = async (
 	poolStakingConfig: PoolStakingConfig,
 	network: number,
+	provider: JsonRpcProvider | null,
 ): Promise<StakePoolInfo> => {
+	if (!provider) {
+		return {
+			apr: Zero,
+		};
+	}
 	if (poolStakingConfig.type === StakingType.BALANCER) {
 		return fetchBalancerPoolStakingInfo(
 			poolStakingConfig as BalancerPoolStakingConfig,
 			network,
+			provider,
 		);
 	} else {
-		return fetchSimplePoolStakingInfo(poolStakingConfig, network);
+		return fetchSimplePoolStakingInfo(poolStakingConfig, network, provider);
 	}
 };
 
 const fetchBalancerPoolStakingInfo = async (
 	balancerPoolStakingConfig: BalancerPoolStakingConfig,
 	network: number,
+	provider: JsonRpcProvider,
 ): Promise<StakePoolInfo> => {
 	const { LM_ADDRESS, POOL_ADDRESS, VAULT_ADDRESS, POOL_ID } =
 		balancerPoolStakingConfig;
-	const provider = networkProviders[network];
 	const tokenAddress = config.NETWORKS_CONFIG[network].TOKEN_ADDRESS;
 
 	const lmContract = new Contract(LM_ADDRESS, LM_ABI, provider);
@@ -144,26 +133,25 @@ const fetchBalancerPoolStakingInfo = async (
 		.div(BigNumber.sum(...weights).div(weights[0]))
 		.div(balances[0]);
 
-	const rewardRatePerToken = toBigNumber(rewardRate).div(
-		totalSupply.toString(),
-	);
-
 	const apr = totalSupply.isZero()
 		? null
-		: rewardRatePerToken.times('31536000').times('100').times(lp);
+		: toBigNumber(rewardRate)
+				.div(totalSupply.toString())
+				.times('31536000')
+				.times('100')
+				.times(lp);
 
 	return {
 		apr,
-		rewardRatePerToken,
 	};
 };
 const fetchSimplePoolStakingInfo = async (
 	simplePoolStakingConfig: SimplePoolStakingConfig,
 	network: number,
+	provider: JsonRpcProvider,
 ): Promise<StakePoolInfo> => {
 	const { LM_ADDRESS, POOL_ADDRESS } = simplePoolStakingConfig;
 	const tokenAddress = config.NETWORKS_CONFIG[network].TOKEN_ADDRESS;
-	const provider = networkProviders[network];
 	const lmContract = new Contract(LM_ADDRESS, LM_ABI, provider);
 
 	let reserves;
@@ -198,19 +186,16 @@ const fetchSimplePoolStakingInfo = async (
 		.times(10 ** 18)
 		.div(2)
 		.div(reserves[0]);
-	const rewardRatePerToken = toBigNumber(rewardRate).div(
-		totalSupply.toString(),
-	);
 	const apr = totalSupply.isZero()
 		? null
-		: rewardRatePerToken
+		: toBigNumber(rewardRate)
+				.div(totalSupply.toString())
 				.times('31536000')
 				.times('100')
 				.times(lp)
 				.div(10 ** 18);
 	return {
 		apr,
-		rewardRatePerToken,
 	};
 };
 
@@ -223,11 +208,11 @@ export const getUserStakeInfo = (
 	notStakedAmount: ethers.BigNumber;
 	earned: ethers.BigNumber;
 } => {
-	let rewards = Zero;
-	let rewardPerTokenPaid = Zero;
-	let stakedAmount = Zero;
-	let notStakedAmount = Zero;
-	let earned = Zero;
+	let rewards = ethers.constants.Zero;
+	let rewardPerTokenPaid = ethers.constants.Zero;
+	let stakedAmount = ethers.constants.Zero;
+	let notStakedAmount = ethers.constants.Zero;
+	let earned = ethers.constants.Zero;
 
 	switch (type) {
 		case StakingType.SUSHISWAP:

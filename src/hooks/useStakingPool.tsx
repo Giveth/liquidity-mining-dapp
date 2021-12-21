@@ -13,7 +13,7 @@ import { PoolStakingConfig, StakingType } from '@/types/config';
 import { StakePoolInfo, UserStakeInfo } from '@/types/poolInfo';
 import { getUnipoolInfo } from '@/services/subgraph';
 import { UnipoolHelper } from '@/lib/contractHelper/UnipoolHelper';
-import { Zero } from '@ethersproject/constants';
+import { Zero } from '@/helpers/number';
 
 export const useStakingPool = (
 	poolStakingConfig: PoolStakingConfig,
@@ -23,49 +23,40 @@ export const useStakingPool = (
 	earned: ethers.BigNumber;
 	stakedAmount: ethers.BigNumber;
 	notStakedAmount: ethers.BigNumber;
-	rewardRatePerToken: BigNumber | null;
 } => {
-	const { address } = useOnboard();
+	const { address, provider } = useOnboard();
 	const { currentBalance } = useBalances();
 	// const { mainnetBalance, xDaiBalance } = useBalances();
 
 	const [apr, setApr] = useState<BigNumber | null>(null);
-	const [rewardRatePerToken, setRewardRatePerToken] =
-		useState<BigNumber | null>(null);
 	const [userStakeInfo, setUserStakeInfo] = useState<UserStakeInfo>({
-		earned: Zero,
-		notStakedAmount: Zero,
-		stakedAmount: Zero,
+		earned: ethers.constants.Zero,
+		notStakedAmount: ethers.constants.Zero,
+		stakedAmount: ethers.constants.Zero,
 	});
-
-	// const [balance, setBalance] = useState(zeroBalances);
 
 	const stakePoolInfoPoll = useRef<NodeJS.Timer | null>(null);
 	const userStakeInfoPoll = useRef<NodeJS.Timer | null>(null);
 
 	const { type, LM_ADDRESS } = poolStakingConfig;
 
-	// useEffect(() => {
-	// 	setBalance(
-	// 		network === config.MAINNET_NETWORK_NUMBER
-	// 			? mainnetBalance
-	// 			: xDaiBalance,
-	// 	);
-	// }, [mainnetBalance, xDaiBalance]);
-
 	useEffect(() => {
 		const cb = () => {
-			const promise: Promise<StakePoolInfo> =
-				type === StakingType.GIV_LM
-					? fetchGivStakingInfo(LM_ADDRESS, network)
-					: fetchLPStakingInfo(poolStakingConfig, network);
-
-			promise.then(
-				({ apr: _apr, rewardRatePerToken: _rewardRatePerToken }) => {
+			if (provider && provider?.network?.chainId === network) {
+				const promise: Promise<StakePoolInfo> =
+					type === StakingType.GIV_LM
+						? fetchGivStakingInfo(LM_ADDRESS, network)
+						: fetchLPStakingInfo(
+								poolStakingConfig,
+								network,
+								provider,
+						  );
+				promise.then(({ apr: _apr }) => {
 					setApr(_apr);
-					setRewardRatePerToken(_rewardRatePerToken);
-				},
-			);
+				});
+			} else {
+				setApr(Zero);
+			}
 		};
 
 		cb();
@@ -78,7 +69,7 @@ export const useStakingPool = (
 				stakePoolInfoPoll.current = null;
 			}
 		};
-	}, []);
+	}, [provider]);
 
 	const isMounted = useRef(true);
 	useEffect(() => {
@@ -124,6 +115,5 @@ export const useStakingPool = (
 	return {
 		apr,
 		...userStakeInfo,
-		rewardRatePerToken,
 	};
 };

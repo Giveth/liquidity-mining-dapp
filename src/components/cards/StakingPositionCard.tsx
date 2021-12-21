@@ -37,7 +37,6 @@ const StakingPositionCard: FC<IStakingPositionCardProps> = ({
 
 	const stakeInfo = {
 		apr: apr,
-		rewardRatePerToken: Zero,
 		userNotStakedAmount: BigNumber.from(unstakedPositions.length),
 		earned: rewardBalance,
 		stakedLpAmount: BigNumber.from(stakedPositions.length),
