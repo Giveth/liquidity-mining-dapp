@@ -51,6 +51,7 @@ import {
 	showFailedClaim,
 } from '../toasts/claim';
 import config from '@/configuration';
+import styled from 'styled-components';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -319,18 +320,18 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 									</>
 								)}
 								<HarvestAllDesc>
-									When you harvest GIV rewards, all liquid GIV
+									When you Claim GIV rewards, all liquid GIV
 									allocated to you is sent to your wallet.
 								</HarvestAllDesc>
 								{claimState === ClaimState.WAITING ? (
-									<Pending>
+									<ClaimPending>
 										<Lottie
 											options={loadingAnimationOptions}
 											height={40}
 											width={40}
 										/>
-										&nbsp;HARVEST PENDING
-									</Pending>
+										&nbsp;CLAIM PENDING
+									</ClaimPending>
 								) : (
 									<HarvestButton
 										label='CLAIM'
@@ -375,7 +376,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 							title='GIV'
 							walletNetwork={network}
 							txHash={txResp?.hash}
-							message='Something Wrong'
+							message='Something went wrong.'
 						/>
 						<CancelButton
 							label='CLOSE'
@@ -392,3 +393,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 		</Modal>
 	);
 };
+
+const ClaimPending = styled(Pending)`
+	width: 316px;
+`;
