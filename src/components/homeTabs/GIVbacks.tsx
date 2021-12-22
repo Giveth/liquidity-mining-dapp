@@ -109,6 +109,7 @@ export const TabGIVbacksTop = () => {
 
 export const TabGIVbacksBottom = () => {
 	const [round, setRound] = useState(0);
+	const [roundEndTime, setRoundEndTime] = useState(0);
 	const { tokenDistroHelper } = useTokenDistro();
 	const { network: walletNetwork } = useContext(OnboardContext);
 
@@ -119,9 +120,11 @@ export const TabGIVbacksBottom = () => {
 			const TwoWeek = 1209600000;
 			const _round = Math.floor(deltaT / TwoWeek) + 1;
 			setRound(_round);
-			tokenDistroHelper.endTime.setDate(
-				tokenDistroHelper.startTime.getDate() + 14,
+			const _roundEndTime = new Date(
+				tokenDistroHelper.startTime.getTime(),
 			);
+			_roundEndTime.setDate(tokenDistroHelper.startTime.getDate() + 14);
+			setRoundEndTime(_roundEndTime);
 		}
 	}, [tokenDistroHelper]);
 
@@ -193,9 +196,7 @@ export const TabGIVbacksBottom = () => {
 									<P>End Date</P>
 									<P>
 										{tokenDistroHelper
-											? formatDate(
-													tokenDistroHelper.endTime,
-											  )
+											? formatDate(roundEndTime)
 											: '-'}
 									</P>
 								</RoundInfoRow>
