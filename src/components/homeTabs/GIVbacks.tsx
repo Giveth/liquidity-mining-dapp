@@ -196,7 +196,9 @@ export const TabGIVbacksBottom = () => {
 									<P>End Date</P>
 									<P>
 										{tokenDistroHelper
-											? formatDate(roundEndTime)
+											? formatDate(
+												roundEndTime,
+												)
 											: '-'}
 									</P>
 								</RoundInfoRow>
