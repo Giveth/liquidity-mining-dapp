@@ -34,7 +34,7 @@ import { constants } from 'ethers';
 
 const ERC721NftContext = createContext<{
 	totalNftPositions: LiquidityPosition[];
-	stakedPositions: StakedPosition[];
+	stakedPositions: LiquidityPosition[];
 	unstakedPositions: LiquidityPosition[];
 	currentIncentive: { key?: (string | number)[] | null };
 	loadingNftPositions: boolean;

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, useMemo } from 'react';
 
 import { useLiquidityPositions, useOnboard } from '@/context';
-import { LiquidityPosition, StakedPosition } from '@/types/nfts';
+import { LiquidityPosition } from '@/types/nfts';
 import { UniswapV3PoolStakingConfig } from '@/types/config';
 import { BigNumber } from '@ethersproject/bignumber';
 import config from '@/configuration';
@@ -62,7 +62,8 @@ export const useStakingNFT = () => {
 
 		const load = async () => {
 			const allRewards = stakedPositions.reduce(
-				(acc: BigNumber, curr: StakedPosition) => acc.add(curr.reward),
+				(acc: BigNumber, curr: LiquidityPosition) =>
+					acc.add(curr.reward),
 				BigNumber.from(0),
 			);
 			setRewardBalance(allRewards);
