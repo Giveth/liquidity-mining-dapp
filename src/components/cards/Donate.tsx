@@ -148,8 +148,6 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 				convertedStackedWithApr,
 			),
 		);
-		// setPotentialClaim(donationWithGivBacks * 0.1);
-		// setEarnEstimate((donationWithGivBacks * 0.9) / (52 * 5));
 	}, [donation, tokenDistroHelper]);
 
 	return (

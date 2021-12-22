@@ -80,7 +80,7 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 	const { currentIncentive, loadPositions } = useLiquidityPositions();
 	const { pool, tickLower, tickUpper } = position._position || {};
 
-	const buttonLabel = isUnstaking ? 'UNSTAKE' : 'STAKE';
+	const buttonLabel = isUnstaking ? 'UNSTAKE & HARVEST' : 'STAKE';
 
 	// Check price range
 	const below =
@@ -143,14 +143,16 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 
 	return (
 		<PositionContainer key={position.tokenId.toString()}>
-			<ImageContainer>
-				<Image
-					src={image}
-					width={72}
-					height={124}
-					alt='Liquidity Position NFT'
-				/>
-			</ImageContainer>
+			{image && (
+				<ImageContainer>
+					<Image
+						src={image}
+						width={72}
+						height={124}
+						alt='Liquidity Position NFT'
+					/>
+				</ImageContainer>
+			)}
 			<PositionInfo>
 				<PositionInfoRow>
 					<StyledOverline>LIQUIDITY</StyledOverline>
@@ -295,7 +297,7 @@ export const TokenValue = styled(B)``;
 
 export const PositionActions = styled.div`
 	display: flex;
-	width: 180px;
+	width: 200px;
 	flex-direction: column;
 	gap: 12px;
 `;

@@ -1,50 +1,11 @@
-import { getAddress, isAddress } from 'ethers/lib/utils';
-import { constants, Contract } from 'ethers';
-import { ClaimData, ITokenDistroBalance } from '../types/GIV';
-import { networkProviders } from '../helpers/networkProvider';
+import { isAddress } from 'ethers/lib/utils';
+import { Contract } from 'ethers';
+import { ClaimData } from '../types/GIV';
 import config from '../configuration';
 import { abi as MERKLE_ABI } from '../artifacts/MerkleDrop.json';
 import { abi as TOKEN_DISTRO_ABI } from '../artifacts/TokenDistro.json';
-import {
-	JsonRpcProvider,
-	Web3Provider,
-	TransactionResponse,
-} from '@ethersproject/providers';
-
-export const formatAddress = (address: string): string => {
-	try {
-		return getAddress(address);
-	} catch {
-		return constants.AddressZero;
-	}
-};
-
-export const getERC20Contract = (
-	address: string,
-	network: number,
-	userProvider: Web3Provider | null,
-) => {
-	const networkConfig = config.NETWORKS_CONFIG[network];
-	const provider: JsonRpcProvider = userProvider
-		? userProvider
-		: networkProviders[network];
-
-	if (!networkConfig || !provider) {
-		return null;
-	}
-
-	const ERC20ABI = [
-		// read balanceOf
-		{
-			constant: true,
-			inputs: [{ name: '_owner', type: 'address' }],
-			name: 'balanceOf',
-			outputs: [{ name: 'balance', type: 'uint256' }],
-			type: 'function',
-		},
-	];
-	return new Contract(address, ERC20ABI, provider);
-};
+import { Web3Provider, TransactionResponse } from '@ethersproject/providers';
+import { fetchBalances } from '@/services/subgraph';
 
 export const fetchAirDropClaimData = async (
 	address: string,
@@ -73,27 +34,12 @@ export const fetchAirDropClaimData = async (
 	}
 };
 
-export const hasClaimedAirDrop = async (
-	address: string,
-	claimData: ClaimData,
-): Promise<boolean> => {
-	const provider = networkProviders[config.XDAI_NETWORK_NUMBER];
-	const merkleContract = new Contract(
-		config.XDAI_CONFIG.MERKLE_ADDRESS,
-		MERKLE_ABI,
-		provider,
+export const hasClaimedAirDrop = async (address: string): Promise<boolean> => {
+	const { givDropClaimed } = await fetchBalances(
+		config.XDAI_NETWORK_NUMBER,
+		address,
 	);
-
-	try {
-		const isClaimedResult = await merkleContract.isClaimed(
-			Number(claimData.index),
-		);
-
-		return Boolean(isClaimedResult);
-	} catch (e) {
-		console.error('error:', e);
-		return false;
-	}
+	return givDropClaimed;
 };
 
 export const claimAirDrop = async (
@@ -118,37 +64,6 @@ export const claimAirDrop = async (
 		.claim(...args);
 };
 
-// export const getTokenDistroAmounts = async (
-// 	address: string,
-// 	tokenDistroAddress: string,
-// 	networkNumber: number,
-// 	userProvider: Web3Provider | null,
-// ): Promise<ITokenDistroBalance> => {
-// 	if (!isAddress(tokenDistroAddress)) {
-// 		return {
-// 			claimable: constants.Zero,
-// 			allocatedAmount: constants.Zero,
-// 			claimedAmount: constants.Zero,
-// 		};
-// 	}
-//
-// 	const provider: JsonRpcProvider = userProvider
-// 		? userProvider
-// 		: networkProviders[networkNumber];
-//
-// 	const tokenDistro = new Contract(
-// 		tokenDistroAddress,
-// 		TOKEN_DISTRO_ABI,
-// 		provider,
-// 	);
-//
-// 	const balances = await tokenDistro.balances(address);
-// 	const claimable = await tokenDistro.claimableNow(address);
-// 	const [allocatedAmount, claimedAmount] = balances;
-//
-// 	return { claimable, allocatedAmount, claimedAmount };
-// };
-//
 export const claimReward = async (
 	tokenDistroAddress: string,
 	provider: Web3Provider | null,

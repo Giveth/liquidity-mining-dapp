@@ -160,8 +160,6 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 				convertedStackedWithApr,
 			),
 		);
-		// setPotentialClaim(stackedWithApr.times(0.1));
-		// setEarnEstimate((stackedWithApr.toNumber() * 0.9) / (52 * 5));
 	}, [apr, stacked, totalAmount, tokenDistroHelper]);
 
 	useEffect(() => {

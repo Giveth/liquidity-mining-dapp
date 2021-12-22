@@ -385,6 +385,8 @@ export const getUnipoolInfo = async (
 
 export interface IUniswapV3Position {
 	tokenId: number;
+	token0: string;
+	token1: string;
 	liquidity: ethers.BigNumber;
 	tickLower: number;
 	tickUpper: number;
@@ -404,6 +406,8 @@ export const getUserPositions = async (
 	const query = `{
 		notStaked: uniswapPositions(where:{owner: "${account.toLowerCase()}"}){
 			tokenId
+			token0
+			token1
 			liquidity
 			tickLower
 			tickUpper
@@ -412,14 +416,18 @@ export const getUserPositions = async (
 		}
 		staked: uniswapPositions(where:{staker: "${account.toLowerCase()}"}){
 			tokenId
+			token0
+			token1
 			liquidity
 			tickLower
 			tickUpper
 			staked
 			staker
 		}
-		allStaked: uniswapPositions(first: 100, where:{staked: true}){
+		allStaked: uniswapPositions(first: 1000, where:{staked: true}){
 			tokenId
+			token0
+			token1
 			liquidity
 			tickLower
 			tickUpper
@@ -443,8 +451,12 @@ export const getUserPositions = async (
 			const tickLower = Number(info?.tickLower);
 			const tickUpper = Number(info?.tickUpper);
 			const staked = Boolean(info?.staked);
+			const token0 = info?.token0;
+			const token1 = info?.token1;
 			return {
 				tokenId,
+				token0,
+				token1,
 				liquidity,
 				tickLower,
 				tickUpper,
@@ -468,7 +480,29 @@ export const getUserPositions = async (
 	}
 };
 
+export const getUniswapV3TokenURI = async (
+	tokenId: string | number,
+): Promise<string> => {
+	const query = `{
+		uniswapPosition(id: "${tokenId}"){
+			tokenURI
+		}
+	  }`;
+	const body = { query };
+
+	const res = await fetch(config.MAINNET_NETWORK.subgraphAddress, {
+		method: 'POST',
+		body: JSON.stringify(body),
+	});
+	const data = await res.json();
+	console.log('data:', data);
+
+	return data?.data?.uniswapPosition?.tokenURI || '';
+};
+
 export interface IUniswapV3Pool {
+	token0: string;
+	token1: string;
 	sqrtPriceX96: ethers.BigNumber;
 	tick: number;
 	liquidity: ethers.BigNumber;
@@ -480,6 +514,8 @@ export const getUniswapV3Pool = async (
 ): Promise<IUniswapV3Pool> => {
 	const query = `{
 		uniswapV3Pool(id: "${address.toLowerCase()}"){
+			token0
+			token1
 			sqrtPriceX96
 			tick
 			liquidity
@@ -498,7 +534,11 @@ export const getUniswapV3Pool = async (
 		const tick = Number(poolInfo.tick);
 		const liquidity = BN(poolInfo.liquidity);
 		const stakedLiquidity = BN(poolInfo.stakedLiquidity);
+		const token0 = poolInfo.token0;
+		const token1 = poolInfo.token1;
 		return {
+			token0,
+			token1,
 			sqrtPriceX96,
 			tick,
 			liquidity,
@@ -507,6 +547,8 @@ export const getUniswapV3Pool = async (
 	} catch (e) {
 		console.error('Error in fetching user positions', e);
 		return {
+			token0: config.MAINNET_CONFIG.TOKEN_ADDRESS,
+			token1: config.MAINNET_CONFIG.WETH_TOKEN_ADDRESS,
 			stakedLiquidity: Zero,
 			liquidity: Zero,
 			sqrtPriceX96: Zero,
