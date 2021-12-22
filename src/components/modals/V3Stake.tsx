@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { Modal, IModal } from './Modal';
 import {
 	neutralColors,
@@ -27,8 +27,14 @@ import { useLiquidityPositions, useOnboard } from '@/context';
 import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
 import { IconWithTooltip } from '../IconWithToolTip';
 import LoadingAnimation from '@/animations/loading.json';
-import { transfer, exit, stake } from '@/lib/stakingNFT';
+import { transfer, exit } from '@/lib/stakingNFT';
 import { BigNumber, constants } from 'ethers';
+import {
+	ConfirmedInnerModal,
+	SubmittedInnerModal,
+	ErrorInnerModal,
+} from './ConfirmSubmit';
+import { useTokenDistro } from '@/context/tokenDistro.context';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -54,13 +60,6 @@ interface IV3StakeModalProps extends IModal {
 	poolStakingConfig: PoolStakingConfig;
 	isUnstakingModal?: boolean;
 }
-import {
-	ConfirmedInnerModal,
-	SubmittedInnerModal,
-	ErrorInnerModal,
-} from './ConfirmSubmit';
-import { Zero } from '@/helpers/number';
-import { LiquidityPosition } from '@/types/nfts';
 
 export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	poolStakingConfig,
@@ -68,6 +67,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	showModal,
 	setShowModal,
 }) => {
+	const { tokenDistroHelper } = useTokenDistro();
 	const { network, provider, address } = useOnboard();
 	const {
 		unstakedPositions,
@@ -125,8 +125,10 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	};
 
 	const handleAction = (tokenId: number, _reward: BigNumber) => {
-		setReward(_reward);
+		const liquidReward = tokenDistroHelper.getLiquidPart(reward);
+
 		setTokenId(tokenId);
+		setReward(liquidReward);
 		setStakeStatus(StakeState.UNSTAKING);
 	};
 
