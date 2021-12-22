@@ -93,7 +93,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		useContext(ClaimViewContext);
 	const { totalAmount } = useContext(UserContext);
 
-	const [deposit, setDeposit] = useState<any>(0);
+	const [deposit, setDeposit] = useState<string>('0');
 	const [potentialClaim, setPotentialClaim] = useState<EthersBigNumber>(
 		constants.Zero,
 	);
@@ -101,18 +101,6 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const [APR, setAPR] = useState<BigNumber>(Zero);
 	const { apr: univ3apr } = useLiquidityPositions();
 	const { tokenDistroHelper } = useTokenDistro();
-
-	const depositChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-		const { value } = e.target;
-		if (value.length === 0) {
-			setDeposit(undefined);
-		} else if (isNaN(+value)) {
-			setDeposit(deposit);
-		} else {
-			if (totalAmount.div(10).gte(utils.parseEther(value)))
-				setDeposit(+value);
-		}
-	};
 
 	useEffect(() => {
 		if (totalAmount) {
@@ -122,8 +110,8 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	useEffect(() => {
 		let _deposit = 0;
-		if (!isNaN(deposit)) {
-			_deposit = deposit;
+		if (deposit !== '.' && deposit !== '') {
+			_deposit = parseFloat(deposit);
 		}
 		const stackedWithApr = APR ? APR.times(_deposit).div(1200) : Zero;
 		if (stackedWithApr.isNaN()) return;
@@ -204,11 +192,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 							<MaxStakeGIV
 								onClick={() =>
 									setDeposit(
-										Number(
-											utils.formatEther(
-												totalAmount.div(10),
-											),
-										),
+										utils.formatEther(totalAmount.div(10)),
 									)
 								}
 							>{`Max ${utils.formatEther(
@@ -220,7 +204,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 								type='number'
 								value={deposit}
 								unit={'GIV'}
-								onChange={depositChangeHandler}
+								onChange={setDeposit}
 							/>
 						</ImpactCardInput>
 					</div>

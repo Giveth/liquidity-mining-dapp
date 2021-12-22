@@ -356,6 +356,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 							{/* <ClaimButton secondary onClick={onClaim}> */}
 							<ClaimButton
 								secondary
+								tabIndex={-1}
 								onClick={() => {
 									openHarvestModal();
 								}}

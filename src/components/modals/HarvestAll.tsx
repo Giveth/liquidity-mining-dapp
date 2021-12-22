@@ -166,9 +166,13 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 					provider,
 					currentIncentive,
 					stakedPositions,
-				).then(res => {
-					setState(HarvestStates.CONFIRMED);
-				});
+				)
+					.then(res => {
+						setState(HarvestStates.CONFIRMED);
+					})
+					.catch(err => {
+						setState(HarvestStates.HARVEST);
+					});
 			} else {
 				// LP Harvest
 				harvestTokens(poolStakingConfig.LM_ADDRESS, provider)

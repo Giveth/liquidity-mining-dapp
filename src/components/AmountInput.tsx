@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { formatWeiHelper } from '../helpers/number';
 import { PoolStakingConfig } from '../types/config';
 import { Row } from './styled-components/Grid';
-import NumericalInput from './NumericalInput';
+import { NumericalInput } from './input';
 interface IAmountInput {
 	maxAmount: BigNumber;
 	setAmount: Dispatch<SetStateAction<string>>;
@@ -47,6 +47,7 @@ export const AmountInput: FC<IAmountInput> = ({
 
 		setAmount(valueBn.toString());
 	}, []);
+
 	return (
 		<>
 			<InputLabelRow justifyContent='space-between'>
