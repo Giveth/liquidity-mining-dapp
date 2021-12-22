@@ -138,9 +138,9 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 			_stacked = parseFloat(stacked);
 		}
 		const stackedWithApr = apr ? apr.times(_stacked).div(1200) : Zero;
-		const convertedStackedWithApr = EthersBigNumber.from(10000).mul(
-			constants.WeiPerEther,
-		);
+		const convertedStackedWithApr = EthersBigNumber.from(
+			stackedWithApr.toFixed(0),
+		).mul(constants.WeiPerEther);
 		setPotentialClaim(
 			tokenDistroHelper.getLiquidPart(convertedStackedWithApr),
 		);
