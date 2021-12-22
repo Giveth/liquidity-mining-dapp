@@ -11,14 +11,14 @@ export enum GiveDropStateType {
 }
 export interface IUserContext {
 	userAddress: string;
-	claimableAmount: BigNumber;
+	totalAmount: BigNumber;
 	giveDropState: GiveDropStateType;
 	submitUserAddress: (address: string) => void;
 	resetWallet: () => void;
 }
 const initialValue = {
 	userAddress: '',
-	claimableAmount: Zero,
+	totalAmount: Zero,
 	giveDropState: GiveDropStateType.notConnected,
 	submitUserAddress: () => {},
 	resetWallet: () => {},
@@ -32,8 +32,8 @@ export const UserProvider: FC<Props> = ({ children }) => {
 	const [userAddress, setUserAddress] = useState<string>(
 		initialValue.userAddress,
 	);
-	const [claimableAmount, setClaimableAmount] = useState<BigNumber>(
-		initialValue.claimableAmount,
+	const [totalAmount, setTotalAmount] = useState<BigNumber>(
+		initialValue.totalAmount,
 	);
 
 	const [giveDropState, setGiveDropState] = useState<GiveDropStateType>(
@@ -42,14 +42,15 @@ export const UserProvider: FC<Props> = ({ children }) => {
 
 	const submitUserAddress = async (address: string) => {
 		setUserAddress(address);
-		setClaimableAmount(Zero);
+		setTotalAmount(Zero);
 
 		const claimData = await fetchAirDropClaimData(address);
 		if (claimData) {
 			const _hasClaimed = await hasClaimedAirDrop(address, claimData);
+			// const _hasClaimed = false;
 			console.log('hasClaimed:', _hasClaimed);
 			if (!_hasClaimed) {
-				setClaimableAmount(BigNumber.from(claimData.amount));
+				setTotalAmount(BigNumber.from(claimData.amount));
 				setGiveDropState(GiveDropStateType.Success);
 				return;
 			} else {
@@ -58,7 +59,7 @@ export const UserProvider: FC<Props> = ({ children }) => {
 			}
 		}
 		setGiveDropState(GiveDropStateType.Missed);
-		setClaimableAmount(Zero);
+		setTotalAmount(Zero);
 	};
 
 	const resetWallet = () => {
@@ -69,7 +70,7 @@ export const UserProvider: FC<Props> = ({ children }) => {
 		<UserContext.Provider
 			value={{
 				userAddress,
-				claimableAmount,
+				totalAmount,
 				giveDropState,
 				resetWallet,
 				submitUserAddress,

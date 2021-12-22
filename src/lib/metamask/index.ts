@@ -6,7 +6,7 @@ declare let window: any;
 const { MAINNET_CONFIG, XDAI_CONFIG } = config;
 
 const tokenImage =
-	'https://giveth.io/_next/image?url=%2Fimages%2Fgiveth-logo-blue.svg&w=128&q=75';
+	'https://raw.githubusercontent.com/Giveth/giveth-design-assets/master/02-logos/GIV%20Token/GIVToken_200x200.png';
 
 const { MAINNET_NETWORK_NUMBER, XDAI_NETWORK_NUMBER } = config;
 

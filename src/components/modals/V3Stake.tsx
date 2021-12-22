@@ -55,32 +55,34 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 			<StakeModalContainer>
 				{(stakeStatus === StakeState.UNKNOWN ||
 					stakeStatus === StakeState.CONFIRMING) && (
-					<StakeModalTitle alignItems='center'>
-						<StakingPoolImages title={title} />
-						<StakeModalTitleText weight={700}>
-							{title}
-						</StakeModalTitleText>
-					</StakeModalTitle>
+					<>
+						<StakeModalTitle alignItems='center'>
+							<StakingPoolImages title={title} />
+							<StakeModalTitleText weight={700}>
+								{title}
+							</StakeModalTitleText>
+						</StakeModalTitle>
+						<InnerModalPositions>
+							{positions.map(position => (
+								<V3StakingCard
+									position={position}
+									setTxStatus={setTxStatus}
+									isUnstaking={isUnstakingModal}
+									key={position.tokenId.toString()}
+									handleStakeStatus={setStakeStatus}
+									handleSelectedNFT={setTokenId}
+									selectedPosition={
+										position.tokenId.toString() === tokenId
+									}
+									isConfirming={
+										stakeStatus === StakeState.CONFIRMING
+									}
+								/>
+							))}
+						</InnerModalPositions>
+					</>
 				)}
-				<InnerModal>
-					{(stakeStatus === StakeState.UNKNOWN ||
-						stakeStatus === StakeState.CONFIRMING) &&
-						positions.map(position => (
-							<V3StakingCard
-								position={position}
-								setTxStatus={setTxStatus}
-								isUnstaking={isUnstakingModal}
-								key={position.tokenId.toString()}
-								handleStakeStatus={setStakeStatus}
-								handleSelectedNFT={setTokenId}
-								selectedPosition={
-									position.tokenId.toString() === tokenId
-								}
-								isConfirming={
-									stakeStatus === StakeState.CONFIRMING
-								}
-							/>
-						))}
+				<InnerModalStates>
 					{stakeStatus === StakeState.REJECT && (
 						<ErrorInnerModal
 							title='You rejected the transaction.'
@@ -109,14 +111,13 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 							txHash={txStatus?.hash}
 						/>
 					)}
-				</InnerModal>
+				</InnerModalStates>
 			</StakeModalContainer>
 		</Modal>
 	);
 };
 
 const StakeModalContainer = styled.div`
-	width: 630px;
 	padding: 24px 0;
 `;
 
@@ -129,11 +130,16 @@ const StakeModalTitleText = styled(H4)`
 	color: ${neutralColors.gray[100]};
 `;
 
-const InnerModal = styled.div`
+const InnerModalPositions = styled.div`
+	width: 630px;
 	display: flex;
 	flex-direction: column;
 	padding: 0 24px;
 	gap: 36px;
+`;
+
+const InnerModalStates = styled.div`
+	width: 370px;
 `;
 
 export const PositionContainer = styled.div`

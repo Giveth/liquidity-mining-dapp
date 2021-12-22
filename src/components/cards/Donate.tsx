@@ -3,12 +3,10 @@ import Image from 'next/image';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
-import { H2, H4, P } from '../styled-components/Typography';
 import {
 	APRRow,
 	ArrowButton,
 	Card,
-	Header,
 	ICardProps,
 	ImpactCard,
 	ImpactCardInput,
@@ -21,6 +19,7 @@ import {
 	PoolItem,
 	PoolItemBold,
 	PoolItems,
+	PreviousArrowButton,
 } from './common';
 import {
 	ClaimViewContext,
@@ -29,10 +28,26 @@ import {
 import { UserContext } from '../../context/user.context';
 import { utils, BigNumber as EthersBigNumber, constants } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
-import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
+import { formatWeiHelper, Zero } from '../../helpers/number';
 import BigNumber from 'bignumber.js';
-import { Subline, neutralColors, IconHelp } from '@giveth/ui-design-system';
+import {
+	Subline,
+	neutralColors,
+	IconHelp,
+	H2,
+	H4,
+	P,
+	Caption,
+	H5,
+	Lead,
+	H6,
+} from '@giveth/ui-design-system';
 import { IconWithTooltip } from '../IconWithToolTip';
+
+const DonatePoolCard = styled(PoolCard)`
+	height: 127px;
+`;
+
 const DonateCardContainer = styled(Card)`
 	padding-right: 154px;
 	::before {
@@ -53,7 +68,8 @@ const DonateCardContainer = styled(Card)`
 			background-repeat: no-repeat;
 		}
 	}
-	@media only screen and (max-width: 1120px) {
+	@media only screen and (max-width: 1360px) {
+		@media only screen and (max-width: 1120px) {
 		padding: 8px;
 		::before {
 			background-image: none;
@@ -65,26 +81,31 @@ const GdropDonateTooltip = styled(Subline)`
 	width: 260px;
 `;
 
-const Title = styled.span`
-	font-size: 58px;
-	margin: 7px 0px 10px 0px;
-	width: 700px;
-	@media only screen and (max-width: 1120px) {
-		width: 100%;
-	}
-	font-weight: 700;
+const DonateHeader = styled.div`
+	margin-bottom: 15px;
 `;
 
-const Desc = styled(P)`
-	width: 700px;
+const Title = styled(H2)`
+	font-size: 3.2em;
+	font-weight: 700;
+	width: 750px;
+	@media only screen and (max-width: 1360px) {
+		width: 100%;
+	}
+`;
+
+const Desc = styled(Lead)`
+	width: 750px;
+	margin-top: 22px;
 	@media only screen and (max-width: 1120px) {
 		width: 100%;
 	}
 `;
 
 export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goNextStep } = useContext(ClaimViewContext);
-	const { claimableAmount } = useContext(UserContext);
+	const { activeIndex, goNextStep, goPreviousStep } =
+		useContext(ClaimViewContext);
+	const { totalAmount } = useContext(UserContext);
 
 	const [donation, setDonation] = useState<any>(0);
 	const [potentialClaim, setPotentialClaim] = useState<EthersBigNumber>(
@@ -99,16 +120,16 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 		} else if (isNaN(+e.target.value)) {
 			setDonation(donation);
 		} else {
-			if (claimableAmount.gte(utils.parseEther(e.target.value)))
+			if (totalAmount.gte(utils.parseEther(e.target.value)))
 				setDonation(+e.target.value);
 		}
 	};
 
 	useEffect(() => {
-		if (claimableAmount) {
-			setDonation(utils.formatEther(claimableAmount));
+		if (totalAmount) {
+			setDonation(utils.formatEther(totalAmount.div(10)));
 		}
-	}, [claimableAmount]);
+	}, [totalAmount]);
 
 	useEffect(() => {
 		let _donation = 0;
@@ -129,21 +150,23 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 		);
 		// setPotentialClaim(donationWithGivBacks * 0.1);
 		// setEarnEstimate((donationWithGivBacks * 0.9) / (52 * 5));
-	}, [donation]);
+	}, [donation, tokenDistroHelper]);
 
 	return (
 		<DonateCardContainer activeIndex={activeIndex} index={index}>
-			<Header>
-				<Title>Donate & get GIV back</Title>
+			<DonateHeader>
+				<Title>Donate &amp; get GIV back</Title>
 				<Desc size='small' color={'#CABAFF'}>
-					Donate to verified projects to get GIV with GIVbacks. The
-					project gets 100% of your donation, and you get rewarded by
-					Giveth with GIV!
+					Donate to verified projects to get GIV with <b>GIVbacks</b>.
+					The project gets 100% of your donation, and you get rewarded
+					by Giveth with GIV!
 				</Desc>
-			</Header>
+			</DonateHeader>
 			<APRRow alignItems={'center'} justifyContent={'space-between'}>
 				<ImpactCard>
-					<H4 as='h2'>If you donate your GIVdrop</H4>
+					<H5 as='h2' weight={700}>
+						If you donate your GIVdrop
+					</H5>
 					<div>
 						<Row justifyContent={'space-between'}>
 							<Row gap='4px' alignItems='center'>
@@ -162,12 +185,14 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 								onClick={() =>
 									setDonation(
 										Number(
-											utils.formatEther(claimableAmount),
+											utils.formatEther(
+												totalAmount.div(10),
+											),
 										),
 									)
 								}
 							>{`Max ${utils.formatEther(
-								claimableAmount,
+								totalAmount.div(10),
 							)} GIV`}</MaxStakeGIV>
 						</Row>
 						<ImpactCardInput>
@@ -181,7 +206,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 					</div>
 				</ImpactCard>
 				<PoolCardContainer>
-					<PoolCard>
+					<DonatePoolCard>
 						<PoolItems>
 							<Row justifyContent='space-between'>
 								<PoolItem>GIVbacks</PoolItem>
@@ -196,7 +221,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 								</PoolItemBold>
 							</Row>
 						</PoolItems>
-					</PoolCard>
+					</DonatePoolCard>
 				</PoolCardContainer>
 			</APRRow>
 			<PoolCardFooter>
@@ -205,7 +230,12 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 				<b>These are just simulations.</b> To participate for real,
 				claim your GIV.
 			</PoolCardFooter>
-			{activeIndex === index && <ArrowButton onClick={goNextStep} />}
+			{activeIndex === index && (
+				<>
+					<ArrowButton onClick={goNextStep} />
+					<PreviousArrowButton onClick={goPreviousStep} />
+				</>
+			)}
 		</DonateCardContainer>
 	);
 };
