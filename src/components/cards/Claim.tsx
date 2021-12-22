@@ -62,6 +62,10 @@ const ClaimedSubtitleContainer = styled.div`
 	justify-content: center;
 	align-items: center;
 	gap: 4px;
+	padding-left: 60px;
+	@media only screen and (max-width: 1360px) {
+		padding-left: 0px;
+	}
 `;
 
 const ClaimedSubtitleA = styled.div`
@@ -178,7 +182,6 @@ const SparkleBurstContainer = styled.div`
 
 const SparkleAnimationOptions = {
 	loop: false,
-	autoplay: false,
 	animationData: SparkleAnimation,
 	rendererSettings: {
 		preserveAspectRatio: 'xMidYMid slice',
@@ -187,7 +190,6 @@ const SparkleAnimationOptions = {
 
 const SparkleBurstAnimationOptions = {
 	loop: false,
-	autoplay: false,
 	animationData: SparkleBurstAnimation,
 	rendererSettings: {
 		preserveAspectRatio: 'xMidYMid slice',
@@ -284,6 +286,8 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 								options={SparkleBurstAnimationOptions}
 								height={200}
 								width={200}
+								isPaused={showClaimModal}
+								speed={0.8}
 							/>
 						</SparkleBurstContainer>
 						<SparkleContainer>
@@ -291,6 +295,8 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 								options={SparkleAnimationOptions}
 								height={100}
 								width={100}
+								isPaused={showClaimModal}
+								speed={0.8}
 							/>
 						</SparkleContainer>
 						<SunImage>
@@ -448,7 +454,6 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 					showModal={showClaimModal}
 					setShowModal={setShowClaimModal}
 					network={config.XDAI_NETWORK_NUMBER}
-					txStatus={txStatus}
 					givdropAmount={totalAmount}
 					checkNetworkAndWallet={checkNetworkAndWallet}
 					onSuccess={onSuccess}
