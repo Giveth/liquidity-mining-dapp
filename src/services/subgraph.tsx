@@ -54,7 +54,7 @@ export const zeroBalances: IBalances = {
 	honeyswapLpStaked: constants.Zero,
 	givStaked: constants.Zero,
 	allocationCount: 0,
-	givDropClaimed: true,
+	givDropClaimed: false,
 };
 
 export const fetchBalances = async (
