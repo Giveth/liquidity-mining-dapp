@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Row } from '../styled-components/Grid';
-import router from 'next/router';
 import {
-	Button,
 	Container,
 	IconExternalLink,
 	IconGIVBack,
 	P,
-	Title,
 	brandColors,
 } from '@giveth/ui-design-system';
 import {
@@ -109,6 +106,8 @@ export const TabGIVbacksTop = () => {
 
 export const TabGIVbacksBottom = () => {
 	const [round, setRound] = useState(0);
+	const [roundStartime, setRoundStartime] = useState(new Date());
+	const [roundEndTime, setRoundEndTime] = useState(new Date());
 	const { tokenDistroHelper } = useTokenDistro();
 	const { network: walletNetwork } = useContext(OnboardContext);
 
@@ -119,12 +118,16 @@ export const TabGIVbacksBottom = () => {
 			const TwoWeek = 1209600000;
 			const _round = Math.floor(deltaT / TwoWeek) + 1;
 			setRound(_round);
+			const _rounStartTime = new Date();
+			_rounStartTime.setDate(
+				tokenDistroHelper.startTime.getDate() + (_round - 1) * 15,
+			);
+			setRoundStartime(_rounStartTime);
+			const _roundEndTime = new Date();
+			_roundEndTime.setDate(_rounStartTime.getDate() + 14);
+			setRoundEndTime(_roundEndTime);
 		}
 	}, [tokenDistroHelper]);
-
-	const goToClaim = () => {
-		router.push('/claim');
-	};
 
 	return (
 		<GIVbacksBottomContainer>
@@ -180,9 +183,7 @@ export const TabGIVbacksBottom = () => {
 									<P>Start Date</P>
 									<P>
 										{tokenDistroHelper
-											? formatDate(
-													tokenDistroHelper.startTime,
-											  )
+											? formatDate(roundStartime)
 											: '-'}
 									</P>
 								</RoundInfoRow>
@@ -190,9 +191,7 @@ export const TabGIVbacksBottom = () => {
 									<P>End Date</P>
 									<P>
 										{tokenDistroHelper
-											? formatDate(
-													tokenDistroHelper.endTime,
-											  )
+											? formatDate(roundEndTime)
 											: '-'}
 									</P>
 								</RoundInfoRow>
@@ -247,79 +246,5 @@ export const TabGIVbacksBottom = () => {
 				</GIVBackCard>
 			</Container>
 		</GIVbacksBottomContainer>
-		// 	<Container>
-		// 		<TabTitle weight={700}>The Economy of Giving</TabTitle>
-		// 		<TabDesc size='medium'>
-		// 			Giveth is building a future in which giving is effortless
-		// 			and people all around the world are rewarded for creating
-		// 			positive change.
-		// 		</TabDesc>
-		// 		<Row wrap={1} justifyContent='space-between'>
-		// 			<EGDataBlock
-		// 				title='GIV Token'
-		// 				subtitle='Donate, earn, govern'
-		// 				button={
-		// 					<Button
-		// 						label='CLAIM YOUR GIV'
-		// 						buttonType='primary'
-		// 					/>
-		// 				}
-		// 				icon={<IconGiveth size={32} />}
-		// 			>
-		// 				GIV fuels and directs the Future of Giving, inspiring
-		// 				people to become Givers and participate in an ecosystem
-		// 				of collective support, abundance, and value-creation.
-		// 			</EGDataBlock>
-		// 			<EGDataBlock title='GIVbacks' subtitle='GIVE AND RECEIVE'>
-		// 				Giveth is a donor owned and governed economy. With
-		// 				GIVbacks, we reward donors to verified projects on
-		// 				Giveth with GIV tokens.
-		// 			</EGDataBlock>
-		// 			<EGDataBlock title='GIVstream' subtitle='Get more GIV'>
-		// 				Welcome to the expanding GIViverse! With the GIVstream,
-		// 				our community members become long-term stakeholders in
-		// 				the Future of Giving.
-		// 			</EGDataBlock>
-		// 		</Row>
-		// 		<Section2Title>How to participate</Section2Title>
-		// 		<Row wrap={1} justifyContent='space-between'>
-		// 			<ParticipateDataBlock
-		// 				title='Give'
-		// 				button={<Button label='Donate to projects' />}
-		// 			>
-		// 				Donate to empower change-makers that are working hard to
-		// 				make a difference. Get GIVbacks when you donate to
-		// 				verified projects.
-		// 			</ParticipateDataBlock>
-		// 			<ParticipateDataBlock
-		// 				title='Govern'
-		// 				button={<Button label='See proposals' />}
-		// 			>
-		// 				The GIVeconomy empowers our collective of projects,
-		// 				donors, builders and community members to build the
-		// 				Future of Giving.
-		// 			</ParticipateDataBlock>
-		// 			<ParticipateDataBlock
-		// 				title='Earn'
-		// 				button={<Button label='Add Liquidty and Earn' />}
-		// 			>
-		// 				Become a liquidity provider and stake tokens in the
-		// 				GIVfarm to generate even more GIV in rewards.
-		// 			</ParticipateDataBlock>
-		// 		</Row>
-		// 		<ClaimCard>
-		// 			<ClaimCardTitle weight={900}>
-		// 				Claim your GIV tokens
-		// 			</ClaimCardTitle>
-		// 			<ClaimCardQuote size='small'>
-		// 				Connect your wallet or check an ethereum address to see
-		// 				your rewards.
-		// 			</ClaimCardQuote>
-		// 			<ClaimCardButton
-		// 				label='CLAIM YOUR GIV'
-		// 				buttonType='primary'
-		// 			></ClaimCardButton>
-		// 		</ClaimCard>
-		// 	</Container>
 	);
 };
