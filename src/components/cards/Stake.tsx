@@ -41,6 +41,7 @@ import { fetchLPStakingInfo } from '@/lib/stakingPool';
 import { useLiquidityPositions } from '@/context';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { H2, Lead, H5 } from '@giveth/ui-design-system';
+import { networkProviders } from '@/helpers/networkProvider';
 
 const InvestCardContainer = styled(Card)`
 	::before {
@@ -150,17 +151,13 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	);
 
 	useEffect(() => {
-		const getAPRs = async (promises: Promise<StakePoolInfo>[]) => {
-			const promiseResult = await Promise.all(promises);
-			const APRs: BigNumber[] = promiseResult.map(elem =>
-				elem.apr ? elem.apr : Zero,
-			);
-			APRs.push(univ3apr);
-			const sortedAPRs = APRs.sort((a, b) => (a.gt(b) ? 0 : -1));
-			const _apr = sortedAPRs.pop();
-			if (_apr) {
-				setAPR(_apr);
-			}
+		const getMaxAPR = async (promises: Promise<StakePoolInfo>[]) => {
+			const stakePoolInfos = await Promise.all(promises);
+			let maxApr = univ3apr;
+			stakePoolInfos.forEach(info => {
+				maxApr = BigNumber.max(maxApr, info?.apr || Zero);
+			});
+			setAPR(maxApr);
 		};
 
 		const promiseQueue: Promise<StakePoolInfo>[] = [];
@@ -168,6 +165,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 			const promise: Promise<StakePoolInfo> = fetchLPStakingInfo(
 				poolStakingConfig,
 				config.XDAI_NETWORK_NUMBER,
+				networkProviders[config.XDAI_NETWORK_NUMBER],
 			);
 			promiseQueue.push(promise);
 		});
@@ -175,10 +173,11 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 			const promise: Promise<StakePoolInfo> = fetchLPStakingInfo(
 				poolStakingConfig,
 				config.MAINNET_NETWORK_NUMBER,
+				networkProviders[config.MAINNET_NETWORK_NUMBER],
 			);
 			promiseQueue.push(promise);
 		});
-		getAPRs(promiseQueue);
+		getMaxAPR(promiseQueue);
 	}, [univ3apr]);
 
 	return (

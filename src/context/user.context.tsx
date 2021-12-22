@@ -46,7 +46,7 @@ export const UserProvider: FC<Props> = ({ children }) => {
 
 		const claimData = await fetchAirDropClaimData(address);
 		if (claimData) {
-			const _hasClaimed = await hasClaimedAirDrop(address, claimData);
+			const _hasClaimed = await hasClaimedAirDrop(address);
 			// const _hasClaimed = false;
 			console.log('hasClaimed:', _hasClaimed);
 			if (!_hasClaimed) {

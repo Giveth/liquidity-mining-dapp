@@ -12,12 +12,13 @@ const StakingPoolCard: FC<IStakingPoolCardProps> = ({
 	network,
 	poolStakingConfig,
 }) => {
-	const { apr, rewardRatePerToken, notStakedAmount, stakedAmount, earned } =
-		useStakingPool(poolStakingConfig, network);
+	const { apr, notStakedAmount, stakedAmount, earned } = useStakingPool(
+		poolStakingConfig,
+		network,
+	);
 
 	const stakeInfo = {
 		apr: apr,
-		rewardRatePerToken: rewardRatePerToken,
 		userNotStakedAmount: notStakedAmount,
 		earned: earned,
 		stakedLpAmount: stakedAmount,

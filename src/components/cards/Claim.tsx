@@ -102,7 +102,7 @@ const ExploreButton = styled(SocialButton)`
 
 const ClaimFromAnother = styled.span`
 	cursor: pointer;
-	color: '#FED670'
+	color: #fed670;
 	margin-top: 4px;
 `;
 
