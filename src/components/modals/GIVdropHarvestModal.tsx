@@ -39,7 +39,10 @@ import BigNumber from 'bignumber.js';
 import Lottie from 'react-lottie';
 import LoadingAnimation from '@/animations/loading.json';
 import { claimAirDrop } from '@/lib/claim';
-import type { TransactionResponse } from '@ethersproject/providers';
+import type {
+	TransactionResponse,
+	TransactionReceipt,
+} from '@ethersproject/providers';
 import useUser from '@/context/user.context';
 import { OnboardContext } from '@/context/onboard.context';
 import {
@@ -68,7 +71,6 @@ enum ClaimState {
 
 interface IGIVdropHarvestModal extends IModal {
 	network: number;
-	txStatus: any;
 	givdropAmount: ethers.BigNumber;
 	checkNetworkAndWallet: () => Promise<boolean>;
 	onSuccess: (tx: TransactionResponse) => void;
@@ -78,13 +80,13 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 	showModal,
 	setShowModal,
 	network,
-	txStatus,
 	givdropAmount,
 	checkNetworkAndWallet,
 	onSuccess,
 }) => {
 	const [price, setPrice] = useState(0);
 	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
+	const [tx, setTx] = useState<TransactionResponse | undefined>();
 	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
 	const [givDropStream, setGivDropStream] = useState<BigNumber.Value>(0);
 	const [givDropAccStream, setGivDropAccStream] = useState<ethers.BigNumber>(
@@ -304,14 +306,14 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 					<SubmittedInnerModal
 						title='GIV'
 						walletNetwork={network}
-						txHash={txStatus?.hash}
+						txHash={tx?.hash}
 					/>
 				)}
 				{claimState === ClaimState.CLAIMED && (
 					<ConfirmedInnerModal
 						title='GIV'
 						walletNetwork={network}
-						txHash={txStatus?.hash}
+						txHash={tx?.hash}
 					/>
 				)}
 				{claimState === ClaimState.ERROR && (
@@ -320,7 +322,8 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 						<ErrorInnerModal
 							title='GIV'
 							walletNetwork={network}
-							txHash={txStatus?.hash}
+							txHash={tx?.hash}
+							message='Something Wrong'
 						/>
 						<CancelButton
 							label='CLOSE'
