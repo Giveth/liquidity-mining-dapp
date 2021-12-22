@@ -141,57 +141,58 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 
 		try {
 			setClaimState(ClaimState.WAITING);
-			// const tx = await claimAirDrop(userAddress, provider);
-			const tx: TransactionResponse = {
-				hash: '0x8162815a31ba2ffc6a815ec76f79231fd7bc4a8c49f9e5ec7d923a6c069ef938',
-				nonce: 0,
-				gasLimit: ethers.BigNumber.from(0),
-				gasPrice: undefined,
-				data: '0',
-				value: ethers.BigNumber.from(0),
-				chainId: 0,
-				confirmations: 0,
-				from: '0',
-				wait: confirmations => {
-					return new Promise(resolve => {
-						setTimeout(() => {
-							const _tx: TransactionReceipt = {
-								to: '',
-								from: '',
-								contractAddress: '',
-								transactionIndex: 0,
-								root: '',
-								gasUsed: ethers.BigNumber.from(0),
-								logsBloom: '',
-								blockHash: '',
-								transactionHash:
-									'0x9162815a31ba2ffc6a815ec76f79231fd7bc4a8c49f9e5ec7d923a6c069ef938',
-								logs: [
-									{
-										blockNumber: 0,
-										blockHash: '',
-										transactionIndex: 0,
-										removed: false,
-										address: '',
-										data: '',
-										topics: [''],
-										transactionHash: '',
-										logIndex: 0,
-									},
-								],
-								blockNumber: 0,
-								confirmations: 0,
-								cumulativeGasUsed: ethers.BigNumber.from(0),
-								effectiveGasPrice: ethers.BigNumber.from(0),
-								byzantium: false,
-								type: 0,
-								status: 1,
-							};
-							resolve(_tx);
-						}, 2000);
-					});
-				},
-			};
+			const tx = await claimAirDrop(userAddress, provider);
+			// This is for test;
+			// const tx: TransactionResponse = {
+			// 	hash: '0x8162815a31ba2ffc6a815ec76f79231fd7bc4a8c49f9e5ec7d923a6c069ef938',
+			// 	nonce: 0,
+			// 	gasLimit: ethers.BigNumber.from(0),
+			// 	gasPrice: undefined,
+			// 	data: '0',
+			// 	value: ethers.BigNumber.from(0),
+			// 	chainId: 0,
+			// 	confirmations: 0,
+			// 	from: '0',
+			// 	wait: confirmations => {
+			// 		return new Promise(resolve => {
+			// 			setTimeout(() => {
+			// 				const _tx: TransactionReceipt = {
+			// 					to: '',
+			// 					from: '',
+			// 					contractAddress: '',
+			// 					transactionIndex: 0,
+			// 					root: '',
+			// 					gasUsed: ethers.BigNumber.from(0),
+			// 					logsBloom: '',
+			// 					blockHash: '',
+			// 					transactionHash:
+			// 						'0x9162815a31ba2ffc6a815ec76f79231fd7bc4a8c49f9e5ec7d923a6c069ef938',
+			// 					logs: [
+			// 						{
+			// 							blockNumber: 0,
+			// 							blockHash: '',
+			// 							transactionIndex: 0,
+			// 							removed: false,
+			// 							address: '',
+			// 							data: '',
+			// 							topics: [''],
+			// 							transactionHash: '',
+			// 							logIndex: 0,
+			// 						},
+			// 					],
+			// 					blockNumber: 0,
+			// 					confirmations: 0,
+			// 					cumulativeGasUsed: ethers.BigNumber.from(0),
+			// 					effectiveGasPrice: ethers.BigNumber.from(0),
+			// 					byzantium: false,
+			// 					type: 0,
+			// 					status: 1,
+			// 				};
+			// 				resolve(_tx);
+			// 			}, 2000);
+			// 		});
+			// 	},
+			// };
 			if (tx) {
 				setTxResp(tx);
 				setClaimState(ClaimState.SUBMITTING);
