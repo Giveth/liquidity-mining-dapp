@@ -46,8 +46,8 @@ export const UserProvider: FC<Props> = ({ children }) => {
 
 		const claimData = await fetchAirDropClaimData(address);
 		if (claimData) {
-			const _hasClaimed = await hasClaimedAirDrop(address, claimData);
-			// const _hasClaimed = false;
+			// const _hasClaimed = await hasClaimedAirDrop(address, claimData);
+			const _hasClaimed = false;
 			console.log('hasClaimed:', _hasClaimed);
 			if (!_hasClaimed) {
 				setTotalAmount(BigNumber.from(claimData.amount));
