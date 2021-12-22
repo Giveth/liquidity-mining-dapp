@@ -1,27 +1,20 @@
 import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
 import { useContext, useEffect, useState } from 'react';
-import useUser, { UserContext } from '../../context/user.context';
-import { utils } from 'ethers';
-import { Container, H2, Lead, P } from '@giveth/ui-design-system';
+import useUser from '../../context/user.context';
+import { Container, H2, Lead } from '@giveth/ui-design-system';
 import Lottie from 'react-lottie';
 import { formatWeiHelper } from '@/helpers/number';
 import { addGIVToken } from '@/lib/metamask';
 import Image from 'next/image';
 import SparkleBurstAnimation from '../../animations/sparkle-burst.json';
 import SparkleAnimation from '../../animations/sparkle.json';
+import BlowingAnimation from '../../animations/blowing.json';
 import config from '@/configuration';
 import Link from 'next/link';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { ClaimViewContext } from '../views/claim/Claim.view';
 import { Row } from '../styled-components/Grid';
-
-const ClaimedContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	position: relative;
-`;
 
 const SmileImage = styled.div`
 	position: absolute;
@@ -136,6 +129,14 @@ const SparkleAnimationOptions = {
 const SparkleBurstAnimationOptions = {
 	loop: false,
 	animationData: SparkleBurstAnimation,
+	rendererSettings: {
+		preserveAspectRatio: 'xMidYMid slice',
+	},
+};
+
+const BlowingAnimationOptions = {
+	loop: false,
+	animationData: BlowingAnimation,
 	rendererSettings: {
 		preserveAspectRatio: 'xMidYMid slice',
 	},
@@ -265,9 +266,22 @@ export const CongratulationsCard = () => {
 					<ClaimedSubtitleB>
 						Watch your GIVstream flow!
 					</ClaimedSubtitleB>
-					<Link href='/givstream' passHref>
-						<ExploreButton>explore the giveconomy</ExploreButton>
-					</Link>
+					<Row alignItems='center'>
+						<Link href='/givstream' passHref>
+							<ExploreButton>
+								explore the giveconomy
+							</ExploreButton>
+						</Link>
+						<div>
+							<Lottie
+								options={BlowingAnimationOptions}
+								height={100}
+								width={80}
+								// isPaused={showClaimModal}
+								speed={0.8}
+							/>
+						</div>
+					</Row>
 					<ClaimFromAnother
 						onClick={() => {
 							goFirstStep();

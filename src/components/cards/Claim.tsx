@@ -17,7 +17,6 @@ import { GIVdropHarvestModal } from '../modals/GIVdropHarvestModal';
 import { formatWeiHelper } from '@/helpers/number';
 import type { TransactionResponse } from '@ethersproject/providers';
 import { wrongWallet } from '../toasts/claim';
-import { useTokenDistro } from '@/context/tokenDistro.context';
 import { H2, Lead } from '@giveth/ui-design-system';
 
 interface IClaimCardContainer {
