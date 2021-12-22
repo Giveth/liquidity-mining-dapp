@@ -30,10 +30,11 @@ import {
 } from '@/services/subgraph';
 import { Zero } from '@/helpers/number';
 import BigNumber from 'bignumber.js';
+import { constants } from 'ethers';
 
 const ERC721NftContext = createContext<{
 	totalNftPositions: LiquidityPosition[];
-	stakedPositions: LiquidityPosition[];
+	stakedPositions: StakedPosition[];
 	unstakedPositions: LiquidityPosition[];
 	currentIncentive: { key?: (string | number)[] | null };
 	loadingNftPositions: boolean;
@@ -223,6 +224,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 					owner: owner,
 					staked: staked,
 					tokenId: tokenId,
+					reward: constants.Zero,
 					uri: '',
 					_position,
 				};
@@ -279,6 +281,16 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 					)
 				).filter(p => p) as LiquidityPosition[];
 
+				const getReward = async (position: LiquidityPosition) => {
+					const { reward } =
+						await uniswapV3StakerContract.getRewardInfo(
+							currentIncentive.key,
+							position.tokenId,
+						);
+
+					return { ...position, reward };
+				};
+
 				const downloadURI = async (
 					position: LiquidityPosition,
 				): Promise<any | null> => {
@@ -310,6 +322,10 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 					stakedPositions.map(downloadURI),
 				);
 
+				const stakedPositionsWithReward = await Promise.all(
+					stakedPositionsWithURI.map(getReward),
+				);
+
 				const unstakedPositions = allPositions
 					.flat()
 					.filter(position => !position.staked);
@@ -319,7 +335,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				);
 
 				setTotalNftPositions(allPositions);
-				setStakedPositions(stakedPositionsWithURI);
+				setStakedPositions(stakedPositionsWithReward);
 				setUnstakedPositions(unstakedPositionsWithURI);
 
 				const ethPriceInGIV = pool.priceOf(pool.token1).toFixed(10);

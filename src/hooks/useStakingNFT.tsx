@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, useMemo } from 'react';
 
 import { useLiquidityPositions, useOnboard } from '@/context';
-import { LiquidityPosition } from '@/types/nfts';
+import { LiquidityPosition, StakedPosition } from '@/types/nfts';
 import { UniswapV3PoolStakingConfig } from '@/types/config';
 import { BigNumber } from '@ethersproject/bignumber';
 import config from '@/configuration';
@@ -61,23 +61,11 @@ export const useStakingNFT = () => {
 			return;
 
 		const load = async () => {
-			try {
-				const getReward = (p: LiquidityPosition) =>
-					uniswapV3StakerContract.getRewardInfo(
-						currentIncentive.key,
-						p?.tokenId,
-					);
-
-				const rewards = await Promise.all(
-					stakedPositions.map(getReward),
-				);
-
-				const allRewards = rewards.reduce(
-					(acc: BigNumber, [reward]) => acc.add(reward),
-					BigNumber.from(0),
-				);
-				setRewardBalance(allRewards);
-			} catch {}
+			const allRewards = stakedPositions.reduce(
+				(acc: BigNumber, curr: StakedPosition) => acc.add(curr.reward),
+				BigNumber.from(0),
+			);
+			setRewardBalance(allRewards);
 		};
 		load();
 	}, [

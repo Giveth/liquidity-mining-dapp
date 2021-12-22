@@ -28,8 +28,7 @@ import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
 import { IconWithTooltip } from '../IconWithToolTip';
 import LoadingAnimation from '@/animations/loading.json';
 import { transfer, exit, stake } from '@/lib/stakingNFT';
-import BigNumber from 'bignumber.js';
-import { ethers } from 'ethers';
+import { BigNumber, constants } from 'ethers';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -60,6 +59,8 @@ import {
 	SubmittedInnerModal,
 	ErrorInnerModal,
 } from './ConfirmSubmit';
+import { Zero } from '@/helpers/number';
+import { LiquidityPosition } from '@/types/nfts';
 
 export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	poolStakingConfig,
@@ -81,6 +82,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	);
 	const [txStatus, setTxStatus] = useState<any>();
 	const [tokenIdState, setTokenId] = useState<number>(0);
+	const [reward, setReward] = useState<BigNumber>(constants.Zero);
 
 	const handleStakeUnstake = async (tokenId: number) => {
 		if (!provider) return;
@@ -122,7 +124,8 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 		}
 	};
 
-	const handleAction = (tokenId: number) => {
+	const handleAction = (tokenId: number, _reward: BigNumber) => {
+		setReward(_reward);
 		setTokenId(tokenId);
 		setStakeStatus(StakeState.UNSTAKING);
 	};
@@ -186,10 +189,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 								</TooltipContent>
 							</IconWithTooltip>
 						</HelpRow>
-						<GIVBoxWithPrice
-							amount={ethers.BigNumber.from(10)}
-							price={'10'}
-						/>
+						<GIVBoxWithPrice amount={reward} />
 						{stakeStatus === StakeState.CONFIRM_UNSTAKE ? (
 							<Pending>
 								<Lottie

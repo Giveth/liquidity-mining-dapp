@@ -10,7 +10,7 @@ import {
 
 interface IGIVBoxWithPriceProps {
 	amount: ethers.BigNumber;
-	price: string;
+	price?: string;
 }
 
 export const GIVBoxWithPrice: FC<IGIVBoxWithPriceProps> = ({

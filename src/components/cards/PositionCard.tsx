@@ -25,6 +25,7 @@ import { IconWithTooltip } from '../IconWithToolTip';
 import LoadingAnimation from '@/animations/loading.json';
 import { StakeState } from '../modals/V3Stake';
 import { Pending } from '../modals/HarvestAll.sc';
+import { BigNumber } from 'ethers';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -60,7 +61,7 @@ interface IV3StakeCardProps {
 	isUnstaking?: boolean;
 	selectedPosition?: boolean;
 	isConfirming?: boolean;
-	handleAction: (tokenId: number) => void;
+	handleAction: (tokenId: number, reward: BigNumber) => void;
 }
 
 const STARTS_WITH = 'data:application/json;base64,';
@@ -72,8 +73,6 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 	isConfirming,
 	handleAction,
 }) => {
-	const { address, provider } = useOnboard();
-	const { currentIncentive, loadPositions } = useLiquidityPositions();
 	const { pool, tickLower, tickUpper } = position._position || {};
 
 	const buttonLabel = isUnstaking ? 'UNSTAKE & HARVEST' : 'STAKE';
@@ -184,7 +183,9 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 					<FullWidthButton
 						label={buttonLabel}
 						buttonType='primary'
-						onClick={() => handleAction(position.tokenId)}
+						onClick={() =>
+							handleAction(position.tokenId, position.reward)
+						}
 					/>
 				)}
 				<FullWidthButton
