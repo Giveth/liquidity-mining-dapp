@@ -99,7 +99,7 @@ const config: EnvConfig = {
 
 		nodeUrl: 'https://rpc.xdaichain.com/',
 		GIV: {
-			LM_ADDRESS: '0x448d5E09620752f031Ea629993050f8581118438',
+			LM_ADDRESS: '0x898Baa558A401e59Cb2aA77bb8b2D89978Cf506F',
 			GARDEN_ADDRESS: '0x642c18755aa5a2bf6861349327d2448813b992ba',
 			BUY_LINK:
 				'https://app.honeyswap.org/#/swap?outputCurrency=0x448d5E09620752f031Ea629993050f8581118438',
