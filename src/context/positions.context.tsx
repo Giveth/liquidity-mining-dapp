@@ -233,7 +233,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				);
 				const wethToken = new Token(
 					network,
-					WETH_TOKEN_ADDRESS as string,
+					WETH_TOKEN_ADDRESS,
 					18,
 					'WETH',
 					'WETH',

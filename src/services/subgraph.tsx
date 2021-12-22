@@ -548,7 +548,7 @@ export const getUniswapV3Pool = async (
 		console.error('Error in fetching user positions', e);
 		return {
 			token0: config.MAINNET_CONFIG.TOKEN_ADDRESS,
-			token1: config.MAINNET_CONFIG.WETH_TOKEN_ADDRESS || '',
+			token1: config.MAINNET_CONFIG.WETH_TOKEN_ADDRESS,
 			stakedLiquidity: Zero,
 			liquidity: Zero,
 			sqrtPriceX96: Zero,
