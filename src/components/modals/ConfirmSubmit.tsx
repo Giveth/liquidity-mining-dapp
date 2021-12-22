@@ -47,7 +47,7 @@ const errorAnimationOptions = {
 interface IConfirmSubmitProps {
 	title: string;
 	walletNetwork: number;
-	txHash: string;
+	txHash?: string;
 }
 
 export const SubmittedInnerModal: FC<IConfirmSubmitProps> = ({
@@ -119,15 +119,20 @@ export const ConfirmedInnerModal: FC<IConfirmSubmitProps> = ({
 	);
 };
 
-export const ErrorInnerModal: FC<IConfirmSubmitProps> = ({
+interface IErrorProps extends IConfirmSubmitProps {
+	message?: string;
+}
+
+export const ErrorInnerModal: FC<IErrorProps> = ({
 	title,
 	walletNetwork,
 	txHash,
+	message,
 }) => {
 	return (
 		<>
 			<Title>{title}</Title>
-			<Lottie options={errorAnimationOptions} height={100} width={100} />
+			<Lottie options={errorAnimationOptions} height={60} width={60} />
 			<TxSubmit weight={700}>{txHash}</TxSubmit>
 			{txHash && (
 				<BlockExplorerLink
@@ -148,11 +153,16 @@ export const ErrorInnerModal: FC<IConfirmSubmitProps> = ({
 					<IconExternalLink size={16} color={'currentColor'} />
 				</BlockExplorerLink>
 			)}
+			{message && <ErrorMessage>{message}</ErrorMessage>}
 		</>
 	);
 };
 
 const Title = styled(Caption)`
+	padding: 24px;
+`;
+
+const ErrorMessage = styled(Caption)`
 	padding: 24px;
 `;
 
