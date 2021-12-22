@@ -127,7 +127,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 			_givDropAcc = _givDropAcc.add(claimableNow).sub(givBackLiquidPart);
 		}
 		setGivDropAccStream(_givDropAcc);
-	}, [givdropAmount, currentBalance, tokenDistroHelper]);
+	}, [givdropAmount, tokenDistroHelper, claimableNow, givBackLiquidPart]);
 
 	const calcUSD = (amount: string) => {
 		const usd = (parseInt(amount.toString()) * price).toFixed(2);
