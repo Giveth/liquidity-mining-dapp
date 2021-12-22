@@ -182,9 +182,11 @@ const Info = styled(P)`
 `;
 
 const BlockExplorerLink = styled(GLink)`
+	display: block;
 	width: 100%;
 	color: ${brandColors.cyan[500]};
 	&:hover {
 		color: ${brandColors.cyan[300]};
 	}
+	padding-bottom: 24px;
 `;
