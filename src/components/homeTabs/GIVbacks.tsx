@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Row } from '../styled-components/Grid';
-import router from 'next/router';
 import {
-	Button,
 	Container,
 	IconExternalLink,
 	IconGIVBack,
 	P,
-	Title,
 	brandColors,
 } from '@giveth/ui-design-system';
 import {
@@ -131,10 +128,6 @@ export const TabGIVbacksBottom = () => {
 			setRoundEndTime(_roundEndTime);
 		}
 	}, [tokenDistroHelper]);
-
-	const goToClaim = () => {
-		router.push('/claim');
-	};
 
 	return (
 		<GIVbacksBottomContainer>
