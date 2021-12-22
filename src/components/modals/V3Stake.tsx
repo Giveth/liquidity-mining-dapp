@@ -118,7 +118,6 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 		setTxStatus(tx);
 		try {
 			const { status } = await tx.wait();
-			console.log('as');
 			if (status) {
 				setStakeStatus(StakeState.CONFIRMED);
 			} else {
