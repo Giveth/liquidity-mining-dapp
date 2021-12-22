@@ -86,7 +86,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 }) => {
 	const [price, setPrice] = useState(0);
 	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
-	const [tx, setTx] = useState<TransactionResponse | undefined>();
+	const [txResp, setTxResp] = useState<TransactionResponse | undefined>();
 	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
 	const [givDropStream, setGivDropStream] = useState<BigNumber.Value>(0);
 	const [givDropAccStream, setGivDropAccStream] = useState<ethers.BigNumber>(
@@ -164,7 +164,8 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 								gasUsed: ethers.BigNumber.from(0),
 								logsBloom: '',
 								blockHash: '',
-								transactionHash: '',
+								transactionHash:
+									'0x9162815a31ba2ffc6a815ec76f79231fd7bc4a8c49f9e5ec7d923a6c069ef938',
 								logs: [
 									{
 										blockNumber: 0,
@@ -192,6 +193,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 				},
 			};
 			if (tx) {
+				setTxResp(tx);
 				setClaimState(ClaimState.SUBMITTING);
 				showPendingClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
 				const { status } = await tx.wait();
@@ -355,14 +357,14 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 					<SubmittedInnerModal
 						title='GIV'
 						walletNetwork={network}
-						txHash={tx?.hash}
+						txHash={txResp?.hash}
 					/>
 				)}
 				{claimState === ClaimState.CLAIMED && (
 					<ConfirmedInnerModal
 						title='GIV'
 						walletNetwork={network}
-						txHash={tx?.hash}
+						txHash={txResp?.hash}
 					/>
 				)}
 				{claimState === ClaimState.ERROR && (
@@ -371,7 +373,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 						<ErrorInnerModal
 							title='GIV'
 							walletNetwork={network}
-							txHash={tx?.hash}
+							txHash={txResp?.hash}
 							message='Something Wrong'
 						/>
 						<CancelButton
