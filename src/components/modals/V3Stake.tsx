@@ -9,12 +9,16 @@ import {
 	Overline,
 	B,
 	IconHelp,
+	IconGIVStream,
+	Lead,
 } from '@giveth/ui-design-system';
 import {
 	CancelButton,
 	HarvestButton,
 	HelpRow,
 	Pending,
+	RateRow,
+	GIVRate,
 	TooltipContent,
 } from './HarvestAll.sc';
 import Lottie from 'react-lottie';
@@ -35,6 +39,7 @@ import {
 	ErrorInnerModal,
 } from './ConfirmSubmit';
 import { useTokenDistro } from '@/context/tokenDistro.context';
+import { formatWeiHelper } from '@/helpers/number';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -83,6 +88,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	const [txStatus, setTxStatus] = useState<any>();
 	const [tokenIdState, setTokenId] = useState<number>(0);
 	const [reward, setReward] = useState<BigNumber>(constants.Zero);
+	const [stream, setStream] = useState<BigNumber>(constants.Zero);
 
 	const handleStakeUnstake = async (tokenId: number) => {
 		if (!provider) return;
@@ -125,10 +131,12 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	};
 
 	const handleAction = (tokenId: number, _reward: BigNumber) => {
-		const liquidReward = tokenDistroHelper.getLiquidPart(reward);
-
+		const liquidReward = tokenDistroHelper.getLiquidPart(_reward);
+		const streamPerWeek =
+			tokenDistroHelper.getStreamPartTokenPerWeek(_reward);
 		setTokenId(tokenId);
 		setReward(liquidReward);
+		setStream(BigNumber.from(streamPerWeek.toFixed(0)));
 		setStakeStatus(StakeState.UNSTAKING);
 	};
 
@@ -192,6 +200,28 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 							</IconWithTooltip>
 						</HelpRow>
 						<GIVBoxWithPrice amount={reward} />
+						<HelpRow alignItems='center'>
+							<Caption>Added to your GIVstream flowrate</Caption>
+							<IconWithTooltip
+								icon={
+									<IconHelp
+										size={16}
+										color={brandColors.deep[100]}
+									/>
+								}
+								direction={'top'}
+							>
+								<TooltipContent>
+									Increase you GIVstream flowrate when you
+									claim liquid rewards!
+								</TooltipContent>
+							</IconWithTooltip>
+						</HelpRow>
+						<RateRow alignItems='center'>
+							<IconGIVStream size={24} />
+							<GIVRate>{formatWeiHelper(stream)}</GIVRate>
+							<Lead>GIV/week</Lead>
+						</RateRow>
 						{stakeStatus === StakeState.CONFIRM_UNSTAKE ? (
 							<Pending>
 								<Lottie
