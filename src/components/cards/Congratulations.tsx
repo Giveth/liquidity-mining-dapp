@@ -142,6 +142,21 @@ const BlowingAnimationOptions = {
 	},
 };
 
+const ExploreRow = styled.div`
+	position: relative;
+`;
+
+const BlowingContainer = styled.div`
+	position: absolute;
+	right: -75px;
+	top: -15px;
+	@media only screen and (max-width: 1360px) {
+	}
+	@media only screen and (max-width: 990px) {
+		display: none;
+	}
+`;
+
 export const CongratulationsCard = () => {
 	const [streamValue, setStreamValue] = useState<string>('0');
 
@@ -168,7 +183,6 @@ export const CongratulationsCard = () => {
 							options={SparkleAnimationOptions}
 							height={100}
 							width={100}
-							// isPaused={showClaimModal}
 							speed={0.8}
 						/>
 					</SparkleContainer>
@@ -197,7 +211,6 @@ export const CongratulationsCard = () => {
 									options={SparkleBurstAnimationOptions}
 									height={200}
 									width={200}
-									// isPaused={showClaimModal}
 									speed={0.8}
 								/>
 							</SparkleBurstContainer>
@@ -209,53 +222,7 @@ export const CongratulationsCard = () => {
 							/>
 						</SmileImage>
 					</ClaimedSubtitleA>
-					<SocialButtonsContainer>
-						<a
-							href='https:twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
-							target='_blank'
-							rel='noreferrer'
-						>
-							<SocialButton>
-								share on twitter
-								<Image
-									src='/images/icons/twitter.svg'
-									height='15'
-									width='15'
-									alt='Twitter logo.'
-								/>
-							</SocialButton>
-						</a>
-						<a
-							href='https:swag.giveth.io/'
-							target='_blank'
-							rel='noreferrer'
-						>
-							<SocialButton>
-								claim your free swag
-								<Image
-									src='/images/icons/tshirt.svg'
-									height='15'
-									width='15'
-									alt='T shirt.'
-								/>
-							</SocialButton>
-						</a>
-						<a
-							href='https:discord.giveth.io/'
-							target='_blank'
-							rel='noreferrer'
-						>
-							<SocialButton>
-								join our discord
-								<Image
-									src='/images/icons/discord.svg'
-									height='15'
-									width='15'
-									alt='discord logo.'
-								/>
-							</SocialButton>
-						</a>
-					</SocialButtonsContainer>
+
 					<ClaimedSubtitleB>
 						Plus you&apos;re getting an additional{' '}
 						<span style={{ color: '#FED670' }}>
@@ -263,34 +230,76 @@ export const CongratulationsCard = () => {
 						</span>{' '}
 						per week.
 					</ClaimedSubtitleB>
-					<ClaimedSubtitleB>
-						Watch your GIVstream flow!
-					</ClaimedSubtitleB>
-					<Row alignItems='center'>
-						<Link href='/givstream' passHref>
-							<ExploreButton>
-								explore the giveconomy
-							</ExploreButton>
-						</Link>
-						<div>
-							<Lottie
-								options={BlowingAnimationOptions}
-								height={100}
-								width={80}
-								// isPaused={showClaimModal}
-								speed={0.8}
-							/>
-						</div>
-					</Row>
-					<ClaimFromAnother
-						onClick={() => {
-							goFirstStep();
-							resetWallet();
-						}}
-					>
-						Claim from another address!
-					</ClaimFromAnother>
 				</CongContent>
+
+				<SocialButtonsContainer>
+					<a
+						href='https:twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
+						target='_blank'
+						rel='noreferrer'
+					>
+						<SocialButton>
+							share on twitter
+							<Image
+								src='/images/icons/twitter.svg'
+								height='15'
+								width='15'
+								alt='Twitter logo.'
+							/>
+						</SocialButton>
+					</a>
+					<a
+						href='https:swag.giveth.io/'
+						target='_blank'
+						rel='noreferrer'
+					>
+						<SocialButton>
+							claim your free swag
+							<Image
+								src='/images/icons/tshirt.svg'
+								height='15'
+								width='15'
+								alt='T shirt.'
+							/>
+						</SocialButton>
+					</a>
+					<a
+						href='https:discord.giveth.io/'
+						target='_blank'
+						rel='noreferrer'
+					>
+						<SocialButton>
+							join our discord
+							<Image
+								src='/images/icons/discord.svg'
+								height='15'
+								width='15'
+								alt='discord logo.'
+							/>
+						</SocialButton>
+					</a>
+				</SocialButtonsContainer>
+				<ExploreRow>
+					<Link href='/' passHref>
+						<ExploreButton>explore the giveconomy</ExploreButton>
+					</Link>
+					<BlowingContainer>
+						<Lottie
+							options={BlowingAnimationOptions}
+							height={100}
+							width={80}
+							speed={0.8}
+						/>
+					</BlowingContainer>
+				</ExploreRow>
+				<ClaimFromAnother
+					onClick={() => {
+						goFirstStep();
+						resetWallet();
+					}}
+				>
+					Claim from another address!
+				</ClaimFromAnother>
 			</CongratulationsContainer>
 		</CongratulationsView>
 	);
