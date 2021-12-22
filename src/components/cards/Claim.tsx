@@ -1,6 +1,5 @@
 import { FC, useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
 import { Row } from '../styled-components/Grid';
@@ -18,93 +17,7 @@ import { GIVdropHarvestModal } from '../modals/GIVdropHarvestModal';
 import { formatWeiHelper } from '@/helpers/number';
 import type { TransactionResponse } from '@ethersproject/providers';
 import { wrongWallet } from '../toasts/claim';
-import { useTokenDistro } from '@/context/tokenDistro.context';
 import { H2, Lead } from '@giveth/ui-design-system';
-
-const ClaimedContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	position: relative;
-`;
-
-const SunImage = styled.div`
-	position: relative;
-	height: 0px;
-	left: -5%;
-	@media only screen and (max-width: 1360px) {
-		top: 90px;
-	}
-	@media only screen and (max-width: 1120px) {
-		display: none;
-	}
-`;
-
-const StarsImage = styled(SunImage)`
-	left: 75%;
-	top: -50px;
-`;
-
-const ClaimedTitle = styled.div`
-	font-family: 'Red Hat Text';
-	font-size: 64px;
-	font-weight: 700;
-	text-align: center;
-`;
-
-const ClaimedSubtitleContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	gap: 4px;
-`;
-
-const ClaimedSubtitleA = styled.div`
-	font-family: 'Red Hat Text';
-	font-size: 21px;
-	text-align: center;
-	display: flex;
-	gap: 12px;
-`;
-
-const AddGivButton = styled.div`
-	cursor: pointer;
-`;
-
-const ClaimedSubtitleB = styled.div`
-	font-family: 'Red Hat Text';
-	font-size: 20px;
-	text-align: center;
-`;
-
-const SocialButton = styled(Button)`
-	font-family: 'Red Hat Text';
-	font-size: 14px;
-	font-weight: bold;
-	text-transform: uppercase;
-	background-color: transparent;
-	border: 2px solid white;
-	height: 50px;
-	width: 265px;
-	margin-top: 12px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	gap: 4px;
-`;
-
-const ExploreButton = styled(SocialButton)`
-	background-color: #e1458d;
-	border: none;
-	width: 285px;
-`;
-
-const ClaimFromAnother = styled.span`
-	cursor: pointer;
-	color: #fed670;
-	margin-top: 4px;
-`;
 
 interface IClaimCardContainer {
 	claimed: any;
@@ -150,9 +63,9 @@ const MetamaskButton = styled.a`
 `;
 
 const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goFirstStep, goPreviousStep } =
+	const { activeIndex, goPreviousStep, goNextStep } =
 		useContext(ClaimViewContext);
-	const { userAddress, totalAmount, resetWallet } = useUser();
+	const { userAddress, totalAmount } = useUser();
 	const {
 		isReady,
 		changeWallet,
@@ -166,22 +79,6 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const [txStatus, setTxStatus] = useState<TransactionResponse | undefined>();
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [showClaimModal, setShowClaimModal] = useState<boolean>(false);
-	const [isClaimed, setIsClaimed] = useState(false);
-	const [streamValue, setStreamValue] = useState<string>('0');
-
-	const { tokenDistroHelper } = useTokenDistro();
-
-	useEffect(() => {
-		setStreamValue(
-			formatWeiHelper(
-				tokenDistroHelper.getStreamPartTokenPerWeek(totalAmount),
-			),
-		);
-	}, [totalAmount, tokenDistroHelper]);
-
-	useEffect(() => {
-		setIsClaimed(false);
-	}, [address, userAddress]);
 
 	useEffect(() => {
 		setShowModal(
@@ -221,8 +118,8 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 	};
 
 	const onSuccess = (tx: TransactionResponse) => {
-		setIsClaimed(true);
 		setTxStatus(tx);
+		goNextStep();
 	};
 
 	return (
@@ -232,154 +129,37 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 				index={index}
 				claimed={txStatus}
 			>
-				{isClaimed ? (
-					<>
-						<SunImage>
-							<Image
-								src='/images/claimed_logo.svg'
-								height='225'
-								width='255'
-								alt='Claimed sun'
-							/>
-						</SunImage>
-						<StarsImage>
-							<Image
-								src='/images/claimed_stars.svg'
-								height='105'
-								width='105'
-								alt='Yellow stars.'
-							/>
-						</StarsImage>
-						<ClaimedContainer>
-							<ClaimedTitle>Congratulations!</ClaimedTitle>
-							<ClaimedSubtitleContainer>
-								<ClaimedSubtitleA>
-									You have successfully claimed{' '}
-									{formatWeiHelper(totalAmount.div(10))} GIV.{' '}
-									<AddGivButton
-										onClick={() =>
-											addGIVToken(
-												config.XDAI_NETWORK_NUMBER,
-											)
-										}
-									>
-										<Image
-											src='/images/icons/metamask.svg'
-											height='24'
-											width='24'
-											alt='Metamask logo.'
-										/>
-									</AddGivButton>
-								</ClaimedSubtitleA>
-								<ClaimedSubtitleB>
-									Plus you&apos;re getting an additional{' '}
-									<span style={{ color: '#FED670' }}>
-										{streamValue} GIV
-									</span>{' '}
-									per week.
-								</ClaimedSubtitleB>
-								<a
-									href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
-									target='_blank'
-									rel='noreferrer'
-								>
-									<SocialButton>
-										share on twitter
-										<Image
-											src='/images/icons/twitter.svg'
-											height='15'
-											width='15'
-											alt='Twitter logo.'
-										/>
-									</SocialButton>
-								</a>
-								<a
-									href='https://swag.giveth.io/'
-									target='_blank'
-									rel='noreferrer'
-								>
-									<SocialButton>
-										claim your free swag
-										<Image
-											src='/images/icons/tshirt.svg'
-											height='15'
-											width='15'
-											alt='T shirt.'
-										/>
-									</SocialButton>
-								</a>
-								<a
-									href='https://discord.giveth.io/'
-									target='_blank'
-									rel='noreferrer'
-								>
-									<SocialButton>
-										join our discord
-										<Image
-											src='/images/icons/discord.svg'
-											height='15'
-											width='15'
-											alt='discord logo.'
-										/>
-									</SocialButton>
-								</a>
-								<Link href='/' passHref>
-									<a target='_blank' rel='noreferrer'>
-										<ExploreButton>
-											explore the giveconomy
-										</ExploreButton>
-									</a>
-								</Link>
-								<ClaimFromAnother
-									onClick={() => {
-										goFirstStep();
-										resetWallet();
-										setIsClaimed(false);
-									}}
-								>
-									Claim from another address!
-								</ClaimFromAnother>
-							</ClaimedSubtitleContainer>
-						</ClaimedContainer>
-					</>
-				) : (
-					<>
-						<ClaimHeader>
-							<Title as='h1' weight={700}>
-								Claim your GIV now!
-							</Title>
-							<Desc size='small' color={'#CABAFF'}>
-								Join the giving economy.
-							</Desc>
-						</ClaimHeader>
-						<Row alignItems={'center'} justifyContent={'center'}>
-							{/* <ClaimButton secondary onClick={onClaim}> */}
-							<ClaimButton
-								secondary
-								tabIndex={-1}
-								onClick={() => {
-									openHarvestModal();
-								}}
-							>
-								CLAIM {formatWeiHelper(totalAmount.div(10))} GIV
-							</ClaimButton>
-						</Row>
-						<Row alignItems={'center'} justifyContent={'center'}>
-							<MetamaskButton
-								onClick={() =>
-									addGIVToken(config.XDAI_NETWORK_NUMBER)
-								}
-							>
-								<Image
-									src='/images/metamask.png'
-									height='32'
-									width='215'
-									alt='Metamask button'
-								/>
-							</MetamaskButton>
-						</Row>
-					</>
-				)}
+				<ClaimHeader>
+					<Title as='h1' weight={700}>
+						Claim your GIV now!
+					</Title>
+					<Desc size='small' color={'#CABAFF'}>
+						Join the giving economy.
+					</Desc>
+				</ClaimHeader>
+				<Row alignItems={'center'} justifyContent={'center'}>
+					{/* <ClaimButton secondary onClick={onClaim}> */}
+					<ClaimButton
+						secondary
+						onClick={() => {
+							openHarvestModal();
+						}}
+					>
+						CLAIM {formatWeiHelper(totalAmount.div(10))} GIV
+					</ClaimButton>
+				</Row>
+				<Row alignItems={'center'} justifyContent={'center'}>
+					<MetamaskButton
+						onClick={() => addGIVToken(config.XDAI_NETWORK_NUMBER)}
+					>
+						<Image
+							src='/images/metamask.png'
+							height='32'
+							width='215'
+							alt='Metamask button'
+						/>
+					</MetamaskButton>
+				</Row>
 				{activeIndex === index && (
 					<>
 						<PreviousArrowButton onClick={goPreviousStep} />
@@ -398,7 +178,6 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 					showModal={showClaimModal}
 					setShowModal={setShowClaimModal}
 					network={config.XDAI_NETWORK_NUMBER}
-					txStatus={txStatus}
 					givdropAmount={totalAmount}
 					checkNetworkAndWallet={checkNetworkAndWallet}
 					onSuccess={onSuccess}
