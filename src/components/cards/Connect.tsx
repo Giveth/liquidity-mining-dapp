@@ -169,14 +169,8 @@ const BackToGIVeconomy = styled.div`
 
 export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { connect } = useContext(OnboardContext);
-	const {
-		totalAmount,
-		giveDropState,
-		step,
-		setStep,
-		goNextStep,
-		goPreviousStep,
-	} = useContext(UserContext);
+	const { totalAmount, giveDropState, step, isloading, goNextStep } =
+		useContext(UserContext);
 
 	let title;
 	let desc;
@@ -194,7 +188,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			title = 'Claim your GIVdrop';
 			desc =
 				'Connect your wallet or check an Ethereum address to see your rewards.';
-			btnLabel = 'CONNECT WALLET';
+			btnLabel = isloading ? 'Loading Data' : 'CONNECT WALLET';
 			bg = {
 				width: '473px',
 				height: '210px',
@@ -268,21 +262,6 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 							>
 								{btnLabel}
 							</ConnectButton>
-							{/* <Span onClick={() => console.log(walletAddress)}>
-								or
-							</Span>
-							<InputWithButtonContainer>
-								<WalletAddressInputWithButton
-									btnLable='Check'
-									placeholder='Enter an address to check your GIVdrop'
-									walletAddress={walletAddress}
-									onSubmit={submitAddress}
-									disabled={loading}
-									onUpdate={() => {
-										resetWallet();
-									}}
-								/>
-							</InputWithButtonContainer> */}
 						</ConnectRow>
 						{giveDropState === GiveDropStateType.Missed && (
 							<Link href='/' passHref>
