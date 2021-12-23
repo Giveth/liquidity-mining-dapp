@@ -6,7 +6,8 @@ const config: EnvConfig = {
 	MAINNET_NETWORK_NUMBER: 1, // ETH
 	XDAI_NETWORK_NUMBER: 100, // xDAI
 
-	GARDEN_LINK: '',
+	GARDEN_LINK:
+		'https://gardens.1hive.org/#/xdai/garden/0xb25f0ee2d26461e2b5b3d3ddafe197a0da677b98',
 
 	MAINNET_NETWORK: {
 		chainId: '0x1', // A 0x-prefixed hexadecimal string
