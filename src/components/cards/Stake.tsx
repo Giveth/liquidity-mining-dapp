@@ -244,10 +244,9 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 				</PoolCardContainer>
 			</APRRow>
 			<PoolCardFooter>
-				The following calculators demonstrate how you can use GIV to
-				participate in the GIVeconomy!{' '}
-				<b>These are just simulations.</b> To participate for real,
-				claim your GIV.
+				These calculators demonstrate how you can use GIV to participate
+				in the GIVeconomy! <b>These are just simulations.</b> To
+				participate for real, claim your GIV.
 			</PoolCardFooter>
 			{step === index && (
 				<>
