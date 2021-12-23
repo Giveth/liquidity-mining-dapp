@@ -113,7 +113,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 						Claim your GIV now!
 					</Title>
 					<Desc size='small' color={'#CABAFF'}>
-						Let's Build the Future of Giving, together.
+						Let&apos;s Build the Future of Giving, together.
 					</Desc>
 				</ClaimHeader>
 				<Row alignItems={'center'} justifyContent={'center'}>
