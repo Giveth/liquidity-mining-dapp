@@ -80,6 +80,8 @@ export const UserProvider: FC<Props> = ({ children }) => {
 		setGiveDropState(GiveDropStateType.notConnected);
 		if (address) {
 			getClaimData();
+		} else {
+			setIsLoading(false);
 		}
 	}, [address, network]);
 
