@@ -113,7 +113,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 						Claim your GIV now!
 					</Title>
 					<Desc size='small' color={'#CABAFF'}>
-						Join the giving economy.
+						Let's Build the Future of Giving, together.
 					</Desc>
 				</ClaimHeader>
 				<Row alignItems={'center'} justifyContent={'center'}>
@@ -124,7 +124,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 							openHarvestModal();
 						}}
 					>
-						CLAIM {formatWeiHelper(totalAmount.div(10))} GIV
+						CLAIM
 					</ClaimButton>
 				</Row>
 				<Row alignItems={'center'} justifyContent={'center'}>
