@@ -113,6 +113,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 						onClick={() => {
 							openHarvestModal();
 						}}
+						tabIndex={-1}
 					>
 						CLAIM
 					</ClaimButton>
