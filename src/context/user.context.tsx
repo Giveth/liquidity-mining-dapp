@@ -66,7 +66,8 @@ export const UserProvider: FC<Props> = ({ children }) => {
 		const claimData = await fetchAirDropClaimData(address);
 		if (claimData) {
 			const _hasClaimed = await hasClaimedAirDrop(address);
-			// const _hasClaimed = false;
+			// const _hasClaimed = true;
+			console.log(`_hasClaimed`, _hasClaimed);
 			setTotalAmount(BigNumber.from(claimData.amount));
 			setIsLoading(false);
 			if (!_hasClaimed) {
@@ -78,6 +79,7 @@ export const UserProvider: FC<Props> = ({ children }) => {
 		}
 		setGiveDropState(GiveDropStateType.Missed);
 		setTotalAmount(Zero);
+		setIsLoading(false);
 	};
 
 	const resetWallet = () => {
