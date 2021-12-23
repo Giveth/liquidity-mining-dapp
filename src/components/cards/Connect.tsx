@@ -237,8 +237,6 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 				bg: '/images/connectMissbg.png',
 			};
 			break;
-		case GiveDropStateType.Claimed:
-			setStep(6);
 		default:
 			break;
 	}

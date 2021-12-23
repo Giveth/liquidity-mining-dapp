@@ -68,6 +68,7 @@ export const UserProvider: FC<Props> = ({ children }) => {
 					return;
 				} else {
 					setGiveDropState(GiveDropStateType.Claimed);
+					setStep(6);
 					return;
 				}
 			}
