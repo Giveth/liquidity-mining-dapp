@@ -215,7 +215,7 @@ const WalletCheckButton = styled.button`
 const WalletDisplayerHint = styled(GLink)``;
 
 export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { address, connect } = useContext(OnboardContext);
+	const { address, connect, isReady } = useContext(OnboardContext);
 	const {
 		totalAmount,
 		giveDropState,
@@ -314,6 +314,9 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 								secondary
 								onClick={async () => {
 									await connect();
+									if (isReady) {
+										getClaimData();
+									}
 								}}
 							>
 								{btnLabel}
