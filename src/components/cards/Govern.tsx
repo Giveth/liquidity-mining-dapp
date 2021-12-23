@@ -87,7 +87,7 @@ const GovernHeader = styled.div`
 `;
 
 const Title = styled(H2)`
-	font-size: 2.7em;
+	font-size: 3.2em;
 	font-weight: 700;
 	width: 750px;
 `;
@@ -263,10 +263,9 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 				</PoolCardContainer>
 			</APRRow>
 			<PoolCardFooter>
-				The following calculators demonstrate how you can use GIV to
-				participate in the GIVeconomy!{' '}
-				<b>These are just simulations.</b> To participate for real,
-				claim your GIV.
+				These calculators demonstrate how you can use GIV to participate
+				in the GIVeconomy! <b>These are just simulations.</b> To
+				participate for real, claim your GIV.
 			</PoolCardFooter>
 			{step === index && (
 				<>
