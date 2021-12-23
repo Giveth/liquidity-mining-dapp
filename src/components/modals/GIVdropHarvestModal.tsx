@@ -39,7 +39,10 @@ import BigNumber from 'bignumber.js';
 import Lottie from 'react-lottie';
 import LoadingAnimation from '@/animations/loading.json';
 import { claimAirDrop } from '@/lib/claim';
-import type { TransactionResponse } from '@ethersproject/providers';
+import type {
+	TransactionResponse,
+	TransactionReceipt,
+} from '@ethersproject/providers';
 import useUser from '@/context/user.context';
 import { OnboardContext } from '@/context/onboard.context';
 import {
@@ -48,6 +51,7 @@ import {
 	showFailedClaim,
 } from '../toasts/claim';
 import config from '@/configuration';
+import styled from 'styled-components';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -68,7 +72,6 @@ enum ClaimState {
 
 interface IGIVdropHarvestModal extends IModal {
 	network: number;
-	txStatus: any;
 	givdropAmount: ethers.BigNumber;
 	checkNetworkAndWallet: () => Promise<boolean>;
 	onSuccess: (tx: TransactionResponse) => void;
@@ -78,13 +81,13 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 	showModal,
 	setShowModal,
 	network,
-	txStatus,
 	givdropAmount,
 	checkNetworkAndWallet,
 	onSuccess,
 }) => {
 	const [price, setPrice] = useState(0);
 	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
+	const [txResp, setTxResp] = useState<TransactionResponse | undefined>();
 	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
 	const [givDropStream, setGivDropStream] = useState<BigNumber.Value>(0);
 	const [givDropAccStream, setGivDropAccStream] = useState<ethers.BigNumber>(
@@ -125,7 +128,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 			_givDropAcc = _givDropAcc.add(claimableNow).sub(givBackLiquidPart);
 		}
 		setGivDropAccStream(_givDropAcc);
-	}, [givdropAmount, currentBalance, tokenDistroHelper]);
+	}, [givdropAmount, tokenDistroHelper, claimableNow, givBackLiquidPart]);
 
 	const calcUSD = (amount: string) => {
 		const usd = (parseInt(amount.toString()) * price).toFixed(2);
@@ -140,7 +143,59 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 		try {
 			setClaimState(ClaimState.WAITING);
 			const tx = await claimAirDrop(userAddress, provider);
+			// This is for test;
+			// const tx: TransactionResponse = {
+			// 	hash: '0x8162815a31ba2ffc6a815ec76f79231fd7bc4a8c49f9e5ec7d923a6c069ef938',
+			// 	nonce: 0,
+			// 	gasLimit: ethers.BigNumber.from(0),
+			// 	gasPrice: undefined,
+			// 	data: '0',
+			// 	value: ethers.BigNumber.from(0),
+			// 	chainId: 0,
+			// 	confirmations: 0,
+			// 	from: '0',
+			// 	wait: confirmations => {
+			// 		return new Promise(resolve => {
+			// 			setTimeout(() => {
+			// 				const _tx: TransactionReceipt = {
+			// 					to: '',
+			// 					from: '',
+			// 					contractAddress: '',
+			// 					transactionIndex: 0,
+			// 					root: '',
+			// 					gasUsed: ethers.BigNumber.from(0),
+			// 					logsBloom: '',
+			// 					blockHash: '',
+			// 					transactionHash:
+			// 						'0x9162815a31ba2ffc6a815ec76f79231fd7bc4a8c49f9e5ec7d923a6c069ef938',
+			// 					logs: [
+			// 						{
+			// 							blockNumber: 0,
+			// 							blockHash: '',
+			// 							transactionIndex: 0,
+			// 							removed: false,
+			// 							address: '',
+			// 							data: '',
+			// 							topics: [''],
+			// 							transactionHash: '',
+			// 							logIndex: 0,
+			// 						},
+			// 					],
+			// 					blockNumber: 0,
+			// 					confirmations: 0,
+			// 					cumulativeGasUsed: ethers.BigNumber.from(0),
+			// 					effectiveGasPrice: ethers.BigNumber.from(0),
+			// 					byzantium: false,
+			// 					type: 0,
+			// 					status: 1,
+			// 				};
+			// 				resolve(_tx);
+			// 			}, 2000);
+			// 		});
+			// 	},
+			// };
 			if (tx) {
+				setTxResp(tx);
 				setClaimState(ClaimState.SUBMITTING);
 				showPendingClaim(config.XDAI_NETWORK_NUMBER, tx.hash);
 				const { status } = await tx.wait();
@@ -265,21 +320,21 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 									</>
 								)}
 								<HarvestAllDesc>
-									When you harvest GIV rewards, all liquid GIV
+									When you Claim GIV rewards, all liquid GIV
 									allocated to you is sent to your wallet.
 								</HarvestAllDesc>
 								{claimState === ClaimState.WAITING ? (
-									<Pending>
+									<ClaimPending>
 										<Lottie
 											options={loadingAnimationOptions}
 											height={40}
 											width={40}
 										/>
-										&nbsp;HARVEST PENDING
-									</Pending>
+										&nbsp;CLAIM PENDING
+									</ClaimPending>
 								) : (
 									<HarvestButton
-										label='HARVEST'
+										label='CLAIM'
 										size='medium'
 										buttonType='primary'
 										onClick={() => {
@@ -304,14 +359,14 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 					<SubmittedInnerModal
 						title='GIV'
 						walletNetwork={network}
-						txHash={txStatus?.hash}
+						txHash={txResp?.hash}
 					/>
 				)}
 				{claimState === ClaimState.CLAIMED && (
 					<ConfirmedInnerModal
 						title='GIV'
 						walletNetwork={network}
-						txHash={txStatus?.hash}
+						txHash={txResp?.hash}
 					/>
 				)}
 				{claimState === ClaimState.ERROR && (
@@ -320,7 +375,8 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 						<ErrorInnerModal
 							title='GIV'
 							walletNetwork={network}
-							txHash={txStatus?.hash}
+							txHash={txResp?.hash}
+							message='Something went wrong.'
 						/>
 						<CancelButton
 							label='CLOSE'
@@ -337,3 +393,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 		</Modal>
 	);
 };
+
+const ClaimPending = styled(Pending)`
+	width: 316px;
+`;
