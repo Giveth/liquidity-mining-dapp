@@ -67,13 +67,16 @@ export const UserProvider: FC<Props> = ({ children }) => {
 	}, [network, step, isReady]);
 
 	const getClaimData = async () => {
+		if (network !== config.XDAI_NETWORK_NUMBER) {
+			return;
+		}
 		setTotalAmount(Zero);
 		setStep(0);
 		setIsLoading(true);
 		const claimData = await fetchAirDropClaimData(address);
 		if (claimData) {
 			const _hasClaimed = await hasClaimedAirDrop(address);
-			// const _hasClaimed = true;
+			// const _hasClaimed = false;
 			console.log(`_hasClaimed`, _hasClaimed);
 			setTotalAmount(BigNumber.from(claimData.amount));
 			setIsLoading(false);
