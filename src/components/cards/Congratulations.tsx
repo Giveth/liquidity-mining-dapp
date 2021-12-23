@@ -13,7 +13,6 @@ import BlowingAnimation from '../../animations/blowing.json';
 import config from '@/configuration';
 import Link from 'next/link';
 import { useTokenDistro } from '@/context/tokenDistro.context';
-import { ClaimViewContext } from '../views/claim/Claim.view';
 import { Row } from '../styled-components/Grid';
 
 const SmileImage = styled.div`
@@ -159,12 +158,8 @@ const BlowingContainer = styled.div`
 
 export const CongratulationsCard = () => {
 	const [streamValue, setStreamValue] = useState<string>('0');
-
 	const { tokenDistroHelper } = useTokenDistro();
-
-	const { goFirstStep } = useContext(ClaimViewContext);
-
-	const { userAddress, totalAmount, resetWallet } = useUser();
+	const { totalAmount } = useUser();
 
 	useEffect(() => {
 		setStreamValue(
@@ -292,14 +287,14 @@ export const CongratulationsCard = () => {
 						/>
 					</BlowingContainer>
 				</ExploreRow>
-				<ClaimFromAnother
+				{/* <ClaimFromAnother
 					onClick={() => {
 						goFirstStep();
 						resetWallet();
 					}}
 				>
 					Claim from another address!
-				</ClaimFromAnother>
+				</ClaimFromAnother> */}
 			</CongratulationsContainer>
 		</CongratulationsView>
 	);

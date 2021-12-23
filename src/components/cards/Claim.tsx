@@ -4,10 +4,7 @@ import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
 import { Row } from '../styled-components/Grid';
 import { Card, Header, PreviousArrowButton } from './common';
-import {
-	ClaimViewContext,
-	IClaimViewCardProps,
-} from '../views/claim/Claim.view';
+import { IClaimViewCardProps } from '../views/claim/Claim.view';
 import useUser from '../../context/user.context';
 import { OnboardContext } from '../../context/onboard.context';
 import config from '../../configuration';
@@ -63,18 +60,9 @@ const MetamaskButton = styled.a`
 `;
 
 const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goPreviousStep, goNextStep } =
-		useContext(ClaimViewContext);
-	const { userAddress, totalAmount } = useUser();
-	const {
-		isReady,
-		changeWallet,
-		connect,
-		provider,
-		network,
-		walletCheck,
-		address,
-	} = useContext(OnboardContext);
+	const { totalAmount, step, goPreviousStep, goNextStep } = useUser();
+	const { isReady, connect, network, walletCheck } =
+		useContext(OnboardContext);
 
 	const [txStatus, setTxStatus] = useState<TransactionResponse | undefined>();
 	const [showModal, setShowModal] = useState<boolean>(false);
@@ -82,23 +70,14 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	useEffect(() => {
 		setShowModal(
-			isReady &&
-				network !== config.XDAI_NETWORK_NUMBER &&
-				activeIndex === 5,
+			isReady && network !== config.XDAI_NETWORK_NUMBER && step === 5,
 		);
-	}, [network, activeIndex, isReady]);
+	}, [network, step, isReady]);
 
 	const checkNetworkAndWallet = async () => {
 		if (!isReady) {
 			console.log('Wallet is not connected');
 			await connect();
-			return false;
-		}
-
-		if (!provider || userAddress !== address) {
-			console.log('Connected wallet is not the claimed address');
-			wrongWallet(userAddress);
-			await changeWallet();
 			return false;
 		}
 
@@ -125,7 +104,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 	return (
 		<>
 			<ClaimCardContainer
-				activeIndex={activeIndex}
+				activeIndex={step}
 				index={index}
 				claimed={txStatus}
 			>
@@ -160,7 +139,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 						/>
 					</MetamaskButton>
 				</Row>
-				{activeIndex === index && (
+				{step === index && (
 					<>
 						<PreviousArrowButton onClick={goPreviousStep} />
 					</>

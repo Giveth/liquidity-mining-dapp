@@ -29,10 +29,7 @@ import {
 } from './common';
 import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
-import {
-	ClaimViewContext,
-	IClaimViewCardProps,
-} from '../views/claim/Claim.view';
+import { IClaimViewCardProps } from '../views/claim/Claim.view';
 import config from '../../configuration';
 import { UserContext } from '../../context/user.context';
 import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
@@ -120,9 +117,8 @@ const GovernFooter = styled.div`
 `;
 
 const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goNextStep, goPreviousStep } =
-		useContext(ClaimViewContext);
-	const { totalAmount } = useContext(UserContext);
+	const { totalAmount, step, goNextStep, goPreviousStep } =
+		useContext(UserContext);
 
 	const [stacked, setStacked] = useState<string>('0');
 	const [potentialClaim, setPotentialClaim] = useState<EthersBigNumber>(
@@ -184,7 +180,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 	}, [stacked]);
 
 	return (
-		<GovernCardContainer activeIndex={activeIndex} index={index}>
+		<GovernCardContainer activeIndex={step} index={index}>
 			<BeeImage>
 				<Image
 					src='/images/bee1.svg'
@@ -272,7 +268,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 				<b>These are just simulations.</b> To participate for real,
 				claim your GIV.
 			</PoolCardFooter>
-			{activeIndex === index && (
+			{step === index && (
 				<>
 					<ArrowButton onClick={goNextStep} />
 					<PreviousArrowButton onClick={goPreviousStep} />

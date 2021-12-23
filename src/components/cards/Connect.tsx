@@ -2,16 +2,12 @@ import { FC, useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { WalletAddressInputWithButton } from '../input';
 import { Button } from '../styled-components/Button';
 import { Row } from '../styled-components/Grid';
 import { ArrowButton, Card } from './common';
 import { OnboardContext } from '../../context/onboard.context';
 import { UserContext, GiveDropStateType } from '../../context/user.context';
-import {
-	ClaimViewContext,
-	IClaimViewCardProps,
-} from '../views/claim/Claim.view';
+import { IClaimViewCardProps } from '../views/claim/Claim.view';
 import config from '@/config/development';
 import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
 import { formatWeiHelper } from '@/helpers/number';
@@ -172,39 +168,15 @@ const BackToGIVeconomy = styled.div`
 `;
 
 export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goNextStep, goFirstStep } =
-		useContext(ClaimViewContext);
-
-	const { address, isReady, connect, network } = useContext(OnboardContext);
-	const { submitUserAddress, totalAmount, giveDropState, resetWallet } =
-		useContext(UserContext);
-
-	const [walletAddress, setWalletAddress] = useState<string>('');
-	const [addressSubmitted, setAddressSubmitted] = useState<boolean>(false);
-	const [loading, setLoading] = useState<boolean>(false);
-	const [connectWallet, setConnectionWallet] = useState<boolean>(false);
-	const [networkModal, setNetworkModal] = useState<boolean>(false);
-
-	useEffect(() => {
-		setWalletAddress(address);
-		if (address && connectWallet) {
-			submitAddress(address);
-			setConnectionWallet(false);
-		}
-	}, [address, connectWallet]);
-
-	useEffect(() => {
-		if (addressSubmitted) {
-			setLoading(false);
-			setAddressSubmitted(false);
-		}
-	}, [addressSubmitted, totalAmount]);
-
-	const submitAddress = async (value: string): Promise<void> => {
-		setLoading(true);
-		await submitUserAddress(value);
-		setAddressSubmitted(true);
-	};
+	const { connect } = useContext(OnboardContext);
+	const {
+		totalAmount,
+		giveDropState,
+		step,
+		setStep,
+		goNextStep,
+		goPreviousStep,
+	} = useContext(UserContext);
 
 	let title;
 	let desc;
@@ -266,29 +238,13 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 			};
 			break;
 		case GiveDropStateType.Claimed:
-			bg = {
-				width: '622px',
-				height: '245px',
-				top: '337px',
-				right: '300px',
-				bg: '/images/connectMissbg.png',
-			};
-			break;
+			setStep(6);
 		default:
 			break;
 	}
 
-	const checkConnection = async () => {
-		if (!isReady) await connect();
-		goNextStep();
-	};
-
-	useEffect(() => {
-		setNetworkModal(network !== config.XDAI_NETWORK_NUMBER && isReady);
-	}, [network, isReady]);
-
 	return (
-		<ConnectCardContainer activeIndex={activeIndex} index={index} data={bg}>
+		<ConnectCardContainer activeIndex={step} index={index} data={bg}>
 			{giveDropState !== GiveDropStateType.Claimed && (
 				<Header>
 					<Title as='h1' weight={700}>
@@ -310,7 +266,6 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 								secondary
 								onClick={async () => {
 									await connect();
-									setConnectionWallet(true);
 								}}
 							>
 								{btnLabel}
@@ -340,98 +295,8 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 						)}
 					</>
 				)}
-			{giveDropState === GiveDropStateType.Success &&
-				activeIndex === index && <ArrowButton onClick={goNextStep} />}
-			{giveDropState === GiveDropStateType.Claimed && (
-				<>
-					<SunImage>
-						<Image
-							src='/images/claimed_logo.svg'
-							height='225'
-							width='255'
-							alt='Claimed sun'
-						/>
-					</SunImage>
-					<StarsImage>
-						<Image
-							src='/images/claimed_stars.svg'
-							height='105'
-							width='105'
-							alt='Yellow stars.'
-						/>
-					</StarsImage>
-					<ClaimedContainer>
-						<ClaimedTitle>Congratulations!</ClaimedTitle>
-						<ClaimedSubtitleContainer>
-							<ClaimedSubtitleA>
-								You already claimed your GIV!
-								<AddGivButton
-									onClick={() => addGIVToken(network)}
-								>
-									<Image
-										src='/images/icons/metamask.svg'
-										height='24'
-										width='24'
-										alt='Metamask logo.'
-									/>
-								</AddGivButton>
-							</ClaimedSubtitleA>
-							<SocialButton
-								label='SHARE ON TWITTER '
-								target='_blank'
-								href='https://twitter.com/intent/tweet?text=The%20%23GIVeconomy%20is%20here!%20Excited%20to%20be%20part%20of%20the%20Future%20of%20Giving%20with%20$GIV%20%26%20%40givethio%20%23blockchain4good%20%23defi4good%20%23givethlove%20%23givdrop'
-								icon={
-									<Image
-										src='/images/icons/twitter.svg'
-										height='15'
-										width='15'
-										alt='Twitter logo.'
-									/>
-								}
-							/>
-							<SocialButton
-								label='CLAIM YOUR FREE SWAG '
-								target='_blank'
-								href='https://swag.giveth.io/'
-								icon={
-									<Image
-										src='/images/icons/tshirt.svg'
-										height='15'
-										width='15'
-										alt='T shirt.'
-									/>
-								}
-							/>
-							<SocialButton
-								label='JOIN OUR DISCORD '
-								target='_blank'
-								href='https://swag.giveth.io/'
-								icon={
-									<Image
-										src='/images/icons/discord.svg'
-										height='15'
-										width='15'
-										alt='discord logo.'
-									/>
-								}
-							/>
-							<Link href='/' passHref>
-								<ExploreButton
-									label='EXPLORE THE GIVECONOMY'
-									linkType='primary'
-								/>
-							</Link>
-							<ClaimFromAnother
-								onClick={() => {
-									goFirstStep();
-									resetWallet();
-								}}
-							>
-								Claim from another address!
-							</ClaimFromAnother>
-						</ClaimedSubtitleContainer>
-					</ClaimedContainer>
-				</>
+			{giveDropState === GiveDropStateType.Success && step === index && (
+				<ArrowButton onClick={goNextStep} />
 			)}
 		</ConnectCardContainer>
 	);
