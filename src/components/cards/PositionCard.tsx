@@ -61,7 +61,7 @@ interface IV3StakeCardProps {
 	isUnstaking?: boolean;
 	selectedPosition?: boolean;
 	isConfirming?: boolean;
-	handleAction: (tokenId: number, reward: BigNumber) => void;
+	handleAction: (tokenId: number) => void;
 }
 
 const STARTS_WITH = 'data:application/json;base64,';
@@ -185,9 +185,7 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 					<FullWidthButton
 						label={buttonLabel}
 						buttonType='primary'
-						onClick={() =>
-							handleAction(position.tokenId, position.reward)
-						}
+						onClick={() => handleAction(position.tokenId)}
 					/>
 				)}
 				<FullWidthButton

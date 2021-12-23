@@ -32,7 +32,7 @@ import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
 import { IconWithTooltip } from '../IconWithToolTip';
 import LoadingAnimation from '@/animations/loading.json';
 import { transfer, exit } from '@/lib/stakingNFT';
-import { BigNumber, constants } from 'ethers';
+import { ethers, BigNumber, constants, utils } from 'ethers';
 import {
 	ConfirmedInnerModal,
 	SubmittedInnerModal,
@@ -40,6 +40,7 @@ import {
 } from './ConfirmSubmit';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { formatWeiHelper } from '@/helpers/number';
+import { getUniswapV3StakerContract } from '@/lib/contracts';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -129,7 +130,25 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 		}
 	};
 
-	const handleAction = (tokenId: number, _reward: BigNumber) => {
+	const getReward = async (
+		tokenId: number,
+		uniswapV3StakerContract: ethers.Contract,
+	) => {
+		const { reward } = await uniswapV3StakerContract.getRewardInfo(
+			currentIncentive.key,
+			tokenId,
+		);
+
+		return reward;
+	};
+
+	const handleAction = async (tokenId: number) => {
+		const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
+		if (!provider || !uniswapV3StakerContract) return;
+
+		const _reward = await getReward(tokenId, uniswapV3StakerContract);
+
+		console.log('_reward', utils.formatEther(_reward));
 		const liquidReward = tokenDistroHelper.getLiquidPart(_reward);
 		const streamPerWeek =
 			tokenDistroHelper.getStreamPartTokenPerWeek(_reward);
@@ -221,34 +240,40 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 							<GIVRate>{formatWeiHelper(stream)}</GIVRate>
 							<Lead>GIV/week</Lead>
 						</RateRow>
-						{stakeStatus === StakeState.CONFIRM_UNSTAKE ? (
-							<Pending>
-								<Lottie
-									options={loadingAnimationOptions}
-									height={40}
-									width={40}
+						<HelpRow alignItems='center'>
+							<B>Claimable from GIVstream</B>
+						</HelpRow>
+						<GIVBoxWithPrice amount={reward} />
+						<HarvestButtonContainer>
+							{stakeStatus === StakeState.CONFIRM_UNSTAKE ? (
+								<Pending>
+									<Lottie
+										options={loadingAnimationOptions}
+										height={40}
+										width={40}
+									/>
+									&nbsp; PENDING
+								</Pending>
+							) : (
+								<HarvestButton
+									label='UNSTAKE &amp; HARVEST'
+									size='medium'
+									buttonType='primary'
+									onClick={() => {
+										handleStakeUnstake(0);
+									}}
 								/>
-								&nbsp; PENDING
-							</Pending>
-						) : (
-							<HarvestButton
-								label='UNSTAKE &amp; HARVEST'
+							)}
+							<CancelButton
+								label='CANCEL'
 								size='medium'
-								buttonType='primary'
+								buttonType='texty'
 								onClick={() => {
-									handleStakeUnstake(0);
+									setShowModal(false);
 								}}
+								// disabled={claimState === ClaimState.WAITING}
 							/>
-						)}
-						<CancelButton
-							label='CANCEL'
-							size='medium'
-							buttonType='texty'
-							onClick={() => {
-								setShowModal(false);
-							}}
-							// disabled={claimState === ClaimState.WAITING}
-						/>
+						</HarvestButtonContainer>
 					</HarvestContainer>
 				)}
 				<InnerModalStates>
@@ -365,4 +390,8 @@ export const HarvestContainer = styled.div`
 	margin: auto;
 	padding: 0 24px;
 	width: 630px;
+`;
+
+export const HarvestButtonContainer = styled.div`
+	margin-top: 36px;
 `;

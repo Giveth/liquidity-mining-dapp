@@ -268,16 +268,6 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 					)
 				).filter(p => p) as LiquidityPosition[];
 
-				const getReward = async (position: LiquidityPosition) => {
-					const { reward } =
-						await uniswapV3StakerContract.getRewardInfo(
-							currentIncentive.key,
-							position.tokenId,
-						);
-
-					return { ...position, reward };
-				};
-
 				const downloadURI = async (
 					position: LiquidityPosition,
 				): Promise<any | null> => {
@@ -307,10 +297,6 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 					stakedPositions.map(downloadURI),
 				);
 
-				const stakedPositionsWithReward = await Promise.all(
-					stakedPositionsWithURI.map(getReward),
-				);
-
 				const unstakedPositions = allPositions
 					.flat()
 					.filter(position => !position.staked);
@@ -320,7 +306,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				);
 
 				setTotalNftPositions(allPositions);
-				setStakedPositions(stakedPositionsWithReward);
+				setStakedPositions(stakedPositionsWithURI);
 				setUnstakedPositions(unstakedPositionsWithURI);
 
 				const ethPriceInGIV = pool.priceOf(pool.token1).toFixed(10);
