@@ -280,9 +280,9 @@ export const CongratulationsCard = () => {
 					</a>
 				</SocialButtonsContainer>
 				<ExploreRow>
-					<Link href='/' passHref>
+					<a href='/' target='_blank'>
 						<ExploreButton>explore the giveconomy</ExploreButton>
-					</Link>
+					</a>
 					<BlowingContainer>
 						<Lottie
 							options={BlowingAnimationOptions}
