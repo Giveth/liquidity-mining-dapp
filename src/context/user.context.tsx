@@ -60,17 +60,14 @@ export const UserProvider: FC<Props> = ({ children }) => {
 			const claimData = await fetchAirDropClaimData(address);
 			if (claimData) {
 				const _hasClaimed = await hasClaimedAirDrop(address);
-				// const _hasClaimed = false;
-				console.log('hasClaimed:', _hasClaimed);
+				setTotalAmount(BigNumber.from(claimData.amount));
 				if (!_hasClaimed) {
-					setTotalAmount(BigNumber.from(claimData.amount));
 					setGiveDropState(GiveDropStateType.Success);
-					return;
 				} else {
 					setGiveDropState(GiveDropStateType.Claimed);
 					setStep(6);
-					return;
 				}
+				return;
 			}
 			setGiveDropState(GiveDropStateType.Missed);
 			setTotalAmount(Zero);
