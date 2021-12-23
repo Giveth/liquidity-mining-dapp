@@ -14,6 +14,7 @@ import config from '@/configuration';
 import Link from 'next/link';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { Row } from '../styled-components/Grid';
+import { useOnboard } from '@/context';
 
 const SmileImage = styled.div`
 	position: absolute;
@@ -160,6 +161,7 @@ export const CongratulationsCard = () => {
 	const [streamValue, setStreamValue] = useState<string>('0');
 	const { tokenDistroHelper } = useTokenDistro();
 	const { totalAmount, resetWallet } = useUser();
+	const { provider } = useOnboard();
 
 	useEffect(() => {
 		setStreamValue(
@@ -189,9 +191,11 @@ export const CongratulationsCard = () => {
 							{formatWeiHelper(totalAmount.div(10))} GIV.{' '}
 						</Lead>
 						<AddGivButton
-							onClick={() =>
-								addGIVToken(config.XDAI_NETWORK_NUMBER)
-							}
+							onClick={() => {
+								if (provider) {
+									addGIVToken(provider);
+								}
+							}}
 						>
 							<Image
 								src='/images/icons/metamask.svg'

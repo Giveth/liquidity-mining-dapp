@@ -61,7 +61,7 @@ const MetamaskButton = styled.a`
 
 const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { totalAmount, step, goPreviousStep, goNextStep } = useUser();
-	const { isReady, connect, network, walletCheck } =
+	const { isReady, connect, network, walletCheck, provider } =
 		useContext(OnboardContext);
 
 	const [txStatus, setTxStatus] = useState<TransactionResponse | undefined>();
@@ -129,7 +129,11 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 				</Row>
 				<Row alignItems={'center'} justifyContent={'center'}>
 					<MetamaskButton
-						onClick={() => addGIVToken(config.XDAI_NETWORK_NUMBER)}
+						onClick={() => {
+							if (provider) {
+								addGIVToken(provider);
+							}
+						}}
 					>
 						<Image
 							src='/images/metamask.png'

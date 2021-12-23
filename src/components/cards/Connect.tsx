@@ -1,5 +1,4 @@
-import { FC, useContext, useEffect, useState } from 'react';
-import Image from 'next/image';
+import { FC, useContext } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
@@ -8,10 +7,7 @@ import { ArrowButton, Card } from './common';
 import { OnboardContext } from '../../context/onboard.context';
 import { UserContext, GiveDropStateType } from '../../context/user.context';
 import { IClaimViewCardProps } from '../views/claim/Claim.view';
-import config from '@/config/development';
-import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
 import { formatWeiHelper } from '@/helpers/number';
-import { addGIVToken } from '@/lib/metamask';
 import {
 	ButtonLink,
 	GLink,
