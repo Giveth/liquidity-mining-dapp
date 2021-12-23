@@ -61,7 +61,10 @@ export const claimAirDrop = async (
 
 	return await merkleContract
 		.connect(signer.connectUnchecked())
-		.claim(...args);
+		.claim(...args, {
+			maxFeePerGas: 4000000000,
+			maxPriorityFeePerGas: 3000000000,
+		});
 };
 
 export const claimReward = async (

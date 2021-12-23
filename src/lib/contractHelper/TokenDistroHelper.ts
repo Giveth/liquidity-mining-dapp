@@ -11,6 +11,7 @@ export class TokenDistroHelper {
 	public readonly startTime: Date;
 	public readonly cliffTime: Date;
 	public readonly endTime: Date;
+	public readonly duration: number;
 
 	constructor({
 		initialAmount,
@@ -26,10 +27,7 @@ export class TokenDistroHelper {
 		this.startTime = startTime;
 		this.cliffTime = cliffTime;
 		this.endTime = endTime;
-	}
-
-	get duration(): number {
-		return this.endTime.getTime() - this.startTime.getTime();
+		this.duration = this.endTime.getTime() - this.startTime.getTime();
 	}
 
 	get remain(): number {
@@ -38,7 +36,7 @@ export class TokenDistroHelper {
 
 	get percent(): number {
 		const { duration, remain } = this;
-		return ((duration - remain) / duration) * 100;
+		return (Math.max(duration - remain, 0) / duration) * 100;
 	}
 
 	get globallyClaimableNow(): ethers.BigNumber {
