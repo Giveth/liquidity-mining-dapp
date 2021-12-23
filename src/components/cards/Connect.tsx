@@ -315,7 +315,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 							>
 								{btnLabel}
 							</ConnectButton>
-							<Span onClick={() => console.log(walletAddress)}>
+							{/* <Span onClick={() => console.log(walletAddress)}>
 								or
 							</Span>
 							<InputWithButtonContainer>
@@ -329,7 +329,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 										resetWallet();
 									}}
 								/>
-							</InputWithButtonContainer>
+							</InputWithButtonContainer> */}
 						</ConnectRow>
 						{giveDropState === GiveDropStateType.Missed && (
 							<Link href='/' passHref>
