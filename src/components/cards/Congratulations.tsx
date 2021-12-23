@@ -159,7 +159,7 @@ const BlowingContainer = styled.div`
 export const CongratulationsCard = () => {
 	const [streamValue, setStreamValue] = useState<string>('0');
 	const { tokenDistroHelper } = useTokenDistro();
-	const { totalAmount } = useUser();
+	const { totalAmount, resetWallet } = useUser();
 
 	useEffect(() => {
 		setStreamValue(
@@ -287,14 +287,13 @@ export const CongratulationsCard = () => {
 						/>
 					</BlowingContainer>
 				</ExploreRow>
-				{/* <ClaimFromAnother
+				<ClaimFromAnother
 					onClick={() => {
-						goFirstStep();
 						resetWallet();
 					}}
 				>
 					Claim from another address!
-				</ClaimFromAnother> */}
+				</ClaimFromAnother>
 			</CongratulationsContainer>
 		</CongratulationsView>
 	);

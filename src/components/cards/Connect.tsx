@@ -14,6 +14,7 @@ import { formatWeiHelper } from '@/helpers/number';
 import { addGIVToken } from '@/lib/metamask';
 import {
 	ButtonLink,
+	GLink,
 	H2,
 	Lead,
 	OulineLinkButton,
@@ -68,9 +69,11 @@ const Desc = styled(Lead)`
 const ConnectRow = styled(Row)`
 	flex-direction: row;
 	gap: 16px;
+	align-items: flex-start;
 	// @media only screen and (max-width: 1360px) {}
 	@media only screen and (max-width: 1120px) {
 		flex-direction: column;
+		align-items: center;
 	}
 `;
 
@@ -167,10 +170,61 @@ const BackToGIVeconomy = styled.div`
 	text-decoration: underline;
 `;
 
+const WalletDisplayer = styled(Row)`
+	flex-direction: column;
+	align-items: center;
+`;
+
+const WalletDisplayerInputContainer = styled.div`
+	position: relative;
+`;
+
+const WalletDisplayerInput = styled.input`
+	width: 588px;
+	height: 68px;
+
+	font-family: Red Hat Text;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 18px;
+	line-height: 28px;
+	text-align: center;
+
+	color: #ffffff;
+	background: #310bb5;
+
+	border: 0;
+	border-radius: 88px;
+
+	padding: 20px 120px 20px 20px;
+`;
+
+const WalletCheckButton = styled.button`
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	width: 114px;
+	height: 48.62px;
+	color: white;
+	background: #1b1657;
+	border: 0;
+	border-radius: 88px;
+	cursor: pointer;
+`;
+
+const WalletDisplayerHint = styled(GLink)``;
+
 export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { connect } = useContext(OnboardContext);
-	const { totalAmount, giveDropState, step, isloading, goNextStep } =
-		useContext(UserContext);
+	const { address, connect } = useContext(OnboardContext);
+	const {
+		totalAmount,
+		giveDropState,
+		step,
+		isloading,
+		setStep,
+		goNextStep,
+		getClaimData,
+	} = useContext(UserContext);
 
 	let title;
 	let desc;
@@ -231,6 +285,8 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 				bg: '/images/connectMissbg.png',
 			};
 			break;
+		case GiveDropStateType.Claimed:
+			setStep(6);
 		default:
 			break;
 	}
@@ -262,6 +318,25 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 							>
 								{btnLabel}
 							</ConnectButton>
+							<WalletDisplayer>
+								<WalletDisplayerInputContainer>
+									<WalletDisplayerInput
+										disabled
+										value={address}
+										placeholder='Please connect your wallet'
+									/>
+									<WalletCheckButton onClick={getClaimData}>
+										Check
+									</WalletCheckButton>
+								</WalletDisplayerInputContainer>
+								<WalletDisplayerHint
+									href='https://docs.giveth.io/giveconomy/givdrop/#if-you-get-stuck-in-the-givdrop-claim'
+									target='_blank'
+								>
+									What if this address doesn&apos;t match the
+									address in my wallet?
+								</WalletDisplayerHint>
+							</WalletDisplayer>
 						</ConnectRow>
 						{giveDropState === GiveDropStateType.Missed && (
 							<Link href='/' passHref>

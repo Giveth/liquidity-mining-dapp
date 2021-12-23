@@ -27,15 +27,19 @@ export interface IUserContext {
 	setStep: Dispatch<SetStateAction<number>>;
 	goNextStep: () => void;
 	goPreviousStep: () => void;
+	getClaimData: () => Promise<void>;
+	resetWallet: () => void;
 }
 const initialValue = {
-	isloading: true,
+	isloading: false,
 	totalAmount: Zero,
 	giveDropState: GiveDropStateType.notConnected,
 	step: 0,
 	setStep: () => {},
 	goNextStep: () => {},
 	goPreviousStep: () => {},
+	getClaimData: async () => {},
+	resetWallet: () => {},
 };
 export const UserContext = createContext<IUserContext>(initialValue);
 
@@ -44,7 +48,7 @@ type Props = {
 };
 export const UserProvider: FC<Props> = ({ children }) => {
 	const [step, setStep] = useState(0);
-	const [isloading, setIsLoading] = useState(true);
+	const [isloading, setIsLoading] = useState(false);
 	const [totalAmount, setTotalAmount] = useState<BigNumber>(
 		initialValue.totalAmount,
 	);
@@ -55,35 +59,36 @@ export const UserProvider: FC<Props> = ({ children }) => {
 
 	const { address, network } = useOnboard();
 
-	useEffect(() => {
-		const getClaimData = async () => {
-			setTotalAmount(Zero);
-			setStep(0);
-
-			const claimData = await fetchAirDropClaimData(address);
-			if (claimData) {
-				const _hasClaimed = await hasClaimedAirDrop(address);
-				setTotalAmount(BigNumber.from(claimData.amount));
-				setIsLoading(false);
-				if (!_hasClaimed) {
-					setGiveDropState(GiveDropStateType.Success);
-				} else {
-					setGiveDropState(GiveDropStateType.Claimed);
-					setStep(6);
-				}
-				return;
-			}
-			setGiveDropState(GiveDropStateType.Missed);
-			setTotalAmount(Zero);
-		};
+	const getClaimData = async () => {
+		setTotalAmount(Zero);
+		setStep(0);
 		setIsLoading(true);
-		setGiveDropState(GiveDropStateType.notConnected);
-		if (address) {
-			getClaimData();
-		} else {
+		const claimData = await fetchAirDropClaimData(address);
+		if (claimData) {
+			const _hasClaimed = await hasClaimedAirDrop(address);
+			// const _hasClaimed = false;
+			setTotalAmount(BigNumber.from(claimData.amount));
 			setIsLoading(false);
+			if (!_hasClaimed) {
+				setGiveDropState(GiveDropStateType.Success);
+			} else {
+				setGiveDropState(GiveDropStateType.Claimed);
+			}
+			return;
 		}
-	}, [address, network]);
+		setGiveDropState(GiveDropStateType.Missed);
+		setTotalAmount(Zero);
+	};
+
+	const resetWallet = () => {
+		setGiveDropState(GiveDropStateType.notConnected);
+		setTotalAmount(Zero);
+		setStep(0);
+	};
+
+	useEffect(() => {
+		resetWallet();
+	}, [address]);
 
 	return (
 		<UserContext.Provider
@@ -99,6 +104,8 @@ export const UserProvider: FC<Props> = ({ children }) => {
 				goPreviousStep: () => {
 					setStep(step - 1);
 				},
+				getClaimData,
+				resetWallet,
 			}}
 		>
 			{children}
