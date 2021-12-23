@@ -160,7 +160,7 @@ const ExploreButton = styled(ButtonLink)`
 
 const ClaimFromAnother = styled.span`
 	cursor: pointer;
-	color: '#FED670'
+	color: #fed670;
 	margin-top: 4px;
 `;
 
@@ -405,7 +405,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 							<SocialButton
 								label='JOIN OUR DISCORD '
 								target='_blank'
-								href='https://swag.giveth.io/'
+								href='https://discord.giveth.io/'
 								icon={
 									<Image
 										src='/images/icons/discord.svg'
@@ -415,12 +415,16 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 									/>
 								}
 							/>
-							<Link href='/' passHref>
+							<a
+								href='/'
+								target='_blank'
+								rel='noreferrer noopener'
+							>
 								<ExploreButton
 									label='EXPLORE THE GIVECONOMY'
 									linkType='primary'
 								/>
-							</Link>
+							</a>
 							<ClaimFromAnother
 								onClick={() => {
 									goFirstStep();

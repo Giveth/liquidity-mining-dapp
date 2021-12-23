@@ -124,7 +124,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 		useContext(ClaimViewContext);
 	const { totalAmount } = useContext(UserContext);
 
-	const [stacked, setStacked] = useState<any>(0);
+	const [stacked, setStacked] = useState<string>('0');
 	const [potentialClaim, setPotentialClaim] = useState<EthersBigNumber>(
 		constants.Zero,
 	);
@@ -132,21 +132,10 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const [apr, setApr] = useState<APR>(null);
 	const { tokenDistroHelper } = useTokenDistro();
 
-	const stackedChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-		if (e.target.value.length === 0) {
-			setStacked(undefined);
-		} else if (isNaN(+e.target.value)) {
-			setStacked(stacked);
-		} else {
-			if (totalAmount.div(10).gte(utils.parseEther(e.target.value)))
-				setStacked(+e.target.value);
-		}
-	};
-
 	useEffect(() => {
 		let _stacked = 0;
-		if (!isNaN(stacked)) {
-			_stacked = stacked;
+		if (stacked !== '.' && stacked !== '') {
+			_stacked = parseFloat(stacked);
 		}
 		const stackedWithApr = apr ? apr.times(_stacked).div(1200) : Zero;
 		const convertedStackedWithApr = EthersBigNumber.from(
@@ -160,8 +149,6 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 				convertedStackedWithApr,
 			),
 		);
-		// setPotentialClaim(stackedWithApr.times(0.1));
-		// setEarnEstimate((stackedWithApr.toNumber() * 0.9) / (52 * 5));
 	}, [apr, stacked, totalAmount, tokenDistroHelper]);
 
 	useEffect(() => {
@@ -230,11 +217,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 							<MaxStakeGIV
 								onClick={() =>
 									setStacked(
-										Number(
-											utils.formatEther(
-												totalAmount.div(10),
-											),
-										),
+										utils.formatEther(totalAmount.div(10)),
 									)
 								}
 							>{`Max ${utils.formatEther(
@@ -246,7 +229,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 								type='number'
 								value={stacked}
 								unit={'GIV'}
-								onChange={stackedChangeHandler}
+								onChange={setStacked}
 							/>
 						</ImpactCardInput>
 					</div>

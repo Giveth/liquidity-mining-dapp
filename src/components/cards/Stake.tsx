@@ -41,6 +41,7 @@ import { fetchLPStakingInfo } from '@/lib/stakingPool';
 import { useLiquidityPositions } from '@/context';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { H2, Lead, H5 } from '@giveth/ui-design-system';
+import { networkProviders } from '@/helpers/networkProvider';
 
 const InvestCardContainer = styled(Card)`
 	::before {
@@ -66,6 +67,12 @@ export const Header = styled.div`
 `;
 const StakeHeader = styled.div`
 	margin-bottom: 60px;
+	@media only screen and (max-width: 1360px) {
+		margin-bottom: 40px;
+	}
+	@media only screen and (max-width: 1120px) {
+		margin-bottom: 20px;
+	}
 `;
 
 const Title = styled(H2)`
@@ -92,7 +99,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		useContext(ClaimViewContext);
 	const { totalAmount } = useContext(UserContext);
 
-	const [deposit, setDeposit] = useState<any>(0);
+	const [deposit, setDeposit] = useState<string>('0');
 	const [potentialClaim, setPotentialClaim] = useState<EthersBigNumber>(
 		constants.Zero,
 	);
@@ -100,18 +107,6 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const [APR, setAPR] = useState<BigNumber>(Zero);
 	const { apr: univ3apr } = useLiquidityPositions();
 	const { tokenDistroHelper } = useTokenDistro();
-
-	const depositChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-		const { value } = e.target;
-		if (value.length === 0) {
-			setDeposit(undefined);
-		} else if (isNaN(+value)) {
-			setDeposit(deposit);
-		} else {
-			if (totalAmount.div(10).gte(utils.parseEther(value)))
-				setDeposit(+value);
-		}
-	};
 
 	useEffect(() => {
 		if (totalAmount) {
@@ -121,8 +116,8 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	useEffect(() => {
 		let _deposit = 0;
-		if (!isNaN(deposit)) {
-			_deposit = deposit;
+		if (deposit !== '.' && deposit !== '') {
+			_deposit = parseFloat(deposit);
 		}
 		const stackedWithApr = APR ? APR.times(_deposit).div(1200) : Zero;
 		if (stackedWithApr.isNaN()) return;
@@ -150,17 +145,13 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	);
 
 	useEffect(() => {
-		const getAPRs = async (promises: Promise<StakePoolInfo>[]) => {
-			const promiseResult = await Promise.all(promises);
-			const APRs: BigNumber[] = promiseResult.map(elem =>
-				elem.apr ? elem.apr : Zero,
-			);
-			APRs.push(univ3apr);
-			const sortedAPRs = APRs.sort((a, b) => (a.gt(b) ? 0 : -1));
-			const _apr = sortedAPRs.pop();
-			if (_apr) {
-				setAPR(_apr);
-			}
+		const getMaxAPR = async (promises: Promise<StakePoolInfo>[]) => {
+			const stakePoolInfos = await Promise.all(promises);
+			let maxApr = univ3apr;
+			stakePoolInfos.forEach(info => {
+				maxApr = BigNumber.max(maxApr, info?.apr || Zero);
+			});
+			setAPR(maxApr);
 		};
 
 		const promiseQueue: Promise<StakePoolInfo>[] = [];
@@ -168,6 +159,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 			const promise: Promise<StakePoolInfo> = fetchLPStakingInfo(
 				poolStakingConfig,
 				config.XDAI_NETWORK_NUMBER,
+				networkProviders[config.XDAI_NETWORK_NUMBER],
 			);
 			promiseQueue.push(promise);
 		});
@@ -175,10 +167,11 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 			const promise: Promise<StakePoolInfo> = fetchLPStakingInfo(
 				poolStakingConfig,
 				config.MAINNET_NETWORK_NUMBER,
+				networkProviders[config.MAINNET_NETWORK_NUMBER],
 			);
 			promiseQueue.push(promise);
 		});
-		getAPRs(promiseQueue);
+		getMaxAPR(promiseQueue);
 	}, [univ3apr]);
 
 	return (
@@ -205,11 +198,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 							<MaxStakeGIV
 								onClick={() =>
 									setDeposit(
-										Number(
-											utils.formatEther(
-												totalAmount.div(10),
-											),
-										),
+										utils.formatEther(totalAmount.div(10)),
 									)
 								}
 							>{`Max ${utils.formatEther(
@@ -221,7 +210,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 								type='number'
 								value={deposit}
 								unit={'GIV'}
-								onChange={depositChangeHandler}
+								onChange={setDeposit}
 							/>
 						</ImpactCardInput>
 					</div>

@@ -104,14 +104,16 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 
 	return (
 		<PositionContainer key={position.tokenId.toString()}>
-			<ImageContainer>
-				<Image
-					src={image}
-					width={72}
-					height={124}
-					alt='Liquidity Position NFT'
-				/>
-			</ImageContainer>
+			{image && (
+				<ImageContainer>
+					<Image
+						src={image}
+						width={72}
+						height={124}
+						alt='Liquidity Position NFT'
+					/>
+				</ImageContainer>
+			)}
 			<PositionInfo>
 				<PositionInfoRow>
 					<StyledOverline>LIQUIDITY</StyledOverline>

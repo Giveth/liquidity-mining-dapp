@@ -17,12 +17,8 @@ import config from '@/configuration';
 import { StakingType, UniswapV3PoolStakingConfig } from '@/types/config';
 import { useOnboard } from '.';
 import {
-	getGivethV3PoolContract,
-	getNftManagerPositionsContract,
-	getUniswapV3StakerContract,
-} from '@/lib/contracts';
-import {
 	getUniswapV3Pool,
+	getUniswapV3TokenURI,
 	getUserPositions,
 	IUniswapV3Pool,
 	IUniswapV3Position,
@@ -49,11 +45,7 @@ interface IPositionsInfo {
 
 export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const network = config.MAINNET_NETWORK_NUMBER;
-	const {
-		address: walletAddress,
-		provider,
-		network: walletNetwork,
-	} = useOnboard();
+	const { address: walletAddress, network: walletNetwork } = useOnboard();
 
 	const [totalNftPositions, setTotalNftPositions] = useState<
 		LiquidityPosition[]
@@ -158,22 +150,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	};
 
 	const loadPositions = useCallback(() => {
-		// if (network !== walletNetwork) return;
-
-		const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
-		const givethV3PoolContract = getGivethV3PoolContract(provider);
-		const nftManagerPositionsContract =
-			getNftManagerPositionsContract(provider);
-
-		if (
-			!nftManagerPositionsContract ||
-			!uniswapV3StakerContract ||
-			!walletAddress ||
-			!givethAddress ||
-			!givethV3PoolContract ||
-			!network
-		)
-			return;
+		if (!walletAddress || !givethAddress || !network) return;
 
 		const fetchPositions = async (
 			owner: string,
@@ -246,20 +223,30 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				lastPositionInfo.current = positionInfo;
 				const { userPositionInfo, poolInfo } = positionInfo;
 
-				const _token0: Token = new Token(
+				const { TOKEN_ADDRESS, WETH_TOKEN_ADDRESS } =
+					config.MAINNET_CONFIG;
+
+				const givToken = new Token(
 					network,
-					config.MAINNET_CONFIG.TOKEN_ADDRESS,
+					TOKEN_ADDRESS,
 					18,
 					'GIV',
 					'GIV',
 				);
-				const _token1: Token = new Token(
+				const wethToken = new Token(
 					network,
-					config.MAINNET_CONFIG.WETH_TOKEN_ADDRESS as string,
+					WETH_TOKEN_ADDRESS,
 					18,
 					'WETH',
 					'WETH',
 				);
+
+				const givIsToken0 =
+					poolInfo.token0.toLowerCase() ===
+					TOKEN_ADDRESS.toLowerCase();
+
+				const _token0: Token = givIsToken0 ? givToken : wethToken;
+				const _token1: Token = givIsToken0 ? wethToken : givToken;
 
 				let pool = new Pool(
 					_token0,
@@ -299,9 +286,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 					let uri = window.sessionStorage.getItem(key);
 					if (!uri) {
 						try {
-							uri = await nftManagerPositionsContract.tokenURI(
-								tokenId,
-							);
+							uri = await getUniswapV3TokenURI(tokenId);
 							window.sessionStorage.setItem(key, uri as string);
 						} catch (e) {
 							console.error(
@@ -352,26 +337,40 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 					.reduce((acc, { _position }) => {
 						if (!_position) return acc;
 
-						// GIV is token0
+						if (givIsToken0) {
+							// GIV is token0
 
-						// GIV Token
-						// let _givToken = _position.pool.token0;
+							// GIV Token
+							// let _givToken = _position.pool.token0;
 
-						// amount of giv in LP
-						let giveAmount = _position.amount0;
+							// amount of giv in LP
+							let givAmount = _position.amount0;
 
-						// amount of eth in LP
-						let wethAmount = _position.amount1;
+							// amount of eth in LP
+							let wethAmount = _position.amount1;
 
-						// calc value of GIV in terms of ETH
-						const ethValueGIV =
-							_position.pool.token0Price.quote(giveAmount);
+							// calc value of GIV in terms of ETH
+							const ethValueGIV =
+								_position.pool.token0Price.quote(givAmount);
 
-						// console.log("givAmount", givAmount.toFixed(2));
-						// console.log("ethValueGIV", ethValueGIV.toFixed(2));
+							// add values of all tokens in ETH
+							return acc?.add(ethValueGIV).add(wethAmount);
+						} else {
+							// WETH is token0
 
-						// add values of all tokens in ETH
-						return acc?.add(ethValueGIV).add(wethAmount);
+							// amount of giv in LP
+							let wethAmount = _position.amount0;
+
+							// amount of eth in LP
+							let givAmount = _position.amount1;
+
+							// calc value of GIV in terms of ETH
+							const ethValueGIV =
+								_position.pool.token1Price.quote(givAmount);
+
+							// add values of all tokens in ETH
+							return acc?.add(ethValueGIV).add(wethAmount);
+						}
 					}, allStaked[0]._position?.amount1.multiply('0'));
 
 				if (totalETHValue) {
@@ -406,22 +405,12 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 		};
 
 		return init();
-	}, [walletAddress, network, provider]);
+	}, [walletAddress, network]);
 
 	//initial load of positions
 	useEffect(() => {
 		const cb = () => {
-			const nftManagerPositionsContract =
-				getNftManagerPositionsContract(provider);
-
-			const uniswapV3StakerContract =
-				getUniswapV3StakerContract(provider);
-			if (
-				!nftManagerPositionsContract ||
-				!uniswapV3StakerContract ||
-				!walletAddress
-			)
-				return;
+			if (!walletAddress) return;
 
 			// only check if network is ethereum or rinkeby
 			if (network && network === config.MAINNET_NETWORK_NUMBER) {
@@ -433,7 +422,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 		return () => {
 			clearInterval(interval);
 		};
-	}, [walletAddress, loadPositions, network, provider]);
+	}, [walletAddress, loadPositions, network]);
 
 	return (
 		<ERC721NftContext.Provider

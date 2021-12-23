@@ -43,7 +43,6 @@ export interface BalancerPoolStakingConfig extends SimplePoolStakingConfig {
 }
 export interface BasicNetworkConfig {
 	TOKEN_ADDRESS: string;
-	WETH_TOKEN_ADDRESS?: string;
 	TOKEN_DISTRO_ADDRESS: string;
 	GIV: BasicStakingConfig;
 	nodeUrl: string;
@@ -54,7 +53,9 @@ export interface BasicNetworkConfig {
 	>;
 }
 
-interface MainnetNetworkConfig extends BasicNetworkConfig {}
+interface MainnetNetworkConfig extends BasicNetworkConfig {
+	WETH_TOKEN_ADDRESS: string;
+}
 interface XDaiNetworkConfig extends BasicNetworkConfig {
 	MERKLE_ADDRESS: string;
 }

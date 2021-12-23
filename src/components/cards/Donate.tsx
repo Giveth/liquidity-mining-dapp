@@ -107,23 +107,12 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 		useContext(ClaimViewContext);
 	const { totalAmount } = useContext(UserContext);
 
-	const [donation, setDonation] = useState<any>(0);
+	const [donation, setDonation] = useState<string>('0');
 	const [potentialClaim, setPotentialClaim] = useState<EthersBigNumber>(
 		constants.Zero,
 	);
 	const [earnEstimate, setEarnEstimate] = useState<BigNumber>(Zero);
 	const { tokenDistroHelper } = useTokenDistro();
-
-	const stackedChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-		if (e.target.value.length === 0) {
-			setDonation(undefined);
-		} else if (isNaN(+e.target.value)) {
-			setDonation(donation);
-		} else {
-			if (totalAmount.gte(utils.parseEther(e.target.value)))
-				setDonation(+e.target.value);
-		}
-	};
 
 	useEffect(() => {
 		if (totalAmount) {
@@ -133,8 +122,8 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	useEffect(() => {
 		let _donation = 0;
-		if (!isNaN(donation)) {
-			_donation = donation;
+		if (donation !== '.' && donation !== '') {
+			_donation = parseFloat(donation);
 		}
 		const donationWithGivBacks = _donation * 0.75;
 		const convertedStackedWithApr = EthersBigNumber.from(
@@ -148,8 +137,6 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 				convertedStackedWithApr,
 			),
 		);
-		// setPotentialClaim(donationWithGivBacks * 0.1);
-		// setEarnEstimate((donationWithGivBacks * 0.9) / (52 * 5));
 	}, [donation, tokenDistroHelper]);
 
 	return (
@@ -184,11 +171,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 							<MaxStakeGIV
 								onClick={() =>
 									setDonation(
-										Number(
-											utils.formatEther(
-												totalAmount.div(10),
-											),
-										),
+										utils.formatEther(totalAmount.div(10)),
 									)
 								}
 							>{`Max ${utils.formatEther(
@@ -200,7 +183,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 								type='number'
 								value={donation}
 								unit={'GIV'}
-								onChange={stackedChangeHandler}
+								onChange={setDonation}
 							/>
 						</ImpactCardInput>
 					</div>
