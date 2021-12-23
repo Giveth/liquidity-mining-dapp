@@ -20,6 +20,7 @@ export enum GiveDropStateType {
 	Claimed,
 }
 export interface IUserContext {
+	isloading: boolean;
 	totalAmount: BigNumber;
 	giveDropState: GiveDropStateType;
 	step: number;
@@ -28,6 +29,7 @@ export interface IUserContext {
 	goPreviousStep: () => void;
 }
 const initialValue = {
+	isloading: true,
 	totalAmount: Zero,
 	giveDropState: GiveDropStateType.notConnected,
 	step: 0,
@@ -42,6 +44,7 @@ type Props = {
 };
 export const UserProvider: FC<Props> = ({ children }) => {
 	const [step, setStep] = useState(0);
+	const [isloading, setIsLoading] = useState(true);
 	const [totalAmount, setTotalAmount] = useState<BigNumber>(
 		initialValue.totalAmount,
 	);
@@ -61,6 +64,7 @@ export const UserProvider: FC<Props> = ({ children }) => {
 			if (claimData) {
 				const _hasClaimed = await hasClaimedAirDrop(address);
 				setTotalAmount(BigNumber.from(claimData.amount));
+				setIsLoading(false);
 				if (!_hasClaimed) {
 					setGiveDropState(GiveDropStateType.Success);
 				} else {
@@ -72,7 +76,7 @@ export const UserProvider: FC<Props> = ({ children }) => {
 			setGiveDropState(GiveDropStateType.Missed);
 			setTotalAmount(Zero);
 		};
-
+		setIsLoading(true);
 		setGiveDropState(GiveDropStateType.notConnected);
 		if (address) {
 			getClaimData();
@@ -82,6 +86,7 @@ export const UserProvider: FC<Props> = ({ children }) => {
 	return (
 		<UserContext.Provider
 			value={{
+				isloading,
 				totalAmount,
 				giveDropState,
 				step,
