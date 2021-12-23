@@ -64,6 +64,12 @@ export const Header = styled.div`
 `;
 const StakeHeader = styled.div`
 	margin-bottom: 60px;
+	@media only screen and (max-width: 1360px) {
+		margin-bottom: 40px;
+	}
+	@media only screen and (max-width: 1120px) {
+		margin-bottom: 20px;
+	}
 `;
 
 const Title = styled(H2)`
