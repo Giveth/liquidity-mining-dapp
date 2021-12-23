@@ -163,16 +163,15 @@ const ClaimFromAnother = styled.span`
 	margin-top: 4px;
 `;
 
-const BackToGIVeconomy = styled.div`
+const WalletLink = styled(GLink)`
 	color: #fed670;
-	cursor: pointer;
-	margin-left: 15px;
 	text-decoration: underline;
 `;
 
 const WalletDisplayer = styled(Row)`
 	flex-direction: column;
 	align-items: center;
+	gap: 16px;
 `;
 
 const WalletDisplayerInputContainer = styled.div`
@@ -211,8 +210,6 @@ const WalletCheckButton = styled.button`
 	border-radius: 88px;
 	cursor: pointer;
 `;
-
-const WalletDisplayerHint = styled(GLink)``;
 
 export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { address, connect, isReady } = useContext(OnboardContext);
@@ -310,15 +307,26 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 							alignItems={'center'}
 							justifyContent={'space-between'}
 						>
-							<ConnectButton
-								secondary
-								onClick={async () => {
-									await connect();
-									getClaimData();
-								}}
-							>
-								{btnLabel}
-							</ConnectButton>
+							<WalletDisplayer>
+								<ConnectButton
+									secondary
+									onClick={async () => {
+										const res = await connect();
+										if (res) {
+											getClaimData();
+										}
+									}}
+								>
+									{btnLabel}
+								</ConnectButton>
+								{giveDropState === GiveDropStateType.Missed && (
+									<Link href='/' passHref>
+										<WalletLink>
+											Go to GIVeconomy
+										</WalletLink>
+									</Link>
+								)}
+							</WalletDisplayer>
 							<WalletDisplayer>
 								<WalletDisplayerInputContainer>
 									<WalletDisplayerInput
@@ -330,22 +338,15 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 										Check
 									</WalletCheckButton>
 								</WalletDisplayerInputContainer>
-								<WalletDisplayerHint
+								<WalletLink
 									href='https://docs.giveth.io/giveconomy/givdrop/#if-you-get-stuck-in-the-givdrop-claim'
 									target='_blank'
 								>
 									What if this address doesn&apos;t match the
 									address in my wallet?
-								</WalletDisplayerHint>
+								</WalletLink>
 							</WalletDisplayer>
 						</ConnectRow>
-						{giveDropState === GiveDropStateType.Missed && (
-							<Link href='/' passHref>
-								<BackToGIVeconomy>
-									Go to GIVeconomy
-								</BackToGIVeconomy>
-							</Link>
-						)}
 					</>
 				)}
 			{giveDropState === GiveDropStateType.Success && step === index && (
