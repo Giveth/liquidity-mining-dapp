@@ -33,7 +33,6 @@ export const Card = styled.div<ICardProps>`
 	transition: left 0.3s ease-out;
 	@media only screen and (max-width: 1360px) {
 		width: 944px;
-		padding: 87px 57px;
 		left: ${props => {
 			if (props.index - props.activeIndex === 0) {
 				return '50%';
@@ -49,7 +48,6 @@ export const Card = styled.div<ICardProps>`
 	}
 	@media only screen and (max-width: 1120px) {
 		width: 705px;
-		padding: 87px 24px;
 		left: ${props => {
 			if (props.index - props.activeIndex === 0) {
 				return '50%';
