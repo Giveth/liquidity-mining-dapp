@@ -314,9 +314,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 								secondary
 								onClick={async () => {
 									await connect();
-									if (isReady) {
-										getClaimData();
-									}
+									getClaimData();
 								}}
 							>
 								{btnLabel}
