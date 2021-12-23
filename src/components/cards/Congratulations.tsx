@@ -118,7 +118,7 @@ const SparkleBurstContainer = styled.div`
 `;
 
 const SparkleAnimationOptions = {
-	loop: false,
+	// loop: false,
 	animationData: SparkleAnimation,
 	rendererSettings: {
 		preserveAspectRatio: 'xMidYMid slice',
@@ -126,7 +126,7 @@ const SparkleAnimationOptions = {
 };
 
 const SparkleBurstAnimationOptions = {
-	loop: false,
+	// loop: false,
 	animationData: SparkleBurstAnimation,
 	rendererSettings: {
 		preserveAspectRatio: 'xMidYMid slice',
@@ -134,7 +134,7 @@ const SparkleBurstAnimationOptions = {
 };
 
 const BlowingAnimationOptions = {
-	loop: false,
+	// loop: false,
 	animationData: BlowingAnimation,
 	rendererSettings: {
 		preserveAspectRatio: 'xMidYMid slice',
