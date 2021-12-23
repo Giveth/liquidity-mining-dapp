@@ -47,7 +47,7 @@ const errorAnimationOptions = {
 interface IConfirmSubmitProps {
 	title: string;
 	walletNetwork: number;
-	txHash: string;
+	txHash?: string;
 }
 
 export const SubmittedInnerModal: FC<IConfirmSubmitProps> = ({
@@ -57,7 +57,7 @@ export const SubmittedInnerModal: FC<IConfirmSubmitProps> = ({
 }) => {
 	return (
 		<>
-			<Caption>{title}</Caption>
+			<Title>{title}</Title>
 			<Lottie
 				options={loadingAnimationOptions}
 				height={100}
@@ -94,7 +94,7 @@ export const ConfirmedInnerModal: FC<IConfirmSubmitProps> = ({
 }) => {
 	return (
 		<>
-			<B>{title}</B>
+			<Title>{title}</Title>
 			<Lottie options={tikAnimationOptions} height={100} width={100} />
 			<TxConfirm weight={700}>Transaction confirmed!</TxConfirm>
 			<Info>It may take a few minutes for the UI to update</Info>
@@ -119,15 +119,20 @@ export const ConfirmedInnerModal: FC<IConfirmSubmitProps> = ({
 	);
 };
 
-export const ErrorInnerModal: FC<IConfirmSubmitProps> = ({
+interface IErrorProps extends IConfirmSubmitProps {
+	message?: string;
+}
+
+export const ErrorInnerModal: FC<IErrorProps> = ({
 	title,
 	walletNetwork,
 	txHash,
+	message,
 }) => {
 	return (
 		<>
-			<Caption>{title}</Caption>
-			<Lottie options={errorAnimationOptions} height={100} width={100} />
+			<Title>{title}</Title>
+			<Lottie options={errorAnimationOptions} height={60} width={60} />
 			<TxSubmit weight={700}>{txHash}</TxSubmit>
 			{txHash && (
 				<BlockExplorerLink
@@ -148,9 +153,18 @@ export const ErrorInnerModal: FC<IConfirmSubmitProps> = ({
 					<IconExternalLink size={16} color={'currentColor'} />
 				</BlockExplorerLink>
 			)}
+			{message && <ErrorMessage>{message}</ErrorMessage>}
 		</>
 	);
 };
+
+const Title = styled(Caption)`
+	padding: 24px;
+`;
+
+const ErrorMessage = styled(Caption)`
+	padding: 24px;
+`;
 
 const TxSubmit = styled(H6)`
 	color: ${neutralColors.gray[100]};
@@ -168,9 +182,11 @@ const Info = styled(P)`
 `;
 
 const BlockExplorerLink = styled(GLink)`
+	display: block;
 	width: 100%;
 	color: ${brandColors.cyan[500]};
 	&:hover {
 		color: ${brandColors.cyan[300]};
 	}
+	padding-bottom: 24px;
 `;
