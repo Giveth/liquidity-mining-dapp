@@ -62,7 +62,7 @@ const config: EnvConfig = {
 					'0xfA656B81cEC0deD6Acd5Bb1a60A06914aB21A0B3',
 				REWARD_TOKEN: '0x3115e5aAa3D6f742d09fbB649150dfE285a9c2A3',
 				UNISWAP_V3_LP_POOL:
-					'0x05f9c5ccc01bc4658516b664be14fb89121c9d15',
+					'0x615d40af2c321bd0cd6345ae0a7fc1506a659a89',
 				INCENTIVE_REFUNDEE_ADDRESS:
 					'0x34d27210cC319EC5281bDc4DC2ad8FbcF4EAEAEB',
 				POOL_ADDRESS: '0xc763b6b3d0f75167db95daa6a0a0d75dd467c4e1',
@@ -99,7 +99,7 @@ const config: EnvConfig = {
 			LM_ADDRESS: '0xD93d3bDBa18ebcB3317a57119ea44ed2Cf41C2F2',
 			GARDEN_ADDRESS: '0x24f2d06446af8d6e89febc205e7936a602a87b60',
 			BUY_LINK:
-				'https://app.honeyswap.org/#/swap?outputCurrency=0x7aAde4907a8e2412BEACbE42E51aaeE5B6085f24',
+				'https://app.honeyswap.org/#/swap?outputCurrency=0x4f4F9b8D5B4d0Dc10506e5551B0513B61fD59e75',
 		},
 
 		pools: [
