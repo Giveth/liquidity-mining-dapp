@@ -21,10 +21,7 @@ import {
 	PoolItems,
 	PreviousArrowButton,
 } from './common';
-import {
-	ClaimViewContext,
-	IClaimViewCardProps,
-} from '../views/claim/Claim.view';
+import { IClaimViewCardProps } from '../views/claim/Claim.view';
 import { UserContext } from '../../context/user.context';
 import { utils, BigNumber as EthersBigNumber, constants } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
@@ -103,9 +100,8 @@ const Desc = styled(Lead)`
 `;
 
 export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goNextStep, goPreviousStep } =
-		useContext(ClaimViewContext);
-	const { totalAmount } = useContext(UserContext);
+	const { totalAmount, step, goNextStep, goPreviousStep } =
+		useContext(UserContext);
 
 	const [donation, setDonation] = useState<string>('0');
 	const [potentialClaim, setPotentialClaim] = useState<EthersBigNumber>(
@@ -140,7 +136,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 	}, [donation, tokenDistroHelper]);
 
 	return (
-		<DonateCardContainer activeIndex={activeIndex} index={index}>
+		<DonateCardContainer activeIndex={step} index={index}>
 			<DonateHeader>
 				<Title>Donate &amp; get GIV back</Title>
 				<Desc size='small' color={'#CABAFF'}>
@@ -208,12 +204,11 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 				</PoolCardContainer>
 			</APRRow>
 			<PoolCardFooter>
-				The following calculators demonstrate how you can use GIV to
-				participate in the GIVeconomy!{' '}
-				<b>These are just simulations.</b> To participate for real,
-				claim your GIV.
+				These calculators demonstrate how you can use GIV to participate
+				in the GIVeconomy! <b>These are just simulations.</b> To
+				participate for real, claim your GIV.
 			</PoolCardFooter>
-			{activeIndex === index && (
+			{step === index && (
 				<>
 					<ArrowButton onClick={goNextStep} />
 					<PreviousArrowButton onClick={goPreviousStep} />

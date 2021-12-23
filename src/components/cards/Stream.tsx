@@ -13,10 +13,7 @@ import {
 	PreviousArrowButton,
 } from './common';
 import { UserContext } from '../../context/user.context';
-import {
-	ClaimViewContext,
-	IClaimViewCardProps,
-} from '../views/claim/Claim.view';
+import { IClaimViewCardProps } from '../views/claim/Claim.view';
 
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { formatWeiHelper } from '@/helpers/number';
@@ -106,9 +103,8 @@ const StreamPlaceholder = styled(Row)`
 `;
 
 export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goNextStep, goPreviousStep } =
-		useContext(ClaimViewContext);
-	const { totalAmount } = useContext(UserContext);
+	const { totalAmount, step, goNextStep, goPreviousStep } =
+		useContext(UserContext);
 	const [streamValue, setStreamValue] = useState<string>('0');
 	const [remain, setRemain] = useState('');
 
@@ -128,7 +124,7 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 	}, [tokenDistroHelper]);
 
 	return (
-		<StreamCardContainer activeIndex={activeIndex} index={index}>
+		<StreamCardContainer activeIndex={step} index={index}>
 			<StreamHeader>
 				<Title as='h1'>Enjoy a continuous flow of GIV</Title>
 
@@ -156,7 +152,7 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 					<StreamPlaceholder>GIV/week</StreamPlaceholder>
 				</StreamValueContainer>
 			</StreamRow>
-			{activeIndex === index && (
+			{step === index && (
 				<>
 					<ArrowButton onClick={goNextStep} />
 					<PreviousArrowButton onClick={goPreviousStep} />
