@@ -1,7 +1,19 @@
-import { createContext, FC, ReactNode, useState, useContext } from 'react';
+import {
+	createContext,
+	FC,
+	ReactNode,
+	useState,
+	useEffect,
+	useContext,
+	SetStateAction,
+} from 'react';
 import { fetchAirDropClaimData, hasClaimedAirDrop } from '@/lib/claim';
 import { Zero } from '@ethersproject/constants';
 import { BigNumber } from 'ethers';
+import { useOnboard } from '.';
+import { Dispatch } from 'react';
+import config from '@/configuration';
+import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
 
 export enum GiveDropStateType {
 	notConnected,
@@ -10,17 +22,25 @@ export enum GiveDropStateType {
 	Claimed,
 }
 export interface IUserContext {
-	userAddress: string;
+	isloading: boolean;
 	totalAmount: BigNumber;
 	giveDropState: GiveDropStateType;
-	submitUserAddress: (address: string) => void;
+	step: number;
+	setStep: Dispatch<SetStateAction<number>>;
+	goNextStep: () => void;
+	goPreviousStep: () => void;
+	getClaimData: () => Promise<void>;
 	resetWallet: () => void;
 }
 const initialValue = {
-	userAddress: '',
+	isloading: false,
 	totalAmount: Zero,
 	giveDropState: GiveDropStateType.notConnected,
-	submitUserAddress: () => {},
+	step: 0,
+	setStep: () => {},
+	goNextStep: () => {},
+	goPreviousStep: () => {},
+	getClaimData: async () => {},
 	resetWallet: () => {},
 };
 export const UserContext = createContext<IUserContext>(initialValue);
@@ -29,9 +49,9 @@ type Props = {
 	children?: ReactNode;
 };
 export const UserProvider: FC<Props> = ({ children }) => {
-	const [userAddress, setUserAddress] = useState<string>(
-		initialValue.userAddress,
-	);
+	const [step, setStep] = useState(0);
+	const [isloading, setIsLoading] = useState(false);
+	const [showModal, setShowModal] = useState<boolean>(false);
 	const [totalAmount, setTotalAmount] = useState<BigNumber>(
 		initialValue.totalAmount,
 	);
@@ -40,43 +60,74 @@ export const UserProvider: FC<Props> = ({ children }) => {
 		GiveDropStateType.notConnected,
 	);
 
-	const submitUserAddress = async (address: string) => {
-		setUserAddress(address);
-		setTotalAmount(Zero);
+	const { address, network, isReady } = useOnboard();
 
+	useEffect(() => {
+		setShowModal(isReady && network !== config.XDAI_NETWORK_NUMBER);
+	}, [network, step, isReady]);
+
+	const getClaimData = async () => {
+		if (network !== config.XDAI_NETWORK_NUMBER) {
+			return;
+		}
+		setTotalAmount(Zero);
+		setStep(0);
+		setIsLoading(true);
 		const claimData = await fetchAirDropClaimData(address);
 		if (claimData) {
 			const _hasClaimed = await hasClaimedAirDrop(address);
 			// const _hasClaimed = false;
-			console.log('hasClaimed:', _hasClaimed);
+			console.log(`_hasClaimed`, _hasClaimed);
+			setTotalAmount(BigNumber.from(claimData.amount));
+			setIsLoading(false);
 			if (!_hasClaimed) {
-				setTotalAmount(BigNumber.from(claimData.amount));
 				setGiveDropState(GiveDropStateType.Success);
-				return;
 			} else {
 				setGiveDropState(GiveDropStateType.Claimed);
-				return;
 			}
+			return;
 		}
 		setGiveDropState(GiveDropStateType.Missed);
 		setTotalAmount(Zero);
+		setIsLoading(false);
 	};
 
 	const resetWallet = () => {
 		setGiveDropState(GiveDropStateType.notConnected);
+		setTotalAmount(Zero);
+		setStep(0);
 	};
+
+	useEffect(() => {
+		resetWallet();
+	}, [address]);
 
 	return (
 		<UserContext.Provider
 			value={{
-				userAddress,
+				isloading,
 				totalAmount,
 				giveDropState,
+				step,
+				setStep,
+				goNextStep: () => {
+					setStep(step + 1);
+				},
+				goPreviousStep: () => {
+					setStep(step - 1);
+				},
+				getClaimData,
 				resetWallet,
-				submitUserAddress,
 			}}
 		>
 			{children}
+			{showModal && (
+				<WrongNetworkModal
+					showModal={showModal}
+					setShowModal={setShowModal}
+					targetNetworks={[config.XDAI_NETWORK_NUMBER]}
+				/>
+			)}
 		</UserContext.Provider>
 	);
 };

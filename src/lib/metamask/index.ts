@@ -1,5 +1,8 @@
+import { Contract } from 'ethers';
 import config from '@/configuration';
 import { networksParams } from '@/utils/constants';
+import { abi as UNI_ABI } from '@/artifacts/UNI.json';
+import { JsonRpcProvider } from '@ethersproject/providers';
 
 declare let window: any;
 
@@ -8,33 +11,50 @@ const { MAINNET_CONFIG, XDAI_CONFIG } = config;
 const tokenImage =
 	'https://raw.githubusercontent.com/Giveth/giveth-design-assets/master/02-logos/GIV%20Token/GIVToken_200x200.png';
 
-const { MAINNET_NETWORK_NUMBER, XDAI_NETWORK_NUMBER } = config;
+interface ITokenOptins {
+	address: string;
+	symbol: string;
+	decimals: number;
+	image: string;
+}
 
-const tokenOptions = {
-	[MAINNET_NETWORK_NUMBER]: {
-		address: MAINNET_CONFIG.TOKEN_ADDRESS,
-		symbol: config.TOKEN_NAME,
-		decimals: 18,
-		image: tokenImage,
-	},
-	[XDAI_NETWORK_NUMBER]: {
-		address: XDAI_CONFIG.TOKEN_ADDRESS,
-		symbol: config.TOKEN_NAME,
-		decimals: 18,
-		image: tokenImage,
-	},
+const fetchTokenInfo = async (
+	provider: JsonRpcProvider,
+): Promise<ITokenOptins | undefined> => {
+	const address =
+		provider.network.chainId === config.MAINNET_NETWORK_NUMBER
+			? MAINNET_CONFIG.TOKEN_ADDRESS
+			: XDAI_CONFIG.TOKEN_ADDRESS;
+	const contract = new Contract(address, UNI_ABI, provider);
+	try {
+		const [_decimal, _symbol]: [number, string] = await Promise.all([
+			contract.decimals(),
+			contract.symbol(),
+		]);
+		return {
+			address: address,
+			symbol: _symbol,
+			decimals: _decimal,
+			image: tokenImage,
+		};
+	} catch (error) {
+		console.error('error in fetchTokenInfo', error);
+	}
+	return;
 };
 
-export async function addGIVToken(network: number): Promise<void> {
+export async function addGIVToken(provider: JsonRpcProvider): Promise<void> {
 	const { ethereum } = window;
-
-	await ethereum.request({
-		method: 'wallet_watchAsset',
-		params: {
-			type: 'ERC20',
-			options: tokenOptions[network],
-		},
-	});
+	const tokenOptions = await fetchTokenInfo(provider);
+	if (tokenOptions) {
+		await ethereum.request({
+			method: 'wallet_watchAsset',
+			params: {
+				type: 'ERC20',
+				options: tokenOptions,
+			},
+		});
+	}
 }
 
 export async function addNetwork(network: number): Promise<void> {

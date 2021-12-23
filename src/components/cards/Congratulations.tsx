@@ -13,8 +13,8 @@ import BlowingAnimation from '../../animations/blowing.json';
 import config from '@/configuration';
 import Link from 'next/link';
 import { useTokenDistro } from '@/context/tokenDistro.context';
-import { ClaimViewContext } from '../views/claim/Claim.view';
 import { Row } from '../styled-components/Grid';
+import { useOnboard } from '@/context';
 
 const SmileImage = styled.div`
 	position: absolute;
@@ -119,7 +119,7 @@ const SparkleBurstContainer = styled.div`
 `;
 
 const SparkleAnimationOptions = {
-	loop: false,
+	// loop: false,
 	animationData: SparkleAnimation,
 	rendererSettings: {
 		preserveAspectRatio: 'xMidYMid slice',
@@ -127,7 +127,7 @@ const SparkleAnimationOptions = {
 };
 
 const SparkleBurstAnimationOptions = {
-	loop: false,
+	// loop: false,
 	animationData: SparkleBurstAnimation,
 	rendererSettings: {
 		preserveAspectRatio: 'xMidYMid slice',
@@ -135,7 +135,7 @@ const SparkleBurstAnimationOptions = {
 };
 
 const BlowingAnimationOptions = {
-	loop: false,
+	// loop: false,
 	animationData: BlowingAnimation,
 	rendererSettings: {
 		preserveAspectRatio: 'xMidYMid slice',
@@ -159,12 +159,9 @@ const BlowingContainer = styled.div`
 
 export const CongratulationsCard = () => {
 	const [streamValue, setStreamValue] = useState<string>('0');
-
 	const { tokenDistroHelper } = useTokenDistro();
-
-	const { goFirstStep } = useContext(ClaimViewContext);
-
-	const { userAddress, totalAmount, resetWallet } = useUser();
+	const { totalAmount, resetWallet } = useUser();
+	const { provider } = useOnboard();
 
 	useEffect(() => {
 		setStreamValue(
@@ -194,9 +191,11 @@ export const CongratulationsCard = () => {
 							{formatWeiHelper(totalAmount.div(10))} GIV.{' '}
 						</Lead>
 						<AddGivButton
-							onClick={() =>
-								addGIVToken(config.XDAI_NETWORK_NUMBER)
-							}
+							onClick={() => {
+								if (provider) {
+									addGIVToken(provider);
+								}
+							}}
 						>
 							<Image
 								src='/images/icons/metamask.svg'
@@ -294,7 +293,6 @@ export const CongratulationsCard = () => {
 				</ExploreRow>
 				<ClaimFromAnother
 					onClick={() => {
-						goFirstStep();
 						resetWallet();
 					}}
 				>

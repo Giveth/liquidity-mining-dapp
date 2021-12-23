@@ -195,8 +195,8 @@ export const TabGIVstreamBottom = () => {
 						direction={'top'}
 					>
 						<FlowRateTooltip>
-							The GIVstream progress shows how much time is left
-							for your GIVstream to flow.
+							The rate at which you receive liquid GIV from your
+							GIVstream.
 						</FlowRateTooltip>
 					</IconWithTooltip>
 				</FlowRateRow>

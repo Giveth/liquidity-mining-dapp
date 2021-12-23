@@ -132,7 +132,7 @@ const Header: FC<IHeader> = () => {
 						<div>
 							<ConnectButton
 								buttonType='primary'
-								label='Connect Wallet'
+								label='CONNECT WALLET'
 								onClick={connect}
 							/>
 						</div>

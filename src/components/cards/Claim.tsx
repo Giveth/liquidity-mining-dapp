@@ -1,22 +1,16 @@
-import { FC, useContext, useEffect, useState } from 'react';
+import { FC, useContext, useState } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
 import { Row } from '../styled-components/Grid';
 import { Card, Header, PreviousArrowButton } from './common';
-import {
-	ClaimViewContext,
-	IClaimViewCardProps,
-} from '../views/claim/Claim.view';
+import { IClaimViewCardProps } from '../views/claim/Claim.view';
 import useUser from '../../context/user.context';
 import { OnboardContext } from '../../context/onboard.context';
 import config from '../../configuration';
 import { addGIVToken } from '@/lib/metamask';
-import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
 import { GIVdropHarvestModal } from '../modals/GIVdropHarvestModal';
-import { formatWeiHelper } from '@/helpers/number';
 import type { TransactionResponse } from '@ethersproject/providers';
-import { wrongWallet } from '../toasts/claim';
 import { H2, Lead } from '@giveth/ui-design-system';
 
 interface IClaimCardContainer {
@@ -63,42 +57,17 @@ const MetamaskButton = styled.a`
 `;
 
 const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { activeIndex, goPreviousStep, goNextStep } =
-		useContext(ClaimViewContext);
-	const { userAddress, totalAmount } = useUser();
-	const {
-		isReady,
-		changeWallet,
-		connect,
-		provider,
-		network,
-		walletCheck,
-		address,
-	} = useContext(OnboardContext);
+	const { totalAmount, step, goPreviousStep, goNextStep } = useUser();
+	const { isReady, connect, network, walletCheck, provider } =
+		useContext(OnboardContext);
 
 	const [txStatus, setTxStatus] = useState<TransactionResponse | undefined>();
-	const [showModal, setShowModal] = useState<boolean>(false);
 	const [showClaimModal, setShowClaimModal] = useState<boolean>(false);
-
-	useEffect(() => {
-		setShowModal(
-			isReady &&
-				network !== config.XDAI_NETWORK_NUMBER &&
-				activeIndex === 5,
-		);
-	}, [network, activeIndex, isReady]);
 
 	const checkNetworkAndWallet = async () => {
 		if (!isReady) {
 			console.log('Wallet is not connected');
 			await connect();
-			return false;
-		}
-
-		if (!provider || userAddress !== address) {
-			console.log('Connected wallet is not the claimed address');
-			wrongWallet(userAddress);
-			await changeWallet();
 			return false;
 		}
 
@@ -125,7 +94,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 	return (
 		<>
 			<ClaimCardContainer
-				activeIndex={activeIndex}
+				activeIndex={step}
 				index={index}
 				claimed={txStatus}
 			>
@@ -134,7 +103,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 						Claim your GIV now!
 					</Title>
 					<Desc size='small' color={'#CABAFF'}>
-						Join the giving economy.
+						Let&apos;s Build the Future of Giving, together.
 					</Desc>
 				</ClaimHeader>
 				<Row alignItems={'center'} justifyContent={'center'}>
@@ -145,12 +114,16 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 							openHarvestModal();
 						}}
 					>
-						CLAIM {formatWeiHelper(totalAmount.div(10))} GIV
+						CLAIM
 					</ClaimButton>
 				</Row>
 				<Row alignItems={'center'} justifyContent={'center'}>
 					<MetamaskButton
-						onClick={() => addGIVToken(config.XDAI_NETWORK_NUMBER)}
+						onClick={() => {
+							if (provider) {
+								addGIVToken(provider);
+							}
+						}}
 					>
 						<Image
 							src='/images/metamask.png'
@@ -160,19 +133,12 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 						/>
 					</MetamaskButton>
 				</Row>
-				{activeIndex === index && (
+				{step === index && (
 					<>
 						<PreviousArrowButton onClick={goPreviousStep} />
 					</>
 				)}
 			</ClaimCardContainer>
-			{showModal && (
-				<WrongNetworkModal
-					showModal={showModal}
-					setShowModal={setShowModal}
-					targetNetworks={[config.XDAI_NETWORK_NUMBER]}
-				/>
-			)}
 			{showClaimModal && (
 				<GIVdropHarvestModal
 					showModal={showClaimModal}

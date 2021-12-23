@@ -18,8 +18,8 @@ const dappId = config.BLOCKNATIVE_DAPP_ID;
 export interface IOnboardContext {
 	address: string;
 	network: number;
-	changeWallet: () => Promise<void>;
-	connect: () => Promise<void>;
+	changeWallet: () => Promise<boolean>;
+	connect: () => Promise<boolean>;
 	walletCheck: () => Promise<void>;
 	isReady: boolean;
 	provider: Web3Provider | null;
@@ -27,8 +27,8 @@ export interface IOnboardContext {
 const initialValue = {
 	address: '',
 	network: 0,
-	changeWallet: () => Promise.resolve(),
-	connect: () => Promise.resolve(),
+	changeWallet: () => Promise.resolve(false),
+	connect: () => Promise.resolve(false),
 	walletCheck: () => Promise.resolve(),
 	isReady: false,
 	provider: null,
@@ -111,15 +111,18 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 				const selected = await onboard.walletSelect(selectedWallet);
 				if (!selected) {
 					setIsReady(false);
-					return;
+					return false;
 				}
 				const ready = await onboard.walletCheck();
 				setIsReady(ready);
+				return true;
 			} catch (e) {
 				console.error(e);
 				setIsReady(false);
+				return false;
 			}
 		}
+		return false;
 	};
 
 	const walletCheck = async () => {
@@ -133,6 +136,7 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 			onboard.walletReset();
 			return connect();
 		}
+		return false;
 	};
 
 	const disconnect = () => {

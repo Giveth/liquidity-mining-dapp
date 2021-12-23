@@ -43,7 +43,6 @@ import type {
 	TransactionResponse,
 	TransactionReceipt,
 } from '@ethersproject/providers';
-import useUser from '@/context/user.context';
 import { OnboardContext } from '@/context/onboard.context';
 import {
 	showPendingClaim,
@@ -100,9 +99,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 	const { tokenDistroHelper } = useTokenDistro();
 	const { currentBalance } = useBalances();
 
-	const { userAddress } = useUser();
-
-	const { provider } = useContext(OnboardContext);
+	const { address, provider } = useContext(OnboardContext);
 
 	useEffect(() => {
 		setClaimableNow(tokenDistroHelper.getUserClaimableNow(currentBalance));
@@ -142,7 +139,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 
 		try {
 			setClaimState(ClaimState.WAITING);
-			const tx = await claimAirDrop(userAddress, provider);
+			const tx = await claimAirDrop(address, provider);
 			// This is for test;
 			// const tx: TransactionResponse = {
 			// 	hash: '0x8162815a31ba2ffc6a815ec76f79231fd7bc4a8c49f9e5ec7d923a6c069ef938',
