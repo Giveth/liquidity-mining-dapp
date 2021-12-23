@@ -12,6 +12,8 @@ import { Zero } from '@ethersproject/constants';
 import { BigNumber } from 'ethers';
 import { useOnboard } from '.';
 import { Dispatch } from 'react';
+import config from '@/configuration';
+import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
 
 export enum GiveDropStateType {
 	notConnected,
@@ -49,6 +51,7 @@ type Props = {
 export const UserProvider: FC<Props> = ({ children }) => {
 	const [step, setStep] = useState(0);
 	const [isloading, setIsLoading] = useState(false);
+	const [showModal, setShowModal] = useState<boolean>(false);
 	const [totalAmount, setTotalAmount] = useState<BigNumber>(
 		initialValue.totalAmount,
 	);
@@ -57,7 +60,11 @@ export const UserProvider: FC<Props> = ({ children }) => {
 		GiveDropStateType.notConnected,
 	);
 
-	const { address, network } = useOnboard();
+	const { address, network, isReady } = useOnboard();
+
+	useEffect(() => {
+		setShowModal(isReady && network !== config.XDAI_NETWORK_NUMBER);
+	}, [network, step, isReady]);
 
 	const getClaimData = async () => {
 		setTotalAmount(Zero);
@@ -111,6 +118,13 @@ export const UserProvider: FC<Props> = ({ children }) => {
 			}}
 		>
 			{children}
+			{showModal && (
+				<WrongNetworkModal
+					showModal={showModal}
+					setShowModal={setShowModal}
+					targetNetworks={[config.XDAI_NETWORK_NUMBER]}
+				/>
+			)}
 		</UserContext.Provider>
 	);
 };

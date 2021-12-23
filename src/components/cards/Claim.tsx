@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from 'react';
+import { FC, useContext, useState } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
@@ -9,11 +9,8 @@ import useUser from '../../context/user.context';
 import { OnboardContext } from '../../context/onboard.context';
 import config from '../../configuration';
 import { addGIVToken } from '@/lib/metamask';
-import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
 import { GIVdropHarvestModal } from '../modals/GIVdropHarvestModal';
-import { formatWeiHelper } from '@/helpers/number';
 import type { TransactionResponse } from '@ethersproject/providers';
-import { wrongWallet } from '../toasts/claim';
 import { H2, Lead } from '@giveth/ui-design-system';
 
 interface IClaimCardContainer {
@@ -65,14 +62,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 		useContext(OnboardContext);
 
 	const [txStatus, setTxStatus] = useState<TransactionResponse | undefined>();
-	const [showModal, setShowModal] = useState<boolean>(false);
 	const [showClaimModal, setShowClaimModal] = useState<boolean>(false);
-
-	useEffect(() => {
-		setShowModal(
-			isReady && network !== config.XDAI_NETWORK_NUMBER && step === 5,
-		);
-	}, [network, step, isReady]);
 
 	const checkNetworkAndWallet = async () => {
 		if (!isReady) {
@@ -149,13 +139,6 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 					</>
 				)}
 			</ClaimCardContainer>
-			{showModal && (
-				<WrongNetworkModal
-					showModal={showModal}
-					setShowModal={setShowModal}
-					targetNetworks={[config.XDAI_NETWORK_NUMBER]}
-				/>
-			)}
 			{showClaimModal && (
 				<GIVdropHarvestModal
 					showModal={showClaimModal}
