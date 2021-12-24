@@ -140,7 +140,6 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 			currentIncentive.key,
 		);
 
-		console.log('_reward', utils.formatEther(_reward));
 		const liquidReward = tokenDistroHelper.getLiquidPart(_reward);
 		const streamPerWeek =
 			tokenDistroHelper.getStreamPartTokenPerWeek(_reward);
