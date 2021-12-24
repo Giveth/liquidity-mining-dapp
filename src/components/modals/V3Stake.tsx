@@ -92,6 +92,9 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	const [reward, setReward] = useState<BigNumber>(constants.Zero);
 	const [stream, setStream] = useState<BigNumber>(constants.Zero);
 	const [claimableNow, setClaimableNow] = useState<BigNumber>(constants.Zero);
+	const [givBackLiquidPart, setGivBackLiquidPart] = useState<BigNumber>(
+		constants.Zero,
+	);
 
 	const handleStakeUnstake = async (tokenId: number) => {
 		if (!provider) return;
@@ -149,6 +152,9 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 		setReward(liquidReward);
 		setStream(BigNumber.from(streamPerWeek.toFixed(0)));
 		setClaimableNow(tokenDistroHelper.getUserClaimableNow(currentBalance));
+		setGivBackLiquidPart(
+			tokenDistroHelper.getLiquidPart(currentBalance.givback),
+		);
 		setStakeStatus(StakeState.UNSTAKING);
 	};
 
@@ -237,7 +243,9 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 						<HelpRow alignItems='center'>
 							<B>Claimable from GIVstream</B>
 						</HelpRow>
-						<GIVBoxWithPrice amount={claimableNow.sub(reward)} />
+						<GIVBoxWithPrice
+							amount={claimableNow.sub(givBackLiquidPart)}
+						/>
 						<HarvestButtonContainer>
 							{stakeStatus === StakeState.CONFIRM_UNSTAKE ? (
 								<Pending>
