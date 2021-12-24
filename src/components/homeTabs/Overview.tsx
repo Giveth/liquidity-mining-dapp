@@ -28,7 +28,7 @@ export const TabOverviewTop = () => {
 		<OverviewTopContainer>
 			<Container>
 				<PreTitle as='span'>Welcome to the</PreTitle>
-				<OverviewTitle>Giveth Economy</OverviewTitle>
+				<OverviewTitle>GIVeconomy</OverviewTitle>
 				<SubTitle size='medium'>
 					The GIVeconomy empowers our collective of projects, donors,
 					builders, and community members to build the Future of
