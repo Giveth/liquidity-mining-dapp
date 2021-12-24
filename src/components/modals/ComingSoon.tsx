@@ -46,5 +46,4 @@ const ByPass = styled.div`
 	left: 0;
 	width: 20px;
 	height: 20px;
-	background-color: ${brandColors.giv[600]};
 `;
