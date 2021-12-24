@@ -218,9 +218,9 @@ export const TabGIVstreamBottom = () => {
 							</a>
 						}
 					>
-						At launch, 10% of the total supply of GIV is liquid. The
-						rest is released via the GIVstream, becoming liquid
-						gradually until December 24, 2026.
+						Your GIVstream provides a continuous flow of claimable
+						GIV until December 23, 2026. Anyone can get or increase
+						their GIVstream by participating in the GIVeconomy.
 					</GsDataBlock>
 					<GsDataBlock
 						title='Expanding GIViverse'
@@ -245,9 +245,10 @@ export const TabGIVstreamBottom = () => {
 						// 	/>
 						// }
 					>
-						Anyone who adds value to the Giveth ecosystem recieves a
-						GIVstream. As the GIVeconomy grows, more GIV becomes
-						liquid & flows to our community.
+						The GIVeconomy begins humbly but as time passes, the
+						GIViverse expands and more GIV flows from GIVstream.
+						This way, as the GIVeconomy grows, so do the governance
+						rights of our community.
 					</GsDataBlock>
 				</Row>
 				{/* <HistoryTitleRow>
