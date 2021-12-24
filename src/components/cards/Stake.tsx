@@ -1,11 +1,4 @@
-import {
-	useState,
-	ChangeEvent,
-	FC,
-	useContext,
-	useEffect,
-	useRef,
-} from 'react';
+import { FC, useContext, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { InputWithUnit } from '../input';
@@ -29,7 +22,7 @@ import {
 } from './common';
 import { IClaimViewCardProps } from '../views/claim/Claim.view';
 import { UserContext } from '../../context/user.context';
-import { utils, BigNumber as EthersBigNumber, constants } from 'ethers';
+import { BigNumber as EthersBigNumber, constants, utils } from 'ethers';
 import config from '../../configuration';
 import BigNumber from 'bignumber.js';
 import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
@@ -37,8 +30,9 @@ import { StakePoolInfo } from '@/types/poolInfo';
 import { fetchLPStakingInfo } from '@/lib/stakingPool';
 import { useLiquidityPositions } from '@/context';
 import { useTokenDistro } from '@/context/tokenDistro.context';
-import { H2, Lead, H5 } from '@giveth/ui-design-system';
+import { H2, H5, Lead } from '@giveth/ui-design-system';
 import { networkProviders } from '@/helpers/networkProvider';
+import { StakingType } from '@/types/config';
 
 const InvestCardContainer = styled(Card)`
 	::before {
@@ -160,6 +154,8 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 			promiseQueue.push(promise);
 		});
 		config.MAINNET_CONFIG.pools.forEach(poolStakingConfig => {
+			if (poolStakingConfig.type === StakingType.UNISWAP) return;
+
 			const promise: Promise<StakePoolInfo> = fetchLPStakingInfo(
 				poolStakingConfig,
 				config.MAINNET_NETWORK_NUMBER,
