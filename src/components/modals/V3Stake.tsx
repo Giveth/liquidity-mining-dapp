@@ -27,7 +27,7 @@ import styled from 'styled-components';
 import { PoolStakingConfig } from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
 import V3StakingCard from '../cards/PositionCard';
-import { useLiquidityPositions, useOnboard } from '@/context';
+import { useBalances, useLiquidityPositions, useOnboard } from '@/context';
 import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
 import { IconWithTooltip } from '../IconWithToolTip';
 import LoadingAnimation from '@/animations/loading.json';
@@ -73,6 +73,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	showModal,
 	setShowModal,
 }) => {
+	const { currentBalance } = useBalances();
 	const { tokenDistroHelper } = useTokenDistro();
 	const { network, provider, address } = useOnboard();
 	const {
@@ -90,6 +91,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	const [tokenIdState, setTokenId] = useState<number>(0);
 	const [reward, setReward] = useState<BigNumber>(constants.Zero);
 	const [stream, setStream] = useState<BigNumber>(constants.Zero);
+	const [claimableNow, setClaimableNow] = useState<BigNumber>(constants.Zero);
 
 	const handleStakeUnstake = async (tokenId: number) => {
 		if (!provider) return;
@@ -146,6 +148,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 		setTokenId(tokenId);
 		setReward(liquidReward);
 		setStream(BigNumber.from(streamPerWeek.toFixed(0)));
+		setClaimableNow(tokenDistroHelper.getUserClaimableNow(currentBalance));
 		setStakeStatus(StakeState.UNSTAKING);
 	};
 
@@ -234,7 +237,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 						<HelpRow alignItems='center'>
 							<B>Claimable from GIVstream</B>
 						</HelpRow>
-						<GIVBoxWithPrice amount={reward} />
+						<GIVBoxWithPrice amount={claimableNow.sub(reward)} />
 						<HarvestButtonContainer>
 							{stakeStatus === StakeState.CONFIRM_UNSTAKE ? (
 								<Pending>
