@@ -359,7 +359,7 @@ export const approveERC20tokenTransfer = async (
 		try {
 			const approveZero: TransactionResponse = await tokenContract
 				.connect(signer.connectUnchecked())
-				.approve(spenderAddress, Zero);
+				.approve(spenderAddress, ethers.constants.Zero);
 
 			const { status } = await approveZero.wait();
 		} catch (error) {
