@@ -21,7 +21,7 @@ const config: EnvConfig = {
 		blockExplorerName: ['etherscan'],
 		blockExplorerUrls: ['https://etherscan.io/'],
 		subgraphAddress:
-			'https://api.studio.thegraph.com/query/13351/giv-economy-mainnet/0.0.3',
+			'https://api.thegraph.com/subgraphs/name/giveth/giveth-economy-mainnet',
 	},
 
 	XDAI_NETWORK: {
@@ -36,7 +36,7 @@ const config: EnvConfig = {
 		blockExplorerName: ['Blockscout'],
 		blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
 		subgraphAddress:
-			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-xdai',
+			'https://api.thegraph.com/subgraphs/name/giveth/giveth-economy-xdai',
 	},
 
 	MAINNET_CONFIG: {
