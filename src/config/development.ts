@@ -7,7 +7,7 @@ const config: EnvConfig = {
 	XDAI_NETWORK_NUMBER: 100, // xDAI
 
 	GARDEN_LINK:
-		'https://gardens-staging.1hive.org/#/xdai/garden/0xbf2d7d659e45bb0ded75d89eaf5f267fd1ce0ade',
+		'https://gardens-staging.1hive.org/#/xdai/garden/0x16388d99199a74810fc572049b3d4d657e7d5deb',
 
 	MAINNET_NETWORK: {
 		chainId: '0x2a', // A 0x-prefixed hexadecimal string
@@ -23,7 +23,7 @@ const config: EnvConfig = {
 		blockExplorerName: ['Etherscan'],
 		blockExplorerUrls: ['https://kovan.etherscan.io'],
 		subgraphAddress:
-			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-kovan-develop',
+			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-kovan-deployment-seven',
 	},
 
 	XDAI_NETWORK: {
@@ -38,34 +38,34 @@ const config: EnvConfig = {
 		blockExplorerName: ['Blockscout'],
 		blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
 		subgraphAddress:
-			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-xdai-develop',
+			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-xdai-deployment-seven',
 	},
 
 	MAINNET_CONFIG: {
-		TOKEN_ADDRESS: '0x900d7e4985461ef158f04ca2Ef1aBd136c620DA0',
+		TOKEN_ADDRESS: '0x29434A25abd94AE882aA883eea81585Aaa5b078D',
 		WETH_TOKEN_ADDRESS: '0xd0a1e359811322d97991e03f863a0c30c2cf029c',
-		TOKEN_DISTRO_ADDRESS: '0xA43C366b0360Da3A6021a91991652cc8806423dB',
+		TOKEN_DISTRO_ADDRESS: '0x2C84Ab41b53C52959a794830fe296Fd717c33337',
 		GIV: {
-			LM_ADDRESS: '0xbDD6F1865E882a412D88d903cDB2817d919B0d36',
+			LM_ADDRESS: '0x17207684344B206A06BF8651d6e5e1833660418b',
 			BUY_LINK:
-				'https://app.uniswap.org/#/swap?outputCurrency=0x900d7e4985461ef158f04ca2Ef1aBd136c620DA0',
+				'https://app.uniswap.org/#/swap?outputCurrency=0x29434A25abd94AE882aA883eea81585Aaa5b078D',
 		},
 
 		nodeUrl: 'https://kovan.infura.io/v3/' + INFURA_API_KEY,
 
 		pools: [
 			{
-				INCENTIVE_START_TIME: 1639683000,
-				INCENTIVE_END_TIME: 1655407800,
+				INCENTIVE_START_TIME: 1640272200,
+				INCENTIVE_END_TIME: 1655997000,
 				INCENTIVE_REWARD_AMOUNT: 10000000,
 				NFT_POSITIONS_MANAGER_ADDRESS:
 					'0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
 				UNISWAP_V3_STAKER: '0x1f98407aaB862CdDeF78Ed252D6f557aA5b0f00d',
 				STAKING_REWARDS_CONTRACT:
 					'0xfA656B81cEC0deD6Acd5Bb1a60A06914aB21A0B3',
-				REWARD_TOKEN: '0x43A440176FDB70aA3730564B0D1e435628f61D3F',
+				REWARD_TOKEN: '0xDfbb5C70006B357d30BB335f55a01e6b0151Bcb5',
 				UNISWAP_V3_LP_POOL:
-					'0x05f9c5ccc01bc4658516b664be14fb89121c9d15',
+					'0x3c2455a3ee0d824941c9329c01a66b86078c3e82',
 				INCENTIVE_REFUNDEE_ADDRESS:
 					'0x5f672d71399d8cDbA64f596394b4f4381247E025',
 				POOL_ADDRESS: '0xa48C26fF05F47a2eEd88C09664de1cb604A21b01',
@@ -73,57 +73,57 @@ const config: EnvConfig = {
 				type: StakingType.UNISWAP,
 				title: 'GIV / ETH',
 				description: '0.3% tier only',
-				provideLiquidityLink: `https://app.uniswap.org/#/add/ETH/0x900d7e4985461ef158f04ca2Ef1aBd136c620DA0/3000`,
+				provideLiquidityLink: `https://app.uniswap.org/#/add/ETH/0x29434A25abd94AE882aA883eea81585Aaa5b078D/3000`,
 				unit: 'NFT',
 			},
 			{
-				POOL_ADDRESS: '0x81343c08cccd0e13f3c49c8270c93edc5f3d0fc6',
+				POOL_ADDRESS: '0x8a6b25e33b12d1bb6929a8793961076bd1f9d3eb',
 				VAULT_ADDRESS: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
 				POOL_ID:
-					'0x81343c08cccd0e13f3c49c8270c93edc5f3d0fc6000200000000000000000518',
-				LM_ADDRESS: '0x9aF8e5FF803D64f1e10688413e75C656d883Ca70',
+					'0x8a6b25e33b12d1bb6929a8793961076bd1f9d3eb00020000000000000000053f',
+				LM_ADDRESS: '0x4B319c068685aF260c91407B651918307df30061',
 				type: StakingType.BALANCER,
 				title: 'GIV / ETH',
 				description: '80% GIV, 20% ETH',
 				provideLiquidityLink:
-					'https://kovan.app.balancer.fi/#/pool/0x81343c08cccd0e13f3c49c8270c93edc5f3d0fc6000200000000000000000518',
+					'https://kovan.app.balancer.fi/#/pool/0x8a6b25e33b12d1bb6929a8793961076bd1f9d3eb00020000000000000000053f',
 				unit: 'LP',
 			},
 		],
 	},
 
 	XDAI_CONFIG: {
-		TOKEN_ADDRESS: '0x7aAde4907a8e2412BEACbE42E51aaeE5B6085f24',
-		MERKLE_ADDRESS: '0x243d4d20E2aEA0565F3504505027255f84c1ad06',
-		TOKEN_DISTRO_ADDRESS: '0x4be013Ee4Cdda158338EC99e64c8c832147bc4cc',
+		TOKEN_ADDRESS: '0x83a8eea6427985C523a0c4d9d3E62C051B6580d3',
+		MERKLE_ADDRESS: '0xc87403C70c9FBfb594d98d3B5E695BBE4C694188',
+		TOKEN_DISTRO_ADDRESS: '0x18a46865AAbAf416a970eaA8625CFC430D2364A1',
 
 		nodeUrl: 'https://rpc.xdaichain.com/',
 		GIV: {
-			LM_ADDRESS: '0x0Aec14Fb84f1bE403E77232E8462106136179f98',
-			GARDEN_ADDRESS: '0x0d455538c9b6f9a699272a9bd44f6a36a93adf9b',
+			LM_ADDRESS: '0xDAEa66Adc97833781139373DF5B3bcEd3fdda5b1',
+			GARDEN_ADDRESS: '0x9ff80789b74d1d2b7cf5a568ea82409c2b327861',
 			BUY_LINK:
-				'https://app.honeyswap.org/#/swap?outputCurrency=0x7aAde4907a8e2412BEACbE42E51aaeE5B6085f24',
+				'https://app.honeyswap.org/#/swap?outputCurrency=0x83a8eea6427985C523a0c4d9d3E62C051B6580d3',
 		},
 
 		pools: [
 			{
-				POOL_ADDRESS: '0x42eE83e61d8A497CcCcf668C126234fb67B616Bd',
-				LM_ADDRESS: '0x94cce6B7448e69526Da8d9c9d125fBdf94F77D97',
+				POOL_ADDRESS: '0x31A5AeA76Af79F592a3A3F46a9f6Cb118990433b',
+				LM_ADDRESS: '0xC09147Ac0aC8B5271F03b511c3554e3238Ae3201',
 				type: StakingType.HONEYSWAP,
 				title: 'GIV / HNY',
 				description: '50% GIV, 50% HNY',
 				provideLiquidityLink:
-					'https://app.honeyswap.org/#/add/0x7aAde4907a8e2412BEACbE42E51aaeE5B6085f24/0x69F79C9eA174d4659B18c7993c7EFbBbB58cF068',
+					'https://app.honeyswap.org/#/add/0x83a8eea6427985C523a0c4d9d3E62C051B6580d3/0x69F79C9eA174d4659B18c7993c7EFbBbB58cF068',
 				unit: 'LP',
 			},
 			{
-				POOL_ADDRESS: '0x633799f6d456ACBb20734ecC185B2Ee94995E456',
-				LM_ADDRESS: '0x6EB0bF719FE7ce41AcF82434B226F9d94704A1bA',
+				POOL_ADDRESS: '0x437B0da7932b21F54488fD80Ee09b519a6f4d8AD',
+				LM_ADDRESS: '0x83535D6DeF8E881E647C00462315bae9A6E7BD09',
 				type: StakingType.SUSHISWAP,
 				title: 'GIV / ETH',
 				description: '50% ETH, 50% GIV',
 				provideLiquidityLink:
-					'https://app.sushi.com/add/0x7aAde4907a8e2412BEACbE42E51aaeE5B6085f24/0x736a98655049433f79dCcF5e54b887E8890b63D1',
+					'https://app.sushi.com/add/0x83a8eea6427985C523a0c4d9d3E62C051B6580d3/0x736a98655049433f79dCcF5e54b887E8890b63D1',
 				unit: 'LP',
 			},
 		],
