@@ -10,7 +10,7 @@ import {
 
 interface IGIVBoxWithPriceProps {
 	amount: ethers.BigNumber;
-	price: string;
+	price?: string;
 }
 
 export const GIVBoxWithPrice: FC<IGIVBoxWithPriceProps> = ({
@@ -22,7 +22,7 @@ export const GIVBoxWithPrice: FC<IGIVBoxWithPriceProps> = ({
 			<GIVBoxWithPriceContainer alignItems='center'>
 				<GIVBoxWithPriceIcon size={40} />
 				<GIVBoxWithPriceAmount>
-					{formatWeiHelper(amount)}
+					{formatWeiHelper(amount, 6)}
 				</GIVBoxWithPriceAmount>
 				{/* <GIVBoxWithPriceUSD>~${price}</GIVBoxWithPriceUSD> */}
 				<GIVBoxWithPriceUSD>reserved</GIVBoxWithPriceUSD>

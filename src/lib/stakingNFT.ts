@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
-import { utils } from 'ethers';
+import { utils, Contract } from 'ethers';
 import { TransactionResponse, Web3Provider } from '@ethersproject/providers';
 
 import { LiquidityPosition } from '@/types/nfts';
@@ -233,4 +233,17 @@ export const withdraw = async (
 	} catch (e) {
 		console.warn(e);
 	}
+};
+
+export const getReward = async (
+	tokenId: number,
+	uniswapV3StakerContract: Contract,
+	currentIncentiveKey?: (string | number)[] | null,
+) => {
+	const { reward } = await uniswapV3StakerContract.getRewardInfo(
+		currentIncentiveKey,
+		tokenId,
+	);
+
+	return reward;
 };

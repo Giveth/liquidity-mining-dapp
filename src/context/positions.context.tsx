@@ -26,6 +26,7 @@ import {
 } from '@/services/subgraph';
 import { Zero } from '@/helpers/number';
 import BigNumber from 'bignumber.js';
+import { constants } from 'ethers';
 
 const ERC721NftContext = createContext<{
 	totalNftPositions: LiquidityPosition[];

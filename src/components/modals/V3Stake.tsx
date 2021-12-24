@@ -1,22 +1,60 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { Modal, IModal } from './Modal';
 import {
 	neutralColors,
 	brandColors,
 	Button,
+	Caption,
 	H4,
 	Overline,
 	B,
+	IconHelp,
+	IconGIVStream,
+	Lead,
 } from '@giveth/ui-design-system';
+import {
+	CancelButton,
+	HarvestButton,
+	HelpRow,
+	Pending,
+	RateRow,
+	GIVRate,
+	TooltipContent,
+} from './HarvestAll.sc';
+import Lottie from 'react-lottie';
 import { Row } from '../styled-components/Grid';
 import styled from 'styled-components';
 import { PoolStakingConfig } from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
 import V3StakingCard from '../cards/PositionCard';
-import { useLiquidityPositions, useOnboard } from '@/context';
+import { useBalances, useLiquidityPositions, useOnboard } from '@/context';
+import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
+import { IconWithTooltip } from '../IconWithToolTip';
+import LoadingAnimation from '@/animations/loading.json';
+import { transfer, exit, getReward } from '@/lib/stakingNFT';
+import { ethers, BigNumber, constants, utils } from 'ethers';
+import {
+	ConfirmedInnerModal,
+	SubmittedInnerModal,
+	ErrorInnerModal,
+} from './ConfirmSubmit';
+import { useTokenDistro } from '@/context/tokenDistro.context';
+import { formatWeiHelper } from '@/helpers/number';
+import { getUniswapV3StakerContract } from '@/lib/contracts';
+
+const loadingAnimationOptions = {
+	loop: true,
+	autoplay: true,
+	animationData: LoadingAnimation,
+	rendererSettings: {
+		preserveAspectRatio: 'xMidYMid slice',
+	},
+};
 
 export enum StakeState {
 	UNKNOWN,
+	UNSTAKING,
+	CONFIRM_UNSTAKE,
 	CONFIRMING,
 	CONFIRMED,
 	REJECT,
@@ -28,11 +66,6 @@ interface IV3StakeModalProps extends IModal {
 	poolStakingConfig: PoolStakingConfig;
 	isUnstakingModal?: boolean;
 }
-import {
-	ConfirmedInnerModal,
-	SubmittedInnerModal,
-	ErrorInnerModal,
-} from './ConfirmSubmit';
 
 export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	poolStakingConfig,
@@ -40,47 +73,210 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	showModal,
 	setShowModal,
 }) => {
-	const { network } = useOnboard();
-	const { unstakedPositions, stakedPositions } = useLiquidityPositions();
+	const { currentBalance } = useBalances();
+	const { tokenDistroHelper } = useTokenDistro();
+	const { network, provider, address } = useOnboard();
+	const {
+		unstakedPositions,
+		stakedPositions,
+		currentIncentive,
+		loadPositions,
+	} = useLiquidityPositions();
 	const positions = isUnstakingModal ? stakedPositions : unstakedPositions;
 	const { title } = poolStakingConfig;
 	const [stakeStatus, setStakeStatus] = useState<StakeState>(
 		StakeState.UNKNOWN,
 	);
 	const [txStatus, setTxStatus] = useState<any>();
-	const [tokenId, setTokenId] = useState<string>('');
+	const [tokenIdState, setTokenId] = useState<number>(0);
+	const [reward, setReward] = useState<BigNumber>(constants.Zero);
+	const [stream, setStream] = useState<BigNumber>(constants.Zero);
+	const [claimableNow, setClaimableNow] = useState<BigNumber>(constants.Zero);
+	const [givBackLiquidPart, setGivBackLiquidPart] = useState<BigNumber>(
+		constants.Zero,
+	);
+
+	const handleStakeUnstake = async (tokenId: number) => {
+		if (!provider) return;
+
+		if (!isUnstakingModal) {
+			setStakeStatus(StakeState.CONFIRMING);
+			setTokenId(tokenId);
+		} else {
+			setStakeStatus(StakeState.CONFIRM_UNSTAKE);
+		}
+
+		const tx = isUnstakingModal
+			? await exit(
+					tokenIdState,
+					address,
+					provider,
+					currentIncentive,
+					setStakeStatus,
+			  )
+			: await transfer(
+					tokenId,
+					address,
+					provider,
+					currentIncentive,
+					setStakeStatus,
+			  );
+		setTxStatus(tx);
+		try {
+			const { status } = await tx.wait();
+			if (status) {
+				setStakeStatus(StakeState.CONFIRMED);
+			} else {
+				setStakeStatus(StakeState.ERROR);
+			}
+			loadPositions();
+		} catch {
+			setStakeStatus(StakeState.UNKNOWN);
+		}
+	};
+
+	const handleAction = async (tokenId: number) => {
+		const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
+		if (!provider || !uniswapV3StakerContract) return;
+
+		const _reward = await getReward(
+			tokenId,
+			uniswapV3StakerContract,
+			currentIncentive.key,
+		);
+
+		const liquidReward = tokenDistroHelper.getLiquidPart(_reward);
+		const streamPerWeek =
+			tokenDistroHelper.getStreamPartTokenPerWeek(_reward);
+		setTokenId(tokenId);
+		setReward(liquidReward);
+		setStream(BigNumber.from(streamPerWeek.toFixed(0)));
+		setClaimableNow(tokenDistroHelper.getUserClaimableNow(currentBalance));
+		setGivBackLiquidPart(
+			tokenDistroHelper.getLiquidPart(currentBalance.givback),
+		);
+		setStakeStatus(StakeState.UNSTAKING);
+	};
 
 	return (
 		<Modal showModal={showModal} setShowModal={setShowModal}>
 			<StakeModalContainer>
 				{(stakeStatus === StakeState.UNKNOWN ||
+					stakeStatus === StakeState.CONFIRMING ||
+					stakeStatus === StakeState.UNSTAKING ||
+					stakeStatus === StakeState.CONFIRM_UNSTAKE) && (
+					<StakeModalTitle alignItems='center'>
+						<StakingPoolImages title={title} />
+						<StakeModalTitleText weight={700}>
+							{title}
+						</StakeModalTitleText>
+					</StakeModalTitle>
+				)}
+				{(stakeStatus === StakeState.UNKNOWN ||
 					stakeStatus === StakeState.CONFIRMING) && (
 					<>
-						<StakeModalTitle alignItems='center'>
-							<StakingPoolImages title={title} />
-							<StakeModalTitleText weight={700}>
-								{title}
-							</StakeModalTitleText>
-						</StakeModalTitle>
 						<InnerModalPositions>
 							{positions.map(position => (
 								<V3StakingCard
-									position={position}
-									setTxStatus={setTxStatus}
-									isUnstaking={isUnstakingModal}
 									key={position.tokenId.toString()}
-									handleStakeStatus={setStakeStatus}
-									handleSelectedNFT={setTokenId}
-									selectedPosition={
-										position.tokenId.toString() === tokenId
+									position={position}
+									isUnstaking={isUnstakingModal}
+									handleAction={
+										isUnstakingModal
+											? handleAction
+											: handleStakeUnstake
 									}
 									isConfirming={
 										stakeStatus === StakeState.CONFIRMING
+									}
+									selectedPosition={
+										position.tokenId === tokenIdState
 									}
 								/>
 							))}
 						</InnerModalPositions>
 					</>
+				)}
+				{(stakeStatus === StakeState.UNSTAKING ||
+					stakeStatus === StakeState.CONFIRM_UNSTAKE) && (
+					<HarvestContainer>
+						<HelpRow alignItems='center'>
+							<Caption>Rewards earned by your NFT</Caption>
+							<IconWithTooltip
+								icon={
+									<IconHelp
+										size={16}
+										color={brandColors.deep[100]}
+									/>
+								}
+								direction={'top'}
+							>
+								<TooltipContent>
+									When you unstake an NFT from this pool, you
+									also harvest any corresponding rewards
+								</TooltipContent>
+							</IconWithTooltip>
+						</HelpRow>
+						<GIVBoxWithPrice amount={reward} />
+						<HelpRow alignItems='center'>
+							<Caption>Added to your GIVstream flowrate</Caption>
+							<IconWithTooltip
+								icon={
+									<IconHelp
+										size={16}
+										color={brandColors.deep[100]}
+									/>
+								}
+								direction={'top'}
+							>
+								<TooltipContent>
+									Increase you GIVstream flowrate when you
+									claim liquid rewards!
+								</TooltipContent>
+							</IconWithTooltip>
+						</HelpRow>
+						<RateRow alignItems='center'>
+							<IconGIVStream size={24} />
+							<GIVRate>{formatWeiHelper(stream)}</GIVRate>
+							<Lead>GIV/week</Lead>
+						</RateRow>
+						<HelpRow alignItems='center'>
+							<B>Claimable from GIVstream</B>
+						</HelpRow>
+						<GIVBoxWithPrice
+							amount={claimableNow.sub(givBackLiquidPart)}
+						/>
+						<HarvestButtonContainer>
+							{stakeStatus === StakeState.CONFIRM_UNSTAKE ? (
+								<Pending>
+									<Lottie
+										options={loadingAnimationOptions}
+										height={40}
+										width={40}
+									/>
+									&nbsp; PENDING
+								</Pending>
+							) : (
+								<HarvestButton
+									label='UNSTAKE &amp; HARVEST'
+									size='medium'
+									buttonType='primary'
+									onClick={() => {
+										handleStakeUnstake(0);
+									}}
+								/>
+							)}
+							<CancelButton
+								label='CANCEL'
+								size='medium'
+								buttonType='texty'
+								onClick={() => {
+									setShowModal(false);
+								}}
+								// disabled={claimState === ClaimState.WAITING}
+							/>
+						</HarvestButtonContainer>
+					</HarvestContainer>
 				)}
 				<InnerModalStates>
 					{stakeStatus === StakeState.REJECT && (
@@ -190,4 +386,14 @@ export const PositionActions = styled.div`
 
 export const FullWidthButton = styled(Button)`
 	width: 100%;
+`;
+
+export const HarvestContainer = styled.div`
+	margin: auto;
+	padding: 0 24px;
+	width: 630px;
+`;
+
+export const HarvestButtonContainer = styled.div`
+	margin-top: 36px;
 `;

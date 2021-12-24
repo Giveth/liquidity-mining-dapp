@@ -25,6 +25,7 @@ import { IconWithTooltip } from '../IconWithToolTip';
 import LoadingAnimation from '@/animations/loading.json';
 import { StakeState } from '../modals/V3Stake';
 import { Pending } from '../modals/HarvestAll.sc';
+import { BigNumber } from 'ethers';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -60,9 +61,7 @@ interface IV3StakeCardProps {
 	isUnstaking?: boolean;
 	selectedPosition?: boolean;
 	isConfirming?: boolean;
-	handleStakeStatus: Dispatch<SetStateAction<StakeState>>;
-	handleSelectedNFT: Dispatch<SetStateAction<string>>;
-	setTxStatus: Dispatch<SetStateAction<any>>;
+	handleAction: (tokenId: number) => void;
 }
 
 const STARTS_WITH = 'data:application/json;base64,';
@@ -72,12 +71,8 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 	isUnstaking,
 	selectedPosition,
 	isConfirming,
-	handleStakeStatus,
-	handleSelectedNFT,
-	setTxStatus,
+	handleAction,
 }) => {
-	const { address, provider } = useOnboard();
-	const { currentIncentive, loadPositions } = useLiquidityPositions();
 	const { pool, tickLower, tickUpper } = position._position || {};
 
 	const buttonLabel = isUnstaking ? 'UNSTAKE & HARVEST' : 'STAKE';
@@ -106,40 +101,6 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 	};
 
 	const { image } = parseUri(position.uri);
-
-	const handleAction = async () => {
-		if (!provider) return;
-
-		handleSelectedNFT(position.tokenId.toString());
-		handleStakeStatus(StakeState.CONFIRMING);
-		const tx = isUnstaking
-			? await exit(
-					position.tokenId,
-					address,
-					provider,
-					currentIncentive,
-					handleStakeStatus,
-			  )
-			: await transfer(
-					position.tokenId,
-					address,
-					provider,
-					currentIncentive,
-					handleStakeStatus,
-			  );
-		setTxStatus(tx);
-		try {
-			const { status } = await tx.wait();
-			if (status) {
-				handleStakeStatus(StakeState.CONFIRMED);
-			} else {
-				handleStakeStatus(StakeState.ERROR);
-			}
-			loadPositions();
-		} catch {
-			handleStakeStatus(StakeState.UNKNOWN);
-		}
-	};
 
 	return (
 		<PositionContainer key={position.tokenId.toString()}>
@@ -224,8 +185,7 @@ const V3StakingCard: FC<IV3StakeCardProps> = ({
 					<FullWidthButton
 						label={buttonLabel}
 						buttonType='primary'
-						onClick={handleAction}
-						disabled={isConfirming}
+						onClick={() => handleAction(position.tokenId)}
 					/>
 				)}
 				<FullWidthButton
@@ -332,7 +292,8 @@ export const PositionLink = styled.a`
 `;
 
 const PendingStyled = styled(Pending)`
-	margin: auto;
+	margin: 0 auto;
+	max-width: 200px;
 `;
 
 export default V3StakingCard;
