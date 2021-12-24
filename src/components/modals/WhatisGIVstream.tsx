@@ -41,7 +41,7 @@ export const WhatisGIVstreamModal: FC<IWhatisGIVstreamModal> = ({
 					directly to your wallet and the rest is added to your
 					GIVstream. As time passes and the GIVstream flows, a larger
 					portion of the total GIV you get is sent directly to you at
-					the time of harvest. The GIVstream flows until December 24,
+					the time of harvest. The GIVstream flows until December 23,
 					2026 at which point the GIVeconomy will be full power!
 				</Desc>
 				<LinksRow alignItems='center' justifyContent='center'>
