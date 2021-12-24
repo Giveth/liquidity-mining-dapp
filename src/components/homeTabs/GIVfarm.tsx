@@ -22,6 +22,7 @@ import { BigNumber } from 'bignumber.js';
 import { constants } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { useFarms } from '@/context/farm.context';
+import { ExtLink } from './commons';
 
 const GIVfarmTabContainer = styled(Container)``;
 
@@ -80,7 +81,17 @@ export const TabGIVfarmBottom = () => {
 
 	return (
 		<GIVfarmTabContainer>
-			<NetworkSelector />
+			<Row alignItems='center' gap='24px'>
+				<NetworkSelector />
+				<ExtLink
+					size='Big'
+					target='_blank'
+					rel='noreferrer'
+					href='https://omni.xdaichain.com/bridge'
+				>
+					Bridge your GIV
+				</ExtLink>
+			</Row>
 			{walletNetwork === config.XDAI_NETWORK_NUMBER && (
 				<PoolRow justifyContent='center' gap='24px' wrap={1}>
 					{config.XDAI_CONFIG.pools.map(
