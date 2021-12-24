@@ -21,6 +21,7 @@ import {
 	DataBlockButton,
 } from './Overview.sc';
 import { IconGIV } from '../Icons/GIV';
+import config from '@/config/development';
 
 export const TabOverviewTop = () => {
 	return (
@@ -101,7 +102,7 @@ export const TabOverviewBottom = () => {
 						title='Govern'
 						button={
 							<a
-								href='https://gardens-staging.1hive.org/#/xdai/garden/0x2050eabe84409e480ad1062001fdb6dfbc836192'
+								href={config.GARDEN_LINK}
 								target='_blank'
 								rel='noreferrer'
 							>
