@@ -21,7 +21,7 @@ import {
 	DataBlockButton,
 } from './Overview.sc';
 import { IconGIV } from '../Icons/GIV';
-import config from '@/config/development';
+import config from '@/configuration';
 
 export const TabOverviewTop = () => {
 	return (
