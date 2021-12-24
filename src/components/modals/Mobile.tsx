@@ -25,7 +25,13 @@ export const MobileModal: FC<IMobileModalProps> = ({
 					<Row gap='8px' alignItems='center' />
 					<DescContainer>
 						Please switch to desktop to enjoy the GIVeconomy DApp or
-						read about the GIVeconomy here.
+						&nbsp;
+						<GLink
+							href='https://docs.giveth.io/giveconomy/'
+							target='_blank'
+						>
+							read about the GIVeconomy here.
+						</GLink>
 					</DescContainer>
 				</ModalContainer>
 			</Modal>
@@ -34,7 +40,8 @@ export const MobileModal: FC<IMobileModalProps> = ({
 };
 
 const ModalContainer = styled.div`
-	width: 420px;
+	width: 100%;
+	max-width: 420px;
 	padding: 16px 24px;
 	text-align: center;
 `;
@@ -46,4 +53,7 @@ const DescContainer = styled.div`
 	border-radius: 8px;
 	padding: 18px;
 	margin: 32px auto;
+	& > a {
+		color: yellow;
+	}
 `;
