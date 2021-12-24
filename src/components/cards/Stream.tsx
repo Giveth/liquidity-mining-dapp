@@ -29,7 +29,7 @@ const StreamCardContainer = styled(Card)`
 		height: 333px;
 		top: 0;
 		right: 0;
-		z-index: 0;
+		z-index: -1;
 	}
 	@media only screen and (max-width: 1360px) {
 		padding-right: 112px;
