@@ -170,7 +170,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 				.then(({ apr: _apr }) => {
 					mounted.current && setApr(_apr);
 				})
-				.catch(e => console.error('Error on fetching APR:', e));
+				.catch(e => console.error('Error on fetching APR Govern:', e));
 		};
 
 		cb();

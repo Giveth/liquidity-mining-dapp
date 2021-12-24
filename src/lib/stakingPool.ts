@@ -203,7 +203,7 @@ const fetchSimplePoolStakingInfo = async (
 					.times(lp)
 					.div(10 ** 18);
 	} catch (e) {
-		console.error('error on fetching apr:', e);
+		console.error('error on fetching apr fetchSimplePoolStakingInfo:', e);
 	}
 
 	return {
