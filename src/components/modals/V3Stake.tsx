@@ -31,7 +31,7 @@ import { useLiquidityPositions, useOnboard } from '@/context';
 import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
 import { IconWithTooltip } from '../IconWithToolTip';
 import LoadingAnimation from '@/animations/loading.json';
-import { transfer, exit } from '@/lib/stakingNFT';
+import { transfer, exit, getReward } from '@/lib/stakingNFT';
 import { ethers, BigNumber, constants, utils } from 'ethers';
 import {
 	ConfirmedInnerModal,
@@ -130,23 +130,15 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 		}
 	};
 
-	const getReward = async (
-		tokenId: number,
-		uniswapV3StakerContract: ethers.Contract,
-	) => {
-		const { reward } = await uniswapV3StakerContract.getRewardInfo(
-			currentIncentive.key,
-			tokenId,
-		);
-
-		return reward;
-	};
-
 	const handleAction = async (tokenId: number) => {
 		const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
 		if (!provider || !uniswapV3StakerContract) return;
 
-		const _reward = await getReward(tokenId, uniswapV3StakerContract);
+		const _reward = await getReward(
+			tokenId,
+			uniswapV3StakerContract,
+			currentIncentive.key,
+		);
 
 		console.log('_reward', utils.formatEther(_reward));
 		const liquidReward = tokenDistroHelper.getLiquidPart(_reward);

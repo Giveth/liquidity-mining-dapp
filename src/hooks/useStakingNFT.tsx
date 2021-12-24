@@ -6,6 +6,7 @@ import { UniswapV3PoolStakingConfig } from '@/types/config';
 import { BigNumber } from '@ethersproject/bignumber';
 import config from '@/configuration';
 import { getUniswapV3StakerContract } from '@/lib/contracts';
+import { getReward } from '@/lib/stakingNFT';
 
 export const useStakingNFT = () => {
 	const { address: walletAddress, network, provider } = useOnboard();
@@ -61,12 +62,23 @@ export const useStakingNFT = () => {
 			return;
 
 		const load = async () => {
-			const allRewards = stakedPositions.reduce(
-				(acc: BigNumber, curr: LiquidityPosition) =>
-					acc.add(curr.reward),
-				BigNumber.from(0),
-			);
-			setRewardBalance(allRewards);
+			try {
+				const rewards = await Promise.all(
+					stakedPositions.map(({ tokenId }) =>
+						getReward(
+							tokenId,
+							uniswapV3StakerContract,
+							currentIncentive.key,
+						),
+					),
+				);
+
+				const allRewards = rewards.reduce(
+					(acc: BigNumber, reward: BigNumber) => acc.add(reward),
+					BigNumber.from(0),
+				);
+				setRewardBalance(allRewards);
+			} catch {}
 		};
 		load();
 	}, [

@@ -201,7 +201,6 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 					owner: owner,
 					staked: staked,
 					tokenId: tokenId,
-					reward: constants.Zero,
 					uri: '',
 					_position,
 				};
