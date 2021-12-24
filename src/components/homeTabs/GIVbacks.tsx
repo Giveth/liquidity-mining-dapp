@@ -162,7 +162,7 @@ export const TabGIVbacksBottom = () => {
 								size='large'
 								onClick={() => {
 									window.open(
-										'https://hlfkiwoiwhi.typeform.com/to/pXxk0HO5',
+										'https://giveth.typeform.com/verification',
 										'_blank',
 									);
 								}}
