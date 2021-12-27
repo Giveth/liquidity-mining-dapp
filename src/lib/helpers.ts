@@ -1,21 +1,21 @@
 // HRM: Human Readable Date.
-export const DurationToYMDhms = (ms: number) => {
+export const DurationToYMDh = (ms: number) => {
 	let baseTime = new Date(0);
 	let duration = new Date(ms);
 
-	let Y = duration.getUTCFullYear() - baseTime.getUTCFullYear();
-	let M = duration.getUTCMonth() - baseTime.getUTCMonth();
-	let D = duration.getUTCDate() - baseTime.getUTCDate();
+	let y = duration.getUTCFullYear() - baseTime.getUTCFullYear();
+	let m = duration.getUTCMonth() - baseTime.getUTCMonth();
+	let d = duration.getUTCDate() - baseTime.getUTCDate();
 	let h = duration.getUTCHours() - baseTime.getUTCHours();
-	let m = duration.getUTCMinutes() - baseTime.getUTCMinutes();
-	let s = duration.getUTCSeconds() - baseTime.getUTCSeconds();
+	// let min = duration.getUTCMinutes() - baseTime.getUTCMinutes();
+	// let sec = duration.getUTCSeconds() - baseTime.getUTCSeconds();
 
-	return { Y: Y, M, D, h, m, s };
+	return { y, m, d, h };
 };
 
 export const DurationToString = (ms: number, length: number = 3) => {
 	let i = 0;
-	const temp: { [key: string]: number } = DurationToYMDhms(ms);
+	const temp: { [key: string]: number } = DurationToYMDh(ms);
 	const res: string[] = [];
 	for (const key in temp) {
 		if (Object.prototype.hasOwnProperty.call(temp, key)) {
