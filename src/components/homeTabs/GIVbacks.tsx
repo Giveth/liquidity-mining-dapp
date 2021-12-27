@@ -138,14 +138,10 @@ export const TabGIVbacksBottom = () => {
 						button={
 							<GbButton
 								label='DONATE TO EARN GIV'
-								buttonType='secondary'
+								linkType='secondary'
 								size='large'
-								onClick={() => {
-									window.open(
-										'https://giveth.io/projects',
-										'_blank',
-									);
-								}}
+								href='https://giveth.io/projects'
+								target='_blank'
 							/>
 						}
 					>
@@ -158,14 +154,10 @@ export const TabGIVbacksBottom = () => {
 						button={
 							<GbButton
 								label='VERIFY YOUR PROJECT'
-								buttonType='secondary'
+								linkType='secondary'
 								size='large'
-								onClick={() => {
-									window.open(
-										'https://giveth.typeform.com/verification',
-										'_blank',
-									);
-								}}
+								href='https://giveth.typeform.com/verification'
+								target='_blank'
 							/>
 						}
 					>
@@ -228,14 +220,11 @@ export const TabGIVbacksBottom = () => {
 								for verification at least 1 week prior to the
 								Start Date in order to be included in the round.
 							</InfoDesc>
-							<InfoReadMore>
-								<a
-									target='_blank'
-									href='https://docs.giveth.io/giveconomy/givbacks'
-									rel='noreferrer noopener'
-								>
-									Read More{' '}
-								</a>
+							<InfoReadMore
+								target='_blank'
+								href='https://docs.giveth.io/giveconomy/givbacks'
+							>
+								<span>Read More </span>
 								<IconExternalLink
 									size={16}
 									color={brandColors.cyan[500]}
