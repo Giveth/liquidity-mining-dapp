@@ -122,9 +122,13 @@ export const TabGIVbacksBottom = () => {
 			_rounStartTime.setDate(
 				tokenDistroHelper.startTime.getDate() + (_round - 1) * 15,
 			);
+			_rounStartTime.setHours(tokenDistroHelper.startTime.getHours());
+			_rounStartTime.setMinutes(tokenDistroHelper.startTime.getMinutes());
 			setRoundStartime(_rounStartTime);
 			const _roundEndTime = new Date();
 			_roundEndTime.setDate(_rounStartTime.getDate() + 14);
+			_roundEndTime.setHours(tokenDistroHelper.startTime.getHours());
+			_roundEndTime.setMinutes(tokenDistroHelper.startTime.getMinutes());
 			setRoundEndTime(_roundEndTime);
 		}
 	}, [tokenDistroHelper]);
