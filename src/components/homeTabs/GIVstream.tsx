@@ -205,17 +205,13 @@ export const TabGIVstreamBottom = () => {
 					<GsDataBlock
 						title='GIVstream'
 						button={
-							<a
+							<GsButton
+								label='LEARN MORE'
+								linkType='secondary'
+								size='large'
 								target='_blank'
 								href='https://docs.giveth.io/giveconomy/givstream'
-								rel='noreferrer noopener'
-							>
-								<GsButton
-									label='LEARN MORE'
-									buttonType='secondary'
-									size='large'
-								/>
-							</a>
+							/>
 						}
 					>
 						Your GIVstream provides a continuous flow of claimable
@@ -277,17 +273,13 @@ export const TabGIVstreamBottom = () => {
 						<IGsDataBox
 							title='GIVbacks'
 							button={
-								<a
+								<GsButton
+									label='SEE PROJECTS'
+									linkType='primary'
+									size='medium'
 									href='https://giveth.io/projects'
 									target='_blank'
-									rel='noreferrer'
-								>
-									<GsButton
-										label='SEE PROJECTS'
-										buttonType='primary'
-										size='medium'
-									/>
-								</a>
+								/>
 							}
 						>
 							Donate to verified projects on Giveth. Get GIV and
@@ -296,17 +288,13 @@ export const TabGIVstreamBottom = () => {
 						<IGsDataBox
 							title='GIVgarden'
 							button={
-								<a
+								<GsButton
+									label='SEE PROPOSALS'
+									linkType='primary'
+									size='medium'
 									href={config.GARDEN_LINK}
 									target='_blank'
-									rel='noreferrer'
-								>
-									<GsButton
-										label='SEE PROPOSALS'
-										buttonType='primary'
-										size='medium'
-									/>
-								</a>
+								/>
 							}
 						>
 							The GIVgarden is the decentralized governance
@@ -319,7 +307,7 @@ export const TabGIVstreamBottom = () => {
 								<Link href='/givfarm' passHref>
 									<GsButton
 										label='SEE OPPORTUNITIES'
-										buttonType='primary'
+										linkType='primary'
 										size='medium'
 									/>
 								</Link>

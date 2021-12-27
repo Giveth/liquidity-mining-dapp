@@ -17,6 +17,7 @@ import {
 	Title,
 	Subline,
 	Caption,
+	ButtonLink,
 } from '@giveth/ui-design-system';
 import { TopContainer } from './commons';
 import { RewardCard } from '../RewardCard';
@@ -67,7 +68,7 @@ export const GsDataBlock = styled(DataBlock)`
 	width: 459px;
 `;
 
-export const GsButton = styled(Button)`
+export const GsButton = styled(ButtonLink)`
 	padding: 24px 34px;
 `;
 
