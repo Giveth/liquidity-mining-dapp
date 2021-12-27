@@ -20,6 +20,7 @@ import {
 	RateRow,
 	GIVRate,
 	TooltipContent,
+	StyledScrollbars,
 } from './HarvestAll.sc';
 import Lottie from 'react-lottie';
 import { Row } from '../styled-components/Grid';
@@ -174,7 +175,11 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 				)}
 				{(stakeStatus === StakeState.UNKNOWN ||
 					stakeStatus === StakeState.CONFIRMING) && (
-					<>
+					<StyledScrollbars
+						autoHeight
+						autoHeightMin={'20Vh'}
+						autoHeightMax={'70Vh'}
+					>
 						<InnerModalPositions>
 							{positions.map(position => (
 								<V3StakingCard
@@ -195,7 +200,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 								/>
 							))}
 						</InnerModalPositions>
-					</>
+					</StyledScrollbars>
 				)}
 				{(stakeStatus === StakeState.UNSTAKING ||
 					stakeStatus === StakeState.CONFIRM_UNSTAKE) && (
@@ -330,7 +335,7 @@ const InnerModalPositions = styled.div`
 	width: 630px;
 	display: flex;
 	flex-direction: column;
-	padding: 0 24px;
+	padding: 24px;
 	gap: 36px;
 `;
 
