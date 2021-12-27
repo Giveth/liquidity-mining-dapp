@@ -42,6 +42,7 @@ import {
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { formatWeiHelper } from '@/helpers/number';
 import { getUniswapV3StakerContract } from '@/lib/contracts';
+import { Scrollbars } from 'react-custom-scrollbars';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -204,84 +205,93 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 				)}
 				{(stakeStatus === StakeState.UNSTAKING ||
 					stakeStatus === StakeState.CONFIRM_UNSTAKE) && (
-					<HarvestContainer>
-						<HelpRow alignItems='center'>
-							<Caption>Rewards earned by your NFT</Caption>
-							<IconWithTooltip
-								icon={
-									<IconHelp
-										size={16}
-										color={brandColors.deep[100]}
-									/>
-								}
-								direction={'top'}
-							>
-								<TooltipContent>
-									When you unstake an NFT from this pool, you
-									also harvest any corresponding rewards
-								</TooltipContent>
-							</IconWithTooltip>
-						</HelpRow>
-						<GIVBoxWithPrice amount={reward} />
-						<HelpRow alignItems='center'>
-							<Caption>Added to your GIVstream flowrate</Caption>
-							<IconWithTooltip
-								icon={
-									<IconHelp
-										size={16}
-										color={brandColors.deep[100]}
-									/>
-								}
-								direction={'top'}
-							>
-								<TooltipContent>
-									Increase you GIVstream flowrate when you
-									claim liquid rewards!
-								</TooltipContent>
-							</IconWithTooltip>
-						</HelpRow>
-						<RateRow alignItems='center'>
-							<IconGIVStream size={24} />
-							<GIVRate>{formatWeiHelper(stream)}</GIVRate>
-							<Lead>GIV/week</Lead>
-						</RateRow>
-						<HelpRow alignItems='center'>
-							<B>Claimable from GIVstream</B>
-						</HelpRow>
-						<GIVBoxWithPrice
-							amount={claimableNow.sub(givBackLiquidPart)}
-						/>
-						<HarvestButtonContainer>
-							{stakeStatus === StakeState.CONFIRM_UNSTAKE ? (
-								<Pending>
-									<Lottie
-										options={loadingAnimationOptions}
-										height={40}
-										width={40}
-									/>
-									&nbsp; PENDING
-								</Pending>
-							) : (
-								<HarvestButton
-									label='UNSTAKE &amp; HARVEST'
-									size='medium'
-									buttonType='primary'
-									onClick={() => {
-										handleStakeUnstake(0);
-									}}
-								/>
-							)}
-							<CancelButton
-								label='CANCEL'
-								size='medium'
-								buttonType='texty'
-								onClick={() => {
-									setShowModal(false);
-								}}
-								// disabled={claimState === ClaimState.WAITING}
+					<Scrollbars
+						autoHeight
+						autoHeightMin={'20Vh'}
+						autoHeightMax={'70Vh'}
+					>
+						<HarvestContainer>
+							<HelpRow alignItems='center'>
+								<Caption>Rewards earned by your NFT</Caption>
+								<IconWithTooltip
+									icon={
+										<IconHelp
+											size={16}
+											color={brandColors.deep[100]}
+										/>
+									}
+									direction={'top'}
+								>
+									<TooltipContent>
+										When you unstake an NFT from this pool,
+										you also harvest any corresponding
+										rewards
+									</TooltipContent>
+								</IconWithTooltip>
+							</HelpRow>
+							<GIVBoxWithPrice amount={reward} />
+							<HelpRow alignItems='center'>
+								<Caption>
+									Added to your GIVstream flowrate
+								</Caption>
+								<IconWithTooltip
+									icon={
+										<IconHelp
+											size={16}
+											color={brandColors.deep[100]}
+										/>
+									}
+									direction={'top'}
+								>
+									<TooltipContent>
+										Increase you GIVstream flowrate when you
+										claim liquid rewards!
+									</TooltipContent>
+								</IconWithTooltip>
+							</HelpRow>
+							<RateRow alignItems='center'>
+								<IconGIVStream size={24} />
+								<GIVRate>{formatWeiHelper(stream)}</GIVRate>
+								<Lead>GIV/week</Lead>
+							</RateRow>
+							<HelpRow alignItems='center'>
+								<B>Claimable from GIVstream</B>
+							</HelpRow>
+							<GIVBoxWithPrice
+								amount={claimableNow.sub(givBackLiquidPart)}
 							/>
-						</HarvestButtonContainer>
-					</HarvestContainer>
+							<HarvestButtonContainer>
+								{stakeStatus === StakeState.CONFIRM_UNSTAKE ? (
+									<Pending>
+										<Lottie
+											options={loadingAnimationOptions}
+											height={40}
+											width={40}
+										/>
+										&nbsp; PENDING
+									</Pending>
+								) : (
+									<HarvestButton
+										label='UNSTAKE &amp; HARVEST'
+										size='medium'
+										buttonType='primary'
+										onClick={() => {
+											handleStakeUnstake(0);
+										}}
+									/>
+								)}
+								<CancelButton
+									label='CANCEL'
+									size='medium'
+									buttonType='texty'
+									onClick={() => {
+										setShowModal(false);
+									}}
+									// disabled={claimState === ClaimState.WAITING}
+								/>
+							</HarvestButtonContainer>
+						</HarvestContainer>
+					</Scrollbars>
 				)}
 				<InnerModalStates>
 					{stakeStatus === StakeState.REJECT && (
