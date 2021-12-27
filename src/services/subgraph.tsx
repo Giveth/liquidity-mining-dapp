@@ -404,7 +404,7 @@ export const getUserPositions = async (
 ): Promise<IUserPositions> => {
 	// TODO: fetching all staked only gets 100 staked positions
 	const query = `{
-		notStaked: uniswapPositions(where:{owner: "${account.toLowerCase()}"}){
+		notStaked: uniswapPositions(where:{owner: "${account.toLowerCase()}", closed: false}){
 			tokenId
 			token0
 			token1
