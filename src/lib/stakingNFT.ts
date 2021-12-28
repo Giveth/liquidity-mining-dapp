@@ -8,6 +8,7 @@ import {
 	getUniswapV3StakerContract,
 } from './contracts';
 import { StakeState } from '@/components/modals/V3Stake';
+import config from '@/configuration';
 
 const abiEncoder = utils.defaultAbiCoder;
 
@@ -41,7 +42,13 @@ export const transfer = async (
 		);
 		const tx = await nftManagerPositionsContract[
 			'safeTransferFrom(address,address,uint256,bytes)'
-		](walletAddress, uniswapV3StakerContract.address, tokenId, data);
+		](
+			walletAddress,
+			uniswapV3StakerContract.address,
+			tokenId,
+			data,
+			config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+		);
 
 		handleStakeStatus(StakeState.SUBMITTING);
 		return tx;
@@ -89,11 +96,10 @@ export const exit = async (
 				[tokenId, walletAddress, 0],
 			);
 
-		const tx = await uniswapV3StakerContract.multicall([
-			unstakeCalldata,
-			claimRewardCalldata,
-			withdrawTokenCalldata,
-		]);
+		const tx = await uniswapV3StakerContract.multicall(
+			[unstakeCalldata, claimRewardCalldata, withdrawTokenCalldata],
+			config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+		);
 		handleStakeStatus(StakeState.SUBMITTING);
 		return tx;
 	} catch (e) {
@@ -144,7 +150,10 @@ export const claimUnstakeStake = async (
 		.concat(stakeMulticall)
 		.concat(claimRewardCalldata);
 
-	const tx = await uniswapV3StakerContract.multicall(multicallData);
+	const tx = await uniswapV3StakerContract.multicall(
+		multicallData,
+		config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+	);
 
 	return tx;
 };
@@ -164,6 +173,7 @@ export const claim = async (
 			currentIncentive.key[0],
 			walletAddress,
 			0,
+			config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
 		);
 	} catch (e) {
 		console.warn(e);
@@ -187,49 +197,11 @@ export const stake = async (
 		return;
 	console.log('currentIncentive', currentIncentive.key);
 	try {
-		uniswapV3StakerContract.stakeToken(currentIncentive.key, tokenId);
-	} catch (e) {
-		console.warn(e);
-	}
-};
-
-export const unstake = async (
-	tokenId: number | undefined,
-	walletAddress: string,
-	provider: Web3Provider,
-	currentIncentive: { key?: (string | number)[] | null },
-) => {
-	try {
-		const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
-
-		if (
-			!tokenId ||
-			!walletAddress ||
-			!uniswapV3StakerContract ||
-			!currentIncentive.key
-		)
-			return;
-
-		await uniswapV3StakerContract.unstakeToken(
+		uniswapV3StakerContract.stakeToken(
 			currentIncentive.key,
 			tokenId,
+			config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
 		);
-	} catch (e) {
-		console.warn(e);
-	}
-};
-
-export const withdraw = async (
-	tokenId: number | undefined,
-	walletAddress: string,
-	provider: Web3Provider,
-) => {
-	try {
-		const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
-
-		if (!tokenId || !walletAddress || !uniswapV3StakerContract) return;
-
-		await uniswapV3StakerContract.withdrawToken(tokenId, walletAddress, []);
 	} catch (e) {
 		console.warn(e);
 	}

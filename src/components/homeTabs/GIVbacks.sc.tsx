@@ -13,6 +13,7 @@ import {
 	GLink,
 	neutralColors,
 	Title,
+	ButtonLink,
 } from '@giveth/ui-design-system';
 import { TopContainer } from './commons';
 import { RewardCard } from '../RewardCard';
@@ -57,7 +58,7 @@ export const GbDataBlock = styled(DataBlock)`
 	margin-bottom: 16px;
 `;
 
-export const GbButton = styled(Button)`
+export const GbButton = styled(ButtonLink)`
 	padding: 24px 31px;
 	margin-top: auto;
 `;

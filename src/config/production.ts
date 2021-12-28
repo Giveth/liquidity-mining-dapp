@@ -1,4 +1,5 @@
-import { EnvConfig, StakingType } from '../types/config';
+import { EnvConfig, StakingType } from '@/types/config';
+import { gwei2wei } from '@/helpers/number';
 
 const INFURA_API_KEY = process.env.NEXT_PUBLIC_INFURA_API_KEY;
 
@@ -9,7 +10,7 @@ const config: EnvConfig = {
 	GARDEN_LINK:
 		'https://gardens.1hive.org/#/xdai/garden/0xb25f0ee2d26461e2b5b3d3ddafe197a0da677b98',
 
-	MAINNET_NETWORK: {
+	MAINNET_CONFIG: {
 		chainId: '0x1', // A 0x-prefixed hexadecimal string
 		chainName: 'Ethereum Mainnet',
 		nativeCurrency: {
@@ -17,29 +18,16 @@ const config: EnvConfig = {
 			symbol: 'ETH', // 2-6 characters long
 			decimals: 18,
 		},
+		gasPreference: {
+			// Keep it empty for automatic configuration
+		},
+
 		rpcUrls: [],
 		blockExplorerName: ['etherscan'],
 		blockExplorerUrls: ['https://etherscan.io/'],
 		subgraphAddress:
 			'https://api.thegraph.com/subgraphs/name/giveth/giveth-economy-mainnet',
-	},
 
-	XDAI_NETWORK: {
-		chainId: '0x64',
-		chainName: 'xDai',
-		nativeCurrency: {
-			name: 'XDAI',
-			symbol: 'XDAI',
-			decimals: 18,
-		},
-		rpcUrls: ['https://rpc.xdaichain.com'],
-		blockExplorerName: ['Blockscout'],
-		blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
-		subgraphAddress:
-			'https://api.thegraph.com/subgraphs/name/giveth/giveth-economy-xdai',
-	},
-
-	MAINNET_CONFIG: {
 		TOKEN_ADDRESS: '0x900db999074d9277c5da2a43f252d74366230da0',
 		WETH_TOKEN_ADDRESS: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
 		TOKEN_DISTRO_ADDRESS: '0x87dE995F6744B75bBe0255A973081142aDb61f4d',
@@ -91,6 +79,25 @@ const config: EnvConfig = {
 	},
 
 	XDAI_CONFIG: {
+		chainId: '0x64',
+		chainName: 'xDai',
+		nativeCurrency: {
+			name: 'XDAI',
+			symbol: 'XDAI',
+			decimals: 18,
+		},
+
+		gasPreference: {
+			maxFeePerGas: gwei2wei('1'),
+			maxPriorityFeePerGas: gwei2wei('1'),
+		},
+
+		rpcUrls: ['https://rpc.xdaichain.com'],
+		blockExplorerName: ['Blockscout'],
+		blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
+		subgraphAddress:
+			'https://api.thegraph.com/subgraphs/name/giveth/giveth-economy-xdai',
+
 		TOKEN_ADDRESS: '0x4f4F9b8D5B4d0Dc10506e5551B0513B61fD59e75',
 		MERKLE_ADDRESS: '0xFad63adEFb8203F7605F25f6a921c8bf45604A5e',
 		TOKEN_DISTRO_ADDRESS: '0xc0dbDcA66a0636236fAbe1B3C16B1bD4C84bB1E1',

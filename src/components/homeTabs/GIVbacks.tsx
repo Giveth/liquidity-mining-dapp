@@ -115,16 +115,20 @@ export const TabGIVbacksBottom = () => {
 		if (tokenDistroHelper) {
 			const now = getNowUnixMS();
 			const deltaT = now - tokenDistroHelper.startTime.getTime();
-			const TwoWeek = 1209600000;
+			const TwoWeek = 1_209_600_000;
 			const _round = Math.floor(deltaT / TwoWeek) + 1;
 			setRound(_round);
 			const _rounStartTime = new Date();
 			_rounStartTime.setDate(
-				tokenDistroHelper.startTime.getDate() + (_round - 1) * 15,
+				tokenDistroHelper.startTime.getDate() + (_round - 1) * 14,
 			);
+			_rounStartTime.setHours(tokenDistroHelper.startTime.getHours());
+			_rounStartTime.setMinutes(tokenDistroHelper.startTime.getMinutes());
 			setRoundStartime(_rounStartTime);
 			const _roundEndTime = new Date();
 			_roundEndTime.setDate(_rounStartTime.getDate() + 14);
+			_roundEndTime.setHours(tokenDistroHelper.startTime.getHours());
+			_roundEndTime.setMinutes(tokenDistroHelper.startTime.getMinutes());
 			setRoundEndTime(_roundEndTime);
 		}
 	}, [tokenDistroHelper]);
@@ -138,14 +142,10 @@ export const TabGIVbacksBottom = () => {
 						button={
 							<GbButton
 								label='DONATE TO EARN GIV'
-								buttonType='secondary'
+								linkType='secondary'
 								size='large'
-								onClick={() => {
-									window.open(
-										'https://giveth.io/projects',
-										'_blank',
-									);
-								}}
+								href='https://giveth.io/projects'
+								target='_blank'
 							/>
 						}
 					>
@@ -158,14 +158,10 @@ export const TabGIVbacksBottom = () => {
 						button={
 							<GbButton
 								label='VERIFY YOUR PROJECT'
-								buttonType='secondary'
+								linkType='secondary'
 								size='large'
-								onClick={() => {
-									window.open(
-										'https://giveth.typeform.com/verification',
-										'_blank',
-									);
-								}}
+								href='https://giveth.typeform.com/verification'
+								target='_blank'
 							/>
 						}
 					>
@@ -228,14 +224,11 @@ export const TabGIVbacksBottom = () => {
 								for verification at least 1 week prior to the
 								Start Date in order to be included in the round.
 							</InfoDesc>
-							<InfoReadMore>
-								<a
-									target='_blank'
-									href='https://docs.giveth.io/giveconomy/givbacks'
-									rel='noreferrer noopener'
-								>
-									Read More{' '}
-								</a>
+							<InfoReadMore
+								target='_blank'
+								href='https://docs.giveth.io/giveconomy/givbacks'
+							>
+								<span>Read More </span>
 								<IconExternalLink
 									size={16}
 									color={brandColors.cyan[500]}

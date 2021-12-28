@@ -4,7 +4,7 @@ import { ClaimData } from '../types/GIV';
 import config from '../configuration';
 import { abi as MERKLE_ABI } from '../artifacts/MerkleDrop.json';
 import { abi as TOKEN_DISTRO_ABI } from '../artifacts/TokenDistro.json';
-import { Web3Provider, TransactionResponse } from '@ethersproject/providers';
+import { TransactionResponse, Web3Provider } from '@ethersproject/providers';
 import { fetchBalances } from '@/services/subgraph';
 
 export const fetchAirDropClaimData = async (
@@ -59,12 +59,13 @@ export const claimAirDrop = async (
 
 	const args = [claimData.index, claimData.amount, claimData.proof];
 
-	return await merkleContract
-		.connect(signer.connectUnchecked())
-		.claim(...args, {
-			maxFeePerGas: 4000000000,
-			maxPriorityFeePerGas: 3000000000,
-		});
+	try {
+		return await merkleContract
+			.connect(signer.connectUnchecked())
+			.claim(...args, config.XDAI_CONFIG.gasPreference);
+	} catch (error) {
+		console.error('Error on claiming GIVdrop:', error);
+	}
 };
 
 export const claimReward = async (
@@ -83,9 +84,12 @@ export const claimReward = async (
 		signer.connectUnchecked(),
 	);
 
-	const tx = await tokenDistro.claim();
-
-	return tx;
+	const networkConfig = config.NETWORKS_CONFIG[network];
+	try {
+		return await tokenDistro.claim(networkConfig.gasPreference);
+	} catch (error) {
+		console.error('Error on claiming token distro reward:', error);
+	}
 
 	// showPendingClaim(network, tx.hash);
 

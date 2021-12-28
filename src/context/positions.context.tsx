@@ -375,7 +375,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 					const currentApr = new BigNumber(INCENTIVE_REWARD_AMOUNT)
 						.div(ethPriceInGIV)
 						.div(totalLiquidityEth)
-						.times(31536000)
+						.times(31_536_000) // One year
 						.div(INCENTIVE_END_TIME - INCENTIVE_START_TIME)
 						.times(100);
 
