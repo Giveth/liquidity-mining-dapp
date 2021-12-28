@@ -48,6 +48,7 @@ export const TokenDistroProvider: FC = ({ children }) => {
 				break;
 
 			default:
+				setCurrentTokenDistroInfo(mainnetTokenDistro);
 		}
 	}, [mainnetTokenDistro, xDaiTokenDistro, network]);
 
