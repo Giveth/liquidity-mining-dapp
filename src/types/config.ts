@@ -41,11 +41,30 @@ export interface BalancerPoolStakingConfig extends SimplePoolStakingConfig {
 	VAULT_ADDRESS: string;
 	POOL_ID: string;
 }
+
+interface GasPreference {
+	maxFeePerGas?: string;
+	maxPriorityFeePerGas?: string;
+}
+
 export interface BasicNetworkConfig {
 	TOKEN_ADDRESS: string;
 	TOKEN_DISTRO_ADDRESS: string;
 	GIV: BasicStakingConfig;
 	nodeUrl: string;
+	chainId: string; // A 0x-prefixed hexadecimal string
+	chainName: string;
+	nativeCurrency: {
+		name: string;
+		symbol: string; // 2-6 characters long
+		decimals: 18;
+	};
+	rpcUrls: string[];
+	blockExplorerUrls?: string[];
+	iconUrls?: string[]; // Currently ignored.
+	blockExplorerName: string[];
+	subgraphAddress: string;
+	gasPreference: GasPreference;
 	pools: Array<
 		| SimplePoolStakingConfig
 		| BalancerPoolStakingConfig
@@ -60,29 +79,9 @@ interface XDaiNetworkConfig extends BasicNetworkConfig {
 	MERKLE_ADDRESS: string;
 }
 
-export interface EthereumChainParameter {
-	chainId: string; // A 0x-prefixed hexadecimal string
-	chainName: string;
-	nativeCurrency: {
-		name: string;
-		symbol: string; // 2-6 characters long
-		decimals: 18;
-	};
-	rpcUrls: string[];
-	blockExplorerUrls?: string[];
-	iconUrls?: string[]; // Currently ignored.
-}
-
-export interface ExtremeEthereumChainParameter extends EthereumChainParameter {
-	blockExplorerName: string[];
-	subgraphAddress: string;
-}
-
 export interface EnvConfig {
 	MAINNET_NETWORK_NUMBER: number;
 	XDAI_NETWORK_NUMBER: number;
-	MAINNET_NETWORK: ExtremeEthereumChainParameter;
-	XDAI_NETWORK: ExtremeEthereumChainParameter;
 	MAINNET_CONFIG: MainnetNetworkConfig;
 	XDAI_CONFIG: XDaiNetworkConfig;
 	GARDEN_LINK: string;

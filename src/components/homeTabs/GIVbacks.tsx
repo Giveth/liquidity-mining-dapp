@@ -115,7 +115,7 @@ export const TabGIVbacksBottom = () => {
 		if (tokenDistroHelper) {
 			const now = getNowUnixMS();
 			const deltaT = now - tokenDistroHelper.startTime.getTime();
-			const TwoWeek = 1209600000;
+			const TwoWeek = 1_209_600_000;
 			const _round = Math.floor(deltaT / TwoWeek) + 1;
 			setRound(_round);
 			const _rounStartTime = new Date();

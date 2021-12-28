@@ -39,3 +39,6 @@ export const formatWeiHelper = (
 	}
 	return formatEthHelper(amountEth, decimals, format);
 };
+
+export const gwei2wei = (gweiAmount: string): string =>
+	ethers.utils.parseUnits(gweiAmount, 'gwei').toString();

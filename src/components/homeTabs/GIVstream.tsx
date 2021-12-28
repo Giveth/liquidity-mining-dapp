@@ -479,12 +479,8 @@ export const GIVstreamHistory: FC = () => {
 									size='Big'
 									onClick={() => {
 										const url =
-											network ===
-											config.MAINNET_NETWORK_NUMBER
-												? config.MAINNET_NETWORK
-														.blockExplorerUrls
-												: config.XDAI_NETWORK
-														.blockExplorerUrls;
+											config.NETWORKS_CONFIG[network]
+												?.blockExplorerUrls;
 										window.open(
 											`${url}/tx/${tokenAllocation.txHash}`,
 											'_blank',

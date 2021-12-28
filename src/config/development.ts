@@ -1,4 +1,5 @@
-import { EnvConfig, StakingType } from '../types/config';
+import { EnvConfig, StakingType } from '@/types/config';
+import { gwei2wei } from '@/helpers/number';
 
 const INFURA_API_KEY = process.env.NEXT_PUBLIC_INFURA_API_KEY;
 
@@ -9,13 +10,17 @@ const config: EnvConfig = {
 	GARDEN_LINK:
 		'https://gardens-staging.1hive.org/#/xdai/garden/0x16388d99199a74810fc572049b3d4d657e7d5deb',
 
-	MAINNET_NETWORK: {
+	MAINNET_CONFIG: {
 		chainId: '0x2a', // A 0x-prefixed hexadecimal string
 		chainName: 'Kovan',
 		nativeCurrency: {
 			name: 'ETH',
 			symbol: 'ETH', // 2-6 characters long
 			decimals: 18,
+		},
+
+		gasPreference: {
+			// Keep it empty for automatic configuration
 		},
 		rpcUrls: [
 			'https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
@@ -24,24 +29,7 @@ const config: EnvConfig = {
 		blockExplorerUrls: ['https://kovan.etherscan.io'],
 		subgraphAddress:
 			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-kovan-deployment-seven',
-	},
 
-	XDAI_NETWORK: {
-		chainId: '0x64',
-		chainName: 'xDai',
-		nativeCurrency: {
-			name: 'XDAI',
-			symbol: 'XDAI',
-			decimals: 18,
-		},
-		rpcUrls: ['https://rpc.xdaichain.com'],
-		blockExplorerName: ['Blockscout'],
-		blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
-		subgraphAddress:
-			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-xdai-deployment-seven',
-	},
-
-	MAINNET_CONFIG: {
 		TOKEN_ADDRESS: '0x29434A25abd94AE882aA883eea81585Aaa5b078D',
 		WETH_TOKEN_ADDRESS: '0xd0a1e359811322d97991e03f863a0c30c2cf029c',
 		TOKEN_DISTRO_ADDRESS: '0x2C84Ab41b53C52959a794830fe296Fd717c33337',
@@ -93,11 +81,31 @@ const config: EnvConfig = {
 	},
 
 	XDAI_CONFIG: {
+		chainId: '0x64',
+		chainName: 'xDai',
+		nativeCurrency: {
+			name: 'XDAI',
+			symbol: 'XDAI',
+			decimals: 18,
+		},
+
+		gasPreference: {
+			maxFeePerGas: gwei2wei('1'),
+			maxPriorityFeePerGas: gwei2wei('1'),
+		},
+
+		rpcUrls: ['https://rpc.xdaichain.com'],
+		blockExplorerName: ['Blockscout'],
+		blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
+		subgraphAddress:
+			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-xdai-deployment-seven',
+
 		TOKEN_ADDRESS: '0x83a8eea6427985C523a0c4d9d3E62C051B6580d3',
 		MERKLE_ADDRESS: '0xc87403C70c9FBfb594d98d3B5E695BBE4C694188',
 		TOKEN_DISTRO_ADDRESS: '0x18a46865AAbAf416a970eaA8625CFC430D2364A1',
 
 		nodeUrl: 'https://rpc.xdaichain.com/',
+
 		GIV: {
 			LM_ADDRESS: '0xDAEa66Adc97833781139373DF5B3bcEd3fdda5b1',
 			GARDEN_ADDRESS: '0x9ff80789b74d1d2b7cf5a568ea82409c2b327861',

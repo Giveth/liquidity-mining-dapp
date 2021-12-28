@@ -346,20 +346,16 @@ export const approveERC20tokenTransfer = async (
 	const amountNumber = ethers.BigNumber.from(amount);
 	const allowanceNumber = ethers.BigNumber.from(allowance.toString());
 
-	console.log('amountNumber', amountNumber.toString());
-	console.log('allowanceNumber', allowanceNumber.toString());
+	if (amountNumber.lte(allowanceNumber)) return true;
 
-	if (amountNumber.lte(allowanceNumber)) {
-		console.log('Allowance is GT Amount');
-		return true;
-	}
+	const gasPreference =
+		config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference;
 
 	if (!allowance.isZero()) {
-		console.log('Lets Zero Aprove');
 		try {
 			const approveZero: TransactionResponse = await tokenContract
 				.connect(signer.connectUnchecked())
-				.approve(spenderAddress, ethers.constants.Zero);
+				.approve(spenderAddress, ethers.constants.Zero, gasPreference);
 
 			const { status } = await approveZero.wait();
 		} catch (error) {
@@ -371,12 +367,11 @@ export const approveERC20tokenTransfer = async (
 	try {
 		const approve = await tokenContract
 			.connect(signer.connectUnchecked())
-			.approve(spenderAddress, amountNumber);
+			.approve(spenderAddress, amountNumber, gasPreference);
 
 		const { status } = await approve.wait();
-		console.log('approve', approve);
 	} catch (error) {
-		console.log('Error on Amount Approve', error);
+		console.log('Error on Amount Approve:', error);
 		return false;
 	}
 	return true;
@@ -401,11 +396,16 @@ export const wrapToken = async (
 		TOKEN_MANAGER_ABI,
 		signer,
 	);
-	const txResponse: TransactionResponse = await gardenContract
-		.connect(signer.connectUnchecked())
-		.wrap(amount);
-
-	return txResponse;
+	try {
+		return await gardenContract
+			.connect(signer.connectUnchecked())
+			.wrap(
+				amount,
+				config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+			);
+	} catch (error) {
+		console.log('Error on wrapping token:', error);
+	}
 };
 
 export const unwrapToken = async (
@@ -426,11 +426,17 @@ export const unwrapToken = async (
 		TOKEN_MANAGER_ABI,
 		signer,
 	);
-	const txResponse: TransactionResponse = await gardenContract
-		.connect(signer.connectUnchecked())
-		.unwrap(amount);
-
-	return txResponse;
+	try {
+		return await gardenContract
+			.connect(signer.connectUnchecked())
+			.unwrap(
+				amount,
+				config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+			);
+	} catch (error) {
+		console.log('Error on unwrapping token:', error);
+		return;
+	}
 };
 
 export const stakeTokens = async (
@@ -457,18 +463,20 @@ export const stakeTokens = async (
 	);
 
 	try {
-		const txResponse: TransactionResponse = await lmContract
+		const gasPreference =
+			config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference ||
+			{};
+		// const { status } = await txResponse.wait();
+		return await lmContract
 			.connect(signer.connectUnchecked())
 			.stakeWithPermit(
 				ethers.BigNumber.from(amount),
 				rawPermitCall.data,
 				{
 					gasLimit: 300_000,
+					...gasPreference,
 				},
 			);
-
-		// const { status } = await txResponse.wait();
-		return txResponse;
 	} catch (e) {
 		console.error('Error on staking:', e);
 		return;
@@ -491,9 +499,13 @@ export const harvestTokens = async (
 		signer.connectUnchecked(),
 	);
 
-	const txResponse = await lmContract.getReward();
-
-	return txResponse;
+	try {
+		return await lmContract.getReward(
+			config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+		);
+	} catch (error) {
+		console.error('Error on harvesting:', Error);
+	}
 };
 
 export const withdrawTokens = async (
@@ -515,8 +527,10 @@ export const withdrawTokens = async (
 	);
 
 	try {
-		const tx = await lmContract.withdraw(ethers.BigNumber.from(amount));
-		return tx;
+		return await lmContract.withdraw(
+			ethers.BigNumber.from(amount),
+			config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+		);
 	} catch (e) {
 		console.error('Error on withdrawing:', e);
 	}
