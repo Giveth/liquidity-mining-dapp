@@ -9,6 +9,7 @@ import {
 	QuoteText,
 	DataBlock,
 	brandColors,
+	ButtonLink,
 } from '@giveth/ui-design-system';
 import { TabContainer, TopContainer } from './commons';
 
@@ -98,7 +99,7 @@ export const ParticipateDataBlock = styled(DataBlock)`
 	}
 `;
 
-export const DataBlockButton = styled(Button)`
+export const DataBlockButton = styled(ButtonLink)`
 	margin-top: auto;
 `;
 

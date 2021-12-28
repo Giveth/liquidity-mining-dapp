@@ -495,8 +495,6 @@ export const getUniswapV3TokenURI = async (
 		body: JSON.stringify(body),
 	});
 	const data = await res.json();
-	console.log('data:', data);
-
 	return data?.data?.uniswapPosition?.tokenURI || '';
 };
 
