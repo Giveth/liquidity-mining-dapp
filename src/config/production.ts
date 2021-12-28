@@ -1,4 +1,4 @@
-import { EnvConfig, StakingType } from '../types/config';
+import { EnvConfig, StakingType } from '@/types/config';
 import { gwei2wei } from '@/helpers/number';
 
 const INFURA_API_KEY = process.env.NEXT_PUBLIC_INFURA_API_KEY;
