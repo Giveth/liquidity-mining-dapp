@@ -88,7 +88,7 @@ const config: EnvConfig = {
 		},
 
 		gasPreference: {
-			maxFeePerGas: gwei2wei('1'),
+			maxFeePerGas: gwei2wei('2'),
 			maxPriorityFeePerGas: gwei2wei('1'),
 		},
 
