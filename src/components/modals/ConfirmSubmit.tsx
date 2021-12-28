@@ -66,19 +66,13 @@ export const SubmittedInnerModal: FC<IConfirmSubmitProps> = ({
 			<TxSubmit weight={700}>{txHash && 'Transaction pending'}</TxSubmit>
 			{txHash && (
 				<BlockExplorerLink
-					href={`${
-						walletNetwork === config.MAINNET_NETWORK_NUMBER
-							? config.MAINNET_NETWORK.blockExplorerUrls
-							: config.XDAI_NETWORK.blockExplorerUrls
-					}
+					href={`${config.NETWORKS_CONFIG[walletNetwork]?.blockExplorerUrls}
 			/tx/${txHash}`}
 					target='_blank'
 					size='Big'
 				>
 					View on{' '}
-					{walletNetwork === config.MAINNET_NETWORK_NUMBER
-						? config.MAINNET_NETWORK.blockExplorerName
-						: config.XDAI_NETWORK.blockExplorerName}
+					{config.NETWORKS_CONFIG[walletNetwork]?.blockExplorerName}
 					&nbsp;
 					<IconExternalLink size={16} color={'currentColor'} />
 				</BlockExplorerLink>
@@ -99,19 +93,13 @@ export const ConfirmedInnerModal: FC<IConfirmSubmitProps> = ({
 			<TxConfirm weight={700}>Transaction confirmed!</TxConfirm>
 			<Info>It may take a few minutes for the UI to update</Info>
 			<BlockExplorerLink
-				href={`${
-					walletNetwork === config.MAINNET_NETWORK_NUMBER
-						? config.MAINNET_NETWORK.blockExplorerUrls
-						: config.XDAI_NETWORK.blockExplorerUrls
-				}
+				href={`${config.NETWORKS_CONFIG[walletNetwork]?.blockExplorerUrls}
 							/tx/${txHash}`}
 				target='_blank'
 				size='Big'
 			>
 				View on{' '}
-				{walletNetwork === config.MAINNET_NETWORK_NUMBER
-					? config.MAINNET_NETWORK.blockExplorerName
-					: config.XDAI_NETWORK.blockExplorerName}
+				{config.NETWORKS_CONFIG[walletNetwork]?.blockExplorerName}
 				&nbsp;
 				<IconExternalLink size={16} color={'currentColor'} />
 			</BlockExplorerLink>
@@ -136,19 +124,13 @@ export const ErrorInnerModal: FC<IErrorProps> = ({
 			<TxSubmit weight={700}>{txHash}</TxSubmit>
 			{txHash && (
 				<BlockExplorerLink
-					href={`${
-						walletNetwork === config.MAINNET_NETWORK_NUMBER
-							? config.MAINNET_NETWORK.blockExplorerUrls
-							: config.XDAI_NETWORK.blockExplorerUrls
-					}
+					href={`${config.NETWORKS_CONFIG[walletNetwork]?.blockExplorerUrls}
 			/tx/${txHash}`}
 					target='_blank'
 					size='Big'
 				>
 					View on{' '}
-					{walletNetwork === config.MAINNET_NETWORK_NUMBER
-						? config.MAINNET_NETWORK.blockExplorerName
-						: config.XDAI_NETWORK.blockExplorerName}
+					{config.NETWORKS_CONFIG[walletNetwork]?.blockExplorerName}
 					&nbsp;
 					<IconExternalLink size={16} color={'currentColor'} />
 				</BlockExplorerLink>

@@ -89,12 +89,8 @@ export const fetchBalances = async (
 		}
 	}`;
 	const reqBody = { query };
-	let uri;
-	if (network === config.MAINNET_NETWORK_NUMBER) {
-		uri = config.MAINNET_NETWORK.subgraphAddress;
-	} else if (network === config.XDAI_NETWORK_NUMBER) {
-		uri = config.XDAI_NETWORK.subgraphAddress;
-	} else {
+	const uri = config.NETWORKS_CONFIG[network]?.subgraphAddress;
+	if (!uri) {
 		console.error('Network is not Defined!');
 		return zeroBalances;
 	}
@@ -195,12 +191,8 @@ export const getHistory = async (
 	  }
 	}`;
 	const body = { query };
-	let uri;
-	if (network === config.MAINNET_NETWORK_NUMBER) {
-		uri = config.MAINNET_NETWORK.subgraphAddress;
-	} else if (network === config.XDAI_NETWORK_NUMBER) {
-		uri = config.XDAI_NETWORK.subgraphAddress;
-	} else {
+	const uri = config.NETWORKS_CONFIG[network]?.subgraphAddress;
+	if (!uri) {
 		console.error('Network is not Defined!');
 		return [];
 	}
@@ -228,9 +220,9 @@ export const getGIVPrice = async (network: number): Promise<number> => {
 	// const body = { query };
 	// let uri;
 	// if (network === config.MAINNET_NETWORK_NUMBER) {
-	// 	uri = config.MAINNET_NETWORK.subgraphAddress;
+	// 	uri = config.MAINNET_CONFIG.subgraphAddress;
 	// } else if (network === config.XDAI_NETWORK_NUMBER) {
-	// 	uri = config.XDAI_NETWORK.subgraphAddress;
+	// 	uri = config.XDAI_CONFIG.subgraphAddress;
 	// } else {
 	// 	console.error('Network is not Defined!');
 	// 	return 0;
@@ -279,12 +271,8 @@ export const getTokenDistroInfo = async (
 		}
 	  }`;
 	const body = { query };
-	let uri;
-	if (network === config.MAINNET_NETWORK_NUMBER) {
-		uri = config.MAINNET_NETWORK.subgraphAddress;
-	} else if (network === config.XDAI_NETWORK_NUMBER) {
-		uri = config.XDAI_NETWORK.subgraphAddress;
-	} else {
+	const uri = config.NETWORKS_CONFIG[network]?.subgraphAddress;
+	if (!uri) {
 		console.error('Network is not Defined!');
 		return;
 	}
@@ -344,12 +332,8 @@ export const getUnipoolInfo = async (
 		}
 	  }`;
 	const body = { query };
-	let uri;
-	if (network === config.MAINNET_NETWORK_NUMBER) {
-		uri = config.MAINNET_NETWORK.subgraphAddress;
-	} else if (network === config.XDAI_NETWORK_NUMBER) {
-		uri = config.XDAI_NETWORK.subgraphAddress;
-	} else {
+	const uri = config.NETWORKS_CONFIG[network]?.subgraphAddress;
+	if (!uri) {
 		console.error('Network is not Defined!');
 		return;
 	}
@@ -437,7 +421,7 @@ export const getUserPositions = async (
 	  }`;
 	const body = { query };
 	try {
-		const res = await fetch(config.MAINNET_NETWORK.subgraphAddress, {
+		const res = await fetch(config.MAINNET_CONFIG.subgraphAddress, {
 			method: 'POST',
 			body: JSON.stringify(body),
 		});
@@ -490,7 +474,7 @@ export const getUniswapV3TokenURI = async (
 	  }`;
 	const body = { query };
 
-	const res = await fetch(config.MAINNET_NETWORK.subgraphAddress, {
+	const res = await fetch(config.MAINNET_CONFIG.subgraphAddress, {
 		method: 'POST',
 		body: JSON.stringify(body),
 	});
@@ -522,7 +506,7 @@ export const getUniswapV3Pool = async (
 	  }`;
 	const body = { query };
 	try {
-		const res = await fetch(config.MAINNET_NETWORK.subgraphAddress, {
+		const res = await fetch(config.MAINNET_CONFIG.subgraphAddress, {
 			method: 'POST',
 			body: JSON.stringify(body),
 		});

@@ -6,7 +6,7 @@ import { B, brandColors } from '@giveth/ui-design-system';
 import { Row } from './styled-components/Grid';
 import { IconXDAI } from './Icons/XDAI';
 import { IconEthereum } from './Icons/Eth';
-import { EthereumChainParameter } from '../types/config';
+import { BasicNetworkConfig } from '../types/config';
 import { ChangeNetworkModal } from './modals/ChangeNetwork';
 
 interface NetworkSelectorProps {
@@ -54,7 +54,7 @@ export const NetworkSelector = () => {
 
 	const handleChangeNetwork = async (
 		networkNumber: number,
-		network: EthereumChainParameter,
+		network: BasicNetworkConfig,
 	) => {
 		setTargetNetwork(networkNumber);
 		if (walletNetwork !== networkNumber) {
@@ -95,7 +95,7 @@ export const NetworkSelector = () => {
 					onClick={() => {
 						handleChangeNetwork(
 							config.XDAI_NETWORK_NUMBER,
-							config.XDAI_NETWORK,
+							config.XDAI_CONFIG,
 						);
 					}}
 				>
@@ -110,7 +110,7 @@ export const NetworkSelector = () => {
 					onClick={() => {
 						handleChangeNetwork(
 							config.MAINNET_NETWORK_NUMBER,
-							config.MAINNET_NETWORK,
+							config.MAINNET_CONFIG,
 						);
 					}}
 				>
