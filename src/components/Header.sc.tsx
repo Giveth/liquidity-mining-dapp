@@ -46,6 +46,10 @@ export const HeaderButton = styled(CButton)`
 	background-color: ${brandColors.giv[900]};
 `;
 
+export const BalanceButton = styled(HeaderButton)`
+	position: relative;
+`;
+
 export const WalletButton = styled(HeaderButton)`
 	font-size: 14px;
 	width: 176px;
@@ -55,6 +59,7 @@ export const WalletButton = styled(HeaderButton)`
 export const HBContainer = styled.div`
 	display: flex;
 	align-items: center;
+	z-index: 2;
 `;
 
 export const WBInfo = styled.div`
@@ -132,4 +137,20 @@ export const BalanceTooltip = styled(Subline)`
 	color: ${neutralColors.gray[100]};
 	text-align: center;
 	width: 120px;
+`;
+
+export const RewardMenuAndButtonContainer = styled.div`
+	position: relative;
+	z-index: 1;
+`;
+
+export const CoverLine = styled.div`
+	background-color: ${brandColors.giv[900]};
+	position: absolute;
+	z-index: 1;
+	height: 2px;
+	// width: 100%;
+	left: 0;
+	right: 0;
+	top: 40%;
 `;

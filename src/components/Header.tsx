@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { Row } from './styled-components/Grid';
-import React, { FC, useContext } from 'react';
+import { FC, useContext, useState } from 'react';
 import { ThemeContext, ThemeType } from '@/context/theme.context';
 import { OnboardContext } from '@/context/onboard.context';
 import { useBalances } from '@/context/balance.context';
@@ -12,7 +12,7 @@ import {
 	HBContainer,
 	HBContent,
 	HBPic,
-	HeaderButton,
+	BalanceButton,
 	HeaderLinks,
 	HeaderLink,
 	StyledHeader,
@@ -22,9 +22,13 @@ import {
 	CreateProject,
 	Logo,
 	BalanceTooltip,
+	RewardMenuAndButtonContainer,
+	CoverLine,
 } from './Header.sc';
 import { IconWithTooltip } from './IconWithToolTip';
 import Link from 'next/link';
+import { B, GLink, Overline } from '@giveth/ui-design-system';
+import { RewardMenu } from './menu/RewardMenu';
 
 export interface IHeader {
 	theme?: ThemeType;
@@ -32,9 +36,15 @@ export interface IHeader {
 }
 
 const Header: FC<IHeader> = () => {
+	const [showRewardMenu, setShowRewardMenu] = useState(true);
 	const { theme } = useContext(ThemeContext);
 	const { currentBalance } = useBalances();
 	const { network, connect, address, provider } = useContext(OnboardContext);
+
+	const handleHoverClickBalance = (show: boolean) => {
+		console.log('hover or clicked', show);
+		setShowRewardMenu(show);
+	};
 
 	return (
 		<>
@@ -76,9 +86,9 @@ const Header: FC<IHeader> = () => {
 					/>
 					{address ? (
 						<>
-							<IconWithTooltip
+							{/* <IconWithTooltip
 								icon={
-									<HeaderButton outline>
+									<BalanceButton outline>
 										<HBContainer>
 											<HBBalanceLogo
 												src={'/images/logo/logo.svg'}
@@ -92,15 +102,41 @@ const Header: FC<IHeader> = () => {
 												)}
 											</HBContent>
 										</HBContainer>
-									</HeaderButton>
+									</BalanceButton>
 								}
 								direction={'bottom'}
 							>
 								<BalanceTooltip>
 									GIV currently in wallet
 								</BalanceTooltip>
-							</IconWithTooltip>
-
+							</IconWithTooltip> */}
+							<RewardMenuAndButtonContainer
+								onClick={() => handleHoverClickBalance(true)}
+								onMouseEnter={() =>
+									handleHoverClickBalance(true)
+								}
+								onMouseLeave={() =>
+									handleHoverClickBalance(false)
+								}
+							>
+								<BalanceButton outline>
+									<HBContainer>
+										<HBBalanceLogo
+											src={'/images/logo/logo.svg'}
+											alt='Profile Pic'
+											width={'24px'}
+											height={'24px'}
+										/>
+										<HBContent>
+											{formatWeiHelper(
+												currentBalance.balance,
+											)}
+										</HBContent>
+									</HBContainer>
+									<CoverLine />
+								</BalanceButton>
+								{showRewardMenu && <RewardMenu />}
+							</RewardMenuAndButtonContainer>
 							<WalletButton outline onClick={connect}>
 								<HBContainer>
 									<HBPic
