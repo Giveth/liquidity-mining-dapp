@@ -47,78 +47,46 @@ const Header: FC<IHeader> = () => {
 	};
 
 	return (
-		<>
-			<StyledHeader
-				justifyContent='space-between'
-				alignItems='center'
-				theme={theme}
-			>
-				<Row gap='16px'>
-					<Logo>
-						<Image
-							width='48p'
-							height='48px'
-							alt='Giveth logo'
-							src={`/images/logo/logo1.png`}
-						/>
-					</Logo>
-				</Row>
-				<HeaderLinks>
-					<HeaderLink size='Big' href='https://giveth.io/'>
-						Home
-					</HeaderLink>
-					<HeaderLink size='Big' href='https://giveth.io/projects'>
-						Projects
-					</HeaderLink>
-					<Link href='/' passHref>
-						<HeaderLink size='Big' active>
-							GIVeconomy
-						</HeaderLink>
-					</Link>
-					<HeaderLink size='Big' href='https://giveth.io/join'>
-						Community
-					</HeaderLink>
-				</HeaderLinks>
-				<Row gap='8px'>
-					<CreateProject
-						label='CREATE A PROJECT'
-						onClick={() => window.open(`https://giveth.io/create`)}
+		<StyledHeader
+			justifyContent='space-between'
+			alignItems='center'
+			theme={theme}
+		>
+			<Row gap='16px'>
+				<Logo>
+					<Image
+						width='48p'
+						height='48px'
+						alt='Giveth logo'
+						src={`/images/logo/logo1.png`}
 					/>
-					{address ? (
-						<>
-							{/* <IconWithTooltip
-								icon={
-									<BalanceButton outline>
-										<HBContainer>
-											<HBBalanceLogo
-												src={'/images/logo/logo.svg'}
-												alt='Profile Pic'
-												width={'24px'}
-												height={'24px'}
-											/>
-											<HBContent>
-												{formatWeiHelper(
-													currentBalance.balance,
-												)}
-											</HBContent>
-										</HBContainer>
-									</BalanceButton>
-								}
-								direction={'bottom'}
-							>
-								<BalanceTooltip>
-									GIV currently in wallet
-								</BalanceTooltip>
-							</IconWithTooltip> */}
-							<RewardMenuAndButtonContainer
-								onClick={() => handleHoverClickBalance(true)}
-								onMouseEnter={() =>
-									handleHoverClickBalance(true)
-								}
-								onMouseLeave={() =>
-									handleHoverClickBalance(false)
-								}
-							>
+				</Logo>
+			</Row>
+			<HeaderLinks>
+				<HeaderLink size='Big' href='https://giveth.io/'>
+					Home
+				</HeaderLink>
+				<HeaderLink size='Big' href='https://giveth.io/projects'>
+					Projects
+				</HeaderLink>
+				<Link href='/' passHref>
+					<HeaderLink size='Big' active>
+						GIVeconomy
+					</HeaderLink>
+				</Link>
+				<HeaderLink size='Big' href='https://giveth.io/join'>
+					Community
+				</HeaderLink>
+			</HeaderLinks>
+			<Row gap='8px'>
+				<CreateProject
+					label='CREATE A PROJECT'
+					onClick={() => window.open(`https://giveth.io/create`)}
+				/>
+				{address ? (
+					<>
+						{/* <IconWithTooltip
+							icon={
 								<BalanceButton outline>
 									<HBContainer>
 										<HBBalanceLogo
@@ -133,49 +101,75 @@ const Header: FC<IHeader> = () => {
 											)}
 										</HBContent>
 									</HBContainer>
-									<CoverLine />
 								</BalanceButton>
-								{showRewardMenu && <RewardMenu />}
-							</RewardMenuAndButtonContainer>
-							<WalletButton outline onClick={connect}>
+							}
+							direction={'bottom'}
+						>
+							<BalanceTooltip>
+								GIV currently in wallet
+							</BalanceTooltip>
+						</IconWithTooltip> */}
+						<RewardMenuAndButtonContainer
+							onClick={() => handleHoverClickBalance(true)}
+							onMouseEnter={() => handleHoverClickBalance(true)}
+							onMouseLeave={() => handleHoverClickBalance(false)}
+						>
+							<BalanceButton outline>
 								<HBContainer>
-									<HBPic
-										src={'/images/placeholders/profile.png'}
+									<HBBalanceLogo
+										src={'/images/logo/logo.svg'}
 										alt='Profile Pic'
 										width={'24px'}
 										height={'24px'}
 									/>
-									<WBInfo>
-										<span>{`${address.substring(
-											0,
-											6,
-										)}...${address.substring(
-											address.length - 5,
-											address.length,
-										)}`}</span>
-										<WBNetwork>
-											Connected to{' '}
-											{networksParams[network]
-												? networksParams[network]
-														.nativeCurrency.symbol
-												: provider?._network?.name}
-										</WBNetwork>
-									</WBInfo>
+									<HBContent>
+										{formatWeiHelper(
+											currentBalance.balance,
+										)}
+									</HBContent>
 								</HBContainer>
-							</WalletButton>
-						</>
-					) : (
-						<div>
-							<ConnectButton
-								buttonType='primary'
-								label='CONNECT WALLET'
-								onClick={connect}
-							/>
-						</div>
-					)}
-				</Row>
-			</StyledHeader>
-		</>
+								<CoverLine />
+							</BalanceButton>
+							{showRewardMenu && <RewardMenu />}
+						</RewardMenuAndButtonContainer>
+						<WalletButton outline onClick={connect}>
+							<HBContainer>
+								<HBPic
+									src={'/images/placeholders/profile.png'}
+									alt='Profile Pic'
+									width={'24px'}
+									height={'24px'}
+								/>
+								<WBInfo>
+									<span>{`${address.substring(
+										0,
+										6,
+									)}...${address.substring(
+										address.length - 5,
+										address.length,
+									)}`}</span>
+									<WBNetwork>
+										Connected to{' '}
+										{networksParams[network]
+											? networksParams[network]
+													.nativeCurrency.symbol
+											: provider?._network?.name}
+									</WBNetwork>
+								</WBInfo>
+							</HBContainer>
+						</WalletButton>
+					</>
+				) : (
+					<div>
+						<ConnectButton
+							buttonType='primary'
+							label='CONNECT WALLET'
+							onClick={connect}
+						/>
+					</div>
+				)}
+			</Row>
+		</StyledHeader>
 	);
 };
 
