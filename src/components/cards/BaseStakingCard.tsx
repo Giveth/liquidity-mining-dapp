@@ -2,6 +2,7 @@ import config from '../../configuration';
 import { PoolStakingConfig, StakingType } from '../../types/config';
 import React, { FC, useContext, useEffect, useState, ReactNode } from 'react';
 import { Row } from '../styled-components/Grid';
+import { IconWithTooltip } from '../IconWithToolTip';
 import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
 import {
 	StakingPoolContainer,
@@ -11,6 +12,7 @@ import {
 	StakingPoolSubtitle,
 	Details,
 	FirstDetail,
+	Subline,
 	Detail,
 	DetailLabel,
 	DetailValue,
@@ -26,10 +28,12 @@ import {
 	IconContainer,
 	IconHelpWraper,
 } from './BaseStakingCard.sc';
+import styled from 'styled-components';
 import {
 	IconCalculator,
 	IconSpark,
 	brandColors,
+	neutralColors,
 	IconHelp,
 	IconExternalLink,
 } from '@giveth/ui-design-system';
@@ -95,6 +99,12 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 
 	const isV3Staking = type === StakingType.UNISWAP;
 
+	const GIVgardenTooltip = styled.div`
+		color: ${neutralColors.gray[100]};
+		text-align: center;
+		width: 120px;
+	`;
+
 	const { apr, earned, stakedLpAmount, userNotStakedAmount } = stakeInfo;
 
 	useEffect(() => {
@@ -116,6 +126,25 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 							walletNetwork === config.XDAI_NETWORK_NUMBER &&
 							`GIVgarden `}
 						{type}
+						{walletNetwork === config.XDAI_NETWORK_NUMBER &&
+						type === StakingType.GIV_LM ? (
+							<IconWithTooltip
+								icon={
+									<IconHelp
+										color={brandColors.deep[100]}
+										size={10}
+									/>
+								}
+							>
+								<GIVgardenTooltip>
+									Earn rewards on 100% GIV here by wrapping
+									your tokens. Wrapped tokens can be used to
+									vote on proposals in the GIVgarden
+								</GIVgardenTooltip>
+							</IconWithTooltip>
+						) : (
+							' '
+						)}
 					</StakingPoolExchange>
 					<div style={{ flex: 1 }}></div>
 					{notif && notif}
