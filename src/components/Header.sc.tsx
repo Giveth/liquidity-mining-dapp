@@ -141,7 +141,7 @@ export const BalanceTooltip = styled(Subline)`
 
 export const RewardMenuAndButtonContainer = styled.div`
 	position: relative;
-	z-index: 1;
+	z-index: 2;
 `;
 
 export const CoverLine = styled.div`
