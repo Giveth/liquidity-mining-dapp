@@ -1,4 +1,4 @@
-import { OnboardContext } from '@/context/onboard.context';
+import { OnboardContext, useOnboard } from '@/context/onboard.context';
 import {
 	Overline,
 	P,
@@ -7,15 +7,34 @@ import {
 	brandColors,
 	Caption,
 } from '@giveth/ui-design-system';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Row } from '../styled-components/Grid';
 import { RewardMenuContainer } from './RewardMenu.sc';
 import Image from 'next/image';
 import { switchNetwork } from '@/lib/metamask';
 import config from '@/configuration';
+import BigNumber from 'bignumber.js';
+import { useBalances } from '@/context';
+import { useTokenDistro } from '@/context/tokenDistro.context';
+import { Zero } from '@ethersproject/constants';
+import { formatWeiHelper } from '@/helpers/number';
 
 export const RewardMenu = () => {
+	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
+	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
+	const { tokenDistroHelper } = useTokenDistro();
+	const { xDaiBalance } = useBalances();
+	const { network: walletNetwork } = useOnboard();
+
+	useEffect(() => {
+		setGivBackLiquidPart(
+			tokenDistroHelper.getLiquidPart(xDaiBalance.givback),
+		);
+		setGivBackStream(
+			tokenDistroHelper.getStreamPartTokenPerWeek(xDaiBalance.givback),
+		);
+	}, [xDaiBalance, tokenDistroHelper]);
 	const { network, connect, address, provider } = useContext(OnboardContext);
 	const switchNetworkHandler = () => {
 		if (network === config.XDAI_NETWORK_NUMBER) {
@@ -81,7 +100,9 @@ export const RewardMenu = () => {
 				<PartInfo>
 					<PartTitle>GIVBacks</PartTitle>
 					<Row gap='4px'>
-						<PartAmount medium>791.43</PartAmount>
+						<PartAmount medium>
+							{formatWeiHelper(givBackLiquidPart)}
+						</PartAmount>
 						<PartUnit>GIV</PartUnit>
 					</Row>
 				</PartInfo>
