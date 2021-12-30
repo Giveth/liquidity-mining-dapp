@@ -19,23 +19,27 @@ import { useBalances } from '@/context';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { Zero } from '@ethersproject/constants';
 import { formatWeiHelper } from '@/helpers/number';
+import { useFarms } from '@/context/farm.context';
 
 export const RewardMenu = () => {
+	const [farmsLiquidPart, setFarmsLiquidPart] = useState(Zero);
 	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
-	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
+	const [givStreamLiquidPart, setGIVstreamLiquidPart] = useState(Zero);
+	const [flowrateow, setFlowrate] = useState<BigNumber.Value>(0);
 	const { tokenDistroHelper } = useTokenDistro();
-	const { xDaiBalance } = useBalances();
-	const { network: walletNetwork } = useOnboard();
+	const { currentBalance } = useBalances();
+	const { totalEarned } = useFarms();
+	const { network, connect, address, provider } = useContext(OnboardContext);
+	const { allocatedTokens, claimed, givback } = currentBalance;
 
 	useEffect(() => {
-		setGivBackLiquidPart(
-			tokenDistroHelper.getLiquidPart(xDaiBalance.givback),
-		);
-		setGivBackStream(
-			tokenDistroHelper.getStreamPartTokenPerWeek(xDaiBalance.givback),
-		);
-	}, [xDaiBalance, tokenDistroHelper]);
-	const { network, connect, address, provider } = useContext(OnboardContext);
+		setFarmsLiquidPart(tokenDistroHelper.getLiquidPart(totalEarned));
+	}, [totalEarned, tokenDistroHelper]);
+
+	useEffect(() => {
+		setGivBackLiquidPart(tokenDistroHelper.getLiquidPart(givback));
+	}, [givback, tokenDistroHelper]);
+
 	const switchNetworkHandler = () => {
 		if (network === config.XDAI_NETWORK_NUMBER) {
 			switchNetwork(config.MAINNET_NETWORK_NUMBER);
@@ -43,6 +47,19 @@ export const RewardMenu = () => {
 			switchNetwork(config.XDAI_NETWORK_NUMBER);
 		}
 	};
+
+	useEffect(() => {
+		setGIVstreamLiquidPart(
+			tokenDistroHelper
+				.getLiquidPart(allocatedTokens.sub(givback))
+				.sub(claimed),
+		);
+		setFlowrate(
+			tokenDistroHelper.getStreamPartTokenPerWeek(
+				allocatedTokens.sub(givback),
+			),
+		);
+	}, [allocatedTokens, claimed, givback, tokenDistroHelper]);
 
 	return (
 		<RewardMenuContainer>
@@ -62,7 +79,9 @@ export const RewardMenu = () => {
 						width='12'
 						alt='Thunder image'
 					/>
-					<FlowrateAmount>{9.588}</FlowrateAmount>
+					<FlowrateAmount>
+						{formatWeiHelper(flowrateow)}
+					</FlowrateAmount>
 					<FlowrateUnit>GIV/week</FlowrateUnit>
 				</FlowrateRow>
 			</FlowrateBox>
@@ -70,7 +89,9 @@ export const RewardMenu = () => {
 				<PartInfo>
 					<PartTitle>From Givstream</PartTitle>
 					<Row gap='4px'>
-						<PartAmount medium>791.43</PartAmount>
+						<PartAmount medium>
+							{formatWeiHelper(givStreamLiquidPart)}
+						</PartAmount>
 						<PartUnit>GIV</PartUnit>
 					</Row>
 				</PartInfo>
@@ -85,7 +106,9 @@ export const RewardMenu = () => {
 				<PartInfo>
 					<PartTitle>GIVFarm & Givgarden</PartTitle>
 					<Row gap='4px'>
-						<PartAmount medium>791.43</PartAmount>
+						<PartAmount medium>
+							{formatWeiHelper(farmsLiquidPart)}
+						</PartAmount>
 						<PartUnit>GIV</PartUnit>
 					</Row>
 				</PartInfo>
