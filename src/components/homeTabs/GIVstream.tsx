@@ -473,21 +473,15 @@ export const GIVstreamHistory: FC = () => {
 									<GsHFrUnit as='span'>{` GIV/week`}</GsHFrUnit>
 								</B>
 								<P as='span'>{date}</P>
-								<TxHash
-									as='span'
-									size='Big'
-									onClick={() => {
-										const url =
-											config.NETWORKS_CONFIG[network]
-												?.blockExplorerUrls;
-										window.open(
-											`${url}/tx/${tokenAllocation.txHash}`,
-											'_blank',
-										);
-									}}
-								>
-									{tokenAllocation.txHash}
-								</TxHash>
+								<span>
+									<TxHash
+										size='Big'
+										href={`${config.NETWORKS_CONFIG[network]?.blockExplorerUrls}/tx/${tokenAllocation.txHash}`}
+										target='_blank'
+									>
+										{tokenAllocation.txHash}
+									</TxHash>
+								</span>
 							</Fragment>
 						);
 					})}
