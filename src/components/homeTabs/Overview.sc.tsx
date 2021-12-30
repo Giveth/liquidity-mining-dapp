@@ -20,7 +20,9 @@ export const OverviewBottomContainer = styled.div`
 	background-repeat: no-repeat;
 `;
 
-export const OverviewTopContainer = styled(TopContainer)``;
+export const OverviewTopContainer = styled(TopContainer)`
+	height: 650px;
+`;
 
 export const OverviewTitle = styled(D3)`
 	font-size: 107px;
@@ -29,12 +31,13 @@ export const OverviewTitle = styled(D3)`
 `;
 
 export const PreTitle = styled(D3)`
+	padding-top: 77px;
+	display: block;
 	color: #a3b0f6;
 `;
 
 export const SubTitle = styled(QuoteText)`
-	max-width: 798px;
-	padding-bottom: 156px;
+	max-width: 907px;
 `;
 
 export const ClaimCardButton = styled(Button)`
