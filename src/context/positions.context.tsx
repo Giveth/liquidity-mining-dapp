@@ -322,6 +322,16 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 					.reduce((acc, { _position }) => {
 						if (!_position) return acc;
 
+						if (
+							_position.tickLower > pool.tickCurrent ||
+							_position.tickUpper < pool.tickCurrent
+						) {
+							// Out of range
+							return acc;
+						}
+
+						// In range
+
 						if (givIsToken0) {
 							// GIV is token0
 
