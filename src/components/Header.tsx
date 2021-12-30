@@ -81,30 +81,6 @@ const Header: FC<IHeader> = () => {
 				/>
 				{address ? (
 					<>
-						{/* <IconWithTooltip
-							icon={
-								<BalanceButton outline>
-									<HBContainer>
-										<HBBalanceLogo
-											src={'/images/logo/logo.svg'}
-											alt='Profile Pic'
-											width={'24px'}
-											height={'24px'}
-										/>
-										<HBContent>
-											{formatWeiHelper(
-												currentBalance.balance,
-											)}
-										</HBContent>
-									</HBContainer>
-								</BalanceButton>
-							}
-							direction={'bottom'}
-						>
-							<BalanceTooltip>
-								GIV currently in wallet
-							</BalanceTooltip>
-						</IconWithTooltip> */}
 						<RewardMenuAndButtonContainer
 							onClick={() => handleHoverClickBalance(true)}
 							onMouseEnter={() => handleHoverClickBalance(true)}
