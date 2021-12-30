@@ -21,13 +21,10 @@ import {
 	WBNetwork,
 	CreateProject,
 	Logo,
-	BalanceTooltip,
 	RewardMenuAndButtonContainer,
 	CoverLine,
 } from './Header.sc';
-import { IconWithTooltip } from './IconWithToolTip';
 import Link from 'next/link';
-import { B, GLink, Overline } from '@giveth/ui-design-system';
 import { RewardMenu } from './menu/RewardMenu';
 
 export interface IHeader {
@@ -36,14 +33,13 @@ export interface IHeader {
 }
 
 const Header: FC<IHeader> = () => {
-	const [showRewardMenu, setShowRewardMenu] = useState(true);
+	const [showRewardMenu, setShowRewardMenu] = useState(false);
 	const { theme } = useContext(ThemeContext);
 	const { currentBalance } = useBalances();
 	const { network, connect, address, provider } = useContext(OnboardContext);
 
 	const handleHoverClickBalance = (show: boolean) => {
-		console.log('hover or clicked', show);
-		// setShowRewardMenu(show);
+		setShowRewardMenu(show);
 	};
 
 	return (
