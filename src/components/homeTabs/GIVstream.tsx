@@ -247,7 +247,7 @@ export const TabGIVstreamBottom = () => {
 						rights of our community.
 					</GsDataBlock>
 				</Row>
-				{/* <HistoryTitleRow>
+				<HistoryTitleRow>
 					<HistoryTitle>History</HistoryTitle>
 					<IconWithTooltip
 						icon={<IconHelp size={16} />}
@@ -259,10 +259,9 @@ export const TabGIVstreamBottom = () => {
 							increases. Below is a summary.
 						</HistoryTooltip>
 					</IconWithTooltip>
-				</HistoryTitleRow> */}
-				{/* <GIVstreamHistory /> */}
+				</HistoryTitleRow>
+				<GIVstreamHistory />
 			</Container>
-			{/* //unipooldis */}
 			<IncreaseSection ref={increaseSecRef}>
 				<Container>
 					<IncreaseSectionTitle>
