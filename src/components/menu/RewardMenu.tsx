@@ -6,6 +6,7 @@ import {
 	GLink,
 	brandColors,
 	Caption,
+	IconHelp,
 } from '@giveth/ui-design-system';
 import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -21,12 +22,15 @@ import { Zero } from '@ethersproject/constants';
 import { formatWeiHelper } from '@/helpers/number';
 import { useFarms } from '@/context/farm.context';
 import Link from 'next/link';
+import { WhatisGIVstreamModal } from '@/components/modals/WhatisGIVstream';
 
 export const RewardMenu = () => {
 	const [farmsLiquidPart, setFarmsLiquidPart] = useState(Zero);
 	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
 	const [givStreamLiquidPart, setGIVstreamLiquidPart] = useState(Zero);
 	const [flowrateow, setFlowrate] = useState<BigNumber.Value>(0);
+	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
+		useState(false);
 	const { tokenDistroHelper } = useTokenDistro();
 	const { currentBalance } = useBalances();
 	const { totalEarned } = useFarms();
@@ -63,93 +67,108 @@ export const RewardMenu = () => {
 	}, [allocatedTokens, claimed, givback, tokenDistroHelper]);
 
 	return (
-		<RewardMenuContainer>
-			<Overline styleType='Small'>Network</Overline>
-			<NetworkRow>
-				<B>{provider?._network?.name}</B>
-				<SwithNetwork onClick={switchNetworkHandler}>
-					Switch network
-				</SwithNetwork>
-			</NetworkRow>
-			<FlowrateBox>
-				<Overline styleType='Small'>GIVStream Flowrate</Overline>
-				<FlowrateRow>
-					<Image
-						src='/images/icons/thunder.svg'
-						height='16'
-						width='12'
-						alt='Thunder image'
-					/>
-					<FlowrateAmount>
-						{formatWeiHelper(flowrateow)}
-					</FlowrateAmount>
-					<FlowrateUnit>GIV/week</FlowrateUnit>
-				</FlowrateRow>
-			</FlowrateBox>
-			<PartRow>
-				<PartInfo>
-					<PartTitle>From Givstream</PartTitle>
-					<Row gap='4px'>
-						<PartAmount medium>
-							{formatWeiHelper(givStreamLiquidPart)}
-						</PartAmount>
-						<PartUnit>GIV</PartUnit>
-					</Row>
-				</PartInfo>
-				<Link href='/givstream' passHref>
-					<ArrowImage>
+		<>
+			<RewardMenuContainer>
+				<Overline styleType='Small'>Network</Overline>
+				<NetworkRow>
+					<B>{provider?._network?.name}</B>
+					<SwithNetwork onClick={switchNetworkHandler}>
+						Switch network
+					</SwithNetwork>
+				</NetworkRow>
+				<FlowrateBox>
+					<Overline styleType='Small'>GIVStream Flowrate</Overline>
+					<FlowrateRow>
 						<Image
-							src='/images/rarrow1.svg'
-							height='42'
-							width='16'
+							src='/images/icons/thunder.svg'
+							height='16'
+							width='12'
 							alt='Thunder image'
 						/>
-					</ArrowImage>
-				</Link>
-			</PartRow>
-			<PartRow>
-				<PartInfo>
-					<PartTitle>GIVFarm & Givgarden</PartTitle>
-					<Row gap='4px'>
-						<PartAmount medium>
-							{formatWeiHelper(farmsLiquidPart)}
-						</PartAmount>
-						<PartUnit>GIV</PartUnit>
-					</Row>
-				</PartInfo>
-				<Link href='/givfarm' passHref>
-					<ArrowImage>
-						<Image
-							src='/images/rarrow1.svg'
-							height='42'
-							width='16'
-							alt='Thunder image'
-						/>
-					</ArrowImage>
-				</Link>
-			</PartRow>
-			<PartRow>
-				<PartInfo>
-					<PartTitle>GIVBacks</PartTitle>
-					<Row gap='4px'>
-						<PartAmount medium>
-							{formatWeiHelper(givBackLiquidPart)}
-						</PartAmount>
-						<PartUnit>GIV</PartUnit>
-					</Row>
-				</PartInfo>
-				<Link href='/givbacks' passHref>
-					<ArrowImage>
-						<Image
-							src='/images/rarrow1.svg'
-							height='42'
-							width='16'
-							alt='Thunder image'
-						/>
-					</ArrowImage>
-				</Link>
-			</PartRow>
-		</RewardMenuContainer>
+						<FlowrateAmount>
+							{formatWeiHelper(flowrateow)}
+						</FlowrateAmount>
+						<FlowrateUnit>GIV/week</FlowrateUnit>
+						<IconHelpWraper
+							onClick={() => {
+								setShowWhatIsGIVstreamModal(true);
+							}}
+						>
+							<IconHelp color='currentColor' />
+						</IconHelpWraper>
+					</FlowrateRow>
+				</FlowrateBox>
+				<PartRow>
+					<PartInfo>
+						<PartTitle>From Givstream</PartTitle>
+						<Row gap='4px'>
+							<PartAmount medium>
+								{formatWeiHelper(givStreamLiquidPart)}
+							</PartAmount>
+							<PartUnit>GIV</PartUnit>
+						</Row>
+					</PartInfo>
+					<Link href='/givstream' passHref>
+						<ArrowImage>
+							<Image
+								src='/images/rarrow1.svg'
+								height='42'
+								width='16'
+								alt='Thunder image'
+							/>
+						</ArrowImage>
+					</Link>
+				</PartRow>
+				<PartRow>
+					<PartInfo>
+						<PartTitle>GIVFarm & Givgarden</PartTitle>
+						<Row gap='4px'>
+							<PartAmount medium>
+								{formatWeiHelper(farmsLiquidPart)}
+							</PartAmount>
+							<PartUnit>GIV</PartUnit>
+						</Row>
+					</PartInfo>
+					<Link href='/givfarm' passHref>
+						<ArrowImage>
+							<Image
+								src='/images/rarrow1.svg'
+								height='42'
+								width='16'
+								alt='Thunder image'
+							/>
+						</ArrowImage>
+					</Link>
+				</PartRow>
+				<PartRow>
+					<PartInfo>
+						<PartTitle>GIVBacks</PartTitle>
+						<Row gap='4px'>
+							<PartAmount medium>
+								{formatWeiHelper(givBackLiquidPart)}
+							</PartAmount>
+							<PartUnit>GIV</PartUnit>
+						</Row>
+					</PartInfo>
+					<Link href='/givbacks' passHref>
+						<ArrowImage>
+							<Image
+								src='/images/rarrow1.svg'
+								height='42'
+								width='16'
+								alt='Thunder image'
+							/>
+						</ArrowImage>
+					</Link>
+				</PartRow>
+			</RewardMenuContainer>
+			{showWhatIsGIVstreamModal && (
+				<WhatisGIVstreamModal
+					showModal={showWhatIsGIVstreamModal}
+					setShowModal={setShowWhatIsGIVstreamModal}
+				/>
+			)}
+		</>
 	);
 };
 
@@ -172,15 +191,16 @@ export const FlowrateBox = styled.div`
 
 export const FlowrateRow = styled(Row)`
 	align-items: center;
-	margin-top: 12px;
+	margin-top: 8px;
+	gap: 4px;
 `;
 
 export const FlowrateAmount = styled(P)`
-	padding-left: 2px;
+	padding-left: 4px;
 `;
 
 export const FlowrateUnit = styled(P)`
-	padding-left: 2px;
+	color: ${brandColors.giv[200]};
 `;
 
 export const PartRow = styled(Row)`
@@ -200,4 +220,9 @@ export const ArrowImage = styled(GLink)`
 	width: 40px;
 	cursor: pointer;
 	text-align: right;
+`;
+
+const IconHelpWraper = styled.div`
+	cursor: pointer;
+	color: ${brandColors.giv[200]};
 `;
