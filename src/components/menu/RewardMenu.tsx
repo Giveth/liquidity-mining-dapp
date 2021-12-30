@@ -12,16 +12,27 @@ import styled from 'styled-components';
 import { Row } from '../styled-components/Grid';
 import { RewardMenuContainer } from './RewardMenu.sc';
 import Image from 'next/image';
+import { switchNetwork } from '@/lib/metamask';
+import config from '@/configuration';
 
 export const RewardMenu = () => {
 	const { network, connect, address, provider } = useContext(OnboardContext);
+	const switchNetworkHandler = () => {
+		if (network === config.XDAI_NETWORK_NUMBER) {
+			switchNetwork(config.MAINNET_NETWORK_NUMBER);
+		} else {
+			switchNetwork(config.XDAI_NETWORK_NUMBER);
+		}
+	};
 
 	return (
 		<RewardMenuContainer>
 			<Overline styleType='Small'>Network</Overline>
 			<NetworkRow>
 				<B>{provider?._network?.name}</B>
-				<SwithNetwork>Switch network</SwithNetwork>
+				<SwithNetwork onClick={switchNetworkHandler}>
+					Switch network
+				</SwithNetwork>
 			</NetworkRow>
 			<FlowrateBox>
 				<Overline styleType='Small'>GIVStream Flowrate</Overline>
@@ -92,6 +103,7 @@ export const NetworkRow = styled(Row)`
 
 export const SwithNetwork = styled(GLink)`
 	color: ${brandColors.pinky[500]};
+	cursor: pointer;
 `;
 
 export const FlowrateBox = styled.div`
