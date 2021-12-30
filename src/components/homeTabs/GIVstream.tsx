@@ -182,7 +182,9 @@ export const TabGIVstreamBottom = () => {
 			<Container>
 				<NetworkSelector />
 				<FlowRateRow alignItems='baseline' gap='8px'>
-					<H3 weight={700}>Your Flowrate:</H3>
+					<H3 id='flowRate' weight={700}>
+						Your Flowrate:
+					</H3>
 					<IconGIVStream size={64} />
 					<H1>
 						{supportedNetworks.includes(walletNetwork)

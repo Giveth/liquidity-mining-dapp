@@ -12,7 +12,6 @@ import {
 	StakingPoolSubtitle,
 	Details,
 	FirstDetail,
-	Subline,
 	Detail,
 	DetailLabel,
 	DetailValue,
@@ -103,6 +102,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 		color: ${neutralColors.gray[100]};
 		text-align: center;
 		width: 120px;
+		font-size: 0.8em;
 	`;
 
 	const { apr, earned, stakedLpAmount, userNotStakedAmount } = stakeInfo;
@@ -126,26 +126,26 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 							walletNetwork === config.XDAI_NETWORK_NUMBER &&
 							`GIVgarden `}
 						{type}
-						{walletNetwork === config.XDAI_NETWORK_NUMBER &&
-						type === StakingType.GIV_LM ? (
-							<IconWithTooltip
-								icon={
-									<IconHelp
-										color={brandColors.deep[100]}
-										size={10}
-									/>
-								}
-							>
-								<GIVgardenTooltip>
-									Earn rewards on 100% GIV here by wrapping
-									your tokens. Wrapped tokens can be used to
-									vote on proposals in the GIVgarden
-								</GIVgardenTooltip>
-							</IconWithTooltip>
-						) : (
-							' '
-						)}
 					</StakingPoolExchange>
+					{walletNetwork === config.XDAI_NETWORK_NUMBER &&
+					type === StakingType.GIV_LM ? (
+						<IconWithTooltip
+							direction={'top'}
+							icon={
+								<IconHelp
+									color={brandColors.deep[100]}
+									size={12}
+								/>
+							}
+						>
+							<GIVgardenTooltip>
+								While staking GIV in this pool you are also
+								granted voting power (gGIV) in the GIVgarden.
+							</GIVgardenTooltip>
+						</IconWithTooltip>
+					) : (
+						' '
+					)}
 					<div style={{ flex: 1 }}></div>
 					{notif && notif}
 				</StakingPoolExchangeRow>
