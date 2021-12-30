@@ -1,5 +1,12 @@
 import { OnboardContext } from '@/context/onboard.context';
-import { Overline, P, B, GLink, brandColors, Caption } from '@giveth/ui-design-system';
+import {
+	Overline,
+	P,
+	B,
+	GLink,
+	brandColors,
+	Caption,
+} from '@giveth/ui-design-system';
 import { useContext } from 'react';
 import styled from 'styled-components';
 import { Row } from '../styled-components/Grid';
@@ -32,8 +39,47 @@ export const RewardMenu = () => {
 			<PartRow>
 				<PartInfo>
 					<PartTitle>From Givstream</PartTitle>
-					<PartAmount></PartAmount>
+					<Row gap='4px'>
+						<PartAmount medium>791.43</PartAmount>
+						<PartUnit>GIV</PartUnit>
+					</Row>
 				</PartInfo>
+				<Image
+					src='/images/rarrow1.svg'
+					height='42'
+					width='16'
+					alt='Thunder image'
+				/>
+			</PartRow>
+			<PartRow>
+				<PartInfo>
+					<PartTitle>GIVFarm & Givgarden</PartTitle>
+					<Row gap='4px'>
+						<PartAmount medium>791.43</PartAmount>
+						<PartUnit>GIV</PartUnit>
+					</Row>
+				</PartInfo>
+				<Image
+					src='/images/rarrow1.svg'
+					height='42'
+					width='16'
+					alt='Thunder image'
+				/>
+			</PartRow>
+			<PartRow>
+				<PartInfo>
+					<PartTitle>GIVBacks</PartTitle>
+					<Row gap='4px'>
+						<PartAmount medium>791.43</PartAmount>
+						<PartUnit>GIV</PartUnit>
+					</Row>
+				</PartInfo>
+				<Image
+					src='/images/rarrow1.svg'
+					height='42'
+					width='16'
+					alt='Thunder image'
+				/>
 			</PartRow>
 		</RewardMenuContainer>
 	);
@@ -70,6 +116,7 @@ export const FlowrateUnit = styled(P)`
 
 export const PartRow = styled(Row)`
 	justify-content: space-between;
+	margin 16px 0;
 `;
 
 export const PartInfo = styled.div``;
@@ -78,3 +125,4 @@ export const PartTitle = styled(Overline)`
 	margin-bottom: 10px;
 `;
 export const PartAmount = styled(Caption)``;
+export const PartUnit = styled(Caption)``;

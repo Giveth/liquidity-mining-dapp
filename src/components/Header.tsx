@@ -43,7 +43,7 @@ const Header: FC<IHeader> = () => {
 
 	const handleHoverClickBalance = (show: boolean) => {
 		console.log('hover or clicked', show);
-		setShowRewardMenu(show);
+		// setShowRewardMenu(show);
 	};
 
 	return (
