@@ -20,6 +20,7 @@ import { useTokenDistro } from '@/context/tokenDistro.context';
 import { Zero } from '@ethersproject/constants';
 import { formatWeiHelper } from '@/helpers/number';
 import { useFarms } from '@/context/farm.context';
+import Link from 'next/link';
 
 export const RewardMenu = () => {
 	const [farmsLiquidPart, setFarmsLiquidPart] = useState(Zero);
@@ -95,12 +96,16 @@ export const RewardMenu = () => {
 						<PartUnit>GIV</PartUnit>
 					</Row>
 				</PartInfo>
-				<Image
-					src='/images/rarrow1.svg'
-					height='42'
-					width='16'
-					alt='Thunder image'
-				/>
+				<Link href='/givstream' passHref>
+					<ArrowImage>
+						<Image
+							src='/images/rarrow1.svg'
+							height='42'
+							width='16'
+							alt='Thunder image'
+						/>
+					</ArrowImage>
+				</Link>
 			</PartRow>
 			<PartRow>
 				<PartInfo>
@@ -112,12 +117,16 @@ export const RewardMenu = () => {
 						<PartUnit>GIV</PartUnit>
 					</Row>
 				</PartInfo>
-				<Image
-					src='/images/rarrow1.svg'
-					height='42'
-					width='16'
-					alt='Thunder image'
-				/>
+				<Link href='/givfarm' passHref>
+					<ArrowImage>
+						<Image
+							src='/images/rarrow1.svg'
+							height='42'
+							width='16'
+							alt='Thunder image'
+						/>
+					</ArrowImage>
+				</Link>
 			</PartRow>
 			<PartRow>
 				<PartInfo>
@@ -129,12 +138,16 @@ export const RewardMenu = () => {
 						<PartUnit>GIV</PartUnit>
 					</Row>
 				</PartInfo>
-				<Image
-					src='/images/rarrow1.svg'
-					height='42'
-					width='16'
-					alt='Thunder image'
-				/>
+				<Link href='/givbacks' passHref>
+					<ArrowImage>
+						<Image
+							src='/images/rarrow1.svg'
+							height='42'
+							width='16'
+							alt='Thunder image'
+						/>
+					</ArrowImage>
+				</Link>
 			</PartRow>
 		</RewardMenuContainer>
 	);
@@ -182,3 +195,9 @@ export const PartTitle = styled(Overline)`
 `;
 export const PartAmount = styled(Caption)``;
 export const PartUnit = styled(Caption)``;
+
+export const ArrowImage = styled(GLink)`
+	width: 40px;
+	cursor: pointer;
+	text-align: right;
+`;
