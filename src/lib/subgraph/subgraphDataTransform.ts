@@ -3,10 +3,13 @@ import {
 	IBalances,
 	ITokenDistroInfo,
 	IUnipool,
+	IUniswapV3Pool,
+	IUniswapV3Position,
 	ZeroBalances,
 } from '@/types/subgraph';
 import { ethers } from 'ethers';
 import { StakingType } from '@/types/config';
+
 const BN = ethers.BigNumber.from;
 
 const transformBalanceInfo = (info: any): IBalances => {
@@ -91,6 +94,24 @@ const transformTokenDistroInfos = (info: any): ITokenDistroInfo => {
 	};
 };
 
+const transformUniswapV3Pool = (info: any): IUniswapV3Pool | undefined => {
+	if (!info) return undefined;
+	const sqrtPriceX96 = BN(info.sqrtPriceX96);
+	const tick = Number(info.tick);
+	const liquidity = BN(info.liquidity);
+	const stakedLiquidity = BN(info.stakedLiquidity);
+	const token0 = info.token0;
+	const token1 = info.token1;
+	return {
+		token0,
+		token1,
+		sqrtPriceX96,
+		tick,
+		liquidity,
+		stakedLiquidity,
+	};
+};
+
 const transformUnipoolInfo = (info: any): IUnipool | undefined => {
 	if (!info) return undefined;
 
@@ -111,10 +132,45 @@ const transformUnipoolInfo = (info: any): IUnipool | undefined => {
 		periodFinish,
 	};
 };
+
+const transformUniswapPositions = (info: any): any => {
+	if (!info) return {};
+	const mapper = (info: any): IUniswapV3Position => {
+		const tokenId = Number(info?.tokenId || 0);
+		const liquidity = BN(info?.liquidity);
+		const tickLower = Number(info?.tickLower);
+		const tickUpper = Number(info?.tickUpper);
+		const staked = Boolean(info?.staked);
+		const token0 = info?.token0;
+		const token1 = info?.token1;
+		return {
+			tokenId,
+			token0,
+			token1,
+			liquidity,
+			tickLower,
+			tickUpper,
+			owner: info.owner,
+			staked,
+			staker: info.staker,
+		};
+	};
+
+	const { userStakedPositions, allPositions, userNotStakedPositions } = info;
+	return {
+		userStakedPositions: userStakedPositions
+			? userStakedPositions.map(mapper)
+			: [],
+		userNotStakedPositions: userNotStakedPositions
+			? userNotStakedPositions.map(mapper)
+			: [],
+		allPositions: allPositions ? allPositions.map(mapper) : [],
+	};
+};
+
 export const transformSubgraphData = async (
 	data: any = {},
 ): Promise<ISubgraphValue> => {
-	console.log('data:', data);
 	return {
 		balances: transformBalanceInfo(data?.balances),
 		tokenDistroInfo: transformTokenDistroInfos(data?.tokenDistroInfos[0]),
@@ -128,5 +184,7 @@ export const transformSubgraphData = async (
 		[StakingType.SUSHISWAP]: transformUnipoolInfo(
 			data[StakingType.SUSHISWAP],
 		),
+		uniswapV3Pool: transformUniswapV3Pool(data?.uniswapV3Pool),
+		...transformUniswapPositions(data),
 	};
 };

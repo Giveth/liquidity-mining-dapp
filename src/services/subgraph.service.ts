@@ -6,7 +6,7 @@ import {
 	IUnipool,
 	IUniswapV3Pool,
 	IUniswapV3Position,
-	IUserPositions,
+	IUniswapV3Positions,
 } from '@/types/subgraph';
 
 const BN = ethers.BigNumber.from;
@@ -109,87 +109,6 @@ export const getGIVPrice = async (network: number): Promise<number> => {
 	// }
 };
 
-export const getUserPositions = async (
-	account: string,
-): Promise<IUserPositions> => {
-	// TODO: fetching all staked only gets 100 staked positions
-	const query = `{
-		notStaked: uniswapPositions(where:{owner: "${account.toLowerCase()}"}){
-			tokenId
-			token0
-			token1
-			liquidity
-			tickLower
-			tickUpper
-			staked
-			staker
-		}
-		staked: uniswapPositions(where:{staker: "${account.toLowerCase()}"}){
-			tokenId
-			token0
-			token1
-			liquidity
-			tickLower
-			tickUpper
-			staked
-			staker
-		}
-		allStaked: uniswapPositions(first: 1000, where:{staked: true}){
-			tokenId
-			token0
-			token1
-			liquidity
-			tickLower
-			tickUpper
-			staked
-			staker
-		}
-	  }`;
-	const body = { query };
-	try {
-		const res = await fetch(config.MAINNET_CONFIG.subgraphAddress, {
-			method: 'POST',
-			body: JSON.stringify(body),
-		});
-		const data = await res.json();
-		const stakedPositionsInfo = data?.data?.staked || [];
-		const notStakedPositionsInfo = data?.data?.notStaked || [];
-		const allStakedPositionsInfo = data?.data?.allStaked || [];
-		const mapper = (info: any): IUniswapV3Position => {
-			const tokenId = Number(info?.tokenId || 0);
-			const liquidity = BN(info?.liquidity);
-			const tickLower = Number(info?.tickLower);
-			const tickUpper = Number(info?.tickUpper);
-			const staked = Boolean(info?.staked);
-			const token0 = info?.token0;
-			const token1 = info?.token1;
-			return {
-				tokenId,
-				token0,
-				token1,
-				liquidity,
-				tickLower,
-				tickUpper,
-				owner: info.owner,
-				staked,
-				staker: info.staker,
-			};
-		};
-		return {
-			staked: stakedPositionsInfo.map(mapper),
-			notStaked: notStakedPositionsInfo.map(mapper),
-			allStaked: allStakedPositionsInfo.map(mapper),
-		};
-	} catch (e) {
-		console.error('Error in fetching user positions', e);
-		return {
-			staked: [],
-			notStaked: [],
-			allStaked: [],
-		};
-	}
-};
-
 export const getUniswapV3TokenURI = async (
 	tokenId: string | number,
 ): Promise<string> => {
@@ -207,52 +126,4 @@ export const getUniswapV3TokenURI = async (
 	const data = await res.json();
 
 	return data?.data?.uniswapPosition?.tokenURI || '';
-};
-
-export const getUniswapV3Pool = async (
-	address: string,
-): Promise<IUniswapV3Pool> => {
-	const query = `{
-		uniswapV3Pool(id: "${address.toLowerCase()}"){
-			token0
-			token1
-			sqrtPriceX96
-			tick
-			liquidity
-			stakedLiquidity
-		}
-	  }`;
-	const body = { query };
-	try {
-		const res = await fetch(config.MAINNET_CONFIG.subgraphAddress, {
-			method: 'POST',
-			body: JSON.stringify(body),
-		});
-		const data = await res.json();
-		const poolInfo = data?.data?.uniswapV3Pool || {};
-		const sqrtPriceX96 = BN(poolInfo.sqrtPriceX96);
-		const tick = Number(poolInfo.tick);
-		const liquidity = BN(poolInfo.liquidity);
-		const stakedLiquidity = BN(poolInfo.stakedLiquidity);
-		const token0 = poolInfo.token0;
-		const token1 = poolInfo.token1;
-		return {
-			token0,
-			token1,
-			sqrtPriceX96,
-			tick,
-			liquidity,
-			stakedLiquidity,
-		};
-	} catch (e) {
-		console.error('Error in fetching user positions', e);
-		return {
-			token0: config.MAINNET_CONFIG.TOKEN_ADDRESS,
-			token1: config.MAINNET_CONFIG.WETH_TOKEN_ADDRESS,
-			stakedLiquidity: Zero,
-			liquidity: Zero,
-			sqrtPriceX96: Zero,
-			tick: 0,
-		};
-	}
 };

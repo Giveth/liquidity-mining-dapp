@@ -14,6 +14,8 @@ import {
 	IBalances,
 	ITokenDistroInfo,
 	IUnipool,
+	IUniswapV3Pool,
+	IUniswapV3Position,
 	ZeroBalances,
 } from '@/types/subgraph';
 import { SubgraphQueryBuilder } from '@/lib/subgraph/subgraphQueryBuilder';
@@ -22,12 +24,16 @@ import { StakingType } from '@/types/config';
 
 export interface ISubgraphValue {
 	balances: IBalances;
-	tokenDistroInfo: ITokenDistroInfo | undefined;
-	[StakingType.GIV_LM]?: IUnipool | undefined;
-	[StakingType.BALANCER]?: IUnipool | undefined;
-	[StakingType.SUSHISWAP]?: IUnipool | undefined;
-	[StakingType.HONEYSWAP]?: IUnipool | undefined;
-	[StakingType.UNISWAP]?: IUnipool | undefined;
+	tokenDistroInfo?: ITokenDistroInfo;
+	uniswapV3Pool?: IUniswapV3Pool;
+	[StakingType.GIV_LM]?: IUnipool;
+	[StakingType.BALANCER]?: IUnipool;
+	[StakingType.SUSHISWAP]?: IUnipool;
+	[StakingType.HONEYSWAP]?: IUnipool;
+	[StakingType.UNISWAP]?: IUnipool;
+	userNotStakedPositions: IUniswapV3Position[];
+	userStakedPositions: IUniswapV3Position[];
+	allPositions: IUniswapV3Position[];
 }
 
 export interface ISubgraphContext {
@@ -37,7 +43,9 @@ export interface ISubgraphContext {
 }
 const defaultSubgraphValue: ISubgraphValue = {
 	balances: ZeroBalances,
-	tokenDistroInfo: undefined,
+	userNotStakedPositions: [],
+	userStakedPositions: [],
+	allPositions: [],
 };
 
 export const SubgraphContext = createContext<ISubgraphContext>({

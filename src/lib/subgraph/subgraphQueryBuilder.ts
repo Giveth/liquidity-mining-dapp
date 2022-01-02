@@ -1,4 +1,8 @@
-import { SimplePoolStakingConfig, StakingType } from '@/types/config';
+import {
+	SimplePoolStakingConfig,
+	StakingType,
+	UniswapV3PoolStakingConfig,
+} from '@/types/config';
 import { getGivStakingConfig } from '@/helpers/networkProvider';
 import config from '@/configuration';
 
@@ -55,6 +59,50 @@ export class SubgraphQueryBuilder {
 		`;
 	};
 
+	private static getUniswapV3PoolQuery = (address: string): string => {
+		return `uniswapV3Pool(id: "${address.toLowerCase()}"){
+			token0
+			token1
+			sqrtPriceX96
+			tick
+			liquidity
+			stakedLiquidity
+		}`;
+	};
+
+	private static getUniswapPositionsQuery = (address: string): string => {
+		return `userNotStakedPositions: uniswapPositions(where:{owner: "${address.toLowerCase()}"}){
+			tokenId
+			token0
+			token1
+			liquidity
+			tickLower
+			tickUpper
+			staked
+			staker
+		}
+		userStakedPositions: uniswapPositions(where:{staker: "${address.toLowerCase()}"}){
+			tokenId
+			token0
+			token1
+			liquidity
+			tickLower
+			tickUpper
+			staked
+			staker
+		}
+		allPositions: uniswapPositions(first: 1000){
+			tokenId
+			token0
+			token1
+			liquidity
+			tickLower
+			tickUpper
+			staked
+			staker
+		}`;
+	};
+
 	private static generateUnipoolInfoQueries = (
 		configs: SimplePoolStakingConfig[],
 	): string => {
@@ -69,6 +117,10 @@ export class SubgraphQueryBuilder {
 	};
 
 	static getMainnetQuery = (address: string): string => {
+		const uniswapConfig = config.MAINNET_CONFIG.pools.find(
+			c => c.type === StakingType.UNISWAP,
+		) as UniswapV3PoolStakingConfig;
+
 		return `
 		{
 			balances: ${SubgraphQueryBuilder.getBalanceQuery(address)}
@@ -79,6 +131,10 @@ export class SubgraphQueryBuilder {
 					c => c.type !== StakingType.UNISWAP,
 				),
 			])}
+			uniswapV3Pool: ${SubgraphQueryBuilder.getUniswapV3PoolQuery(
+				uniswapConfig.UNISWAP_V3_LP_POOL,
+			)}
+			${SubgraphQueryBuilder.getUniswapPositionsQuery(address)}
 		}
 		`;
 	};

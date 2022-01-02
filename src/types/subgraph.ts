@@ -87,10 +87,10 @@ export interface IUniswapV3Position {
 	staker: string | null;
 	staked: boolean;
 }
-export interface IUserPositions {
-	staked: IUniswapV3Position[];
-	notStaked: IUniswapV3Position[];
-	allStaked: IUniswapV3Position[];
+export interface IUniswapV3Positions {
+	userStaked: IUniswapV3Position[];
+	userNotStaked: IUniswapV3Position[];
+	all: IUniswapV3Position[];
 }
 
 export interface IUniswapV3Pool {

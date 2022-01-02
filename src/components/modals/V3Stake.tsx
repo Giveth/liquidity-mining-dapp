@@ -80,12 +80,8 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	} = useSubgraph();
 	const { tokenDistroHelper } = useTokenDistro();
 	const { network, provider, address } = useOnboard();
-	const {
-		unstakedPositions,
-		stakedPositions,
-		currentIncentive,
-		loadPositions,
-	} = useLiquidityPositions();
+	const { unstakedPositions, stakedPositions, currentIncentive } =
+		useLiquidityPositions();
 	const positions = isUnstakingModal ? stakedPositions : unstakedPositions;
 	const { title } = poolStakingConfig;
 	const [stakeStatus, setStakeStatus] = useState<StakeState>(
@@ -133,7 +129,6 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 			} else {
 				setStakeStatus(StakeState.ERROR);
 			}
-			loadPositions();
 		} catch {
 			setStakeStatus(StakeState.UNKNOWN);
 		}
