@@ -913,10 +913,10 @@
     "@ethersproject/properties" "^5.4.0"
     "@ethersproject/strings" "^5.4.0"
 
-"@giveth/ui-design-system@^1.2.29":
-  version "1.2.29"
-  resolved "https://registry.yarnpkg.com/@giveth/ui-design-system/-/ui-design-system-1.2.29.tgz#94aeb9f3b5986e6cabab3c376ecec319dc043915"
-  integrity sha512-QeCBzNku2721wVNSMAALLInTkP8WYSwdN2nskdTFSEm75H59R4u6w5qwmUfDA2HH4ItYxpaLw3m66lhJQmzIsA==
+"@giveth/ui-design-system@^1.2.31":
+  version "1.2.31"
+  resolved "https://registry.yarnpkg.com/@giveth/ui-design-system/-/ui-design-system-1.2.31.tgz#3610de2d386b462cf416ba148bc94b64267674b8"
+  integrity sha512-MfOTtMuK3cANATNe7mks5njGME/c9XZsSF8HphYAspCUZ8DPgaUMaTc97v74mu2CkVzNHn+YO/2hdS9tA4JF2g==
   dependencies:
     "@types/styled-components" "^5.1.14"
     styled-components "^5.3.1"
