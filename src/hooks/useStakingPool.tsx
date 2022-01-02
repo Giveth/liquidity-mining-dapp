@@ -7,11 +7,9 @@ import {
 	fetchLPStakingInfo,
 	getUserStakeInfo,
 } from '@/lib/stakingPool';
-import config from '@/configuration';
 import { useSubgraph, useOnboard } from '@/context';
 import { PoolStakingConfig, StakingType } from '@/types/config';
 import { StakePoolInfo, UserStakeInfo } from '@/types/poolInfo';
-import { getUnipoolInfo } from '@/services/subgraph.service';
 import { UnipoolHelper } from '@/lib/contractHelper/UnipoolHelper';
 import { Zero } from '@/helpers/number';
 
@@ -25,9 +23,9 @@ export const useStakingPool = (
 	notStakedAmount: ethers.BigNumber;
 } => {
 	const { address, provider, network: walletNetwork } = useOnboard();
-	const {
-		currentValues: { balances },
-	} = useSubgraph();
+	const { currentValues } = useSubgraph();
+
+	const { balances } = currentValues;
 
 	const [apr, setApr] = useState<BigNumber | null>(null);
 	const [userStakeInfo, setUserStakeInfo] = useState<UserStakeInfo>({
@@ -37,7 +35,6 @@ export const useStakingPool = (
 	});
 
 	const stakePoolInfoPoll = useRef<NodeJS.Timer | null>(null);
-	const userStakeInfoPoll = useRef<NodeJS.Timer | null>(null);
 
 	const { type, LM_ADDRESS } = poolStakingConfig;
 
@@ -52,11 +49,16 @@ export const useStakingPool = (
 			) {
 				const promise: Promise<StakePoolInfo> =
 					type === StakingType.GIV_LM
-						? fetchGivStakingInfo(LM_ADDRESS, network)
+						? fetchGivStakingInfo(
+								LM_ADDRESS,
+								network,
+								currentValues[type],
+						  )
 						: fetchLPStakingInfo(
 								poolStakingConfig,
 								network,
 								provider,
+								currentValues[type],
 						  );
 				promise.then(({ apr: _apr }) => {
 					setApr(_apr);
@@ -86,38 +88,12 @@ export const useStakingPool = (
 	}, []);
 
 	useEffect(() => {
-		const cb = async () => {
-			try {
-				const unipoolInfo = await getUnipoolInfo(network, LM_ADDRESS);
-				let unipoolHelper;
-				if (unipoolInfo) unipoolHelper = new UnipoolHelper(unipoolInfo);
-
-				setUserStakeInfo(
-					getUserStakeInfo(
-						poolStakingConfig.type,
-						balances,
-						unipoolHelper,
-					),
-				);
-			} catch (error) {
-				console.error('Error in fetching Staking data', error);
-			}
-		};
-
-		cb();
-
-		userStakeInfoPoll.current = setInterval(
-			cb,
-			config.SUBGRAPH_POLLING_INTERVAL,
-		); // Every 15 seconds
-
-		return () => {
-			if (userStakeInfoPoll.current) {
-				clearInterval(userStakeInfoPoll.current);
-				userStakeInfoPoll.current = null;
-			}
-		};
-	}, [address, poolStakingConfig, balances]);
+		const unipoolInfo = currentValues[type];
+		if (unipoolInfo) {
+			const unipoolHelper = new UnipoolHelper(unipoolInfo);
+			setUserStakeInfo(getUserStakeInfo(type, balances, unipoolHelper));
+		}
+	}, [type, currentValues, balances]);
 
 	return {
 		apr,

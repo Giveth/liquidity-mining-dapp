@@ -10,13 +10,24 @@ import { isAddress } from 'ethers/lib/utils';
 import { fetchSubgraph } from '@/services/subgraph.service';
 import { OnboardContext } from '@/context/onboard.context';
 import config from '@/configuration';
-import { IBalances, ITokenDistroInfo, ZeroBalances } from '@/types/subgraph';
+import {
+	IBalances,
+	ITokenDistroInfo,
+	IUnipool,
+	ZeroBalances,
+} from '@/types/subgraph';
 import { SubgraphQueryBuilder } from '@/lib/subgraph/subgraphQueryBuilder';
 import { transformSubgraphData } from '@/lib/subgraph/subgraphDataTransform';
+import { StakingType } from '@/types/config';
 
 export interface ISubgraphValue {
 	balances: IBalances;
 	tokenDistroInfo: ITokenDistroInfo | undefined;
+	[StakingType.GIV_LM]?: IUnipool | undefined;
+	[StakingType.BALANCER]?: IUnipool | undefined;
+	[StakingType.SUSHISWAP]?: IUnipool | undefined;
+	[StakingType.HONEYSWAP]?: IUnipool | undefined;
+	[StakingType.UNISWAP]?: IUnipool | undefined;
 }
 
 export interface ISubgraphContext {

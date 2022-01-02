@@ -28,7 +28,7 @@ import BigNumber from 'bignumber.js';
 import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
 import { StakePoolInfo } from '@/types/poolInfo';
 import { fetchLPStakingInfo } from '@/lib/stakingPool';
-import { useLiquidityPositions } from '@/context';
+import { useLiquidityPositions, useSubgraph } from '@/context';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { H2, H5, Lead } from '@giveth/ui-design-system';
 import { networkProviders } from '@/helpers/networkProvider';
@@ -97,6 +97,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const [APR, setAPR] = useState<BigNumber>(Zero);
 	const { apr: univ3apr } = useLiquidityPositions();
 	const { tokenDistroHelper } = useTokenDistro();
+	const { mainnetValues, xDaiValues } = useSubgraph();
 
 	useEffect(() => {
 		if (totalAmount) {
@@ -150,6 +151,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 				poolStakingConfig,
 				config.XDAI_NETWORK_NUMBER,
 				networkProviders[config.XDAI_NETWORK_NUMBER],
+				xDaiValues[poolStakingConfig.type],
 			);
 			promiseQueue.push(promise);
 		});
@@ -160,6 +162,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 				poolStakingConfig,
 				config.MAINNET_NETWORK_NUMBER,
 				networkProviders[config.MAINNET_NETWORK_NUMBER],
+				mainnetValues[poolStakingConfig.type],
 			);
 			promiseQueue.push(promise);
 		});

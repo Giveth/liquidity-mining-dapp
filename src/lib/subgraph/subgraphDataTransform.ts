@@ -1,6 +1,12 @@
 import { ISubgraphValue } from '@/context/subgraph.context';
-import { IBalances, ITokenDistroInfo, ZeroBalances } from '@/types/subgraph';
+import {
+	IBalances,
+	ITokenDistroInfo,
+	IUnipool,
+	ZeroBalances,
+} from '@/types/subgraph';
 import { ethers } from 'ethers';
+import { StakingType } from '@/types/config';
 const BN = ethers.BigNumber.from;
 
 const transformBalanceInfo = (info: any): IBalances => {
@@ -84,12 +90,43 @@ const transformTokenDistroInfos = (info: any): ITokenDistroInfo => {
 		endTime,
 	};
 };
+
+const transformUnipoolInfo = (info: any): IUnipool | undefined => {
+	if (!info) return undefined;
+
+	const _lastUpdateTime = info?.lastUpdateTime || '0';
+	const _periodFinish = info?.periodFinish || '0';
+
+	const totalSupply = BN(info?.totalSupply || 0);
+	const rewardPerTokenStored = BN(info?.rewardPerTokenStored || 0);
+	const rewardRate = BN(info?.rewardRate || 0);
+	const lastUpdateTime = new Date(+(_lastUpdateTime.toString() + '000'));
+	const periodFinish = new Date(+(_periodFinish.toString() + '000'));
+
+	return {
+		totalSupply,
+		rewardPerTokenStored,
+		rewardRate,
+		lastUpdateTime,
+		periodFinish,
+	};
+};
 export const transformSubgraphData = async (
-	data: any,
+	data: any = {},
 ): Promise<ISubgraphValue> => {
 	console.log('data:', data);
 	return {
 		balances: transformBalanceInfo(data?.balances),
 		tokenDistroInfo: transformTokenDistroInfos(data?.tokenDistroInfos[0]),
+		[StakingType.GIV_LM]: transformUnipoolInfo(data[StakingType.GIV_LM]),
+		[StakingType.BALANCER]: transformUnipoolInfo(
+			data[StakingType.BALANCER],
+		),
+		[StakingType.HONEYSWAP]: transformUnipoolInfo(
+			data[StakingType.HONEYSWAP],
+		),
+		[StakingType.SUSHISWAP]: transformUnipoolInfo(
+			data[StakingType.SUSHISWAP],
+		),
 	};
 };

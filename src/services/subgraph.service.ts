@@ -3,7 +3,6 @@ import { ethers } from 'ethers';
 import { Zero } from '@ethersproject/constants';
 import {
 	ITokenAllocation,
-	ITokenDistroInfo,
 	IUnipool,
 	IUniswapV3Pool,
 	IUniswapV3Position,
@@ -108,59 +107,6 @@ export const getGIVPrice = async (network: number): Promise<number> => {
 	// 	console.error('Error in getGIVPrice from Subgraph', error);
 	// 	return 0;
 	// }
-};
-
-export const getUnipoolInfo = async (
-	network: number,
-	unipoolAddress: string,
-): Promise<IUnipool | undefined> => {
-	const query = `{
-		 unipoolContractInfo(id: "${unipoolAddress.toLowerCase()}"){
-			totalSupply
-			lastUpdateTime
-			periodFinish
-			rewardPerTokenStored
-			rewardRate
-		}
-	  }`;
-	const body = { query };
-	let uri;
-	if (network === config.MAINNET_NETWORK_NUMBER) {
-		uri = config.MAINNET_CONFIG.subgraphAddress;
-	} else if (network === config.XDAI_NETWORK_NUMBER) {
-		uri = config.XDAI_CONFIG.subgraphAddress;
-	} else {
-		console.error('Network is not Defined!');
-		return;
-	}
-	try {
-		const res = await fetch(uri, {
-			method: 'POST',
-			body: JSON.stringify(body),
-		});
-		const data = await res.json();
-		const info = data?.data?.unipoolContractInfo;
-
-		const _lastUpdateTime = info?.lastUpdateTime || '0';
-		const _periodFinish = info?.periodFinish || '0';
-
-		const totalSupply = BN(info?.totalSupply || 0);
-		const rewardPerTokenStored = BN(info?.rewardPerTokenStored || 0);
-		const rewardRate = BN(info?.rewardRate || 0);
-		const lastUpdateTime = new Date(+(_lastUpdateTime.toString() + '000'));
-		const periodFinish = new Date(+(_periodFinish.toString() + '000'));
-
-		return {
-			totalSupply,
-			rewardPerTokenStored,
-			rewardRate,
-			lastUpdateTime,
-			periodFinish,
-		};
-	} catch (error) {
-		console.error('Error in getUnipoolInfo from Subgraph', error);
-		return;
-	}
 };
 
 export const getUserPositions = async (

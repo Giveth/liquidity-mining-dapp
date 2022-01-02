@@ -1,9 +1,10 @@
-import { address } from 'bnc-onboard/dist/src/stores';
+import { SimplePoolStakingConfig, StakingType } from '@/types/config';
+import { getGivStakingConfig } from '@/helpers/networkProvider';
+import config from '@/configuration';
 
 export class SubgraphQueryBuilder {
 	static getBalanceQuery = (address: string): string => {
-		return `
-		balance(id: "${address.toLowerCase()}") {
+		return `balance(id: "${address.toLowerCase()}") {
 			balance
 			allocatedTokens
 			claimed
@@ -30,9 +31,8 @@ export class SubgraphQueryBuilder {
 		}`;
 	};
 
-	static getTokenDistroInfoQuery = (): string => {
-		return `
-		tokenDistroContractInfos(first:10){
+	private static getTokenDistroInfoQuery = (): string => {
+		return `tokenDistroContractInfos(first:10){
 		  id
 		  initialAmount
 		  duration
@@ -44,20 +44,56 @@ export class SubgraphQueryBuilder {
 		`;
 	};
 
-	static getGeneralQuery = (address: string): string => {
-		return `
-		{
-			balances: ${SubgraphQueryBuilder.getBalanceQuery(address)}
-			tokenDistroInfos: ${SubgraphQueryBuilder.getTokenDistroInfoQuery()}
+	private static getUnipoolInfoQuery = (address: string): string => {
+		return `unipoolContractInfo(id: "${address.toLowerCase()}"){
+			totalSupply
+			lastUpdateTime
+			periodFinish
+			rewardPerTokenStored
+			rewardRate
 		}
 		`;
 	};
 
+	private static generateUnipoolInfoQueries = (
+		configs: SimplePoolStakingConfig[],
+	): string => {
+		return configs
+			.map(
+				c =>
+					`${c.type}: ${SubgraphQueryBuilder.getUnipoolInfoQuery(
+						c.LM_ADDRESS,
+					)}`,
+			)
+			.join();
+	};
+
 	static getMainnetQuery = (address: string): string => {
-		return SubgraphQueryBuilder.getGeneralQuery(address);
+		return `
+		{
+			balances: ${SubgraphQueryBuilder.getBalanceQuery(address)}
+			tokenDistroInfos: ${SubgraphQueryBuilder.getTokenDistroInfoQuery()}
+			${SubgraphQueryBuilder.generateUnipoolInfoQueries([
+				getGivStakingConfig(config.MAINNET_CONFIG),
+				...config.MAINNET_CONFIG.pools.filter(
+					c => c.type !== StakingType.UNISWAP,
+				),
+			])}
+		}
+		`;
 	};
 
 	static getXDaiQuery = (address: string): string => {
-		return SubgraphQueryBuilder.getGeneralQuery(address);
+		return `
+		{
+			balances: ${SubgraphQueryBuilder.getBalanceQuery(address)}
+			tokenDistroInfos: ${SubgraphQueryBuilder.getTokenDistroInfoQuery()}
+			
+			${SubgraphQueryBuilder.generateUnipoolInfoQueries([
+				getGivStakingConfig(config.XDAI_CONFIG),
+				...config.XDAI_CONFIG.pools,
+			])}
+		}
+		`;
 	};
 }
