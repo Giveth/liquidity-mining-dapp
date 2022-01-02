@@ -97,9 +97,7 @@ const Header: FC<IHeader> = () => {
 										height={'24px'}
 									/>
 									<HBContent>
-										{formatWeiHelper(
-											balances.balance,
-										)}
+										{formatWeiHelper(balances.balance)}
 									</HBContent>
 								</HBContainer>
 								<CoverLine />
