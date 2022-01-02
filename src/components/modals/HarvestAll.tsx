@@ -11,11 +11,11 @@ import {
 	Lead,
 } from '@giveth/ui-design-system';
 import { OnboardContext } from '@/context/onboard.context';
-import { getGIVPrice } from '@/services/subgraph';
+import { getGIVPrice } from '@/services/subgraph.service';
 import { PoolStakingConfig } from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
 import { formatWeiHelper } from '@/helpers/number';
-import { useBalances } from '@/context/balance.context';
+import { useSubgraph } from '@/context/subgraph.context';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { harvestTokens } from '@/lib/stakingPool';
 import { claimUnstakeStake } from '@/lib/stakingNFT';
@@ -81,7 +81,9 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	network,
 }) => {
 	const [state, setState] = useState(HarvestStates.HARVEST);
-	const { currentBalance } = useBalances();
+	const {
+		currentValues: { balances },
+	} = useSubgraph();
 	const { tokenDistroHelper } = useTokenDistro();
 	const {
 		network: walletNetwork,
@@ -108,14 +110,12 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 				tokenDistroHelper.getStreamPartTokenPerWeek(claimable),
 			);
 		}
-		setClaimableNow(tokenDistroHelper.getUserClaimableNow(currentBalance));
-		setGivBackLiquidPart(
-			tokenDistroHelper.getLiquidPart(currentBalance.givback),
-		);
+		setClaimableNow(tokenDistroHelper.getUserClaimableNow(balances));
+		setGivBackLiquidPart(tokenDistroHelper.getLiquidPart(balances.givback));
 		setGivBackStream(
-			tokenDistroHelper.getStreamPartTokenPerWeek(currentBalance.givback),
+			tokenDistroHelper.getStreamPartTokenPerWeek(balances.givback),
 		);
-	}, [claimable, currentBalance, tokenDistroHelper]);
+	}, [claimable, balances, tokenDistroHelper]);
 
 	useEffect(() => {
 		let _sum = rewardLiquidPart.add(givBackLiquidPart);
@@ -137,7 +137,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	useEffect(() => {
 		if (
 			network === config.XDAI_NETWORK_NUMBER &&
-			!currentBalance.givDropClaimed
+			!balances.givDropClaimed
 		) {
 			fetchAirDropClaimData(address).then(claimData => {
 				if (claimData) {
@@ -149,7 +149,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 				}
 			});
 		}
-	}, [address, network, currentBalance, tokenDistroHelper]);
+	}, [address, network, balances, tokenDistroHelper]);
 
 	const onHarvest = () => {
 		if (!provider) return;
@@ -322,7 +322,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 											</RateRow>
 										</>
 									)}
-									{currentBalance.givback.gt(0) && (
+									{balances.givback.gt(0) && (
 										<>
 											<HelpRow alignItems='center'>
 												<B>Claimable from GIVbacks</B>

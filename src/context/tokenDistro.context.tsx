@@ -1,5 +1,5 @@
 import { createContext, FC, useContext, useEffect, useState } from 'react';
-import { getTokenDistroInfo } from '@/services/subgraph';
+import { getTokenDistroInfo } from '@/services/subgraph.service';
 import { OnboardContext } from '@/context/onboard.context';
 import config from '@/configuration';
 import { TokenDistroHelper } from '@/lib/contractHelper/TokenDistroHelper';

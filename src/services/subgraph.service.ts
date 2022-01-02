@@ -1,179 +1,38 @@
 import config from '@/configuration';
-import { constants, ethers } from 'ethers';
-import { getNowUnixMS } from '@/helpers/time';
+import { ethers } from 'ethers';
 import { Zero } from '@ethersproject/constants';
-import { any } from 'prop-types';
+import {
+	ITokenAllocation,
+	ITokenDistroInfo,
+	IUnipool,
+	IUniswapV3Pool,
+	IUniswapV3Position,
+	IUserPositions,
+} from '@/types/subgraph';
 
 const BN = ethers.BigNumber.from;
 
-export interface IBalances {
-	balance: ethers.BigNumber;
-	allocatedTokens: ethers.BigNumber;
-	claimed: ethers.BigNumber;
-	rewardPerTokenPaidGivLm: ethers.BigNumber;
-	rewardsGivLm: ethers.BigNumber;
-	rewardPerTokenPaidSushiSwap: ethers.BigNumber;
-	rewardsSushiSwap: ethers.BigNumber;
-	rewardPerTokenPaidHoneyswap: ethers.BigNumber;
-	rewardsHoneyswap: ethers.BigNumber;
-	rewardPerTokenPaidUniswap: ethers.BigNumber;
-	rewardsUniswap: ethers.BigNumber;
-	rewardPerTokenPaidBalancer: ethers.BigNumber;
-	rewardsBalancer: ethers.BigNumber;
-	givback: ethers.BigNumber;
-	balancerLp: ethers.BigNumber;
-	balancerLpStaked: ethers.BigNumber;
-	sushiswapLp: ethers.BigNumber;
-	sushiSwapLpStaked: ethers.BigNumber;
-	honeyswapLp: ethers.BigNumber;
-	honeyswapLpStaked: ethers.BigNumber;
-	givStaked: ethers.BigNumber;
-	allocationCount: number;
-	givDropClaimed: boolean;
-}
-export const zeroBalances: IBalances = {
-	balance: constants.Zero,
-	allocatedTokens: constants.Zero,
-	claimed: constants.Zero,
-	rewardPerTokenPaidGivLm: constants.Zero,
-	rewardsGivLm: constants.Zero,
-	rewardPerTokenPaidSushiSwap: constants.Zero,
-	rewardsSushiSwap: constants.Zero,
-	rewardPerTokenPaidHoneyswap: constants.Zero,
-	rewardsHoneyswap: constants.Zero,
-	rewardPerTokenPaidUniswap: constants.Zero,
-	rewardsUniswap: constants.Zero,
-	rewardPerTokenPaidBalancer: constants.Zero,
-	rewardsBalancer: constants.Zero,
-	givback: constants.Zero,
-	balancerLp: constants.Zero,
-	balancerLpStaked: constants.Zero,
-	sushiswapLp: constants.Zero,
-	sushiSwapLpStaked: constants.Zero,
-	honeyswapLp: constants.Zero,
-	honeyswapLpStaked: constants.Zero,
-	givStaked: constants.Zero,
-	allocationCount: 0,
-	givDropClaimed: false,
-};
-
-export const fetchBalances = async (
+export const fetchSubgraph = async (
+	query: string,
 	network: number,
-	address: string,
-): Promise<IBalances> => {
-	const query = `{
-		balance(id: "${address.toLowerCase()}") {
-			balance
-			allocatedTokens
-			claimed
-			rewardPerTokenPaidGivLm
-			rewardsGivLm
-			rewardPerTokenPaidSushiSwap
-			rewardsSushiSwap
-			rewardPerTokenPaidHoneyswap
-			rewardsHoneyswap
-			rewardPerTokenPaidUniswap
-			rewardsUniswap
-			rewardPerTokenPaidBalancer
-			rewardsBalancer
-			givback
-			balancerLp
-			balancerLpStaked
-			sushiswapLp
-			sushiSwapLpStaked
-			honeyswapLp 
-			honeyswapLpStaked 
-			givStaked
-			allocationCount
-			givDropClaimed
-		}
-	}`;
+): Promise<any> => {
 	const reqBody = { query };
-	const uri = config.NETWORKS_CONFIG[network]?.subgraphAddress;
-	if (!uri) {
+	let uri;
+	if (network === config.MAINNET_NETWORK_NUMBER) {
+		uri = config.MAINNET_CONFIG.subgraphAddress;
+	} else if (network === config.XDAI_NETWORK_NUMBER) {
+		uri = config.XDAI_CONFIG.subgraphAddress;
+	} else {
 		console.error('Network is not Defined!');
-		return zeroBalances;
+		return {};
 	}
-	try {
-		const res = await fetch(uri, {
-			method: 'POST',
-			body: JSON.stringify(reqBody),
-		});
-		const data = await res.json();
-		const info = data.data.balance;
-
-		if (!info) return zeroBalances;
-
-		const balance = BN(info.balance || 0);
-		const allocatedTokens = BN(info.allocatedTokens || 0);
-		const claimed = BN(info.claimed || 0);
-		const rewardPerTokenPaidGivLm = BN(info.rewardPerTokenPaidGivLm || 0);
-		const rewardsGivLm = BN(info.rewardsGivLm || 0);
-		const rewardPerTokenPaidSushiSwap = BN(
-			info.rewardPerTokenPaidSushiSwap || 0,
-		);
-		const rewardsSushiSwap = BN(info.rewardsSushiSwap || 0);
-		const rewardPerTokenPaidHoneyswap = BN(
-			info.rewardPerTokenPaidHoneyswap || 0,
-		);
-		const rewardsHoneyswap = BN(info.rewardsHoneyswap || 0);
-		const rewardPerTokenPaidUniswap = BN(
-			info.rewardPerTokenPaidUniswap || 0,
-		);
-		const rewardsUniswap = BN(info.rewardsUniswap || 0);
-		const rewardPerTokenPaidBalancer = BN(
-			info.rewardPerTokenPaidBalancer || 0,
-		);
-		const rewardsBalancer = BN(info.rewardsBalancer || 0);
-		const givback = BN(info.givback || 0);
-		const balancerLp = BN(info.balancerLp || 0);
-		const balancerLpStaked = BN(info.balancerLpStaked || 0);
-		const sushiswapLp = BN(info.sushiswapLp || 0);
-		const sushiSwapLpStaked = BN(info.sushiSwapLpStaked || 0);
-		const honeyswapLp = BN(info.honeyswapLp || 0);
-		const honeyswapLpStaked = BN(info.honeyswapLpStaked || 0);
-		const givStaked = BN(info.givStaked || 0);
-		const allocationCount = Number(info.allocationCount || 0);
-		const givDropClaimed = Boolean(info.givDropClaimed);
-
-		return {
-			balance,
-			allocatedTokens,
-			claimed,
-			rewardPerTokenPaidGivLm,
-			rewardsGivLm,
-			rewardPerTokenPaidSushiSwap,
-			rewardsSushiSwap,
-			rewardPerTokenPaidHoneyswap,
-			rewardsHoneyswap,
-			rewardPerTokenPaidUniswap,
-			rewardsUniswap,
-			rewardPerTokenPaidBalancer,
-			rewardsBalancer,
-			givback,
-			balancerLp,
-			balancerLpStaked,
-			sushiswapLp,
-			sushiSwapLpStaked,
-			honeyswapLp,
-			honeyswapLpStaked,
-			givStaked,
-			allocationCount,
-			givDropClaimed,
-		};
-	} catch (error) {
-		console.error('Error in fetching Balances', error);
-		return zeroBalances;
-	}
+	const res = await fetch(uri, {
+		method: 'POST',
+		body: JSON.stringify(reqBody),
+	});
+	const { data } = await res.json();
+	return data;
 };
-
-export interface ITokenAllocation {
-	amount: ethers.BigNumber;
-	distributor: string;
-	recipient: string;
-	timestamp: string;
-	txHash: string;
-}
 
 export const getHistory = async (
 	network: number,
@@ -191,8 +50,12 @@ export const getHistory = async (
 	  }
 	}`;
 	const body = { query };
-	const uri = config.NETWORKS_CONFIG[network]?.subgraphAddress;
-	if (!uri) {
+	let uri;
+	if (network === config.MAINNET_NETWORK_NUMBER) {
+		uri = config.MAINNET_CONFIG.subgraphAddress;
+	} else if (network === config.XDAI_NETWORK_NUMBER) {
+		uri = config.XDAI_CONFIG.subgraphAddress;
+	} else {
 		console.error('Network is not Defined!');
 		return [];
 	}
@@ -247,15 +110,6 @@ export const getGIVPrice = async (network: number): Promise<number> => {
 	// }
 };
 
-export interface ITokenDistroInfo {
-	initialAmount: ethers.BigNumber;
-	lockedAmount: ethers.BigNumber;
-	totalTokens: ethers.BigNumber;
-	startTime: Date;
-	cliffTime: Date;
-	endTime: Date;
-}
-
 export const getTokenDistroInfo = async (
 	network: number,
 ): Promise<ITokenDistroInfo | undefined> => {
@@ -271,8 +125,12 @@ export const getTokenDistroInfo = async (
 		}
 	  }`;
 	const body = { query };
-	const uri = config.NETWORKS_CONFIG[network]?.subgraphAddress;
-	if (!uri) {
+	let uri;
+	if (network === config.MAINNET_NETWORK_NUMBER) {
+		uri = config.MAINNET_CONFIG.subgraphAddress;
+	} else if (network === config.XDAI_NETWORK_NUMBER) {
+		uri = config.XDAI_CONFIG.subgraphAddress;
+	} else {
 		console.error('Network is not Defined!');
 		return;
 	}
@@ -311,13 +169,6 @@ export const getTokenDistroInfo = async (
 	}
 };
 
-export interface IUnipool {
-	totalSupply: ethers.BigNumber;
-	lastUpdateTime: Date;
-	periodFinish: Date;
-	rewardPerTokenStored: ethers.BigNumber;
-	rewardRate: ethers.BigNumber;
-}
 export const getUnipoolInfo = async (
 	network: number,
 	unipoolAddress: string,
@@ -332,8 +183,12 @@ export const getUnipoolInfo = async (
 		}
 	  }`;
 	const body = { query };
-	const uri = config.NETWORKS_CONFIG[network]?.subgraphAddress;
-	if (!uri) {
+	let uri;
+	if (network === config.MAINNET_NETWORK_NUMBER) {
+		uri = config.MAINNET_CONFIG.subgraphAddress;
+	} else if (network === config.XDAI_NETWORK_NUMBER) {
+		uri = config.XDAI_CONFIG.subgraphAddress;
+	} else {
 		console.error('Network is not Defined!');
 		return;
 	}
@@ -367,28 +222,12 @@ export const getUnipoolInfo = async (
 	}
 };
 
-export interface IUniswapV3Position {
-	tokenId: number;
-	token0: string;
-	token1: string;
-	liquidity: ethers.BigNumber;
-	tickLower: number;
-	tickUpper: number;
-	owner: string;
-	staker: string | null;
-	staked: boolean;
-}
-export interface IUserPositions {
-	staked: IUniswapV3Position[];
-	notStaked: IUniswapV3Position[];
-	allStaked: IUniswapV3Position[];
-}
 export const getUserPositions = async (
 	account: string,
 ): Promise<IUserPositions> => {
 	// TODO: fetching all staked only gets 100 staked positions
 	const query = `{
-		notStaked: uniswapPositions(where:{owner: "${account.toLowerCase()}", closed: false}){
+		notStaked: uniswapPositions(where:{owner: "${account.toLowerCase()}"}){
 			tokenId
 			token0
 			token1
@@ -408,7 +247,7 @@ export const getUserPositions = async (
 			staked
 			staker
 		}
-		allStaked: uniswapPositions(first: 1000){
+		allStaked: uniswapPositions(first: 1000, where:{staked: true}){
 			tokenId
 			token0
 			token1
@@ -479,17 +318,9 @@ export const getUniswapV3TokenURI = async (
 		body: JSON.stringify(body),
 	});
 	const data = await res.json();
+
 	return data?.data?.uniswapPosition?.tokenURI || '';
 };
-
-export interface IUniswapV3Pool {
-	token0: string;
-	token1: string;
-	sqrtPriceX96: ethers.BigNumber;
-	tick: number;
-	liquidity: ethers.BigNumber;
-	stakedLiquidity: ethers.BigNumber;
-}
 
 export const getUniswapV3Pool = async (
 	address: string,

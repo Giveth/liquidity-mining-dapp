@@ -1,4 +1,4 @@
-import { IUnipool } from '@/services/subgraph';
+import { IUnipool } from '@/services/subgraph.service';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { getNowUnixMS } from '@/helpers/time';

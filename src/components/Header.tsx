@@ -3,7 +3,6 @@ import { Row } from './styled-components/Grid';
 import { FC, useContext, useState } from 'react';
 import { ThemeContext, ThemeType } from '@/context/theme.context';
 import { OnboardContext } from '@/context/onboard.context';
-import { useBalances } from '@/context/balance.context';
 import { formatWeiHelper } from '@/helpers/number';
 import { networksParams } from '@/helpers/blockchain';
 import {
@@ -25,6 +24,7 @@ import {
 	CoverLine,
 } from './Header.sc';
 import Link from 'next/link';
+import { useSubgraph } from '@/context/subgraph.context';
 import { RewardMenu } from './menu/RewardMenu';
 
 export interface IHeader {
@@ -35,7 +35,9 @@ export interface IHeader {
 const Header: FC<IHeader> = () => {
 	const [showRewardMenu, setShowRewardMenu] = useState(false);
 	const { theme } = useContext(ThemeContext);
-	const { currentBalance } = useBalances();
+	const {
+		currentValues: { balances },
+	} = useSubgraph();
 	const { network, connect, address, provider } = useContext(OnboardContext);
 
 	const handleHoverClickBalance = (show: boolean) => {
@@ -96,7 +98,7 @@ const Header: FC<IHeader> = () => {
 									/>
 									<HBContent>
 										{formatWeiHelper(
-											currentBalance.balance,
+											balances.balance,
 										)}
 									</HBContent>
 								</HBContainer>

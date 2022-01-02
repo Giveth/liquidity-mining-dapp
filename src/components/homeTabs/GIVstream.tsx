@@ -57,30 +57,29 @@ import {
 	TxHash,
 } from './GIVstream.sc';
 import { IconWithTooltip } from '../IconWithToolTip';
-import {
-	getHistory,
-	getTokenDistroInfo,
-	ITokenAllocation,
-} from '@/services/subgraph';
+import { getHistory } from '@/services/subgraph.service';
 import { OnboardContext } from '@/context/onboard.context';
 import { formatWeiHelper } from '@/helpers/number';
 import config from '@/configuration';
 import { DurationToString } from '@/lib/helpers';
 import { NetworkSelector } from '@/components/NetworkSelector';
-import { useBalances } from '@/context/balance.context';
 import { constants, ethers } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import BigNumber from 'bignumber.js';
 import { HarvestAllModal } from '../modals/HarvestAll';
 import { Zero } from '@ethersproject/constants';
+import { useSubgraph } from '@/context';
+import { ITokenAllocation } from '@/types/subgraph';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
 	const [rewardLiquidPart, setRewardLiquidPart] = useState(constants.Zero);
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
 	const { tokenDistroHelper } = useTokenDistro();
-	const { currentBalance } = useBalances();
-	const { allocatedTokens, claimed, givback } = currentBalance;
+	const {
+		currentValues: { balances },
+	} = useSubgraph();
+	const { allocatedTokens, claimed, givback } = balances;
 	const { network: walletNetwork } = useContext(OnboardContext);
 
 	useEffect(() => {
@@ -153,7 +152,9 @@ export const TabGIVstreamBottom = () => {
 	const [streamAmount, setStreamAmount] = useState<BigNumber>(
 		new BigNumber(0),
 	);
-	const { currentBalance } = useBalances();
+	const {
+		currentValues: { balances },
+	} = useSubgraph();
 	const increaseSecRef = useRef<HTMLDivElement>(null);
 	const supportedNetworks = [
 		config.MAINNET_NETWORK_NUMBER,
@@ -163,14 +164,10 @@ export const TabGIVstreamBottom = () => {
 	useEffect(() => {
 		setStreamAmount(
 			tokenDistroHelper.getStreamPartTokenPerWeek(
-				currentBalance.allocatedTokens.sub(currentBalance.givback),
+				balances.allocatedTokens.sub(balances.givback),
 			),
 		);
-	}, [
-		currentBalance.allocatedTokens,
-		currentBalance.givback,
-		tokenDistroHelper,
-	]);
+	}, [balances.allocatedTokens, balances.givback, tokenDistroHelper]);
 
 	useEffect(() => {
 		setPercent(tokenDistroHelper.percent);
@@ -405,8 +402,10 @@ export const GIVstreamHistory: FC = () => {
 	const [page, setPage] = useState(0);
 	const [pages, setPages] = useState<any[]>([]);
 	const count = 6;
-	const { currentBalance } = useBalances();
-	const { allocationCount } = currentBalance;
+	const {
+		currentValues: { balances },
+	} = useSubgraph();
+	const { allocationCount } = balances;
 
 	const { tokenDistroHelper } = useTokenDistro();
 

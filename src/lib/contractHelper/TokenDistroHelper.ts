@@ -1,4 +1,4 @@
-import { IBalances, ITokenDistroInfo } from '@/services/subgraph';
+import { IBalances, ITokenDistroInfo } from '@/services/subgraph.service';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { Zero } from '@ethersproject/constants';

@@ -20,13 +20,15 @@ import {
 	getUniswapV3Pool,
 	getUniswapV3TokenURI,
 	getUserPositions,
-	IUniswapV3Pool,
-	IUniswapV3Position,
-	IUserPositions,
-} from '@/services/subgraph';
+} from '@/services/subgraph.service';
 import { Zero } from '@/helpers/number';
 import BigNumber from 'bignumber.js';
 import { constants } from 'ethers';
+import {
+	IUniswapV3Pool,
+	IUniswapV3Position,
+	IUserPositions,
+} from '@/types/subgraph';
 
 const ERC721NftContext = createContext<{
 	totalNftPositions: LiquidityPosition[];

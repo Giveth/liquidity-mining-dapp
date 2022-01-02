@@ -4,13 +4,13 @@ import '../styles/globals.css';
 
 import { OnboardProvider } from '@/context/onboard.context';
 import { ThemeProvider } from '@/context/theme.context';
-import { BalanceProvider } from '@/context/balance.context';
 import { FarmProvider } from '@/context/farm.context';
 import { NftsProvider } from '@/context/positions.context';
 import { TokenDistroProvider } from '@/context/tokenDistro.context';
 
 import { MobileModal } from '@/components/modals/Mobile';
 import { useEffect, useState } from 'react';
+import { SubgraphProvider } from '@/context/subgraph.context';
 
 function MyApp({ Component, pageProps }: AppProps) {
 	const [showMobileModal, setShowMobileModal] = useState(false);
@@ -21,7 +21,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
 	return (
 		<OnboardProvider>
-			<BalanceProvider>
+			<SubgraphProvider>
 				<TokenDistroProvider>
 					<NftsProvider>
 						<FarmProvider>
@@ -37,7 +37,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 						</FarmProvider>
 					</NftsProvider>
 				</TokenDistroProvider>
-			</BalanceProvider>
+			</SubgraphProvider>
 		</OnboardProvider>
 	);
 }

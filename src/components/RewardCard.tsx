@@ -1,6 +1,6 @@
 import config from '@/configuration';
 import { formatWeiHelper, Zero } from '@/helpers/number';
-import { getGIVPrice } from '@/services/subgraph';
+import { getGIVPrice } from '@/services/subgraph.service';
 import {
 	brandColors,
 	Caption,

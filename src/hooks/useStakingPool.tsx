@@ -8,10 +8,10 @@ import {
 	getUserStakeInfo,
 } from '@/lib/stakingPool';
 import config from '@/configuration';
-import { useBalances, useOnboard } from '@/context';
+import { useSubgraph, useOnboard } from '@/context';
 import { PoolStakingConfig, StakingType } from '@/types/config';
 import { StakePoolInfo, UserStakeInfo } from '@/types/poolInfo';
-import { getUnipoolInfo } from '@/services/subgraph';
+import { getUnipoolInfo } from '@/services/subgraph.service';
 import { UnipoolHelper } from '@/lib/contractHelper/UnipoolHelper';
 import { Zero } from '@/helpers/number';
 
@@ -25,7 +25,9 @@ export const useStakingPool = (
 	notStakedAmount: ethers.BigNumber;
 } => {
 	const { address, provider, network: walletNetwork } = useOnboard();
-	const { currentBalance } = useBalances();
+	const {
+		currentValues: { balances },
+	} = useSubgraph();
 
 	const [apr, setApr] = useState<BigNumber | null>(null);
 	const [userStakeInfo, setUserStakeInfo] = useState<UserStakeInfo>({
@@ -93,7 +95,7 @@ export const useStakingPool = (
 				setUserStakeInfo(
 					getUserStakeInfo(
 						poolStakingConfig.type,
-						currentBalance,
+						balances,
 						unipoolHelper,
 					),
 				);
@@ -115,7 +117,7 @@ export const useStakingPool = (
 				userStakeInfoPoll.current = null;
 			}
 		};
-	}, [address, poolStakingConfig, currentBalance]);
+	}, [address, poolStakingConfig, balances]);
 
 	return {
 		apr,

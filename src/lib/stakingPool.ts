@@ -22,9 +22,10 @@ import {
 	TransactionResponse,
 	Web3Provider,
 } from '@ethersproject/providers';
-import { getUnipoolInfo, IBalances, IUnipool } from '@/services/subgraph';
+import { getUnipoolInfo } from '@/services/subgraph.service';
 import { UnipoolHelper } from '@/lib/contractHelper/UnipoolHelper';
 import { Zero } from '@/helpers/number';
+import { IBalances, IUnipool } from '@/types/subgraph';
 
 const toBigNumber = (eb: ethers.BigNumber): BigNumber =>
 	new BigNumber(eb.toString());
