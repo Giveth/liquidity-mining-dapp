@@ -42,7 +42,7 @@ export const GIVstreamTopInnerContainer = styled(Container)`
 
 export const Left = styled.div`
 	width: 708px;
-	z-index: 2;
+	z-index: 1;
 `;
 
 export const Right = styled.div`

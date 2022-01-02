@@ -8,6 +8,7 @@ import { IconXDAI } from './Icons/XDAI';
 import { IconEthereum } from './Icons/Eth';
 import { BasicNetworkConfig } from '../types/config';
 import { ChangeNetworkModal } from './modals/ChangeNetwork';
+import { switchNetwork } from '@/lib/metamask';
 
 interface NetworkSelectorProps {
 	disabled?: boolean;
@@ -59,26 +60,7 @@ export const NetworkSelector = () => {
 		setTargetNetwork(networkNumber);
 		if (walletNetwork !== networkNumber) {
 			if (typeof (window as any).ethereum !== 'undefined') {
-				const { ethereum } = window as any;
-				try {
-					await ethereum.request({
-						method: 'wallet_switchEthereumChain',
-						params: [{ chainId: network.chainId }],
-					});
-				} catch (switchError: any) {
-					// This error code indicates that the chain has not been added to MetaMask.
-					if (switchError.code === 4902) {
-						try {
-							await ethereum.request({
-								method: 'wallet_addEthereumChain',
-								params: [network],
-							});
-						} catch (addError) {
-							// handle "add" error
-						}
-					}
-					// handle other "switch" errors
-				}
+				switchNetwork(networkNumber);
 			} else {
 				setShowChangeNetworkModal(true);
 			}
