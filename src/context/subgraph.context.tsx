@@ -10,12 +10,13 @@ import { isAddress } from 'ethers/lib/utils';
 import { fetchSubgraph } from '@/services/subgraph.service';
 import { OnboardContext } from '@/context/onboard.context';
 import config from '@/configuration';
-import { IBalances, ZeroBalances } from '@/types/subgraph';
+import { IBalances, ITokenDistroInfo, ZeroBalances } from '@/types/subgraph';
 import { SubgraphQueryBuilder } from '@/lib/subgraph/subgraphQueryBuilder';
 import { transformSubgraphData } from '@/lib/subgraph/subgraphDataTransform';
 
 export interface ISubgraphValue {
 	balances: IBalances;
+	tokenDistroInfo: ITokenDistroInfo | undefined;
 }
 
 export interface ISubgraphContext {
@@ -25,6 +26,7 @@ export interface ISubgraphContext {
 }
 const defaultSubgraphValue: ISubgraphValue = {
 	balances: ZeroBalances,
+	tokenDistroInfo: undefined,
 };
 
 export const SubgraphContext = createContext<ISubgraphContext>({

@@ -1,9 +1,9 @@
 import { createContext, FC, useContext, useEffect, useState } from 'react';
-import { getTokenDistroInfo } from '@/services/subgraph.service';
 import { OnboardContext } from '@/context/onboard.context';
 import config from '@/configuration';
 import { TokenDistroHelper } from '@/lib/contractHelper/TokenDistroHelper';
 import { Zero } from '@ethersproject/constants';
+import { useSubgraph } from '@/context/subgraph.context';
 
 export interface ITokenDistroContext {
 	tokenDistroHelper: TokenDistroHelper;
@@ -29,6 +29,8 @@ export const BalanceContext = createContext<ITokenDistroContext>({
 export const TokenDistroProvider: FC = ({ children }) => {
 	const { address, network, provider } = useContext(OnboardContext);
 
+	const { mainnetValues, xDaiValues } = useSubgraph();
+
 	const [currentTokenDistroInfo, setCurrentTokenDistroInfo] =
 		useState<TokenDistroHelper>(defaultTokenDistroHelper);
 	const [mainnetTokenDistro, setMainnetTokenDistro] =
@@ -36,6 +38,20 @@ export const TokenDistroProvider: FC = ({ children }) => {
 	const [xDaiTokenDistro, setXDaiTokenDistro] = useState<TokenDistroHelper>(
 		defaultTokenDistroHelper,
 	);
+
+	useEffect(() => {
+		if (mainnetValues?.tokenDistroInfo)
+			setMainnetTokenDistro(
+				new TokenDistroHelper(mainnetValues.tokenDistroInfo),
+			);
+	}, [mainnetValues]);
+
+	useEffect(() => {
+		if (xDaiValues.tokenDistroInfo)
+			setXDaiTokenDistro(
+				new TokenDistroHelper(xDaiValues.tokenDistroInfo),
+			);
+	}, [xDaiValues]);
 
 	useEffect(() => {
 		switch (network) {
@@ -51,54 +67,6 @@ export const TokenDistroProvider: FC = ({ children }) => {
 				setCurrentTokenDistroInfo(mainnetTokenDistro);
 		}
 	}, [mainnetTokenDistro, xDaiTokenDistro, network]);
-
-	useEffect(() => {
-		getTokenDistroInfo(config.MAINNET_NETWORK_NUMBER).then(
-			_tokenDistroInfo => {
-				if (_tokenDistroInfo)
-					setMainnetTokenDistro(
-						new TokenDistroHelper(_tokenDistroInfo),
-					);
-			},
-		);
-		getTokenDistroInfo(config.XDAI_NETWORK_NUMBER).then(
-			_tokenDistroInfo => {
-				if (_tokenDistroInfo)
-					setXDaiTokenDistro(new TokenDistroHelper(_tokenDistroInfo));
-			},
-		);
-	}, []);
-
-	useEffect(() => {
-		const fetchTokenDistroInfo = async () => {
-			try {
-				const _tokenDistroInfo = await getTokenDistroInfo(network);
-				if (_tokenDistroInfo) {
-					if (network === config.MAINNET_NETWORK_NUMBER)
-						setMainnetTokenDistro(
-							new TokenDistroHelper(_tokenDistroInfo),
-						);
-					else
-						setXDaiTokenDistro(
-							new TokenDistroHelper(_tokenDistroInfo),
-						);
-				}
-			} catch (e) {
-				console.error(
-					'Error in fetching token and streaming balances',
-					e,
-				);
-			}
-		};
-
-		const interval = setInterval(
-			fetchTokenDistroInfo,
-			120000, // Every two minutes
-		);
-		return () => {
-			clearInterval(interval);
-		};
-	}, [network]);
 
 	return (
 		<BalanceContext.Provider

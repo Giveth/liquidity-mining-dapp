@@ -110,65 +110,6 @@ export const getGIVPrice = async (network: number): Promise<number> => {
 	// }
 };
 
-export const getTokenDistroInfo = async (
-	network: number,
-): Promise<ITokenDistroInfo | undefined> => {
-	const query = `{
-		tokenDistroContractInfos(first:10){
-		  id
-		  initialAmount
-		  duration
-		  startTime
-		  cliffTime
-		  lockedAmount
-		  totalTokens
-		}
-	  }`;
-	const body = { query };
-	let uri;
-	if (network === config.MAINNET_NETWORK_NUMBER) {
-		uri = config.MAINNET_CONFIG.subgraphAddress;
-	} else if (network === config.XDAI_NETWORK_NUMBER) {
-		uri = config.XDAI_CONFIG.subgraphAddress;
-	} else {
-		console.error('Network is not Defined!');
-		return;
-	}
-	try {
-		const res = await fetch(uri, {
-			method: 'POST',
-			body: JSON.stringify(body),
-		});
-		const data = await res.json();
-		const info = data.data.tokenDistroContractInfos[0];
-
-		const _startTime = info.startTime;
-		const _cliffTime = info.cliffTime;
-		const _duration = await info.duration;
-
-		const startTime = new Date(+(_startTime.toString() + '000'));
-		const cliffTime = new Date(+(_cliffTime.toString() + '000'));
-		const duration = +(_duration.toString() + '000');
-
-		const endTime = new Date(startTime.getTime() + duration);
-		const initialAmount = BN(info.initialAmount);
-		const lockedAmount = BN(info.lockedAmount);
-		const totalTokens = BN(info.totalTokens);
-
-		return {
-			initialAmount,
-			lockedAmount,
-			totalTokens,
-			startTime,
-			cliffTime,
-			endTime,
-		};
-	} catch (error) {
-		console.error('Error in getTokenDistroInfo from Subgraph', error);
-		return;
-	}
-};
-
 export const getUnipoolInfo = async (
 	network: number,
 	unipoolAddress: string,

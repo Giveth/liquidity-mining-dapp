@@ -1,6 +1,6 @@
 import { isAddress } from 'ethers/lib/utils';
 import { Contract } from 'ethers';
-import { ClaimData } from '../types/GIV';
+import { ClaimData } from '@/types/GIV';
 import config from '../configuration';
 import { abi as MERKLE_ABI } from '../artifacts/MerkleDrop.json';
 import { abi as TOKEN_DISTRO_ABI } from '../artifacts/TokenDistro.json';
@@ -27,8 +27,7 @@ export const fetchAirDropClaimData = async (
 			referrerPolicy: 'no-referrer',
 			body: JSON.stringify(data),
 		});
-		const json = await response.json();
-		return json;
+		return await response.json();
 	} catch (e) {
 		// eslint-disable-next-line no-console
 		console.error(e);

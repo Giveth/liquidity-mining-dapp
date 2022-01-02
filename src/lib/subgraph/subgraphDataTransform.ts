@@ -1,5 +1,5 @@
 import { ISubgraphValue } from '@/context/subgraph.context';
-import { IBalances, ZeroBalances } from '@/types/subgraph';
+import { IBalances, ITokenDistroInfo, ZeroBalances } from '@/types/subgraph';
 import { ethers } from 'ethers';
 const BN = ethers.BigNumber.from;
 
@@ -61,10 +61,35 @@ const transformBalanceInfo = (info: any): IBalances => {
 	};
 };
 
+const transformTokenDistroInfos = (info: any): ITokenDistroInfo => {
+	const _startTime = info.startTime;
+	const _cliffTime = info.cliffTime;
+	const _duration = info.duration;
+
+	const startTime = new Date(+(_startTime.toString() + '000'));
+	const cliffTime = new Date(+(_cliffTime.toString() + '000'));
+	const duration = +(_duration.toString() + '000');
+
+	const endTime = new Date(startTime.getTime() + duration);
+	const initialAmount = BN(info.initialAmount);
+	const lockedAmount = BN(info.lockedAmount);
+	const totalTokens = BN(info.totalTokens);
+
+	return {
+		initialAmount,
+		lockedAmount,
+		totalTokens,
+		startTime,
+		cliffTime,
+		endTime,
+	};
+};
 export const transformSubgraphData = async (
 	data: any,
 ): Promise<ISubgraphValue> => {
+	console.log('data:', data);
 	return {
 		balances: transformBalanceInfo(data?.balances),
+		tokenDistroInfo: transformTokenDistroInfos(data?.tokenDistroInfos[0]),
 	};
 };

@@ -30,10 +30,25 @@ export class SubgraphQueryBuilder {
 		}`;
 	};
 
+	static getTokenDistroInfoQuery = (): string => {
+		return `
+		tokenDistroContractInfos(first:10){
+		  id
+		  initialAmount
+		  duration
+		  startTime
+		  cliffTime
+		  lockedAmount
+		  totalTokens
+		}
+		`;
+	};
+
 	static getGeneralQuery = (address: string): string => {
 		return `
 		{
 			balances: ${SubgraphQueryBuilder.getBalanceQuery(address)}
+			tokenDistroInfos: ${SubgraphQueryBuilder.getTokenDistroInfoQuery()}
 		}
 		`;
 	};
