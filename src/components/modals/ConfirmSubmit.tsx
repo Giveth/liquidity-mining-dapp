@@ -121,7 +121,8 @@ export const ErrorInnerModal: FC<IErrorProps> = ({
 		<>
 			<Title>{title}</Title>
 			<Lottie options={errorAnimationOptions} height={60} width={60} />
-			<TxSubmit weight={700}>{txHash}</TxSubmit>
+			<TxFailed weight={700}>Transaction Error!</TxFailed>
+			{message && <ErrorMessage>{message}</ErrorMessage>}
 			{txHash && (
 				<BlockExplorerLink
 					href={`${config.NETWORKS_CONFIG[walletNetwork]?.blockExplorerUrls}
@@ -135,7 +136,6 @@ export const ErrorInnerModal: FC<IErrorProps> = ({
 					<IconExternalLink size={16} color={'currentColor'} />
 				</BlockExplorerLink>
 			)}
-			{message && <ErrorMessage>{message}</ErrorMessage>}
 		</>
 	);
 };
@@ -145,13 +145,18 @@ const Title = styled(Caption)`
 `;
 
 const ErrorMessage = styled(Caption)`
-	padding: 24px;
+	padding: 16px;
 `;
 
 const TxSubmit = styled(H6)`
 	color: ${neutralColors.gray[100]};
 	margin-top: 18px;
 	margin-bottom: 16px;
+`;
+
+const TxFailed = styled(H5)`
+	color: ${neutralColors.gray[100]};
+	margin-top: 18px;
 `;
 
 const TxConfirm = styled(H5)`
