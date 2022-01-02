@@ -31,12 +31,14 @@ import { InputWithUnit } from '../input';
 import { Row } from '../styled-components/Grid';
 import { IClaimViewCardProps } from '../views/claim/Claim.view';
 import config from '../../configuration';
-import { UserContext } from '../../context/user.context';
-import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
-import { fetchGivStakingInfo } from '../../lib/stakingPool';
-import { APR } from '../../types/poolInfo';
+import { UserContext } from '@/context/user.context';
+import { formatEthHelper, formatWeiHelper, Zero } from '@/helpers/number';
+import { fetchGivStakingInfo } from '@/lib/stakingPool';
+import { APR } from '@/types/poolInfo';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { H2, H5, Lead, P } from '@giveth/ui-design-system';
+import { useSubgraph } from '@/context';
+import { StakingType } from '@/types/config';
 
 const GovernCardContainer = styled(Card)`
 	padding-left: 254px;
@@ -127,6 +129,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const [earnEstimate, setEarnEstimate] = useState<BigNumber>(Zero);
 	const [apr, setApr] = useState<APR>(null);
 	const { tokenDistroHelper } = useTokenDistro();
+	const { xDaiValues } = useSubgraph();
 
 	useEffect(() => {
 		let _stacked = 0;
@@ -166,6 +169,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 			fetchGivStakingInfo(
 				config.XDAI_CONFIG.GIV.LM_ADDRESS,
 				config.XDAI_NETWORK_NUMBER,
+				xDaiValues[StakingType.GIV_LM],
 			)
 				.then(({ apr: _apr }) => {
 					mounted.current && setApr(_apr);
@@ -177,7 +181,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 		const interval = setInterval(cb, 120 * 1000);
 
 		return () => clearInterval(interval);
-	}, [stacked]);
+	}, [stacked, xDaiValues]);
 
 	return (
 		<GovernCardContainer activeIndex={step} index={index}>
