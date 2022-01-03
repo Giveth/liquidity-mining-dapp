@@ -41,9 +41,11 @@ import { OnboardContext } from '@/context/onboard.context';
 import { getNowUnixMS } from '@/helpers/time';
 import { useOnboard } from '@/context';
 import { formatDate } from '@/lib/helpers';
+import { GIVBackExplainModal } from '../modals/GIVBackExplain';
 
 export const TabGIVbacksTop = () => {
-	const [showModal, setShowModal] = useState(false);
+	const [showHarvestModal, setShowHarvestModal] = useState(false);
+	const [showGivBackExplain, setShowGivBackExplain] = useState(false);
 	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
 	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
 	const { tokenDistroHelper } = useTokenDistro();
@@ -83,7 +85,7 @@ export const TabGIVbacksTop = () => {
 								stream={givBackStream}
 								actionLabel='HARVEST'
 								actionCb={() => {
-									setShowModal(true);
+									setShowHarvestModal(true);
 								}}
 								network={walletNetwork}
 								targetNetworks={[config.XDAI_NETWORK_NUMBER]}
@@ -92,12 +94,18 @@ export const TabGIVbacksTop = () => {
 					</Row>
 				</Container>
 			</GIVbacksTopContainer>
-			{showModal && (
+			{showHarvestModal && (
 				<HarvestAllModal
 					title='GIVbacks Rewards'
-					showModal={showModal}
-					setShowModal={setShowModal}
+					showModal={showHarvestModal}
+					setShowModal={setShowHarvestModal}
 					network={config.XDAI_NETWORK_NUMBER}
+				/>
+			)}
+			{showGivBackExplain && (
+				<GIVBackExplainModal
+					showModal={showGivBackExplain}
+					setShowModal={setShowGivBackExplain}
 				/>
 			)}
 		</>
