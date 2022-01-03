@@ -44,7 +44,7 @@ export const GBSubtitle = styled(QuoteText)`
 export const GIVbackRewardCard = styled(RewardCard)`
 	position: absolute;
 	z-index: 1;
-	bottom: -37px;
+	bottom: -27px;
 `;
 
 export const GIVbacksBottomContainer = styled.div``;
