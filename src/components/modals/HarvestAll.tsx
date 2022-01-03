@@ -39,6 +39,7 @@ import {
 	TooltipContent,
 	StyledScrollbars,
 	HarvestBoxes,
+	HarvestAllPending,
 } from './HarvestAll.sc';
 import { Zero } from '@ethersproject/constants';
 import { ethers } from 'ethers';
@@ -428,7 +429,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 										/>
 									)}
 									{state === HarvestStates.HARVESTING && (
-										<Pending>
+										<HarvestAllPending>
 											<Lottie
 												options={
 													loadingAnimationOptions
@@ -437,7 +438,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 												width={40}
 											/>
 											&nbsp;HARVEST PENDING
-										</Pending>
+										</HarvestAllPending>
 									)}
 									<CancelButton
 										disabled={
