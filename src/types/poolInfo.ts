@@ -8,7 +8,3 @@ export interface UserStakeInfo {
 }
 
 export type APR = BigNumber | null;
-
-export interface StakePoolInfo {
-	apr: APR;
-}

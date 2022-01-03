@@ -3,15 +3,13 @@ import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
 
 import {
-	fetchGivStakingInfo,
-	fetchLPStakingInfo,
+	getGivStakingAPR,
+	getLPStakingAPR,
 	getUserStakeInfo,
 } from '@/lib/stakingPool';
-import config from '@/configuration';
-import { useBalances, useOnboard } from '@/context';
+import { useSubgraph, useOnboard } from '@/context';
 import { PoolStakingConfig, StakingType } from '@/types/config';
-import { StakePoolInfo, UserStakeInfo } from '@/types/poolInfo';
-import { getUnipoolInfo } from '@/services/subgraph';
+import { APR, UserStakeInfo } from '@/types/poolInfo';
 import { UnipoolHelper } from '@/lib/contractHelper/UnipoolHelper';
 import { Zero } from '@/helpers/number';
 
@@ -24,8 +22,10 @@ export const useStakingPool = (
 	stakedAmount: ethers.BigNumber;
 	notStakedAmount: ethers.BigNumber;
 } => {
-	const { address, provider, network: walletNetwork } = useOnboard();
-	const { currentBalance } = useBalances();
+	const { provider, network: walletNetwork } = useOnboard();
+	const { currentValues } = useSubgraph();
+
+	const { balances } = currentValues;
 
 	const [apr, setApr] = useState<BigNumber | null>(null);
 	const [userStakeInfo, setUserStakeInfo] = useState<UserStakeInfo>({
@@ -35,7 +35,6 @@ export const useStakingPool = (
 	});
 
 	const stakePoolInfoPoll = useRef<NodeJS.Timer | null>(null);
-	const userStakeInfoPoll = useRef<NodeJS.Timer | null>(null);
 
 	const { type, LM_ADDRESS } = poolStakingConfig;
 
@@ -48,17 +47,20 @@ export const useStakingPool = (
 				// When switching to another network, the provider may still be connected to wrong one
 				(providerNetwork === undefined || providerNetwork === network)
 			) {
-				const promise: Promise<StakePoolInfo> =
+				const promise: Promise<APR> =
 					type === StakingType.GIV_LM
-						? fetchGivStakingInfo(LM_ADDRESS, network)
-						: fetchLPStakingInfo(
+						? getGivStakingAPR(
+								LM_ADDRESS,
+								network,
+								currentValues[type],
+						  )
+						: getLPStakingAPR(
 								poolStakingConfig,
 								network,
 								provider,
+								currentValues[type],
 						  );
-				promise.then(({ apr: _apr }) => {
-					setApr(_apr);
-				});
+				promise.then(setApr);
 			} else {
 				setApr(Zero);
 			}
@@ -84,38 +86,12 @@ export const useStakingPool = (
 	}, []);
 
 	useEffect(() => {
-		const cb = async () => {
-			try {
-				const unipoolInfo = await getUnipoolInfo(network, LM_ADDRESS);
-				let unipoolHelper;
-				if (unipoolInfo) unipoolHelper = new UnipoolHelper(unipoolInfo);
-
-				setUserStakeInfo(
-					getUserStakeInfo(
-						poolStakingConfig.type,
-						currentBalance,
-						unipoolHelper,
-					),
-				);
-			} catch (error) {
-				console.error('Error in fetching Staking data', error);
-			}
-		};
-
-		cb();
-
-		userStakeInfoPoll.current = setInterval(
-			cb,
-			config.SUBGRAPH_POLLING_INTERVAL,
-		); // Every 15 seconds
-
-		return () => {
-			if (userStakeInfoPoll.current) {
-				clearInterval(userStakeInfoPoll.current);
-				userStakeInfoPoll.current = null;
-			}
-		};
-	}, [address, poolStakingConfig, currentBalance]);
+		const unipoolInfo = currentValues[type];
+		if (unipoolInfo) {
+			const unipoolHelper = new UnipoolHelper(unipoolInfo);
+			setUserStakeInfo(getUserStakeInfo(type, balances, unipoolHelper));
+		}
+	}, [type, currentValues, balances]);
 
 	return {
 		apr,

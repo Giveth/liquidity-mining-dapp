@@ -16,26 +16,28 @@ import Image from 'next/image';
 import { switchNetwork } from '@/lib/metamask';
 import config from '@/configuration';
 import BigNumber from 'bignumber.js';
-import { useBalances } from '@/context';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { Zero } from '@ethersproject/constants';
 import { formatWeiHelper } from '@/helpers/number';
 import { useFarms } from '@/context/farm.context';
 import Link from 'next/link';
 import { WhatisGIVstreamModal } from '@/components/modals/WhatisGIVstream';
+import { useSubgraph } from '@/context';
 
 export const RewardMenu = () => {
 	const [farmsLiquidPart, setFarmsLiquidPart] = useState(Zero);
 	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
 	const [givStreamLiquidPart, setGIVstreamLiquidPart] = useState(Zero);
-	const [flowrateow, setFlowrate] = useState<BigNumber.Value>(0);
+	const [flowRateNow, setFlowRateNow] = useState<BigNumber.Value>(0);
 	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
 		useState(false);
 	const { tokenDistroHelper } = useTokenDistro();
-	const { currentBalance } = useBalances();
+	const {
+		currentValues: { balances },
+	} = useSubgraph();
 	const { totalEarned } = useFarms();
-	const { network, connect, address, provider } = useContext(OnboardContext);
-	const { allocatedTokens, claimed, givback } = currentBalance;
+	const { network, provider } = useContext(OnboardContext);
+	const { allocatedTokens, claimed, givback } = balances;
 
 	useEffect(() => {
 		setFarmsLiquidPart(tokenDistroHelper.getLiquidPart(totalEarned));
@@ -59,7 +61,7 @@ export const RewardMenu = () => {
 				.getLiquidPart(allocatedTokens.sub(givback))
 				.sub(claimed),
 		);
-		setFlowrate(
+		setFlowRateNow(
 			tokenDistroHelper.getStreamPartTokenPerWeek(
 				allocatedTokens.sub(givback),
 			),
@@ -86,7 +88,7 @@ export const RewardMenu = () => {
 							alt='Thunder image'
 						/>
 						<FlowrateAmount>
-							{formatWeiHelper(flowrateow)}
+							{formatWeiHelper(flowRateNow)}
 						</FlowrateAmount>
 						<FlowrateUnit>GIV/week</FlowrateUnit>
 						<IconHelpWraper
@@ -205,7 +207,7 @@ export const FlowrateUnit = styled(P)`
 
 export const PartRow = styled(Row)`
 	justify-content: space-between;
-	margin 16px 0;
+	margin: 16px 0;
 `;
 
 export const PartInfo = styled.div``;

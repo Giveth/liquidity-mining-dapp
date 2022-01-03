@@ -1,8 +1,8 @@
-import { IBalances, ITokenDistroInfo } from '@/services/subgraph';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { Zero } from '@ethersproject/constants';
 import { getNowUnixMS } from '@/helpers/time';
+import { IBalances, ITokenDistroInfo } from '@/types/subgraph';
 
 export class TokenDistroHelper {
 	public readonly initialAmount: ethers.BigNumber;

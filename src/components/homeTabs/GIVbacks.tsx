@@ -34,12 +34,11 @@ import {
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { Zero } from '@ethersproject/constants';
 import BigNumber from 'bignumber.js';
-import { useBalances } from '@/context/balance.context';
 import config from '@/configuration';
 import { HarvestAllModal } from '../modals/HarvestAll';
 import { OnboardContext } from '@/context/onboard.context';
 import { getNowUnixMS } from '@/helpers/time';
-import { useOnboard } from '@/context';
+import { useOnboard, useSubgraph } from '@/context';
 import { formatDate } from '@/lib/helpers';
 import { GIVBackExplainModal } from '../modals/GIVBackExplain';
 
@@ -49,17 +48,17 @@ export const TabGIVbacksTop = () => {
 	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
 	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
 	const { tokenDistroHelper } = useTokenDistro();
-	const { xDaiBalance } = useBalances();
+	const {
+		currentValues: { balances },
+	} = useSubgraph();
 	const { network: walletNetwork } = useOnboard();
 
 	useEffect(() => {
-		setGivBackLiquidPart(
-			tokenDistroHelper.getLiquidPart(xDaiBalance.givback),
-		);
+		setGivBackLiquidPart(tokenDistroHelper.getLiquidPart(balances.givback));
 		setGivBackStream(
-			tokenDistroHelper.getStreamPartTokenPerWeek(xDaiBalance.givback),
+			tokenDistroHelper.getStreamPartTokenPerWeek(balances.givback),
 		);
-	}, [xDaiBalance, tokenDistroHelper]);
+	}, [balances, tokenDistroHelper]);
 
 	return (
 		<>
