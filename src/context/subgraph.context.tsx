@@ -103,14 +103,17 @@ export const SubgraphProvider: FC = ({ children }) => {
 			fetchXDaiInfo(address);
 
 			const interval = setInterval(() => {
-				fetchMainnetInfo(address);
-				fetchXDaiInfo(address);
+				if (network === config.XDAI_NETWORK_NUMBER) {
+					fetchXDaiInfo(address);
+				} else {
+					fetchMainnetInfo(address);
+				}
 			}, config.SUBGRAPH_POLLING_INTERVAL);
 			return () => {
 				clearInterval(interval);
 			};
 		}
-	}, [address, fetchMainnetInfo, fetchXDaiInfo]);
+	}, [address, fetchMainnetInfo, fetchXDaiInfo, network]);
 
 	return (
 		<SubgraphContext.Provider
