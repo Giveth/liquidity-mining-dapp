@@ -3,13 +3,13 @@ import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
 
 import {
-	fetchGivStakingInfo,
-	fetchLPStakingInfo,
+	getGivStakingAPR,
+	getLPStakingAPR,
 	getUserStakeInfo,
 } from '@/lib/stakingPool';
 import { useSubgraph, useOnboard } from '@/context';
 import { PoolStakingConfig, StakingType } from '@/types/config';
-import { StakePoolInfo, UserStakeInfo } from '@/types/poolInfo';
+import { APR, UserStakeInfo } from '@/types/poolInfo';
 import { UnipoolHelper } from '@/lib/contractHelper/UnipoolHelper';
 import { Zero } from '@/helpers/number';
 
@@ -22,7 +22,7 @@ export const useStakingPool = (
 	stakedAmount: ethers.BigNumber;
 	notStakedAmount: ethers.BigNumber;
 } => {
-	const { address, provider, network: walletNetwork } = useOnboard();
+	const { provider, network: walletNetwork } = useOnboard();
 	const { currentValues } = useSubgraph();
 
 	const { balances } = currentValues;
@@ -47,22 +47,20 @@ export const useStakingPool = (
 				// When switching to another network, the provider may still be connected to wrong one
 				(providerNetwork === undefined || providerNetwork === network)
 			) {
-				const promise: Promise<StakePoolInfo> =
+				const promise: Promise<APR> =
 					type === StakingType.GIV_LM
-						? fetchGivStakingInfo(
+						? getGivStakingAPR(
 								LM_ADDRESS,
 								network,
 								currentValues[type],
 						  )
-						: fetchLPStakingInfo(
+						: getLPStakingAPR(
 								poolStakingConfig,
 								network,
 								provider,
 								currentValues[type],
 						  );
-				promise.then(({ apr: _apr }) => {
-					setApr(_apr);
-				});
+				promise.then(setApr);
 			} else {
 				setApr(Zero);
 			}

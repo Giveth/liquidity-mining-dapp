@@ -33,7 +33,7 @@ import { IClaimViewCardProps } from '../views/claim/Claim.view';
 import config from '../../configuration';
 import { UserContext } from '@/context/user.context';
 import { formatEthHelper, formatWeiHelper, Zero } from '@/helpers/number';
-import { fetchGivStakingInfo } from '@/lib/stakingPool';
+import { getGivStakingAPR } from '@/lib/stakingPool';
 import { APR } from '@/types/poolInfo';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { H2, H5, Lead, P } from '@giveth/ui-design-system';
@@ -166,12 +166,12 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 
 	useEffect(() => {
 		const cb = () => {
-			fetchGivStakingInfo(
+			getGivStakingAPR(
 				config.XDAI_CONFIG.GIV.LM_ADDRESS,
 				config.XDAI_NETWORK_NUMBER,
 				xDaiValues[StakingType.GIV_LM],
 			)
-				.then(({ apr: _apr }) => {
+				.then(_apr => {
 					mounted.current && setApr(_apr);
 				})
 				.catch(e => console.error('Error on fetching APR:', e));

@@ -26,8 +26,8 @@ import { BigNumber as EthersBigNumber, constants, utils } from 'ethers';
 import config from '../../configuration';
 import BigNumber from 'bignumber.js';
 import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
-import { StakePoolInfo } from '@/types/poolInfo';
-import { fetchLPStakingInfo } from '@/lib/stakingPool';
+import { APR } from '@/types/poolInfo';
+import { getLPStakingAPR } from '@/lib/stakingPool';
 import { useLiquidityPositions, useSubgraph } from '@/context';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { H2, H5, Lead } from '@giveth/ui-design-system';
@@ -136,18 +136,18 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	);
 
 	useEffect(() => {
-		const getMaxAPR = async (promises: Promise<StakePoolInfo>[]) => {
-			const stakePoolInfos = await Promise.all(promises);
+		const getMaxAPR = async (promises: Promise<APR>[]) => {
+			const stakePoolAPRs = await Promise.all(promises);
 			let maxApr = univ3apr;
-			stakePoolInfos.forEach(info => {
-				maxApr = BigNumber.max(maxApr, info?.apr || Zero);
+			stakePoolAPRs.forEach(apr => {
+				maxApr = BigNumber.max(maxApr, apr || Zero);
 			});
 			setAPR(maxApr);
 		};
 
-		const promiseQueue: Promise<StakePoolInfo>[] = [];
+		const promiseQueue: Promise<APR>[] = [];
 		config.XDAI_CONFIG.pools.forEach(poolStakingConfig => {
-			const promise: Promise<StakePoolInfo> = fetchLPStakingInfo(
+			const promise: Promise<APR> = getLPStakingAPR(
 				poolStakingConfig,
 				config.XDAI_NETWORK_NUMBER,
 				networkProviders[config.XDAI_NETWORK_NUMBER],
@@ -158,7 +158,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		config.MAINNET_CONFIG.pools.forEach(poolStakingConfig => {
 			if (poolStakingConfig.type === StakingType.UNISWAP) return;
 
-			const promise: Promise<StakePoolInfo> = fetchLPStakingInfo(
+			const promise: Promise<APR> = getLPStakingAPR(
 				poolStakingConfig,
 				config.MAINNET_NETWORK_NUMBER,
 				networkProviders[config.MAINNET_NETWORK_NUMBER],

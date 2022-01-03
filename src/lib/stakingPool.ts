@@ -7,7 +7,7 @@ import { abi as BAL_VAULT_ABI } from '../artifacts/BalancerVault.json';
 import { abi as TOKEN_MANAGER_ABI } from '../artifacts/HookedTokenManager.json';
 import { abi as ERC20_ABI } from '../artifacts/ERC20.json';
 
-import { StakePoolInfo } from '@/types/poolInfo';
+import { APR } from '@/types/poolInfo';
 import BigNumber from 'bignumber.js';
 import config from '../configuration';
 import {
@@ -29,11 +29,11 @@ import { IBalances, IUnipool } from '@/types/subgraph';
 const toBigNumber = (eb: ethers.BigNumber): BigNumber =>
 	new BigNumber(eb.toString());
 
-export const fetchGivStakingInfo = async (
+export const getGivStakingAPR = async (
 	lmAddress: string,
 	network: number,
 	unipool: IUnipool | undefined,
-): Promise<StakePoolInfo> => {
+): Promise<APR> => {
 	let apr: BigNumber = Zero;
 
 	if (unipool) {
@@ -48,31 +48,27 @@ export const fetchGivStakingInfo = async (
 					.times('100');
 	}
 
-	return {
-		apr,
-	};
+	return apr;
 };
 
-export const fetchLPStakingInfo = async (
+export const getLPStakingAPR = async (
 	poolStakingConfig: PoolStakingConfig,
 	network: number,
 	provider: JsonRpcProvider | null,
 	unipool: IUnipool | undefined,
-): Promise<StakePoolInfo> => {
+): Promise<APR> => {
 	if (!provider) {
-		return {
-			apr: Zero,
-		};
+		return Zero;
 	}
 	if (poolStakingConfig.type === StakingType.BALANCER) {
-		return fetchBalancerPoolStakingInfo(
+		return getBalancerPoolStakingAPR(
 			poolStakingConfig as BalancerPoolStakingConfig,
 			network,
 			provider,
 			unipool,
 		);
 	} else {
-		return fetchSimplePoolStakingInfo(
+		return getSimplePoolStakingAPR(
 			poolStakingConfig,
 			network,
 			provider,
@@ -81,12 +77,12 @@ export const fetchLPStakingInfo = async (
 	}
 };
 
-const fetchBalancerPoolStakingInfo = async (
+const getBalancerPoolStakingAPR = async (
 	balancerPoolStakingConfig: BalancerPoolStakingConfig,
 	network: number,
 	provider: JsonRpcProvider,
 	unipool: IUnipool | undefined,
-): Promise<StakePoolInfo> => {
+): Promise<APR> => {
 	const { LM_ADDRESS, POOL_ADDRESS, VAULT_ADDRESS, POOL_ID } =
 		balancerPoolStakingConfig;
 	const tokenAddress = config.NETWORKS_CONFIG[network].TOKEN_ADDRESS;
@@ -153,16 +149,14 @@ const fetchBalancerPoolStakingInfo = async (
 	} catch (e) {
 		console.error('error on fetching balancer apr:', e);
 	}
-	return {
-		apr,
-	};
+	return apr;
 };
-const fetchSimplePoolStakingInfo = async (
+const getSimplePoolStakingAPR = async (
 	simplePoolStakingConfig: SimplePoolStakingConfig,
 	network: number,
 	provider: JsonRpcProvider,
 	unipool: IUnipool | undefined,
-): Promise<StakePoolInfo> => {
+): Promise<APR> => {
 	const { LM_ADDRESS, POOL_ADDRESS } = simplePoolStakingConfig;
 	const tokenAddress = config.NETWORKS_CONFIG[network].TOKEN_ADDRESS;
 	const lmContract = new Contract(LM_ADDRESS, LM_ABI, provider);
@@ -211,9 +205,7 @@ const fetchSimplePoolStakingInfo = async (
 		console.error('error on fetching apr:', e);
 	}
 
-	return {
-		apr,
-	};
+	return apr;
 };
 
 export const getUserStakeInfo = (
