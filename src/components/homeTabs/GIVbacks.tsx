@@ -87,6 +87,14 @@ export const TabGIVbacksTop = () => {
 								actionCb={() => {
 									setShowHarvestModal(true);
 								}}
+								subButtonLabel={
+									givBackLiquidPart.isZero()
+										? "Why don't I have GIVbacks?"
+										: undefined
+								}
+								subButtonCb={() => {
+									setShowGivBackExplain(true);
+								}}
 								network={walletNetwork}
 								targetNetworks={[config.XDAI_NETWORK_NUMBER]}
 							/>
