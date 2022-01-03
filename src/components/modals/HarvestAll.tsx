@@ -47,7 +47,6 @@ import { claimReward, fetchAirDropClaimData } from '@/lib/claim';
 import config from '@/configuration';
 import { IconWithTooltip } from '../IconWithToolTip';
 import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
-import Link from 'next/link';
 
 interface IHarvestAllModalProps extends IModal {
 	title: string;

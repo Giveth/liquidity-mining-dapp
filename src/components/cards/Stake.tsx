@@ -170,7 +170,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		<InvestCardContainer activeIndex={step} index={index}>
 			<StakeHeader>
 				<Title as='h1'>Grow your Rewards</Title>
-				<Desc size='small' color={'#CABAFF'}>
+				<Desc>
 					Provide liquidity and get rewarded. Stake tokens in the{' '}
 					<b>GIVfarm</b> to earn up to{' '}
 					{APR ? `${formatEthHelper(APR, 2)}% APR` : ' ? '}

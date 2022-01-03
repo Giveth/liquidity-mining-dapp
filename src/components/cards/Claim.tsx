@@ -105,7 +105,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 					<Title as='h1' weight={700}>
 						Claim your GIV now!
 					</Title>
-					<Desc color={'#CABAFF'}>
+					<Desc>
 						Let&apos;s Build the Future of Giving, together.
 					</Desc>
 				</ClaimHeader>
