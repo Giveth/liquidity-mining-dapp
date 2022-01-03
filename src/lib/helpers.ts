@@ -29,7 +29,7 @@ export const DurationToString = (ms: number, length: number = 3) => {
 };
 
 export const formatDate = (date: Date) => {
-	const res = date
+	return date
 		.toLocaleString('en-US', {
 			weekday: 'short',
 			day: 'numeric',
@@ -38,7 +38,5 @@ export const formatDate = (date: Date) => {
 			hour: 'numeric',
 			minute: 'numeric',
 		})
-		.split(',');
-	res[1] += 'th';
-	return res.join('');
+		.replace(/,/g, '');
 };
