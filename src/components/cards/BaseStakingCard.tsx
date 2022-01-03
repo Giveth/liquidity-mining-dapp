@@ -26,6 +26,7 @@ import {
 	LiquidityButton,
 	IconContainer,
 	IconHelpWraper,
+	GIVgardenTooltip,
 } from './BaseStakingCard.sc';
 import styled from 'styled-components';
 import {
@@ -98,13 +99,6 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 
 	const isV3Staking = type === StakingType.UNISWAP;
 
-	const GIVgardenTooltip = styled.div`
-		color: ${neutralColors.gray[100]};
-		text-align: center;
-		width: 120px;
-		font-size: 0.8em;
-	`;
-
 	const { apr, earned, stakedLpAmount, userNotStakedAmount } = stakeInfo;
 
 	useEffect(() => {
@@ -128,24 +122,23 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 						{type}
 					</StakingPoolExchange>
 					{walletNetwork === config.XDAI_NETWORK_NUMBER &&
-					type === StakingType.GIV_LM ? (
-						<IconWithTooltip
-							direction={'top'}
-							icon={
-								<IconHelp
-									color={brandColors.deep[100]}
-									size={12}
-								/>
-							}
-						>
-							<GIVgardenTooltip>
-								While staking GIV in this pool you are also
-								granted voting power (gGIV) in the GIVgarden.
-							</GIVgardenTooltip>
-						</IconWithTooltip>
-					) : (
-						' '
-					)}
+						type === StakingType.GIV_LM && (
+							<IconWithTooltip
+								direction={'top'}
+								icon={
+									<IconHelp
+										color={brandColors.deep[100]}
+										size={12}
+									/>
+								}
+							>
+								<GIVgardenTooltip>
+									While staking GIV in this pool you are also
+									granted voting power (gGIV) in the
+									GIVgarden.
+								</GIVgardenTooltip>
+							</IconWithTooltip>
+						)}
 					<div style={{ flex: 1 }}></div>
 					{notif && notif}
 				</StakingPoolExchangeRow>
