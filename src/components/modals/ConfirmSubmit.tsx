@@ -16,6 +16,9 @@ import TikAnimation from '../../animations/tik.json';
 import ErrorAnimation from '../../animations/error.json';
 import styled from 'styled-components';
 import { FC } from 'react';
+import { AddGIVTokenButton } from '../AddGIVTokenButton';
+import { useOnboard } from '@/context';
+import { Row } from '../styled-components/Grid';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -44,6 +47,11 @@ const errorAnimationOptions = {
 	},
 };
 
+const AddTokenRow = styled(Row)`
+	margin-top: 16px;
+	margin-bottom: 16px;
+`;
+
 interface IConfirmSubmitProps {
 	title: string;
 	walletNetwork: number;
@@ -55,6 +63,7 @@ export const SubmittedInnerModal: FC<IConfirmSubmitProps> = ({
 	walletNetwork,
 	txHash,
 }) => {
+	const { provider } = useOnboard();
 	return (
 		<>
 			<Title>{title}</Title>
@@ -64,6 +73,9 @@ export const SubmittedInnerModal: FC<IConfirmSubmitProps> = ({
 				width={100}
 			/>
 			<TxSubmit weight={700}>{txHash && 'Transaction pending'}</TxSubmit>
+			<AddTokenRow alignItems={'center'} justifyContent={'center'}>
+				<AddGIVTokenButton provider={provider} />
+			</AddTokenRow>
 			{txHash && (
 				<BlockExplorerLink
 					href={`${config.NETWORKS_CONFIG[walletNetwork]?.blockExplorerUrls}
@@ -86,12 +98,17 @@ export const ConfirmedInnerModal: FC<IConfirmSubmitProps> = ({
 	walletNetwork,
 	txHash,
 }) => {
+	const { provider } = useOnboard();
+
 	return (
 		<>
 			<Title>{title}</Title>
 			<Lottie options={tikAnimationOptions} height={100} width={100} />
 			<TxConfirm weight={700}>Transaction confirmed!</TxConfirm>
 			<Info>It may take a few minutes for the UI to update</Info>
+			<AddTokenRow alignItems={'center'} justifyContent={'center'}>
+				<AddGIVTokenButton provider={provider} />
+			</AddTokenRow>
 			<BlockExplorerLink
 				href={`${config.NETWORKS_CONFIG[walletNetwork]?.blockExplorerUrls}
 							/tx/${txHash}`}
