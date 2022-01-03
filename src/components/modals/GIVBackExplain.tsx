@@ -39,9 +39,13 @@ export const GIVBackExplainModal: FC<IGIVBackExplainModal> = ({
 					or that you claimed your GIVbacks rewards already.
 				</Desc>
 				<LinksRow alignItems='center' justifyContent='center'>
-					<GLink onClick={() => setShowModal(false)}>
+					<GLink
+						onClick={() => setShowModal(false)}
+						target='_blank'
+						href='https://docs.giveth.io/giveconomy/givbacks'
+					>
 						<LinksRow justifyContent='center'>
-							View Your GIVstream{' '}
+							Read More
 							<IconExternalLink
 								size={16}
 								color={'currentColor'}
