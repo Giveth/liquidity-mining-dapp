@@ -192,7 +192,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 			<GovernHeader>
 				<Title as='h1'>Engage in Governance</Title>
 
-				<Desc size='small' color={'#CABAFF'}>
+				<Desc>
 					Participate in Giveth governance using the <b>GIVgarden</b>.
 					Wrap GIV to vote on proposals and earn rewards.
 				</Desc>

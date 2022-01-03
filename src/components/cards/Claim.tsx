@@ -1,5 +1,4 @@
 import { FC, useContext, useState } from 'react';
-import Image from 'next/image';
 import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
 import { Row } from '../styled-components/Grid';
@@ -8,10 +7,10 @@ import { IClaimViewCardProps } from '../views/claim/Claim.view';
 import useUser from '../../context/user.context';
 import { OnboardContext } from '../../context/onboard.context';
 import config from '../../configuration';
-import { addGIVToken } from '@/lib/metamask';
 import { GIVdropHarvestModal } from '../modals/GIVdropHarvestModal';
 import type { TransactionResponse } from '@ethersproject/providers';
 import { H2, Lead } from '@giveth/ui-design-system';
+import { AddGIVTokenButton } from '../AddGIVTokenButton';
 
 interface IClaimCardContainer {
 	claimed: any;
@@ -54,6 +53,10 @@ const MetamaskButton = styled.a`
 	margin-top: 12px;
 	background: transparent;
 	cursor: pointer;
+`;
+
+const AddTokenRow = styled(Row)`
+	margin-top: 16px;
 `;
 
 const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
@@ -102,7 +105,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 					<Title as='h1' weight={700}>
 						Claim your GIV now!
 					</Title>
-					<Desc size='small' color={'#CABAFF'}>
+					<Desc>
 						Let&apos;s Build the Future of Giving, together.
 					</Desc>
 				</ClaimHeader>
@@ -118,22 +121,9 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 						CLAIM
 					</ClaimButton>
 				</Row>
-				<Row alignItems={'center'} justifyContent={'center'}>
-					<MetamaskButton
-						onClick={() => {
-							if (provider) {
-								addGIVToken(provider);
-							}
-						}}
-					>
-						<Image
-							src='/images/metamask.png'
-							height='32'
-							width='215'
-							alt='Metamask button'
-						/>
-					</MetamaskButton>
-				</Row>
+				<AddTokenRow alignItems={'center'} justifyContent={'center'}>
+					<AddGIVTokenButton provider={provider} />
+				</AddTokenRow>
 				{step === index && (
 					<>
 						<PreviousArrowButton onClick={goPreviousStep} />

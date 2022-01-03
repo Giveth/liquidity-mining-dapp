@@ -408,7 +408,7 @@ export const getUserPositions = async (
 			staked
 			staker
 		}
-		allStaked: uniswapPositions(first: 1000, where:{staked: true}){
+		allStaked: uniswapPositions(first: 1000){
 			tokenId
 			token0
 			token1

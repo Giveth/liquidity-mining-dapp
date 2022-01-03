@@ -368,7 +368,6 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 				)}
 				{claimState === ClaimState.ERROR && (
 					<>
-						{' '}
 						<ErrorInnerModal
 							title='GIV'
 							walletNetwork={network}
