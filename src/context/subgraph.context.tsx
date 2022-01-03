@@ -65,10 +65,10 @@ export const SubgraphProvider: FC = ({ children }) => {
 	const [xDaiSubgraphValue, setXDaiSubgraphValue] =
 		useState<ISubgraphValue>(defaultSubgraphValue);
 
-	const fetchMainnetInfo = useCallback(async useAddress => {
+	const fetchMainnetInfo = useCallback(async userAddress => {
 		try {
 			const response = await fetchSubgraph(
-				SubgraphQueryBuilder.getMainnetQuery(useAddress),
+				SubgraphQueryBuilder.getMainnetQuery(userAddress),
 				config.MAINNET_NETWORK_NUMBER,
 			);
 			setMainnetSubgraphValue(await transformSubgraphData(response));
@@ -77,10 +77,10 @@ export const SubgraphProvider: FC = ({ children }) => {
 		}
 	}, []);
 
-	const fetchXDaiInfo = useCallback(async useAddress => {
+	const fetchXDaiInfo = useCallback(async userAddress => {
 		try {
 			const response = await fetchSubgraph(
-				SubgraphQueryBuilder.getXDaiQuery(useAddress),
+				SubgraphQueryBuilder.getXDaiQuery(userAddress),
 				config.XDAI_NETWORK_NUMBER,
 			);
 			setXDaiSubgraphValue(await transformSubgraphData(response));
