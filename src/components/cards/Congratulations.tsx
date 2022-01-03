@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { Row } from '../styled-components/Grid';
 import { useOnboard } from '@/context';
+import { AddGIVTokenButton } from '../AddGIVTokenButton';
 
 const SmileImage = styled.div`
 	position: absolute;
@@ -190,20 +191,10 @@ export const CongratulationsCard = () => {
 						<Lead>
 							{formatWeiHelper(totalAmount.div(10))} GIV.{' '}
 						</Lead>
-						<AddGivButton
-							onClick={() => {
-								if (provider) {
-									addGIVToken(provider);
-								}
-							}}
-						>
-							<Image
-								src='/images/icons/metamask.svg'
-								height='24'
-								width='24'
-								alt='Metamask logo.'
-							/>
-						</AddGivButton>
+						<AddGIVTokenButton
+							provider={provider}
+							showText={false}
+						/>
 						<SmileImage>
 							<SparkleBurstContainer>
 								<Lottie
