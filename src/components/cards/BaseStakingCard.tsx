@@ -2,6 +2,7 @@ import config from '../../configuration';
 import { PoolStakingConfig, StakingType } from '../../types/config';
 import React, { FC, useContext, useEffect, useState, ReactNode } from 'react';
 import { Row } from '../styled-components/Grid';
+import { IconWithTooltip } from '../IconWithToolTip';
 import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
 import {
 	StakingPoolContainer,
@@ -25,11 +26,14 @@ import {
 	LiquidityButton,
 	IconContainer,
 	IconHelpWraper,
+	GIVgardenTooltip,
 } from './BaseStakingCard.sc';
+import styled from 'styled-components';
 import {
 	IconCalculator,
 	IconSpark,
 	brandColors,
+	neutralColors,
 	IconHelp,
 	IconExternalLink,
 } from '@giveth/ui-design-system';
@@ -117,6 +121,24 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 							`GIVgarden `}
 						{type}
 					</StakingPoolExchange>
+					{walletNetwork === config.XDAI_NETWORK_NUMBER &&
+						type === StakingType.GIV_LM && (
+							<IconWithTooltip
+								direction={'top'}
+								icon={
+									<IconHelp
+										color={brandColors.deep[100]}
+										size={12}
+									/>
+								}
+							>
+								<GIVgardenTooltip>
+									While staking GIV in this pool you are also
+									granted voting power (gGIV) in the
+									GIVgarden.
+								</GIVgardenTooltip>
+							</IconWithTooltip>
+						)}
 					<div style={{ flex: 1 }}></div>
 					{notif && notif}
 				</StakingPoolExchangeRow>

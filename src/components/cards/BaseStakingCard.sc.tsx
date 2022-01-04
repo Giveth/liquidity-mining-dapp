@@ -57,7 +57,12 @@ export const FirstDetail = styled(Row)`
 export const Detail = styled(Row)`
 	margin-bottom: 16px;
 `;
-
+export const GIVgardenTooltip = styled.div`
+	color: ${neutralColors.gray[100]};
+	text-align: center;
+	width: 120px;
+	font-size: 0.8em;
+`;
 export const DetailLabel = styled(Caption)``;
 export const DetailValue = styled(B)``;
 export const DetailUnit = styled(P)`

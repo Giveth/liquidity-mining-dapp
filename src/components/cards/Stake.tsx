@@ -26,9 +26,9 @@ import { BigNumber as EthersBigNumber, constants, utils } from 'ethers';
 import config from '../../configuration';
 import BigNumber from 'bignumber.js';
 import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
-import { StakePoolInfo } from '@/types/poolInfo';
-import { fetchLPStakingInfo } from '@/lib/stakingPool';
-import { useLiquidityPositions } from '@/context';
+import { APR } from '@/types/poolInfo';
+import { getLPStakingAPR } from '@/lib/stakingPool';
+import { useLiquidityPositions, useSubgraph } from '@/context';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { H2, H5, Lead } from '@giveth/ui-design-system';
 import { networkProviders } from '@/helpers/networkProvider';
@@ -97,6 +97,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const [APR, setAPR] = useState<BigNumber>(Zero);
 	const { apr: univ3apr } = useLiquidityPositions();
 	const { tokenDistroHelper } = useTokenDistro();
+	const { mainnetValues, xDaiValues } = useSubgraph();
 
 	useEffect(() => {
 		if (totalAmount) {
@@ -135,31 +136,33 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 	);
 
 	useEffect(() => {
-		const getMaxAPR = async (promises: Promise<StakePoolInfo>[]) => {
-			const stakePoolInfos = await Promise.all(promises);
+		const getMaxAPR = async (promises: Promise<APR>[]) => {
+			const stakePoolAPRs = await Promise.all(promises);
 			let maxApr = univ3apr;
-			stakePoolInfos.forEach(info => {
-				maxApr = BigNumber.max(maxApr, info?.apr || Zero);
+			stakePoolAPRs.forEach(apr => {
+				maxApr = BigNumber.max(maxApr, apr || Zero);
 			});
 			setAPR(maxApr);
 		};
 
-		const promiseQueue: Promise<StakePoolInfo>[] = [];
+		const promiseQueue: Promise<APR>[] = [];
 		config.XDAI_CONFIG.pools.forEach(poolStakingConfig => {
-			const promise: Promise<StakePoolInfo> = fetchLPStakingInfo(
+			const promise: Promise<APR> = getLPStakingAPR(
 				poolStakingConfig,
 				config.XDAI_NETWORK_NUMBER,
 				networkProviders[config.XDAI_NETWORK_NUMBER],
+				xDaiValues[poolStakingConfig.type],
 			);
 			promiseQueue.push(promise);
 		});
 		config.MAINNET_CONFIG.pools.forEach(poolStakingConfig => {
 			if (poolStakingConfig.type === StakingType.UNISWAP) return;
 
-			const promise: Promise<StakePoolInfo> = fetchLPStakingInfo(
+			const promise: Promise<APR> = getLPStakingAPR(
 				poolStakingConfig,
 				config.MAINNET_NETWORK_NUMBER,
 				networkProviders[config.MAINNET_NETWORK_NUMBER],
+				mainnetValues[poolStakingConfig.type],
 			);
 			promiseQueue.push(promise);
 		});
@@ -170,7 +173,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 		<InvestCardContainer activeIndex={step} index={index}>
 			<StakeHeader>
 				<Title as='h1'>Grow your Rewards</Title>
-				<Desc size='small' color={'#CABAFF'}>
+				<Desc>
 					Provide liquidity and get rewarded. Stake tokens in the{' '}
 					<b>GIVfarm</b> to earn up to{' '}
 					{APR ? `${formatEthHelper(APR, 2)}% APR` : ' ? '}

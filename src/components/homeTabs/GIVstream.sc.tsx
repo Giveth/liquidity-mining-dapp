@@ -42,7 +42,7 @@ export const GIVstreamTopInnerContainer = styled(Container)`
 
 export const Left = styled.div`
 	width: 708px;
-	z-index: 2;
+	z-index: 1;
 `;
 
 export const Right = styled.div`
@@ -190,7 +190,7 @@ export const TxHash = styled(GLink)`
 `;
 
 interface IPaginationItem {
-	disable: boolean;
+	disable?: boolean;
 	isActive?: boolean;
 }
 
@@ -198,7 +198,7 @@ export const PaginationRow = styled(Row)`
 	margin-top: 16px;
 `;
 
-export const PaginationItem = styled(Caption)`
+export const PaginationItem = styled(Caption)<IPaginationItem>`
 	${props =>
 		props.disable
 			? `color: ${neutralColors.gray[700]}`
