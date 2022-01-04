@@ -6,7 +6,7 @@ export const Zero = new BigNumber(0);
 
 export const formatEthHelper = (
 	amount: BigNumber.Value,
-	decimals: number,
+	decimals: number = 4,
 	format = true,
 ): string => {
 	if (!amount) return '0';
@@ -18,11 +18,13 @@ export const formatEthHelper = (
 	}
 	amt = amt.decimalPlaces(Number(decimals), BigNumber.ROUND_DOWN);
 	return format
-		? amt.toFormat({
-				groupSize: 3,
-				groupSeparator: ',',
-				decimalSeparator: '.',
-		  })
+		? amt.lt(0.0001)
+			? '<0.0001'
+			: amt.toFormat({
+					groupSize: 3,
+					groupSeparator: ',',
+					decimalSeparator: '.',
+			  })
 		: amt.toFixed();
 };
 
