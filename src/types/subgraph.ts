@@ -15,6 +15,7 @@ export interface IBalances {
 	rewardPerTokenPaidBalancer: ethers.BigNumber;
 	rewardsBalancer: ethers.BigNumber;
 	givback: ethers.BigNumber;
+	givbackLiquidPart: ethers.BigNumber;
 	balancerLp: ethers.BigNumber;
 	balancerLpStaked: ethers.BigNumber;
 	sushiswapLp: ethers.BigNumber;
@@ -40,6 +41,7 @@ export const ZeroBalances: IBalances = {
 	rewardPerTokenPaidBalancer: constants.Zero,
 	rewardsBalancer: constants.Zero,
 	givback: constants.Zero,
+	givbackLiquidPart: constants.Zero,
 	balancerLp: constants.Zero,
 	balancerLpStaked: constants.Zero,
 	sushiswapLp: constants.Zero,
