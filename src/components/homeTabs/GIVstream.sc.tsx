@@ -207,3 +207,7 @@ export const TxSpan = styled.span`
 	color: ${brandColors.cyan[500]};
 	cursor: pointer;
 `;
+export const NoData = styled.div`
+	text-align: center;
+	padding 20px;
+`;

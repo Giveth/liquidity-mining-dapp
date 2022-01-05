@@ -50,6 +50,7 @@ import {
 	IncreaseSection,
 	IncreaseSectionTitle,
 	Left,
+	NoData,
 	PaginationItem,
 	PaginationRow,
 	PercentageRow,
@@ -499,7 +500,9 @@ export const GIVstreamHistory: FC = () => {
 					})}
 				</Grid>
 			)}
-			{!tokenAllocations && <div> NO DATA</div>}
+			{(!tokenAllocations || tokenAllocations.length == 0) && (
+				<NoData> NO DATA</NoData>
+			)}
 			<PaginationRow justifyContent={'flex-end'} gap='16px'>
 				<PaginationItem
 					onClick={() => {
