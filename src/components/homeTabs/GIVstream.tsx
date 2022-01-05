@@ -55,6 +55,7 @@ import {
 	PercentageRow,
 	Right,
 	TxHash,
+	TxSpan,
 } from './GIVstream.sc';
 import { IconWithTooltip } from '../IconWithToolTip';
 import { getHistory } from '@/services/subgraph.service';
@@ -474,7 +475,7 @@ export const GIVstreamHistory: FC = () => {
 									<GsHFrUnit as='span'>{` GIV/week`}</GsHFrUnit>
 								</B>
 								<P as='span'>{date}</P>
-								<span>
+								<TxSpan>
 									<TxHash
 										size='Big'
 										href={`${config.NETWORKS_CONFIG[network]?.blockExplorerUrls}/tx/${tokenAllocation.txHash}`}
@@ -482,7 +483,7 @@ export const GIVstreamHistory: FC = () => {
 									>
 										{tokenAllocation.txHash}
 									</TxHash>
-								</span>
+								</TxSpan>
 							</Fragment>
 						);
 					})}
