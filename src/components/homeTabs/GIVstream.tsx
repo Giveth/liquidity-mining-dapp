@@ -412,10 +412,11 @@ export const GIVstreamHistory: FC = () => {
 	const [tokenAllocations, setTokenAllocations] = useState<
 		ITokenAllocation[]
 	>([]);
+	const [loading, setLoading] = useState(true);
 	const [page, setPage] = useState(0);
 	const [pages, setPages] = useState<any[]>([]);
 	const [numberOfPages, setNumberOfPages] = useState(0);
-	const count = 6;
+	const count = 1;
 	const {
 		currentValues: { balances },
 	} = useSubgraph();
@@ -428,9 +429,11 @@ export const GIVstreamHistory: FC = () => {
 	}, [network, address]);
 
 	useEffect(() => {
+		setLoading(true);
 		getHistory(network, address, page * count, count).then(
 			_tokenAllocations => {
 				setTokenAllocations(_tokenAllocations);
+				setLoading(false);
 			},
 		);
 	}, [network, address, page]);
