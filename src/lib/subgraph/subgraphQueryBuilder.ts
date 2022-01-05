@@ -71,7 +71,7 @@ export class SubgraphQueryBuilder {
 	};
 
 	private static getUniswapPositionsQuery = (address: string): string => {
-		return `userNotStakedPositions: uniswapPositions(where:{owner: "${address.toLowerCase()}"}){
+		return `userNotStakedPositions: uniswapPositions(where:{owner: "${address.toLowerCase()}",closed:false}){
 			tokenId
 			token0
 			token1
@@ -91,7 +91,7 @@ export class SubgraphQueryBuilder {
 			staked
 			staker
 		}
-		allPositions: uniswapPositions(first: 1000){
+		allPositions: uniswapPositions(first: 1000, where: {closed:false}){
 			tokenId
 			token0
 			token1
