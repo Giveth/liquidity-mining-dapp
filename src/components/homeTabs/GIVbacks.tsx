@@ -58,10 +58,6 @@ export const TabGIVbacksTop = () => {
 		);
 	}, [balances, tokenDistroHelper]);
 
-	console.log(`balances`, balances);
-
-	console.log(`givbackLiquidPart`, balances?.givbackLiquidPart?.toString());
-
 	return (
 		<>
 			<GIVbacksTopContainer>
