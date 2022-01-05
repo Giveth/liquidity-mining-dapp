@@ -530,10 +530,10 @@ export const GIVstreamHistory: FC = () => {
 					})}
 					<PaginationItem
 						onClick={() => {
-							if (page + 1 < Math.ceil(allocationCount / count))
+							if (page + 1 < numberOfPages)
 								setPage(page => page + 1);
 						}}
-						disable={page + 1 >= Math.ceil(allocationCount / count)}
+						disable={page + 1 >= numberOfPages}
 					>
 						{'Next  >'}
 					</PaginationItem>
