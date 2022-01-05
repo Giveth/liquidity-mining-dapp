@@ -414,6 +414,7 @@ export const GIVstreamHistory: FC = () => {
 	>([]);
 	const [page, setPage] = useState(0);
 	const [pages, setPages] = useState<any[]>([]);
+	const [numberOfPages, setNumberOfPages] = useState(0);
 	const count = 6;
 	const {
 		currentValues: { balances },
@@ -445,6 +446,7 @@ export const GIVstreamHistory: FC = () => {
 			}
 			setPages(_pages);
 		}
+		setNumberOfPages(nop);
 	}, [allocationCount]);
 
 	return (
@@ -503,38 +505,40 @@ export const GIVstreamHistory: FC = () => {
 			{(!tokenAllocations || tokenAllocations.length == 0) && (
 				<NoData> NO DATA</NoData>
 			)}
-			<PaginationRow justifyContent={'flex-end'} gap='16px'>
-				<PaginationItem
-					onClick={() => {
-						if (page > 0) setPage(page => page - 1);
-					}}
-					disable={page == 0}
-				>
-					{'<  Back'}
-				</PaginationItem>
-				{pages.map((p, id) => {
-					return (
-						<PaginationItem
-							key={id}
-							onClick={() => {
-								if (!isNaN(+p)) setPage(+p - 1);
-							}}
-							isActive={+p - 1 === page}
-						>
-							{p}
-						</PaginationItem>
-					);
-				})}
-				<PaginationItem
-					onClick={() => {
-						if (page + 1 < Math.ceil(allocationCount / count))
-							setPage(page => page + 1);
-					}}
-					disable={page + 1 >= Math.ceil(allocationCount / count)}
-				>
-					{'Next  >'}
-				</PaginationItem>
-			</PaginationRow>
+			{numberOfPages > 1 && (
+				<PaginationRow justifyContent={'flex-end'} gap='16px'>
+					<PaginationItem
+						onClick={() => {
+							if (page > 0) setPage(page => page - 1);
+						}}
+						disable={page == 0}
+					>
+						{'<  Prev'}
+					</PaginationItem>
+					{pages.map((p, id) => {
+						return (
+							<PaginationItem
+								key={id}
+								onClick={() => {
+									if (!isNaN(+p)) setPage(+p - 1);
+								}}
+								isActive={+p - 1 === page}
+							>
+								{p}
+							</PaginationItem>
+						);
+					})}
+					<PaginationItem
+						onClick={() => {
+							if (page + 1 < Math.ceil(allocationCount / count))
+								setPage(page => page + 1);
+						}}
+						disable={page + 1 >= Math.ceil(allocationCount / count)}
+					>
+						{'Next  >'}
+					</PaginationItem>
+				</PaginationRow>
+			)}
 		</HistoryContainer>
 	);
 };
