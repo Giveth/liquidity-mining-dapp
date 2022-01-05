@@ -373,23 +373,33 @@ const convetSourceTypeToIcon = (distributor: string) => {
 					<P>{` GIVbacks`}</P>
 				</Row>
 			);
-		case 'giveth':
 		case 'balancerlm':
-		case 'uniswappool':
+		case 'balancerlp':
+		case 'shushiswaplp':
+		case 'honeyswaplp':
 		case 'givlm':
+		case 'giveth':
+		case 'givhnypool':
 			return (
 				<Row gap='16px'>
 					<IconGIVFarm size={24} color={brandColors.mustard[500]} />
 					<P>{` GIVfarm`}</P>
 				</Row>
 			);
-		// case GIVstreamSources.Garden:
-		// 	return (
-		// 		<Row gap='16px'>
-		// 			<IconGIVGarden size={24} color={brandColors.mustard[500]} />
-		// 			<P>{` GIVgarden`}</P>
-		// 		</Row>
-		// 	);
+		case 'gardenPool':
+			return (
+				<Row gap='16px'>
+					<IconGIVGarden size={24} color={brandColors.mustard[500]} />
+					<P>{` GIVgarden`}</P>
+				</Row>
+			);
+		case 'givdrop':
+			return (
+				<Row gap='16px'>
+					<IconGIVGarden size={24} color={brandColors.mustard[500]} />
+					<P>{` GIVdrop`}</P>
+				</Row>
+			);
 		default:
 			return distributor; //'Unknown'
 			break;
