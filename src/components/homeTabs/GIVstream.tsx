@@ -435,7 +435,7 @@ export const GIVstreamHistory: FC = () => {
 	}, [network, address, page]);
 
 	useEffect(() => {
-		const nop = Math.ceil(allocationCount / count) + 1;
+		const nop = Math.ceil(allocationCount / count);
 		if (nop > 4) {
 			setPages([1, 2, '...', nop - 1, nop]);
 		} else {
@@ -527,10 +527,10 @@ export const GIVstreamHistory: FC = () => {
 				})}
 				<PaginationItem
 					onClick={() => {
-						if (page < Math.floor(allocationCount / count))
+						if (page + 1 < Math.ceil(allocationCount / count))
 							setPage(page => page + 1);
 					}}
-					disable={page >= Math.floor(allocationCount / count)}
+					disable={page + 1 >= Math.ceil(allocationCount / count)}
 				>
 					{'Next  >'}
 				</PaginationItem>
