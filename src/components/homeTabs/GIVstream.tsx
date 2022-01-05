@@ -462,7 +462,7 @@ export const GIVstreamHistory: FC = () => {
 						const date = d
 							.toDateString()
 							.split(' ')
-							.splice(1, 2)
+							.splice(1, 3)
 							.join(' ');
 						return (
 							// <span key={idx}>1</span>
