@@ -416,7 +416,7 @@ export const GIVstreamHistory: FC = () => {
 	const [page, setPage] = useState(0);
 	const [pages, setPages] = useState<any[]>([]);
 	const [numberOfPages, setNumberOfPages] = useState(0);
-	const count = 1;
+	const count = 6;
 	const {
 		currentValues: { balances },
 	} = useSubgraph();
@@ -440,17 +440,30 @@ export const GIVstreamHistory: FC = () => {
 
 	useEffect(() => {
 		const nop = Math.ceil(allocationCount / count);
-		if (nop > 4) {
-			setPages([1, 2, '...', nop - 1, nop]);
-		} else {
-			const _pages = [];
-			for (let i = 1; i < nop + 1; i++) {
+		let _pages: Array<string | number> = [];
+		const current_page = page + 1;
+		// Loop through
+		for (let i = 1; i <= nop; i++) {
+			// Define offset
+			let offset = i == 1 || nop ? count + 1 : count;
+			// If added
+			if (
+				i == 1 ||
+				(current_page - offset <= i && current_page + offset >= i) ||
+				i == current_page ||
+				i == nop
+			) {
 				_pages.push(i);
+			} else if (
+				i == current_page - (offset + 1) ||
+				i == current_page + (offset + 1)
+			) {
+				_pages.push('...');
 			}
-			setPages(_pages);
 		}
+		setPages(_pages);
 		setNumberOfPages(nop);
-	}, [allocationCount]);
+	}, [allocationCount, page]);
 
 	return (
 		<HistoryContainer>
