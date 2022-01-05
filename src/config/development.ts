@@ -90,18 +90,19 @@ const config: EnvConfig = {
 		},
 
 		gasPreference: {
-			maxFeePerGas: gwei2wei('2'),
-			maxPriorityFeePerGas: gwei2wei('1'),
+			// gasPrice: gwei2wei('2'),
+			// maxFeePerGas: gwei2wei('2'),
+			// maxPriorityFeePerGas: gwei2wei('1'),
 		},
 
 		rpcUrls: ['https://rpc.xdaichain.com'],
 		blockExplorerName: ['Blockscout'],
 		blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
 		subgraphAddress:
-			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-xdai-deployment-seven',
+			'https://api.thegraph.com/subgraphs/name/aminlatifi/giv-economy-xdai-torus',
 
 		TOKEN_ADDRESS: '0x83a8eea6427985C523a0c4d9d3E62C051B6580d3',
-		MERKLE_ADDRESS: '0xc87403C70c9FBfb594d98d3B5E695BBE4C694188',
+		MERKLE_ADDRESS: '0x5C1DF9DAA253cD5F209F2E9CFe6db92A8828BA8E',
 		TOKEN_DISTRO_ADDRESS: '0x18a46865AAbAf416a970eaA8625CFC430D2364A1',
 
 		nodeUrl: 'https://rpc.xdaichain.com/',
