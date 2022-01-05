@@ -45,7 +45,6 @@ import { GIVBackExplainModal } from '../modals/GIVBackExplain';
 export const TabGIVbacksTop = () => {
 	const [showHarvestModal, setShowHarvestModal] = useState(false);
 	const [showGivBackExplain, setShowGivBackExplain] = useState(false);
-	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
 	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
 	const { tokenDistroHelper } = useTokenDistro();
 	const {
@@ -54,11 +53,14 @@ export const TabGIVbacksTop = () => {
 	const { network: walletNetwork } = useOnboard();
 
 	useEffect(() => {
-		setGivBackLiquidPart(tokenDistroHelper.getLiquidPart(balances.givback));
 		setGivBackStream(
 			tokenDistroHelper.getStreamPartTokenPerWeek(balances.givback),
 		);
 	}, [balances, tokenDistroHelper]);
+
+	console.log(`balances`, balances);
+
+	console.log(`givbackLiquidPart`, balances?.givbackLiquidPart?.toString());
 
 	return (
 		<>
@@ -80,14 +82,14 @@ export const TabGIVbacksTop = () => {
 							<GIVbackRewardCard
 								title='Your GIVbacks rewards'
 								wrongNetworkText='GIVbacks is only available on xDAI.'
-								liquidAmount={givBackLiquidPart}
+								liquidAmount={balances?.givbackLiquidPart}
 								stream={givBackStream}
 								actionLabel='HARVEST'
 								actionCb={() => {
 									setShowHarvestModal(true);
 								}}
 								subButtonLabel={
-									givBackLiquidPart.isZero()
+									balances?.givbackLiquidPart?.isZero()
 										? "Why don't I have GIVbacks?"
 										: undefined
 								}
