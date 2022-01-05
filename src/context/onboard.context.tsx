@@ -95,7 +95,7 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 					},
 					{
 						walletName: 'torus',
-						loginMethod: 'google'
+						loginMethod: 'google',
 					},
 				],
 			},
