@@ -23,6 +23,7 @@ export class SubgraphQueryBuilder {
 			rewardPerTokenPaidBalancer
 			rewardsBalancer
 			givback
+			givbackLiquidPart
 			balancerLp
 			balancerLpStaked
 			sushiswapLp
