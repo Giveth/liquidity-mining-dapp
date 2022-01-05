@@ -8,6 +8,7 @@ import { TransactionResponse, Web3Provider } from '@ethersproject/providers';
 import { fetchSubgraph } from '@/services/subgraph.service';
 import { SubgraphQueryBuilder } from '@/lib/subgraph/subgraphQueryBuilder';
 import { transformSubgraphData } from '@/lib/subgraph/subgraphDataTransform';
+import { getGasPreference } from '@/lib/helpers';
 
 export const fetchAirDropClaimData = async (
 	address: string,
@@ -70,7 +71,7 @@ export const claimAirDrop = async (
 	try {
 		return await merkleContract
 			.connect(signer.connectUnchecked())
-			.claim(...args, config.XDAI_CONFIG.gasPreference);
+			.claim(...args, getGasPreference(config.XDAI_CONFIG));
 	} catch (error) {
 		console.error('Error on claiming GIVdrop:', error);
 	}
@@ -94,7 +95,7 @@ export const claimReward = async (
 
 	const networkConfig = config.NETWORKS_CONFIG[network];
 	try {
-		return await tokenDistro.claim(networkConfig.gasPreference);
+		return await tokenDistro.claim(getGasPreference(networkConfig));
 	} catch (error) {
 		console.error('Error on claiming token distro reward:', error);
 	}

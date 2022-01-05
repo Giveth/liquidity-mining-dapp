@@ -25,6 +25,7 @@ import {
 import { UnipoolHelper } from '@/lib/contractHelper/UnipoolHelper';
 import { Zero } from '@/helpers/number';
 import { IBalances, IUnipool } from '@/types/subgraph';
+import { getGasPreference } from '@/lib/helpers';
 
 const toBigNumber = (eb: ethers.BigNumber): BigNumber =>
 	new BigNumber(eb.toString());
@@ -345,8 +346,9 @@ export const approveERC20tokenTransfer = async (
 
 	if (amountNumber.lte(allowanceNumber)) return true;
 
-	const gasPreference =
-		config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference;
+	const gasPreference = getGasPreference(
+		config.NETWORKS_CONFIG[provider.network.chainId],
+	);
 
 	if (!allowance.isZero()) {
 		try {
@@ -398,7 +400,9 @@ export const wrapToken = async (
 			.connect(signer.connectUnchecked())
 			.wrap(
 				amount,
-				config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+				getGasPreference(
+					config.NETWORKS_CONFIG[provider.network.chainId],
+				),
 			);
 	} catch (error) {
 		console.log('Error on wrapping token:', error);
@@ -428,7 +432,9 @@ export const unwrapToken = async (
 			.connect(signer.connectUnchecked())
 			.unwrap(
 				amount,
-				config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+				getGasPreference(
+					config.NETWORKS_CONFIG[provider.network.chainId],
+				),
 			);
 	} catch (error) {
 		console.log('Error on unwrapping token:', error);
@@ -460,9 +466,9 @@ export const stakeTokens = async (
 	);
 
 	try {
-		const gasPreference =
-			config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference ||
-			{};
+		const gasPreference = getGasPreference(
+			config.NETWORKS_CONFIG[provider.network.chainId],
+		);
 		// const { status } = await txResponse.wait();
 		return await lmContract
 			.connect(signer.connectUnchecked())
@@ -498,7 +504,7 @@ export const harvestTokens = async (
 
 	try {
 		return await lmContract.getReward(
-			config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+			getGasPreference(config.NETWORKS_CONFIG[provider.network.chainId]),
 		);
 	} catch (error) {
 		console.error('Error on harvesting:', Error);
@@ -526,7 +532,7 @@ export const withdrawTokens = async (
 	try {
 		return await lmContract.withdraw(
 			ethers.BigNumber.from(amount),
-			config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+			getGasPreference(config.NETWORKS_CONFIG[provider.network.chainId]),
 		);
 	} catch (e) {
 		console.error('Error on withdrawing:', e);
