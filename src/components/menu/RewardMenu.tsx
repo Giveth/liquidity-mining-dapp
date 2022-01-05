@@ -1,4 +1,4 @@
-import { OnboardContext, useOnboard } from '@/context/onboard.context';
+import { OnboardContext } from '@/context/onboard.context';
 import {
 	Overline,
 	P,
@@ -19,10 +19,15 @@ import BigNumber from 'bignumber.js';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { Zero } from '@ethersproject/constants';
 import { formatWeiHelper } from '@/helpers/number';
-import { useFarms } from '@/context/farm.context';
 import Link from 'next/link';
 import { WhatisGIVstreamModal } from '@/components/modals/WhatisGIVstream';
 import { useSubgraph } from '@/context';
+import { getGivStakingConfig } from '@/helpers/networkProvider';
+import { UnipoolHelper } from '@/lib/contractHelper/UnipoolHelper';
+import { getUserStakeInfo } from '@/lib/stakingPool';
+import { constants } from 'ethers';
+import { useStakingNFT } from '@/hooks/useStakingNFT';
+import { StakingType } from '@/types/config';
 
 export const RewardMenu = () => {
 	const [farmsLiquidPart, setFarmsLiquidPart] = useState(Zero);
@@ -32,16 +37,11 @@ export const RewardMenu = () => {
 	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
 		useState(false);
 	const { tokenDistroHelper } = useTokenDistro();
-	const {
-		currentValues: { balances },
-	} = useSubgraph();
-	const { totalEarned } = useFarms();
+	const { currentValues } = useSubgraph();
+	const { rewardBalance } = useStakingNFT();
 	const { network, provider } = useContext(OnboardContext);
+	const { balances } = currentValues;
 	const { allocatedTokens, claimed, givback } = balances;
-
-	useEffect(() => {
-		setFarmsLiquidPart(tokenDistroHelper.getLiquidPart(totalEarned));
-	}, [totalEarned, tokenDistroHelper]);
 
 	useEffect(() => {
 		setGivBackLiquidPart(tokenDistroHelper.getLiquidPart(givback));
@@ -67,6 +67,37 @@ export const RewardMenu = () => {
 			),
 		);
 	}, [allocatedTokens, claimed, givback, tokenDistroHelper]);
+
+	useEffect(() => {
+		let pools;
+		if (network === config.XDAI_NETWORK_NUMBER) {
+			pools = [
+				...config.XDAI_CONFIG.pools,
+				getGivStakingConfig(config.XDAI_CONFIG),
+			];
+		} else if (network === config.MAINNET_NETWORK_NUMBER) {
+			pools = [
+				...config.MAINNET_CONFIG.pools,
+				getGivStakingConfig(config.MAINNET_CONFIG),
+			];
+		}
+		if (pools) {
+			let _farmRewards = constants.Zero;
+			pools.forEach(pool => {
+				const { type } = pool;
+				const unipoolInfo = currentValues[type];
+				if (unipoolInfo) {
+					const unipoolHelper = new UnipoolHelper(unipoolInfo);
+					_farmRewards = _farmRewards.add(
+						getUserStakeInfo(type, balances, unipoolHelper).earned,
+					);
+				} else if (type === StakingType.UNISWAP) {
+					_farmRewards = _farmRewards.add(rewardBalance);
+				}
+			});
+			setFarmsLiquidPart(tokenDistroHelper.getLiquidPart(_farmRewards));
+		}
+	}, [balances, currentValues, network, rewardBalance, tokenDistroHelper]);
 
 	return (
 		<>
