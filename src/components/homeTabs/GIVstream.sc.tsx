@@ -164,7 +164,18 @@ export const HistoryTooltip = styled(Subline)`
 `;
 
 export const HistoryContainer = styled.div`
+	position: relative;
 	margin-bottom: 64px;
+`;
+export const HistoryLoading = styled.div`
+	background-color: ${brandColors.giv[800]}aa;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 40px;
+	left: 0;
+	bottom: 0;
+	z-index: 1;
 `;
 
 export const Grid = styled.div`

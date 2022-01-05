@@ -43,6 +43,7 @@ import {
 	GSSubtitle,
 	GSTitle,
 	HistoryContainer,
+	HistoryLoading,
 	HistoryTitle,
 	HistoryTitleRow,
 	HistoryTooltip,
@@ -555,6 +556,7 @@ export const GIVstreamHistory: FC = () => {
 					</PaginationItem>
 				</PaginationRow>
 			)}
+			{loading && <HistoryLoading></HistoryLoading>}
 		</HistoryContainer>
 	);
 };
