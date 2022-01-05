@@ -184,10 +184,7 @@ export const GsHFrUnit = styled(P)`
 	color: ${brandColors.giv[200]};
 `;
 
-export const TxHash = styled(GLink)`
-	color: ${brandColors.cyan[500]};
-	cursor: pointer;
-`;
+export const TxHash = styled(GLink)``;
 
 interface IPaginationItem {
 	disable?: boolean;
@@ -204,4 +201,13 @@ export const PaginationItem = styled(Caption)<IPaginationItem>`
 			? `color: ${neutralColors.gray[700]}`
 			: `cursor: pointer; color: ${neutralColors.gray[100]}`};
 	${props => (props.isActive ? `font-weight: bold;` : '')};
+`;
+
+export const TxSpan = styled.span`
+	color: ${brandColors.cyan[500]};
+	cursor: pointer;
+`;
+export const NoData = styled.div`
+	text-align: center;
+	padding 20px;
 `;

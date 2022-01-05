@@ -50,11 +50,13 @@ import {
 	IncreaseSection,
 	IncreaseSectionTitle,
 	Left,
+	NoData,
 	PaginationItem,
 	PaginationRow,
 	PercentageRow,
 	Right,
 	TxHash,
+	TxSpan,
 } from './GIVstream.sc';
 import { IconWithTooltip } from '../IconWithToolTip';
 import { getHistory } from '@/services/subgraph.service';
@@ -246,7 +248,7 @@ export const TabGIVstreamBottom = () => {
 						rights of our community.
 					</GsDataBlock>
 				</Row>
-				{/* <HistoryTitleRow>
+				<HistoryTitleRow>
 					<HistoryTitle>History</HistoryTitle>
 					<IconWithTooltip
 						icon={<IconHelp size={16} />}
@@ -258,10 +260,9 @@ export const TabGIVstreamBottom = () => {
 							increases. Below is a summary.
 						</HistoryTooltip>
 					</IconWithTooltip>
-				</HistoryTitleRow> */}
-				{/* <GIVstreamHistory /> */}
+				</HistoryTitleRow>
+				<GIVstreamHistory />
 			</Container>
-			{/* //unipooldis */}
 			<IncreaseSection ref={increaseSecRef}>
 				<Container>
 					<IncreaseSectionTitle>
@@ -373,23 +374,33 @@ const convetSourceTypeToIcon = (distributor: string) => {
 					<P>{` GIVbacks`}</P>
 				</Row>
 			);
-		case 'giveth':
 		case 'balancerlm':
-		case 'uniswappool':
+		case 'balancerlp':
+		case 'shushiswaplp':
+		case 'honeyswaplp':
 		case 'givlm':
+		case 'giveth':
+		case 'givhnypool':
 			return (
 				<Row gap='16px'>
 					<IconGIVFarm size={24} color={brandColors.mustard[500]} />
 					<P>{` GIVfarm`}</P>
 				</Row>
 			);
-		// case GIVstreamSources.Garden:
-		// 	return (
-		// 		<Row gap='16px'>
-		// 			<IconGIVGarden size={24} color={brandColors.mustard[500]} />
-		// 			<P>{` GIVgarden`}</P>
-		// 		</Row>
-		// 	);
+		case 'gardenPool':
+			return (
+				<Row gap='16px'>
+					<IconGIVGarden size={24} color={brandColors.mustard[500]} />
+					<P>{` GIVgarden`}</P>
+				</Row>
+			);
+		case 'givdrop':
+			return (
+				<Row gap='16px'>
+					<IconGIVGarden size={24} color={brandColors.mustard[500]} />
+					<P>{` GIVdrop`}</P>
+				</Row>
+			);
 		default:
 			return distributor; //'Unknown'
 			break;
@@ -451,7 +462,7 @@ export const GIVstreamHistory: FC = () => {
 						const date = d
 							.toDateString()
 							.split(' ')
-							.splice(1, 2)
+							.splice(1, 3)
 							.join(' ');
 						return (
 							// <span key={idx}>1</span>
@@ -475,27 +486,23 @@ export const GIVstreamHistory: FC = () => {
 									<GsHFrUnit as='span'>{` GIV/week`}</GsHFrUnit>
 								</B>
 								<P as='span'>{date}</P>
-								<TxHash
-									as='span'
-									size='Big'
-									onClick={() => {
-										const url =
-											config.NETWORKS_CONFIG[network]
-												?.blockExplorerUrls;
-										window.open(
-											`${url}/tx/${tokenAllocation.txHash}`,
-											'_blank',
-										);
-									}}
-								>
-									{tokenAllocation.txHash}
-								</TxHash>
+								<TxSpan>
+									<TxHash
+										size='Big'
+										href={`${config.NETWORKS_CONFIG[network]?.blockExplorerUrls}/tx/${tokenAllocation.txHash}`}
+										target='_blank'
+									>
+										{tokenAllocation.txHash}
+									</TxHash>
+								</TxSpan>
 							</Fragment>
 						);
 					})}
 				</Grid>
 			)}
-			{!tokenAllocations && <div> NO DATA</div>}
+			{(!tokenAllocations || tokenAllocations.length == 0) && (
+				<NoData> NO DATA</NoData>
+			)}
 			<PaginationRow justifyContent={'flex-end'} gap='16px'>
 				<PaginationItem
 					onClick={() => {
