@@ -435,7 +435,7 @@ export const GIVstreamHistory: FC = () => {
 	}, [network, address, page]);
 
 	useEffect(() => {
-		const nop = Math.floor(allocationCount / count) + 1;
+		const nop = Math.ceil(allocationCount / count) + 1;
 		if (nop > 4) {
 			setPages([1, 2, '...', nop - 1, nop]);
 		} else {
