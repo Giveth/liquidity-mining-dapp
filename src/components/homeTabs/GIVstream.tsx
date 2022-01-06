@@ -43,6 +43,7 @@ import {
 	GSSubtitle,
 	GSTitle,
 	HistoryContainer,
+	HistoryLoading,
 	HistoryTitle,
 	HistoryTitleRow,
 	HistoryTooltip,
@@ -412,8 +413,10 @@ export const GIVstreamHistory: FC = () => {
 	const [tokenAllocations, setTokenAllocations] = useState<
 		ITokenAllocation[]
 	>([]);
+	const [loading, setLoading] = useState(true);
 	const [page, setPage] = useState(0);
 	const [pages, setPages] = useState<any[]>([]);
+	const [numberOfPages, setNumberOfPages] = useState(0);
 	const count = 6;
 	const {
 		currentValues: { balances },
@@ -427,25 +430,41 @@ export const GIVstreamHistory: FC = () => {
 	}, [network, address]);
 
 	useEffect(() => {
+		setLoading(true);
 		getHistory(network, address, page * count, count).then(
 			_tokenAllocations => {
 				setTokenAllocations(_tokenAllocations);
+				setLoading(false);
 			},
 		);
 	}, [network, address, page]);
 
 	useEffect(() => {
-		const nop = Math.floor(allocationCount / count) + 1;
-		if (nop > 4) {
-			setPages([1, 2, '...', nop - 1, nop]);
-		} else {
-			const _pages = [];
-			for (let i = 1; i < nop + 1; i++) {
+		const nop = Math.ceil(allocationCount / count);
+		let _pages: Array<string | number> = [];
+		const current_page = page + 1;
+		// Loop through
+		for (let i = 1; i <= nop; i++) {
+			// Define offset
+			let offset = i == 1 || nop ? count + 1 : count;
+			// If added
+			if (
+				i == 1 ||
+				(current_page - offset <= i && current_page + offset >= i) ||
+				i == current_page ||
+				i == nop
+			) {
 				_pages.push(i);
+			} else if (
+				i == current_page - (offset + 1) ||
+				i == current_page + (offset + 1)
+			) {
+				_pages.push('...');
 			}
-			setPages(_pages);
 		}
-	}, [allocationCount]);
+		setPages(_pages);
+		setNumberOfPages(nop);
+	}, [allocationCount, page]);
 
 	return (
 		<HistoryContainer>
@@ -503,38 +522,41 @@ export const GIVstreamHistory: FC = () => {
 			{(!tokenAllocations || tokenAllocations.length == 0) && (
 				<NoData> NO DATA</NoData>
 			)}
-			<PaginationRow justifyContent={'flex-end'} gap='16px'>
-				<PaginationItem
-					onClick={() => {
-						if (page > 0) setPage(page => page - 1);
-					}}
-					disable={page == 0}
-				>
-					{'<  Back'}
-				</PaginationItem>
-				{pages.map((p, id) => {
-					return (
-						<PaginationItem
-							key={id}
-							onClick={() => {
-								if (!isNaN(+p)) setPage(+p - 1);
-							}}
-							isActive={+p - 1 === page}
-						>
-							{p}
-						</PaginationItem>
-					);
-				})}
-				<PaginationItem
-					onClick={() => {
-						if (page < Math.floor(allocationCount / count))
-							setPage(page => page + 1);
-					}}
-					disable={page >= Math.floor(allocationCount / count)}
-				>
-					{'Next  >'}
-				</PaginationItem>
-			</PaginationRow>
+			{numberOfPages > 1 && (
+				<PaginationRow justifyContent={'flex-end'} gap='16px'>
+					<PaginationItem
+						onClick={() => {
+							if (page > 0) setPage(page => page - 1);
+						}}
+						disable={page == 0}
+					>
+						{'<  Prev'}
+					</PaginationItem>
+					{pages.map((p, id) => {
+						return (
+							<PaginationItem
+								key={id}
+								onClick={() => {
+									if (!isNaN(+p)) setPage(+p - 1);
+								}}
+								isActive={+p - 1 === page}
+							>
+								{p}
+							</PaginationItem>
+						);
+					})}
+					<PaginationItem
+						onClick={() => {
+							if (page + 1 < numberOfPages)
+								setPage(page => page + 1);
+						}}
+						disable={page + 1 >= numberOfPages}
+					>
+						{'Next  >'}
+					</PaginationItem>
+				</PaginationRow>
+			)}
+			{loading && <HistoryLoading></HistoryLoading>}
 		</HistoryContainer>
 	);
 };
