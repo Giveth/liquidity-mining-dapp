@@ -99,7 +99,6 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	const [rewardLiquidPart, setRewardLiquidPart] = useState(Zero);
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
 	const [claimableNow, setClaimableNow] = useState(Zero);
-	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
 	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
 	const [sum, setSum] = useState(Zero);
 
@@ -111,14 +110,13 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 			);
 		}
 		setClaimableNow(tokenDistroHelper.getUserClaimableNow(balances));
-		setGivBackLiquidPart(tokenDistroHelper.getLiquidPart(balances.givback));
 		setGivBackStream(
 			tokenDistroHelper.getStreamPartTokenPerWeek(balances.givback),
 		);
 	}, [claimable, balances, tokenDistroHelper]);
 
 	useEffect(() => {
-		let _sum = rewardLiquidPart.add(givBackLiquidPart);
+		let _sum = rewardLiquidPart.add(balances.givbackLiquidPart);
 		if (claimableNow) {
 			_sum = _sum.add(claimableNow);
 		}
@@ -126,7 +124,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		} else {
 			setSum(_sum);
 		}
-	}, [rewardLiquidPart, givBackLiquidPart, claimableNow]);
+	}, [rewardLiquidPart, balances.givbackLiquidPart, claimableNow]);
 
 	useEffect(() => {
 		getGIVPrice(network).then(price => {
@@ -328,10 +326,12 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 												<B>Claimable from GIVbacks</B>
 											</HelpRow>
 											<GIVBoxWithPrice
-												amount={givBackLiquidPart}
+												amount={
+													balances.givbackLiquidPart
+												}
 												price={calcUSD(
 													formatWeiHelper(
-														givBackLiquidPart,
+														balances.givbackLiquidPart,
 													),
 												)}
 											/>
@@ -405,7 +405,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 											</HelpRow>
 											<GIVBoxWithPrice
 												amount={claimableNow.sub(
-													givBackLiquidPart,
+													balances.givbackLiquidPart,
 												)}
 												price={calcUSD(
 													formatWeiHelper(
