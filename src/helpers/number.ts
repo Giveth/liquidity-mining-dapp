@@ -6,7 +6,7 @@ export const Zero = new BigNumber(0);
 
 export const formatEthHelper = (
 	amount: BigNumber.Value,
-	decimals: number = 4,
+	decimals: number = config.TOKEN_PRECISION,
 	format = true,
 ): string => {
 	if (!amount) return '0';
