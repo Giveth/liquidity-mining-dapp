@@ -50,37 +50,38 @@ import {
 	IncreaseSection,
 	IncreaseSectionTitle,
 	Left,
+	NoData,
 	PaginationItem,
 	PaginationRow,
 	PercentageRow,
 	Right,
 	TxHash,
+	TxSpan,
 } from './GIVstream.sc';
 import { IconWithTooltip } from '../IconWithToolTip';
-import {
-	getHistory,
-	getTokenDistroInfo,
-	ITokenAllocation,
-} from '@/services/subgraph';
+import { getHistory } from '@/services/subgraph.service';
 import { OnboardContext } from '@/context/onboard.context';
 import { formatWeiHelper } from '@/helpers/number';
 import config from '@/configuration';
 import { DurationToString } from '@/lib/helpers';
 import { NetworkSelector } from '@/components/NetworkSelector';
-import { useBalances } from '@/context/balance.context';
 import { constants, ethers } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import BigNumber from 'bignumber.js';
 import { HarvestAllModal } from '../modals/HarvestAll';
 import { Zero } from '@ethersproject/constants';
+import { useSubgraph } from '@/context';
+import { ITokenAllocation } from '@/types/subgraph';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
 	const [rewardLiquidPart, setRewardLiquidPart] = useState(constants.Zero);
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
 	const { tokenDistroHelper } = useTokenDistro();
-	const { currentBalance } = useBalances();
-	const { allocatedTokens, claimed, givback } = currentBalance;
+	const {
+		currentValues: { balances },
+	} = useSubgraph();
+	const { allocatedTokens, claimed, givback } = balances;
 	const { network: walletNetwork } = useContext(OnboardContext);
 
 	useEffect(() => {
@@ -153,7 +154,9 @@ export const TabGIVstreamBottom = () => {
 	const [streamAmount, setStreamAmount] = useState<BigNumber>(
 		new BigNumber(0),
 	);
-	const { currentBalance } = useBalances();
+	const {
+		currentValues: { balances },
+	} = useSubgraph();
 	const increaseSecRef = useRef<HTMLDivElement>(null);
 	const supportedNetworks = [
 		config.MAINNET_NETWORK_NUMBER,
@@ -163,14 +166,10 @@ export const TabGIVstreamBottom = () => {
 	useEffect(() => {
 		setStreamAmount(
 			tokenDistroHelper.getStreamPartTokenPerWeek(
-				currentBalance.allocatedTokens.sub(currentBalance.givback),
+				balances.allocatedTokens.sub(balances.givback),
 			),
 		);
-	}, [
-		currentBalance.allocatedTokens,
-		currentBalance.givback,
-		tokenDistroHelper,
-	]);
+	}, [balances.allocatedTokens, balances.givback, tokenDistroHelper]);
 
 	useEffect(() => {
 		setPercent(tokenDistroHelper.percent);
@@ -182,7 +181,9 @@ export const TabGIVstreamBottom = () => {
 			<Container>
 				<NetworkSelector />
 				<FlowRateRow alignItems='baseline' gap='8px'>
-					<H3 weight={700}>Your Flowrate:</H3>
+					<H3 id='flowRate' weight={700}>
+						Your Flowrate:
+					</H3>
 					<IconGIVStream size={64} />
 					<H1>
 						{supportedNetworks.includes(walletNetwork)
@@ -247,7 +248,7 @@ export const TabGIVstreamBottom = () => {
 						rights of our community.
 					</GsDataBlock>
 				</Row>
-				{/* <HistoryTitleRow>
+				<HistoryTitleRow>
 					<HistoryTitle>History</HistoryTitle>
 					<IconWithTooltip
 						icon={<IconHelp size={16} />}
@@ -259,10 +260,9 @@ export const TabGIVstreamBottom = () => {
 							increases. Below is a summary.
 						</HistoryTooltip>
 					</IconWithTooltip>
-				</HistoryTitleRow> */}
-				{/* <GIVstreamHistory /> */}
+				</HistoryTitleRow>
+				<GIVstreamHistory />
 			</Container>
-			{/* //unipooldis */}
 			<IncreaseSection ref={increaseSecRef}>
 				<Container>
 					<IncreaseSectionTitle>
@@ -374,23 +374,33 @@ const convetSourceTypeToIcon = (distributor: string) => {
 					<P>{` GIVbacks`}</P>
 				</Row>
 			);
-		case 'giveth':
 		case 'balancerlm':
-		case 'uniswappool':
+		case 'balancerlp':
+		case 'shushiswaplp':
+		case 'honeyswaplp':
 		case 'givlm':
+		case 'giveth':
+		case 'givhnypool':
 			return (
 				<Row gap='16px'>
 					<IconGIVFarm size={24} color={brandColors.mustard[500]} />
 					<P>{` GIVfarm`}</P>
 				</Row>
 			);
-		// case GIVstreamSources.Garden:
-		// 	return (
-		// 		<Row gap='16px'>
-		// 			<IconGIVGarden size={24} color={brandColors.mustard[500]} />
-		// 			<P>{` GIVgarden`}</P>
-		// 		</Row>
-		// 	);
+		case 'gardenPool':
+			return (
+				<Row gap='16px'>
+					<IconGIVGarden size={24} color={brandColors.mustard[500]} />
+					<P>{` GIVgarden`}</P>
+				</Row>
+			);
+		case 'givdrop':
+			return (
+				<Row gap='16px'>
+					<IconGIVGarden size={24} color={brandColors.mustard[500]} />
+					<P>{` GIVdrop`}</P>
+				</Row>
+			);
 		default:
 			return distributor; //'Unknown'
 			break;
@@ -405,8 +415,10 @@ export const GIVstreamHistory: FC = () => {
 	const [page, setPage] = useState(0);
 	const [pages, setPages] = useState<any[]>([]);
 	const count = 6;
-	const { currentBalance } = useBalances();
-	const { allocationCount } = currentBalance;
+	const {
+		currentValues: { balances },
+	} = useSubgraph();
+	const { allocationCount } = balances;
 
 	const { tokenDistroHelper } = useTokenDistro();
 
@@ -450,7 +462,7 @@ export const GIVstreamHistory: FC = () => {
 						const date = d
 							.toDateString()
 							.split(' ')
-							.splice(1, 2)
+							.splice(1, 3)
 							.join(' ');
 						return (
 							// <span key={idx}>1</span>
@@ -474,27 +486,23 @@ export const GIVstreamHistory: FC = () => {
 									<GsHFrUnit as='span'>{` GIV/week`}</GsHFrUnit>
 								</B>
 								<P as='span'>{date}</P>
-								<TxHash
-									as='span'
-									size='Big'
-									onClick={() => {
-										const url =
-											config.NETWORKS_CONFIG[network]
-												?.blockExplorerUrls;
-										window.open(
-											`${url}/tx/${tokenAllocation.txHash}`,
-											'_blank',
-										);
-									}}
-								>
-									{tokenAllocation.txHash}
-								</TxHash>
+								<TxSpan>
+									<TxHash
+										size='Big'
+										href={`${config.NETWORKS_CONFIG[network]?.blockExplorerUrls}/tx/${tokenAllocation.txHash}`}
+										target='_blank'
+									>
+										{tokenAllocation.txHash}
+									</TxHash>
+								</TxSpan>
 							</Fragment>
 						);
 					})}
 				</Grid>
 			)}
-			{!tokenAllocations && <div> NO DATA</div>}
+			{(!tokenAllocations || tokenAllocations.length == 0) && (
+				<NoData> NO DATA</NoData>
+			)}
 			<PaginationRow justifyContent={'flex-end'} gap='16px'>
 				<PaginationItem
 					onClick={() => {

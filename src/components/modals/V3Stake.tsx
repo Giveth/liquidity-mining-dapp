@@ -28,7 +28,7 @@ import styled from 'styled-components';
 import { PoolStakingConfig } from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
 import V3StakingCard from '../cards/PositionCard';
-import { useBalances, useLiquidityPositions, useOnboard } from '@/context';
+import { useLiquidityPositions, useOnboard, useSubgraph } from '@/context';
 import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
 import { IconWithTooltip } from '../IconWithToolTip';
 import LoadingAnimation from '@/animations/loading.json';
@@ -75,15 +75,13 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	showModal,
 	setShowModal,
 }) => {
-	const { currentBalance } = useBalances();
+	const {
+		currentValues: { balances },
+	} = useSubgraph();
 	const { tokenDistroHelper } = useTokenDistro();
 	const { network, provider, address } = useOnboard();
-	const {
-		unstakedPositions,
-		stakedPositions,
-		currentIncentive,
-		loadPositions,
-	} = useLiquidityPositions();
+	const { unstakedPositions, stakedPositions, currentIncentive } =
+		useLiquidityPositions();
 	const positions = isUnstakingModal ? stakedPositions : unstakedPositions;
 	const { title } = poolStakingConfig;
 	const [stakeStatus, setStakeStatus] = useState<StakeState>(
@@ -131,7 +129,6 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 			} else {
 				setStakeStatus(StakeState.ERROR);
 			}
-			loadPositions();
 		} catch {
 			setStakeStatus(StakeState.UNKNOWN);
 		}
@@ -153,10 +150,8 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 		setTokenId(tokenId);
 		setReward(liquidReward);
 		setStream(BigNumber.from(streamPerWeek.toFixed(0)));
-		setClaimableNow(tokenDistroHelper.getUserClaimableNow(currentBalance));
-		setGivBackLiquidPart(
-			tokenDistroHelper.getLiquidPart(currentBalance.givback),
-		);
+		setClaimableNow(tokenDistroHelper.getUserClaimableNow(balances));
+		setGivBackLiquidPart(tokenDistroHelper.getLiquidPart(balances.givback));
 		setStakeStatus(StakeState.UNSTAKING);
 	};
 

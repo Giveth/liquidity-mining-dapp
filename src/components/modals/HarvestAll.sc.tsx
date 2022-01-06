@@ -172,6 +172,10 @@ export const Pending = styled(Row)`
 	}
 `;
 
+export const HarvestAllPending = styled(Pending)`
+	max-width: 316px;
+`;
+
 export const TooltipContent = styled(Subline)`
 	width: 200px;
 `;

@@ -128,7 +128,7 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 			<StreamHeader>
 				<Title as='h1'>Enjoy a continuous flow of GIV</Title>
 
-				<Desc size='small' color={'#CABAFF'}>
+				<Desc>
 					Welcome to the expanding GIViverse! The <b>GIVstream</b>{' '}
 					offers continuous rewards for GIVeconomy participants. As
 					the GIVeconomy grows, so does your GIV!

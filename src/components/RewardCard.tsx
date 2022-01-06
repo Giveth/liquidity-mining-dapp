@@ -1,6 +1,6 @@
 import config from '@/configuration';
 import { formatWeiHelper, Zero } from '@/helpers/number';
-import { getGIVPrice } from '@/services/subgraph';
+import { getGIVPrice } from '@/services/subgraph.service';
 import {
 	brandColors,
 	Caption,
@@ -37,6 +37,8 @@ interface IRewardCardProps {
 	stream: BigNumber.Value;
 	actionLabel?: string;
 	actionCb?: MouseEventHandler<HTMLButtonElement>;
+	subButtonLabel?: string;
+	subButtonCb?: Function;
 	network: number;
 	className?: string;
 	wrongNetworkText: string;
@@ -49,6 +51,8 @@ export const RewardCard: FC<IRewardCardProps> = ({
 	stream = Zero,
 	actionLabel,
 	actionCb,
+	subButtonLabel,
+	subButtonCb,
 	network,
 	className,
 	wrongNetworkText,
@@ -122,6 +126,15 @@ export const RewardCard: FC<IRewardCardProps> = ({
 								disabled={liquidAmount.isZero()}
 							/>
 						)}
+						{subButtonLabel && (
+							<StyledSubButton
+								onClick={() => {
+									if (subButtonCb) subButtonCb();
+								}}
+							>
+								{subButtonLabel}
+							</StyledSubButton>
+						)}
 					</>
 				)}
 			</RewadCardContainer>
@@ -184,4 +197,14 @@ const ActionButton = styled(Button)`
 
 const IconHelpWraper = styled.div`
 	cursor: pointer;
+`;
+
+const StyledSubButton = styled(Caption)`
+	color: ${brandColors.giv[100]};
+	position: absolute;
+	left: 50%;
+	cursor: pointer;
+	margin-top: 8px;
+	text-align: center;
+	transform: translateX(-50%);
 `;

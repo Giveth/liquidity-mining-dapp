@@ -139,7 +139,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 		<DonateCardContainer activeIndex={step} index={index}>
 			<DonateHeader>
 				<Title>Donate &amp; get GIV back</Title>
-				<Desc size='small' color={'#CABAFF'}>
+				<Desc>
 					Donate to verified projects to get GIV with <b>GIVbacks</b>.
 					The project gets 100% of your donation, and you get rewarded
 					by Giveth with GIV!

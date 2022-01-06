@@ -9,6 +9,7 @@ import {
 } from './contracts';
 import { StakeState } from '@/components/modals/V3Stake';
 import config from '@/configuration';
+import { getGasPreference } from '@/lib/helpers';
 
 const abiEncoder = utils.defaultAbiCoder;
 
@@ -47,7 +48,7 @@ export const transfer = async (
 			uniswapV3StakerContract.address,
 			tokenId,
 			data,
-			config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+			getGasPreference(config.NETWORKS_CONFIG[provider.network.chainId]),
 		);
 
 		handleStakeStatus(StakeState.SUBMITTING);
@@ -98,7 +99,7 @@ export const exit = async (
 
 		const tx = await uniswapV3StakerContract.multicall(
 			[unstakeCalldata, claimRewardCalldata, withdrawTokenCalldata],
-			config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+			getGasPreference(config.NETWORKS_CONFIG[provider.network.chainId]),
 		);
 		handleStakeStatus(StakeState.SUBMITTING);
 		return tx;
@@ -152,7 +153,7 @@ export const claimUnstakeStake = async (
 
 	const tx = await uniswapV3StakerContract.multicall(
 		multicallData,
-		config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+		getGasPreference(config.NETWORKS_CONFIG[provider.network.chainId]),
 	);
 
 	return tx;
@@ -173,7 +174,7 @@ export const claim = async (
 			currentIncentive.key[0],
 			walletAddress,
 			0,
-			config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+			getGasPreference(config.NETWORKS_CONFIG[provider.network.chainId]),
 		);
 	} catch (e) {
 		console.warn(e);
@@ -200,7 +201,7 @@ export const stake = async (
 		uniswapV3StakerContract.stakeToken(
 			currentIncentive.key,
 			tokenId,
-			config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+			getGasPreference(config.NETWORKS_CONFIG[provider.network.chainId]),
 		);
 	} catch (e) {
 		console.warn(e);

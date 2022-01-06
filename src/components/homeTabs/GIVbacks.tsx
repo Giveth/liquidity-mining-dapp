@@ -34,30 +34,31 @@ import {
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { Zero } from '@ethersproject/constants';
 import BigNumber from 'bignumber.js';
-import { useBalances } from '@/context/balance.context';
 import config from '@/configuration';
 import { HarvestAllModal } from '../modals/HarvestAll';
 import { OnboardContext } from '@/context/onboard.context';
 import { getNowUnixMS } from '@/helpers/time';
-import { useOnboard } from '@/context';
+import { useOnboard, useSubgraph } from '@/context';
 import { formatDate } from '@/lib/helpers';
+import { GIVBackExplainModal } from '../modals/GIVBackExplain';
 
 export const TabGIVbacksTop = () => {
-	const [showModal, setShowModal] = useState(false);
+	const [showHarvestModal, setShowHarvestModal] = useState(false);
+	const [showGivBackExplain, setShowGivBackExplain] = useState(false);
 	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
 	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
 	const { tokenDistroHelper } = useTokenDistro();
-	const { xDaiBalance } = useBalances();
+	const {
+		currentValues: { balances },
+	} = useSubgraph();
 	const { network: walletNetwork } = useOnboard();
 
 	useEffect(() => {
-		setGivBackLiquidPart(
-			tokenDistroHelper.getLiquidPart(xDaiBalance.givback),
-		);
+		setGivBackLiquidPart(tokenDistroHelper.getLiquidPart(balances.givback));
 		setGivBackStream(
-			tokenDistroHelper.getStreamPartTokenPerWeek(xDaiBalance.givback),
+			tokenDistroHelper.getStreamPartTokenPerWeek(balances.givback),
 		);
-	}, [xDaiBalance, tokenDistroHelper]);
+	}, [balances, tokenDistroHelper]);
 
 	return (
 		<>
@@ -83,7 +84,15 @@ export const TabGIVbacksTop = () => {
 								stream={givBackStream}
 								actionLabel='HARVEST'
 								actionCb={() => {
-									setShowModal(true);
+									setShowHarvestModal(true);
+								}}
+								subButtonLabel={
+									givBackLiquidPart.isZero()
+										? "Why don't I have GIVbacks?"
+										: undefined
+								}
+								subButtonCb={() => {
+									setShowGivBackExplain(true);
 								}}
 								network={walletNetwork}
 								targetNetworks={[config.XDAI_NETWORK_NUMBER]}
@@ -92,12 +101,18 @@ export const TabGIVbacksTop = () => {
 					</Row>
 				</Container>
 			</GIVbacksTopContainer>
-			{showModal && (
+			{showHarvestModal && (
 				<HarvestAllModal
 					title='GIVbacks Rewards'
-					showModal={showModal}
-					setShowModal={setShowModal}
+					showModal={showHarvestModal}
+					setShowModal={setShowHarvestModal}
 					network={config.XDAI_NETWORK_NUMBER}
+				/>
+			)}
+			{showGivBackExplain && (
+				<GIVBackExplainModal
+					showModal={showGivBackExplain}
+					setShowModal={setShowGivBackExplain}
 				/>
 			)}
 		</>

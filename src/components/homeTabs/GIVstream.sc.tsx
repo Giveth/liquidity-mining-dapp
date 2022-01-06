@@ -42,7 +42,7 @@ export const GIVstreamTopInnerContainer = styled(Container)`
 
 export const Left = styled.div`
 	width: 708px;
-	z-index: 2;
+	z-index: 1;
 `;
 
 export const Right = styled.div`
@@ -184,13 +184,10 @@ export const GsHFrUnit = styled(P)`
 	color: ${brandColors.giv[200]};
 `;
 
-export const TxHash = styled(GLink)`
-	color: ${brandColors.cyan[500]};
-	cursor: pointer;
-`;
+export const TxHash = styled(GLink)``;
 
 interface IPaginationItem {
-	disable: boolean;
+	disable?: boolean;
 	isActive?: boolean;
 }
 
@@ -198,10 +195,19 @@ export const PaginationRow = styled(Row)`
 	margin-top: 16px;
 `;
 
-export const PaginationItem = styled(Caption)`
+export const PaginationItem = styled(Caption)<IPaginationItem>`
 	${props =>
 		props.disable
 			? `color: ${neutralColors.gray[700]}`
 			: `cursor: pointer; color: ${neutralColors.gray[100]}`};
 	${props => (props.isActive ? `font-weight: bold;` : '')};
+`;
+
+export const TxSpan = styled.span`
+	color: ${brandColors.cyan[500]};
+	cursor: pointer;
+`;
+export const NoData = styled.div`
+	text-align: center;
+	padding 20px;
 `;

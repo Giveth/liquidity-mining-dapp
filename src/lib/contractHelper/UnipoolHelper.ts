@@ -1,7 +1,7 @@
-import { IUnipool } from '@/services/subgraph';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { getNowUnixMS } from '@/helpers/time';
+import { IUnipool } from '@/types/subgraph';
 
 const toBN = (value: ethers.BigNumberish): BigNumber => {
 	return new BigNumber(value.toString());

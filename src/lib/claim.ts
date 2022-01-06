@@ -1,11 +1,14 @@
 import { isAddress } from 'ethers/lib/utils';
 import { Contract } from 'ethers';
-import { ClaimData } from '../types/GIV';
+import { ClaimData } from '@/types/GIV';
 import config from '../configuration';
 import { abi as MERKLE_ABI } from '../artifacts/MerkleDrop.json';
 import { abi as TOKEN_DISTRO_ABI } from '../artifacts/TokenDistro.json';
 import { TransactionResponse, Web3Provider } from '@ethersproject/providers';
-import { fetchBalances } from '@/services/subgraph';
+import { fetchSubgraph } from '@/services/subgraph.service';
+import { SubgraphQueryBuilder } from '@/lib/subgraph/subgraphQueryBuilder';
+import { transformSubgraphData } from '@/lib/subgraph/subgraphDataTransform';
+import { getGasPreference } from '@/lib/helpers';
 
 export const fetchAirDropClaimData = async (
 	address: string,
@@ -25,8 +28,7 @@ export const fetchAirDropClaimData = async (
 			referrerPolicy: 'no-referrer',
 			body: JSON.stringify(data),
 		});
-		const json = await response.json();
-		return json;
+		return await response.json();
 	} catch (e) {
 		// eslint-disable-next-line no-console
 		console.error(e);
@@ -35,11 +37,18 @@ export const fetchAirDropClaimData = async (
 };
 
 export const hasClaimedAirDrop = async (address: string): Promise<boolean> => {
-	const { givDropClaimed } = await fetchBalances(
-		config.XDAI_NETWORK_NUMBER,
-		address,
-	);
-	return givDropClaimed;
+	try {
+		const response = await fetchSubgraph(
+			SubgraphQueryBuilder.getXDaiQuery(address),
+			config.XDAI_NETWORK_NUMBER,
+		);
+		const { balances } = await transformSubgraphData(response);
+		return balances.givDropClaimed;
+	} catch (e) {
+		console.error('Error on fetching subgraph');
+		// It's better to continue givDrop if subgraph is unreachable
+		return false;
+	}
 };
 
 export const claimAirDrop = async (
@@ -62,7 +71,7 @@ export const claimAirDrop = async (
 	try {
 		return await merkleContract
 			.connect(signer.connectUnchecked())
-			.claim(...args, config.XDAI_CONFIG.gasPreference);
+			.claim(...args, getGasPreference(config.XDAI_CONFIG));
 	} catch (error) {
 		console.error('Error on claiming GIVdrop:', error);
 	}
@@ -86,7 +95,7 @@ export const claimReward = async (
 
 	const networkConfig = config.NETWORKS_CONFIG[network];
 	try {
-		return await tokenDistro.claim(networkConfig.gasPreference);
+		return await tokenDistro.claim(getGasPreference(networkConfig));
 	} catch (error) {
 		console.error('Error on claiming token distro reward:', error);
 	}
