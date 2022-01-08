@@ -33,7 +33,6 @@ import { IconWithTooltip } from '../IconWithToolTip';
 import { ethers, constants } from 'ethers';
 import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
 import { useTokenDistro } from '@/context/tokenDistro.context';
-import { useBalances } from '@/context';
 import { Zero } from '@ethersproject/constants';
 import BigNumber from 'bignumber.js';
 import Lottie from 'react-lottie';
@@ -51,6 +50,7 @@ import {
 } from '../toasts/claim';
 import config from '@/configuration';
 import styled from 'styled-components';
+import { useSubgraph } from '@/context';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -97,19 +97,19 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 		ClaimState.UNKNOWN,
 	);
 	const { tokenDistroHelper } = useTokenDistro();
-	const { currentBalance } = useBalances();
+	const {
+		currentValues: { balances },
+	} = useSubgraph();
 
 	const { address, provider } = useContext(OnboardContext);
 
 	useEffect(() => {
-		setClaimableNow(tokenDistroHelper.getUserClaimableNow(currentBalance));
-		setGivBackLiquidPart(
-			tokenDistroHelper.getLiquidPart(currentBalance.givback),
-		);
+		setClaimableNow(tokenDistroHelper.getUserClaimableNow(balances));
+		setGivBackLiquidPart(tokenDistroHelper.getLiquidPart(balances.givback));
 		setGivBackStream(
-			tokenDistroHelper.getStreamPartTokenPerWeek(currentBalance.givback),
+			tokenDistroHelper.getStreamPartTokenPerWeek(balances.givback),
 		);
-	}, [currentBalance, tokenDistroHelper]);
+	}, [balances, tokenDistroHelper]);
 
 	useEffect(() => {
 		setGivDropStream(
@@ -256,7 +256,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 										</RateRow>
 									</>
 								)}
-								{!currentBalance.givback.isZero() && (
+								{!balances.givback.isZero() && (
 									<>
 										<HelpRow alignItems='center'>
 											<B>Claimable from GIVbacks</B>
@@ -368,7 +368,6 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 				)}
 				{claimState === ClaimState.ERROR && (
 					<>
-						{' '}
 						<ErrorInnerModal
 							title='GIV'
 							walletNetwork={network}

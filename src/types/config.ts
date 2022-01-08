@@ -42,7 +42,7 @@ export interface BalancerPoolStakingConfig extends SimplePoolStakingConfig {
 	POOL_ID: string;
 }
 
-interface GasPreference {
+export interface GasPreference {
 	maxFeePerGas?: string;
 	maxPriorityFeePerGas?: string;
 }

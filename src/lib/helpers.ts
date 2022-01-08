@@ -1,4 +1,6 @@
 // HRM: Human Readable Date.
+import { BasicNetworkConfig, GasPreference } from '@/types/config';
+
 export const DurationToYMDh = (ms: number) => {
 	let baseTime = new Date(0);
 	let duration = new Date(ms);
@@ -14,7 +16,6 @@ export const DurationToYMDh = (ms: number) => {
 };
 
 export const DurationToString = (ms: number, length: number = 3) => {
-	let i = 0;
 	const temp: { [key: string]: number } = DurationToYMDh(ms);
 	const res: string[] = [];
 	for (const key in temp) {
@@ -39,4 +40,15 @@ export const formatDate = (date: Date) => {
 			minute: 'numeric',
 		})
 		.replace(/,/g, '');
+};
+
+export const getGasPreference = (
+	networkConfig: BasicNetworkConfig,
+): GasPreference => {
+	const selectedWallet = window.localStorage.getItem('selectedWallet');
+	// MetaMask works with gas preference cofnig
+	if (selectedWallet === 'MetaMask') return networkConfig.gasPreference || {};
+
+	// For torus, it should be empty to work!
+	return {};
 };

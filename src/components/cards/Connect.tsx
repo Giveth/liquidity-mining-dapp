@@ -291,9 +291,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 					<Title as='h1' weight={700}>
 						{title}
 					</Title>
-					<Desc size='small' color={'#CABAFF'}>
-						{desc}
-					</Desc>
+					<Desc>{desc}</Desc>
 				</Header>
 			)}
 			{giveDropState !== GiveDropStateType.Success &&

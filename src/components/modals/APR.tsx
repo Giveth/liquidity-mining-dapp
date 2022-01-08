@@ -1,6 +1,7 @@
 import { FC, useState } from 'react';
 import { Modal, IModal } from './Modal';
 import styled from 'styled-components';
+import Link from 'next/link';
 import {
 	H6,
 	GLink,
@@ -16,7 +17,6 @@ import { PoolStakingConfig } from '@/types/config';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import Image from 'next/image';
 import { WhatisGIVstreamModal } from './WhatisGIVstream';
-
 interface IAPRModalProps extends IModal {
 	poolStakingConfig: PoolStakingConfig;
 	maxAmount: BigNumber;
@@ -56,10 +56,17 @@ export const APRModal: FC<IAPRModalProps> = ({
 							<SublineBold>IMPORTANT</SublineBold>
 						</AlertRow>
 						<Desc>
-							Part of your earnings from the GIVfarm go into
-							increasing your GIVstream flowrate.
+							A percentage of the GIV you earn from staking is
+							claimable immediately, and the remaining percent
+							goes into increasing your GIVstream flowrate. Over
+							time, a greater percentage of your total earnings
+							will be claimable immediately following the
+							continued expansion of the{' '}
+							<Link href='/givstream#flowRate' passHref>
+								<GIViverseLink>GIViverse</GIViverseLink>
+							</Link>
 						</Desc>
-						<DescTitle>Earnings breakdown </DescTitle>
+						<DescTitle>Current Distribution:</DescTitle>
 						<Desc>
 							Claimable immediately:{' '}
 							{tokenDistroHelper.GlobalReleasePercentage}%
@@ -68,12 +75,14 @@ export const APRModal: FC<IAPRModalProps> = ({
 							Increasing your GIVstream:{' '}
 							{100 - tokenDistroHelper.GlobalReleasePercentage}%
 						</Desc>
-						<Whatis
-							onClick={() => {
-								setShowWhatIsGIVstreamModal(true);
-							}}
-						>
-							What is a GIVstream?
+						<Whatis>
+							<a
+								href='https://docs.giveth.io/giveconomy/givstream/'
+								target='_blank'
+								rel='noreferrer'
+							>
+								Read More
+							</a>
 						</Whatis>
 					</DescContainer>
 				</APRModalContainer>
@@ -95,6 +104,10 @@ const APRModalContainer = styled.div`
 	text-align: left;
 `;
 
+const GIViverseLink = styled.span`
+	cursor: pointer;
+	color: ${brandColors.cyan[500]};
+`;
 const APRLabel = styled(H6)``;
 
 const InputLabel = styled(GLink)`

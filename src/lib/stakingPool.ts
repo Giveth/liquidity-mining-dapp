@@ -7,7 +7,7 @@ import { abi as BAL_VAULT_ABI } from '../artifacts/BalancerVault.json';
 import { abi as TOKEN_MANAGER_ABI } from '../artifacts/HookedTokenManager.json';
 import { abi as ERC20_ABI } from '../artifacts/ERC20.json';
 
-import { StakePoolInfo } from '@/types/poolInfo';
+import { APR } from '@/types/poolInfo';
 import BigNumber from 'bignumber.js';
 import config from '../configuration';
 import {
@@ -22,23 +22,24 @@ import {
 	TransactionResponse,
 	Web3Provider,
 } from '@ethersproject/providers';
-import { getUnipoolInfo, IBalances, IUnipool } from '@/services/subgraph';
 import { UnipoolHelper } from '@/lib/contractHelper/UnipoolHelper';
 import { Zero } from '@/helpers/number';
+import { IBalances, IUnipool } from '@/types/subgraph';
+import { getGasPreference } from '@/lib/helpers';
 
 const toBigNumber = (eb: ethers.BigNumber): BigNumber =>
 	new BigNumber(eb.toString());
 
-export const fetchGivStakingInfo = async (
+export const getGivStakingAPR = async (
 	lmAddress: string,
 	network: number,
-): Promise<StakePoolInfo> => {
+	unipool: IUnipool | undefined,
+): Promise<APR> => {
 	let apr: BigNumber = Zero;
 
-	const subGraphInfo = await getUnipoolInfo(network, lmAddress);
-	if (subGraphInfo) {
-		const totalSupply = subGraphInfo.totalSupply;
-		const rewardRate = subGraphInfo.rewardRate;
+	if (unipool) {
+		const totalSupply = unipool.totalSupply;
+		const rewardRate = unipool.rewardRate;
 
 		apr = totalSupply.isZero()
 			? Zero
@@ -48,37 +49,41 @@ export const fetchGivStakingInfo = async (
 					.times('100');
 	}
 
-	return {
-		apr,
-	};
+	return apr;
 };
 
-export const fetchLPStakingInfo = async (
+export const getLPStakingAPR = async (
 	poolStakingConfig: PoolStakingConfig,
 	network: number,
 	provider: JsonRpcProvider | null,
-): Promise<StakePoolInfo> => {
+	unipool: IUnipool | undefined,
+): Promise<APR> => {
 	if (!provider) {
-		return {
-			apr: Zero,
-		};
+		return Zero;
 	}
 	if (poolStakingConfig.type === StakingType.BALANCER) {
-		return fetchBalancerPoolStakingInfo(
+		return getBalancerPoolStakingAPR(
 			poolStakingConfig as BalancerPoolStakingConfig,
 			network,
 			provider,
+			unipool,
 		);
 	} else {
-		return fetchSimplePoolStakingInfo(poolStakingConfig, network, provider);
+		return getSimplePoolStakingAPR(
+			poolStakingConfig,
+			network,
+			provider,
+			unipool,
+		);
 	}
 };
 
-const fetchBalancerPoolStakingInfo = async (
+const getBalancerPoolStakingAPR = async (
 	balancerPoolStakingConfig: BalancerPoolStakingConfig,
 	network: number,
 	provider: JsonRpcProvider,
-): Promise<StakePoolInfo> => {
+	unipool: IUnipool | undefined,
+): Promise<APR> => {
 	const { LM_ADDRESS, POOL_ADDRESS, VAULT_ADDRESS, POOL_ID } =
 		balancerPoolStakingConfig;
 	const tokenAddress = config.NETWORKS_CONFIG[network].TOKEN_ADDRESS;
@@ -98,24 +103,22 @@ const fetchBalancerPoolStakingInfo = async (
 	let apr = null;
 
 	try {
-		const [_poolTokens, _poolTotalSupply, _poolNormalizedWeights, lmInfo]: [
+		const [_poolTokens, _poolTotalSupply, _poolNormalizedWeights]: [
 			PoolTokens,
 			ethers.BigNumber,
 			Array<ethers.BigNumber>,
-			IUnipool | undefined,
 		] = await Promise.all([
 			vaultContract.getPoolTokens(POOL_ID),
 			poolContract.totalSupply(),
 			poolContract.getNormalizedWeights(),
-			getUnipoolInfo(network, LM_ADDRESS),
 		]);
 
 		let totalSupply: ethers.BigNumber;
 		let rewardRate: ethers.BigNumber;
 
-		if (lmInfo) {
-			totalSupply = lmInfo.totalSupply;
-			rewardRate = lmInfo.rewardRate;
+		if (unipool) {
+			totalSupply = unipool.totalSupply;
+			rewardRate = unipool.rewardRate;
 		} else {
 			[totalSupply, rewardRate] = await Promise.all([
 				lmContract.totalSupply(),
@@ -147,15 +150,14 @@ const fetchBalancerPoolStakingInfo = async (
 	} catch (e) {
 		console.error('error on fetching balancer apr:', e);
 	}
-	return {
-		apr,
-	};
+	return apr;
 };
-const fetchSimplePoolStakingInfo = async (
+const getSimplePoolStakingAPR = async (
 	simplePoolStakingConfig: SimplePoolStakingConfig,
 	network: number,
 	provider: JsonRpcProvider,
-): Promise<StakePoolInfo> => {
+	unipool: IUnipool | undefined,
+): Promise<APR> => {
 	const { LM_ADDRESS, POOL_ADDRESS } = simplePoolStakingConfig;
 	const tokenAddress = config.NETWORKS_CONFIG[network].TOKEN_ADDRESS;
 	const lmContract = new Contract(LM_ADDRESS, LM_ABI, provider);
@@ -167,20 +169,18 @@ const fetchSimplePoolStakingInfo = async (
 	const poolContract = new Contract(POOL_ADDRESS, UNI_ABI, provider);
 	let apr = null;
 	try {
-		const [_reserves, _token0, _poolTotalSupply, lmInfo]: [
+		const [_reserves, _token0, _poolTotalSupply]: [
 			Array<ethers.BigNumber>,
 			string,
 			ethers.BigNumber,
-			IUnipool | undefined,
 		] = await Promise.all([
 			poolContract.getReserves(),
 			poolContract.token0(),
 			poolContract.totalSupply(),
-			getUnipoolInfo(network, LM_ADDRESS),
 		]);
-		if (lmInfo) {
-			totalSupply = lmInfo.totalSupply;
-			rewardRate = lmInfo.rewardRate;
+		if (unipool) {
+			totalSupply = unipool.totalSupply;
+			rewardRate = unipool.rewardRate;
 		} else {
 			[totalSupply, rewardRate] = await Promise.all([
 				lmContract.totalSupply(),
@@ -206,9 +206,7 @@ const fetchSimplePoolStakingInfo = async (
 		console.error('error on fetching apr:', e);
 	}
 
-	return {
-		apr,
-	};
+	return apr;
 };
 
 export const getUserStakeInfo = (
@@ -348,8 +346,9 @@ export const approveERC20tokenTransfer = async (
 
 	if (amountNumber.lte(allowanceNumber)) return true;
 
-	const gasPreference =
-		config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference;
+	const gasPreference = getGasPreference(
+		config.NETWORKS_CONFIG[provider.network.chainId],
+	);
 
 	if (!allowance.isZero()) {
 		try {
@@ -401,7 +400,9 @@ export const wrapToken = async (
 			.connect(signer.connectUnchecked())
 			.wrap(
 				amount,
-				config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+				getGasPreference(
+					config.NETWORKS_CONFIG[provider.network.chainId],
+				),
 			);
 	} catch (error) {
 		console.log('Error on wrapping token:', error);
@@ -431,7 +432,9 @@ export const unwrapToken = async (
 			.connect(signer.connectUnchecked())
 			.unwrap(
 				amount,
-				config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+				getGasPreference(
+					config.NETWORKS_CONFIG[provider.network.chainId],
+				),
 			);
 	} catch (error) {
 		console.log('Error on unwrapping token:', error);
@@ -463,9 +466,9 @@ export const stakeTokens = async (
 	);
 
 	try {
-		const gasPreference =
-			config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference ||
-			{};
+		const gasPreference = getGasPreference(
+			config.NETWORKS_CONFIG[provider.network.chainId],
+		);
 		// const { status } = await txResponse.wait();
 		return await lmContract
 			.connect(signer.connectUnchecked())
@@ -501,7 +504,7 @@ export const harvestTokens = async (
 
 	try {
 		return await lmContract.getReward(
-			config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+			getGasPreference(config.NETWORKS_CONFIG[provider.network.chainId]),
 		);
 	} catch (error) {
 		console.error('Error on harvesting:', Error);
@@ -529,7 +532,7 @@ export const withdrawTokens = async (
 	try {
 		return await lmContract.withdraw(
 			ethers.BigNumber.from(amount),
-			config.NETWORKS_CONFIG[provider.network.chainId]?.gasPreference,
+			getGasPreference(config.NETWORKS_CONFIG[provider.network.chainId]),
 		);
 	} catch (e) {
 		console.error('Error on withdrawing:', e);
