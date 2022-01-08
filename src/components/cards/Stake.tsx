@@ -176,7 +176,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 				<Desc>
 					Provide liquidity and get rewarded. Stake tokens in the{' '}
 					<b>GIVfarm</b> to earn up to{' '}
-					{APR ? `${formatEthHelper(APR, 2)}% APR` : ' ? '}
+					{APR ? `${formatEthHelper(APR)}% APR` : ' ? '}
 				</Desc>
 			</StakeHeader>
 			<APRRow alignItems={'flex-start'} justifyContent={'space-between'}>
@@ -223,7 +223,7 @@ const InvestCard: FC<IClaimViewCardProps> = ({ index }) => {
 										width='16'
 										alt='Star icon'
 									/>
-									{formatEthHelper(APR ? APR : Zero, 2)}%
+									{formatEthHelper(APR ? APR : Zero)}%
 								</PoolItemBold>
 							</Row>
 							<Row justifyContent='space-between'>
