@@ -10,6 +10,7 @@ import {
 	Subline,
 	ButtonLink,
 } from '@giveth/ui-design-system';
+import { device } from '@/utils/constants';
 
 export const StyledHeader = styled(Row)<IHeader>`
 	padding: 16px 32px;
@@ -132,6 +133,10 @@ export const NotifButton = styled(HeaderButton)`
 
 export const CreateProject = styled(ButtonLink)`
 	white-space: nowrap;
+	display: none;
+	@media ${device.laptop} {
+		display: block;
+	}
 `;
 
 export const SmallCreateProject = styled(ButtonLink)`
@@ -142,6 +147,9 @@ export const SmallCreateProject = styled(ButtonLink)`
 	gap: 0;
 	span {
 		font-size: 32px !important;
+	}
+	@media ${device.laptop} {
+		display: none;
 	}
 `;
 
