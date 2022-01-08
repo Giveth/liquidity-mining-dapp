@@ -19,6 +19,7 @@ import {
 	WBInfo,
 	WBNetwork,
 	CreateProject,
+	SmallCreateProject,
 	Logo,
 	RewardMenuAndButtonContainer,
 	CoverLine,
@@ -79,7 +80,21 @@ const Header: FC<IHeader> = () => {
 			<Row gap='8px'>
 				<CreateProject
 					label='CREATE A PROJECT'
-					onClick={() => window.open(`https://giveth.io/create`)}
+					href='https://giveth.io/create'
+					target='_blank'
+				/>
+				<SmallCreateProject
+					label=''
+					href='https://giveth.io/create'
+					target='_blank'
+					icon={
+						<Image
+							src='/images/plus-white.svg'
+							width={16}
+							height={16}
+							alt='create project'
+						/>
+					}
 				/>
 				{address ? (
 					<>

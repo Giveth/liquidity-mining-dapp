@@ -8,6 +8,7 @@ import {
 	Button,
 	GLink,
 	Subline,
+	ButtonLink,
 } from '@giveth/ui-design-system';
 
 export const StyledHeader = styled(Row)<IHeader>`
@@ -129,8 +130,19 @@ export const NotifButton = styled(HeaderButton)`
 	max-width: 48px;
 `;
 
-export const CreateProject = styled(Button)`
+export const CreateProject = styled(ButtonLink)`
 	white-space: nowrap;
+`;
+
+export const SmallCreateProject = styled(ButtonLink)`
+	white-space: nowrap;
+	padding: 0;
+	width: 48px;
+	height: 48px;
+	gap: 0;
+	span {
+		font-size: 32px !important;
+	}
 `;
 
 export const BalanceTooltip = styled(Subline)`
