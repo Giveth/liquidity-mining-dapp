@@ -51,7 +51,7 @@ export const TabTitle = styled(H1)`
 `;
 
 export const TabDesc = styled(QuoteText)`
-	width: 812px;
+	max-width: 812px;
 	margin-bottom: 50px;
 `;
 
