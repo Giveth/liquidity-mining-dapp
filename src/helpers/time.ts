@@ -24,7 +24,7 @@ const fetchServerTime = async () => {
 		fetching = true;
 		const response = await fetch(
 			'https://api.timezonedb.com/v2.1/get-time-zone?by=zone&format=json&key=LU8PKNDD9BUB&zone=GM',
-			{ mode: 'cors' },
+			{ mode: 'no-cors' },
 		);
 
 		if (response.ok) {
