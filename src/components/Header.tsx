@@ -53,7 +53,7 @@ const Header: FC<IHeader> = () => {
 			alignItems='center'
 			theme={theme}
 		>
-			<Row gap='16px'>
+			<Row gap='24px'>
 				<Logo>
 					<Image
 						width='48p'
@@ -65,9 +65,7 @@ const Header: FC<IHeader> = () => {
 				<SmallHeaderLinks>
 					<IconMenu24 />
 					<Link href='/' passHref>
-						<HeaderLink size='Big' active>
-							GIVeconomy
-						</HeaderLink>
+						<HeaderLink size='Big'>GIVeconomy</HeaderLink>
 					</Link>
 				</SmallHeaderLinks>
 			</Row>

@@ -123,6 +123,7 @@ export const SmallHeaderLinks = styled(Row)`
 	align-self: center;
 	align-items: center;
 	display: flex;
+	padding: 0 16px;
 	@media ${device.laptopL} {
 		display: none;
 	}
