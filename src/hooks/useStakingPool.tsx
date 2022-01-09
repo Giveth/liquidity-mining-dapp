@@ -76,7 +76,7 @@ export const useStakingPool = (
 				stakePoolInfoPoll.current = null;
 			}
 		};
-	}, [provider, walletNetwork, currentValues]);
+	}, [provider, walletNetwork]);
 
 	const isMounted = useRef(true);
 	useEffect(() => {
