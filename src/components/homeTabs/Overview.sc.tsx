@@ -10,6 +10,7 @@ import {
 	DataBlock,
 	brandColors,
 	ButtonLink,
+	D1,
 } from '@giveth/ui-design-system';
 import { TabContainer, TopContainer } from './commons';
 
@@ -24,8 +25,7 @@ export const OverviewTopContainer = styled(TopContainer)`
 	height: 650px;
 `;
 
-export const OverviewTitle = styled(D3)`
-	font-size: 107px;
+export const OverviewTitle = styled(D1)`
 	padding-bottom: 36px;
 	max-width: 989px;
 `;
