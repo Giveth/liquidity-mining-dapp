@@ -113,6 +113,19 @@ export const HeaderLinks = styled(Row)`
 	border-radius: 48px;
 	padding: 6px;
 	gap: 8px;
+	display: none;
+	@media ${device.laptopL} {
+		display: flex;
+	}
+`;
+
+export const SmallHeaderLinks = styled(Row)`
+	align-self: center;
+	align-items: center;
+	display: flex;
+	@media ${device.laptopL} {
+		display: none;
+	}
 `;
 
 export const HeaderLink = styled(GLink)<IHeaderLinkProps>`

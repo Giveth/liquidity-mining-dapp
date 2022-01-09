@@ -23,10 +23,12 @@ import {
 	Logo,
 	RewardMenuAndButtonContainer,
 	CoverLine,
+	SmallHeaderLinks,
 } from './Header.sc';
 import Link from 'next/link';
 import { useSubgraph } from '@/context/subgraph.context';
 import { RewardMenu } from './menu/RewardMenu';
+import { IconMenu24 } from '@giveth/ui-design-system';
 
 export interface IHeader {
 	theme?: ThemeType;
@@ -60,6 +62,14 @@ const Header: FC<IHeader> = () => {
 						src={`/images/logo/logo1.png`}
 					/>
 				</Logo>
+				<SmallHeaderLinks>
+					<IconMenu24 />
+					<Link href='/' passHref>
+						<HeaderLink size='Big' active>
+							GIVeconomy
+						</HeaderLink>
+					</Link>
+				</SmallHeaderLinks>
 			</Row>
 			<HeaderLinks>
 				<HeaderLink size='Big' href='https://giveth.io/'>
