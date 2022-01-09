@@ -131,14 +131,14 @@ export const TabGIVbacksBottom = () => {
 			const TwoWeek = 1_209_600_000;
 			const _round = Math.floor(deltaT / TwoWeek) + 1;
 			setRound(_round);
-			const _rounStartTime = new Date();
+			const _rounStartTime = new Date(tokenDistroHelper.startTime);
 			_rounStartTime.setDate(
 				tokenDistroHelper.startTime.getDate() + (_round - 1) * 14,
 			);
 			_rounStartTime.setHours(tokenDistroHelper.startTime.getHours());
 			_rounStartTime.setMinutes(tokenDistroHelper.startTime.getMinutes());
 			setRoundStartime(_rounStartTime);
-			const _roundEndTime = new Date();
+			const _roundEndTime = new Date(_rounStartTime);
 			_roundEndTime.setDate(_rounStartTime.getDate() + 14);
 			_roundEndTime.setHours(tokenDistroHelper.startTime.getHours());
 			_roundEndTime.setMinutes(tokenDistroHelper.startTime.getMinutes());
