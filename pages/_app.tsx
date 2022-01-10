@@ -15,17 +15,30 @@ import Head from 'next/head';
 
 function MyApp({ Component, pageProps }: AppProps) {
 	const [showMobileModal, setShowMobileModal] = useState(false);
+	const [viewPort, setViewPort] = useState(false);
 
 	useEffect(() => {
-		if (window.screen.width < 768) setShowMobileModal(true);
+		const windowResizeHandler = () => {
+			console.log(window.screen.width);
+			if (window.screen.width < 768) {
+				setShowMobileModal(true);
+				setViewPort(true);
+			} else {
+				setShowMobileModal(false);
+				setViewPort(false);
+			}
+		};
+		windowResizeHandler();
+		window.addEventListener('resize', windowResizeHandler);
+		return () => {
+			removeEventListener('resize', windowResizeHandler);
+		};
 	}, []);
 
 	return (
 		<>
 			<Head>
-				{showMobileModal && (
-					<meta name='viewport' content='width=768' />
-				)}
+				{viewPort && <meta name='viewport' content='width=768' />}
 			</Head>
 			<OnboardProvider>
 				<SubgraphProvider>
