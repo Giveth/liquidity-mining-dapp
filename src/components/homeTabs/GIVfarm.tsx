@@ -22,7 +22,7 @@ import { BigNumber } from 'bignumber.js';
 import { constants } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { useFarms } from '@/context/farm.context';
-import { ExtLink } from './commons';
+import { TopFiller, TopInnerContainer, ExtLink } from './commons';
 
 const GIVfarmTabContainer = styled(Container)``;
 
@@ -42,7 +42,8 @@ export const TabGIVfarmTop = () => {
 
 	return (
 		<GIVfarmTopContainer>
-			<Container>
+			<TopInnerContainer>
+				<TopFiller />
 				<Row justifyContent='space-between'>
 					<Left>
 						<Row alignItems='baseline' gap='16px'>
@@ -67,7 +68,7 @@ export const TabGIVfarmTop = () => {
 						/>
 					</Right>
 				</Row>
-			</Container>
+			</TopInnerContainer>
 		</GIVfarmTopContainer>
 	);
 };
