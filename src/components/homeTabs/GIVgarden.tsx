@@ -30,6 +30,7 @@ import { Zero } from '@ethersproject/constants';
 import { useOnboard } from '@/context';
 import { ethers } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
+import { TopFiller, TopInnerContainer } from './commons';
 
 const poolStakingConfig = getGivStakingConfig(config.XDAI_CONFIG);
 
@@ -52,11 +53,12 @@ export const TabGardenTop = () => {
 	useEffect(() => {
 		setEarnedLiquidPart(tokenDistroHelper.getLiquidPart(earned));
 		setEarnedStream(tokenDistroHelper.getStreamPartTokenPerWeek(earned));
-	}, [earned]);
+	}, [earned, tokenDistroHelper]);
 
 	return (
 		<GardenTopContainer>
-			<Container>
+			<TopInnerContainer>
+				<TopFiller />
 				<Row justifyContent='space-between'>
 					<Left>
 						<Title>
@@ -83,7 +85,7 @@ export const TabGardenTop = () => {
 						/>
 					</Right>
 				</Row>
-			</Container>
+			</TopInnerContainer>
 			{showModal && (
 				<HarvestAllModal
 					title='GIVgarden Rewards'
