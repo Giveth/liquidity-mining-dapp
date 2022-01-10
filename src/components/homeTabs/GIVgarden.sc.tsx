@@ -54,12 +54,8 @@ export const Right = styled.div`
 `;
 
 export const Title = styled(D1)`
-	font-size: 4rem;
 	margin-top: 60px;
 	margin-bottom: 24px;
-	@media ${device.tablet} {
-		font-size: 4.2rem;
-	}
 `;
 
 export const Subtitle = styled(QuoteText)`
