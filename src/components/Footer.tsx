@@ -20,7 +20,7 @@ export const Footer = () => {
 		<FooterContainer>
 			<Container>
 				<Row>
-					<LeftContainer>
+					<LeftContainer wrap={1}>
 						<LinkColumn>
 							<Link href='/' passHref>
 								<a>
@@ -152,6 +152,8 @@ const SocialContainer = styled(Row)`
 const LinkColumn = styled(Row)`
 	flex-direction: column;
 	gap: 8px;
+	padding-right: 16px;
+	margin-bottom: 32px;
 `;
 
 const LinkItem = styled(P)`

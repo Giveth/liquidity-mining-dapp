@@ -19,13 +19,16 @@ import {
 	WBInfo,
 	WBNetwork,
 	CreateProject,
+	SmallCreateProject,
 	Logo,
 	RewardMenuAndButtonContainer,
 	CoverLine,
+	SmallHeaderLinks,
 } from './Header.sc';
 import Link from 'next/link';
 import { useSubgraph } from '@/context/subgraph.context';
 import { RewardMenu } from './menu/RewardMenu';
+import { IconMenu24 } from '@giveth/ui-design-system';
 
 export interface IHeader {
 	theme?: ThemeType;
@@ -50,7 +53,7 @@ const Header: FC<IHeader> = () => {
 			alignItems='center'
 			theme={theme}
 		>
-			<Row gap='16px'>
+			<Row>
 				<Logo>
 					<Image
 						width='48p'
@@ -59,6 +62,12 @@ const Header: FC<IHeader> = () => {
 						src={`/images/logo/logo1.png`}
 					/>
 				</Logo>
+				<SmallHeaderLinks>
+					{/* <IconMenu24 /> */}
+					<Link href='/' passHref>
+						<HeaderLink size='Big'>GIVeconomy</HeaderLink>
+					</Link>
+				</SmallHeaderLinks>
 			</Row>
 			<HeaderLinks>
 				<HeaderLink size='Big' href='https://giveth.io/'>
@@ -79,7 +88,21 @@ const Header: FC<IHeader> = () => {
 			<Row gap='8px'>
 				<CreateProject
 					label='CREATE A PROJECT'
-					onClick={() => window.open(`https://giveth.io/create`)}
+					href='https://giveth.io/create'
+					target='_blank'
+				/>
+				<SmallCreateProject
+					label=''
+					href='https://giveth.io/create'
+					target='_blank'
+					icon={
+						<Image
+							src='/images/plus-white.svg'
+							width={16}
+							height={16}
+							alt='create project'
+						/>
+					}
 				/>
 				{address ? (
 					<>

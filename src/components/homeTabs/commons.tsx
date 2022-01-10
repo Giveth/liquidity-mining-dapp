@@ -4,8 +4,7 @@ import styled from 'styled-components';
 export const TabContainer = styled.div``;
 
 export const TopContainer = styled(TabContainer)`
-	background-image: url('/images/Giv.png');
-	background-size: cover;
+	background-image: url('/images/backgrounds/givup.svg');
 	height: 370px;
 `;
 
