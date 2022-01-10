@@ -88,19 +88,13 @@ export const ClaimCardTitle = styled(H1)`
 `;
 
 export const EGDataBlock = styled(DataBlock)`
-	width: 344px;
+	width: 100%;
 	margin-bottom: 64px;
 	@media ${device.tablet} {
-		width: 344px;
+		width: calc(50% - 16px);
 	}
 	@media ${device.laptop} {
-		width: 304px;
-	}
-	@media ${device.laptopL} {
-		width: 389px;
-	}
-	@media ${device.desktop} {
-		width: 363px;
+		width: calc(33% - 16px);
 	}
 `;
 
@@ -116,16 +110,10 @@ export const ParticipateDataBlock = styled(DataBlock)`
 		flex-grow: 1;
 	}
 	@media ${device.tablet} {
-		width: 344px;
+		width: calc(50% - 16px);
 	}
 	@media ${device.laptop} {
-		width: 304px;
-	}
-	@media ${device.laptopL} {
-		width: 389px;
-	}
-	@media ${device.desktop} {
-		width: 363px;
+		width: calc(33% - 16px);
 	}
 `;
 
