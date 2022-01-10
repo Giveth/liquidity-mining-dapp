@@ -14,6 +14,7 @@ export const TopInnerContainer = styled(Container)`
 	flex-direction: column;
 	height: 370px;
 `;
+export const TopContainerRow = styled(Row)``;
 
 export const ExtLink = styled(GLink)`
 	color: ${brandColors.cyan[500]};
