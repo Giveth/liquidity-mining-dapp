@@ -151,6 +151,7 @@ export const RewardCard: FC<IRewardCardProps> = ({
 };
 
 const RewadCardContainer = styled.div`
+	position: relative;
 	width: 360px;
 	background-color: ${brandColors.giv[700]};
 	padding: 24px 24px;
