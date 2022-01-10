@@ -16,10 +16,9 @@ import { TabContainer, TopContainer } from './commons';
 import { device } from '@/utils/constants';
 
 export const OverviewBottomContainer = styled.div`
-	background-image: url('/images/backgrounds/curves.svg');
-	background-size: contain;
+	background-image: url('/images/backgrounds/wave.svg');
 	background-position: center;
-	background-repeat: no-repeat;
+	background-repeat: repeat-x;
 `;
 
 export const OverviewTopContainer = styled(TopContainer)`
@@ -99,8 +98,7 @@ export const EGDataBlock = styled(DataBlock)`
 `;
 
 export const ParticipateDataBlock = styled(DataBlock)`
-	/* min-height: 345px; */
-	width: 286px;
+	width: 100%;
 	display: flex;
 	flex-flow: column nowrap;
 	align-items: flex-start;
