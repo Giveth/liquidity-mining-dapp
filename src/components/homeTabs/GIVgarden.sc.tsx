@@ -15,6 +15,7 @@ import {
 import { TopContainer } from './commons';
 import { RewardCard } from '../RewardCard';
 import { Row } from '../styled-components/Grid';
+import { device } from '@/utils/constants';
 
 export const GardenTopContainer = styled(TopContainer)`
 	overflow: hidden;
@@ -29,12 +30,13 @@ export const GardenTopContainer = styled(TopContainer)`
 `;
 
 export const Left = styled.div`
-	width: 616px;
+	/* width: 616px; */
 `;
 
 export const Right = styled.div`
-	width: 360px;
+	/* width: 360px; */
 	position: relative;
+	align-self: end;
 	&::before {
 		content: url('/images/flower1.svg');
 		position: absolute;
@@ -52,18 +54,23 @@ export const Right = styled.div`
 `;
 
 export const Title = styled(D1)`
+	font-size: 4rem;
 	margin-top: 60px;
 	margin-bottom: 24px;
+	@media ${device.tablet} {
+		font-size: 4.2rem;
+	}
 `;
 
 export const Subtitle = styled(QuoteText)`
-	margin-bottom: 48px;
+	/* margin-bottom: 48px; */
 `;
 
 export const GardenRewardCard = styled(RewardCard)`
-	position: absolute;
-	z-index: 1;
-	bottom: -37px;
+	/* position: absolute;
+	bottom: -37px; */
+	z-index: 100;
+	position: relative;
 `;
 
 export const GardenBottomContainer = styled.div``;
@@ -74,7 +81,7 @@ export const Section1Title = styled(H3)`
 `;
 
 export const Section1Subtitle = styled(QuoteText)`
-	width: 802px;
+	/* width: 802px; */
 `;
 
 export const OpenGardenButton = styled(Button)`
@@ -89,7 +96,7 @@ export const Section2Title = styled(H1)`
 `;
 
 export const GovernanceDB = styled(DataBlock)`
-	width: 385px;
+	/* width: 385px; */
 	min-height: 285px;
 	display: flex;
 	flex-flow: column nowrap;
@@ -134,7 +141,6 @@ export const VoteCard = styled.div`
 `;
 
 export const VoteCardDesc = styled(QuoteText)`
-	width: 754px;
 	color: ${brandColors.giv[200]};
 	margin-top: 24px;
 	margin-bottom: 8px;

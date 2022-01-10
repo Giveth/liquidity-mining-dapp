@@ -59,10 +59,10 @@ export const TabGardenTop = () => {
 			<Container>
 				<Row justifyContent='space-between'>
 					<Left>
-						<Row alignItems='baseline' gap='16px'>
-							<Title>GIVgarden</Title>
+						<Title>
+							GIVgarden
 							<IconGIVGarden size={64} />
-						</Row>
+						</Title>
 						<Subtitle size='medium'>
 							The GIVgarden is the decentralized governance
 							platform for the GIVeconomy.
