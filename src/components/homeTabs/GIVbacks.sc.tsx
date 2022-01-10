@@ -25,11 +25,11 @@ export const GIVbacksTopContainer = styled(TopContainer)`
 `;
 
 export const Left = styled.div`
-	width: 708px;
+	align-self: end;
 `;
 
 export const Right = styled.div`
-	width: 360px;
+	align-self: end;
 `;
 
 export const GBTitle = styled(D1)`
@@ -41,11 +41,7 @@ export const GBSubtitle = styled(QuoteText)`
 	margin-bottom: 89px;
 `;
 
-export const GIVbackRewardCard = styled(RewardCard)`
-	position: absolute;
-	z-index: 1;
-	bottom: -27px;
-`;
+export const GIVbackRewardCard = styled(RewardCard)``;
 
 export const GIVbacksBottomContainer = styled.div``;
 
