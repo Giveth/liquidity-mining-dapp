@@ -13,6 +13,7 @@ import {
 	D1,
 } from '@giveth/ui-design-system';
 import { TabContainer, TopContainer } from './commons';
+import { device } from '@/utils/constants';
 
 export const OverviewBottomContainer = styled.div`
 	background-image: url('/images/backgrounds/curves.svg');
@@ -87,18 +88,44 @@ export const ClaimCardTitle = styled(H1)`
 `;
 
 export const EGDataBlock = styled(DataBlock)`
-	width: 355px;
+	width: 344px;
+	margin-bottom: 64px;
+	@media ${device.tablet} {
+		width: 344px;
+	}
+	@media ${device.laptop} {
+		width: 304px;
+	}
+	@media ${device.laptopL} {
+		width: 389px;
+	}
+	@media ${device.desktop} {
+		width: 363px;
+	}
 `;
 
 export const ParticipateDataBlock = styled(DataBlock)`
-	min-height: 345px;
+	/* min-height: 345px; */
 	width: 286px;
 	display: flex;
 	flex-flow: column nowrap;
 	align-items: flex-start;
+	margin-bottom: 32px;
 
 	div:nth-child(2) {
 		flex-grow: 1;
+	}
+	@media ${device.tablet} {
+		width: 344px;
+	}
+	@media ${device.laptop} {
+		width: 304px;
+	}
+	@media ${device.laptopL} {
+		width: 389px;
+	}
+	@media ${device.desktop} {
+		width: 363px;
 	}
 `;
 
