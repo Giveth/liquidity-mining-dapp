@@ -63,7 +63,7 @@ export const Section2Title = styled(H1)`
 
 export const ClaimCard = styled.div`
 	background-color: #3c14c5;
-	padding: 105px 146px;
+	padding: 141px 16px 106px;
 	background-image: url('/images/backgrounds/giv-outline.svg');
 	border-radius: 8px;
 	min-height: 480px;
@@ -80,6 +80,15 @@ export const ClaimCard = styled.div`
 		position: absolute;
 		bottom: -4px;
 		left: 0;
+	}
+	@media ${device.laptop} {
+		padding: 100px 50px 146px;
+	}
+	@media ${device.laptopL} {
+		padding: 100px 64px 146px;
+	}
+	@media ${device.desktop} {
+		padding: 100px 64px 146px;
 	}
 `;
 export const ClaimCardTitle = styled(H1)`
