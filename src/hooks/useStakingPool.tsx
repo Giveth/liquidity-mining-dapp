@@ -38,6 +38,8 @@ export const useStakingPool = (
 
 	const { type, LM_ADDRESS } = poolStakingConfig;
 
+	const unipoolIsDefined = !!currentValues[type];
+
 	useEffect(() => {
 		const cb = () => {
 			const providerNetwork = provider?.network?.chainId;
@@ -76,7 +78,7 @@ export const useStakingPool = (
 				stakePoolInfoPoll.current = null;
 			}
 		};
-	}, [provider, walletNetwork]);
+	}, [provider, walletNetwork, unipoolIsDefined]);
 
 	const isMounted = useRef(true);
 	useEffect(() => {
