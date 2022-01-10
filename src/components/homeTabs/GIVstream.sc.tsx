@@ -19,7 +19,7 @@ import {
 	Caption,
 	ButtonLink,
 } from '@giveth/ui-design-system';
-import { TopContainer } from './commons';
+import { TopContainer, TopInnerContainer } from './commons';
 import { RewardCard } from '../RewardCard';
 import { Row } from '../styled-components/Grid';
 import { DataBox } from '../DataBox';
@@ -29,9 +29,9 @@ export const GIVstreamTopContainer = styled(TopContainer)`
 	position: relative;
 `;
 
-export const GIVstreamTopInnerContainer = styled(Container)`
-	overflow: hidden;
-	&::after {
+export const GIVstreamTopInnerContainer = styled(TopInnerContainer)`
+	/* overflow: hidden; */
+	&::before {
 		content: url('/images/stream.svg');
 		position: absolute;
 		right: 350px;
@@ -41,12 +41,11 @@ export const GIVstreamTopInnerContainer = styled(Container)`
 `;
 
 export const Left = styled.div`
-	width: 708px;
 	z-index: 1;
 `;
 
 export const Right = styled.div`
-	width: 360px;
+	align-self: end;
 `;
 
 export const GSTitle = styled(D1)`
@@ -56,11 +55,7 @@ export const GSTitle = styled(D1)`
 
 export const GSSubtitle = styled(QuoteText)``;
 
-export const GIVstreamRewardCard = styled(RewardCard)`
-	position: absolute;
-	z-index: 1;
-	bottom: -37px;
-`;
+export const GIVstreamRewardCard = styled(RewardCard)``;
 
 export const GIVbacksBottomContainer = styled.div``;
 
@@ -220,5 +215,5 @@ export const TxSpan = styled.span`
 `;
 export const NoData = styled.div`
 	text-align: center;
-	padding 20px;
+	padding: 20px;
 `;
