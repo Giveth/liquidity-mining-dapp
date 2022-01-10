@@ -67,7 +67,6 @@ export class SubgraphQueryBuilder {
 			sqrtPriceX96
 			tick
 			liquidity
-			stakedLiquidity
 		}`;
 	};
 

@@ -101,5 +101,4 @@ export interface IUniswapV3Pool {
 	sqrtPriceX96: ethers.BigNumber;
 	tick: number;
 	liquidity: ethers.BigNumber;
-	stakedLiquidity: ethers.BigNumber;
 }
