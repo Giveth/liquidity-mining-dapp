@@ -101,7 +101,6 @@ const transformUniswapV3Pool = (info: any): IUniswapV3Pool | undefined => {
 	const sqrtPriceX96 = BN(info.sqrtPriceX96);
 	const tick = Number(info.tick);
 	const liquidity = BN(info.liquidity);
-	const stakedLiquidity = BN(info.stakedLiquidity);
 	const token0 = info.token0;
 	const token1 = info.token1;
 	return {
@@ -110,7 +109,6 @@ const transformUniswapV3Pool = (info: any): IUniswapV3Pool | undefined => {
 		sqrtPriceX96,
 		tick,
 		liquidity,
-		stakedLiquidity,
 	};
 };
 
