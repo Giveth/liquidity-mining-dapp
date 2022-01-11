@@ -67,7 +67,7 @@ export const Subtitle = styled(QuoteText)`
 export const GardenRewardCard = styled(RewardCard)`
 	/* position: absolute;
 	bottom: -37px; */
-	z-index: 100;
+	z-index: 1;
 	position: relative;
 `;
 
