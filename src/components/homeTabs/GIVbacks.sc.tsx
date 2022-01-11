@@ -25,7 +25,7 @@ export const GIVbacksTopContainer = styled(TopContainer)`
 `;
 
 export const Left = styled.div`
-	align-self: end;
+	align-self: start;
 `;
 
 export const Right = styled.div`
@@ -33,7 +33,6 @@ export const Right = styled.div`
 `;
 
 export const GBTitle = styled(D1)`
-	margin-top: 60px;
 	margin-bottom: 24px;
 `;
 
