@@ -80,6 +80,7 @@ export const useStakingPool = (
 		};
 	}, [provider, walletNetwork, unipoolIsDefined]);
 
+
 	const isMounted = useRef(true);
 	useEffect(() => {
 		return () => {
