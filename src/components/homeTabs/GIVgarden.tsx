@@ -129,7 +129,7 @@ export const TabGardenBottom = () => {
 				<Section2Title weight={500}>
 					Three Pillars of Governance
 				</Section2Title>
-				<GovernanceRaw justifyContent='space-between'>
+				<GovernanceRaw wrap={1} justifyContent='space-between'>
 					<GovernanceDB
 						title='Covenant'
 						button={

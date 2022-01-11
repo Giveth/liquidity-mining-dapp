@@ -94,11 +94,17 @@ export const Section2Title = styled(H1)`
 `;
 
 export const GovernanceDB = styled(DataBlock)`
-	/* width: 385px; */
+	width: 100%;
 	min-height: 285px;
 	display: flex;
 	flex-flow: column nowrap;
 	align-items: flex-start;
+	@media ${device.tablet} {
+		width: calc(50% - 16px);
+	}
+	@media ${device.laptop} {
+		width: calc(33% - 16px);
+	}
 `;
 
 export const GovernanceLink = styled(GLink)`
