@@ -12,15 +12,18 @@ import {
 } from '@giveth/ui-design-system';
 import { device } from '@/utils/constants';
 
+export const HeaderPlaceholder = styled.div`
+	height: 100px;
+`;
+
 export const StyledHeader = styled(Row)<IHeader>`
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: ${props => (props.show ? 0 : '-100px')};
 	padding: 16px 32px;
 	z-index: 1050;
-	transition: box-shadow 0.3s ease;
-	${props => {
-		if (props.scrolled) {
-			return 'box-shadow: 0px 0px 13px 4px rgba(0,0,0,0.5);';
-		}
-	}}
+	transition: top 0.3s ease;
 `;
 
 export const Logo = styled.div`
