@@ -41,6 +41,7 @@ import { getNowUnixMS } from '@/helpers/time';
 import { useOnboard, useSubgraph } from '@/context';
 import { formatDate } from '@/lib/helpers';
 import { GIVBackExplainModal } from '../modals/GIVBackExplain';
+import { TopFiller, TopInnerContainer } from './commons';
 
 export const TabGIVbacksTop = () => {
 	const [showHarvestModal, setShowHarvestModal] = useState(false);
@@ -61,7 +62,8 @@ export const TabGIVbacksTop = () => {
 	return (
 		<>
 			<GIVbacksTopContainer>
-				<Container>
+				<TopInnerContainer>
+					<TopFiller />
 					<Row justifyContent='space-between'>
 						<Left>
 							<Row alignItems='baseline' gap='16px'>
@@ -97,7 +99,7 @@ export const TabGIVbacksTop = () => {
 							/>
 						</Right>
 					</Row>
-				</Container>
+				</TopInnerContainer>
 			</GIVbacksTopContainer>
 			{showHarvestModal && (
 				<HarvestAllModal

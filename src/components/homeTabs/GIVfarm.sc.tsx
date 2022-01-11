@@ -25,7 +25,7 @@ export const Left = styled.div`
 `;
 
 export const Right = styled.div`
-	width: 360px;
+	align-self: end;
 `;
 
 export const Title = styled(D1)`
@@ -37,11 +37,7 @@ export const Subtitle = styled(QuoteText)`
 	margin-bottom: 89px;
 `;
 
-export const GIVfarmRewardCard = styled(RewardCard)`
-	position: absolute;
-	z-index: 1;
-	bottom: -37px;
-`;
+export const GIVfarmRewardCard = styled(RewardCard)``;
 
 interface PoolRowProps {
 	disabled?: boolean;

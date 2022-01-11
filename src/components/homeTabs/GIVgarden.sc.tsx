@@ -15,6 +15,7 @@ import {
 import { TopContainer } from './commons';
 import { RewardCard } from '../RewardCard';
 import { Row } from '../styled-components/Grid';
+import { device } from '@/utils/constants';
 
 export const GardenTopContainer = styled(TopContainer)`
 	overflow: hidden;
@@ -29,12 +30,13 @@ export const GardenTopContainer = styled(TopContainer)`
 `;
 
 export const Left = styled.div`
-	width: 616px;
+	/* width: 616px; */
 `;
 
 export const Right = styled.div`
-	width: 360px;
+	/* width: 360px; */
 	position: relative;
+	align-self: end;
 	&::before {
 		content: url('/images/flower1.svg');
 		position: absolute;
@@ -52,18 +54,21 @@ export const Right = styled.div`
 `;
 
 export const Title = styled(D1)`
+	position: relative;
 	margin-top: 60px;
 	margin-bottom: 24px;
+	display: inline-block;
 `;
 
 export const Subtitle = styled(QuoteText)`
-	margin-bottom: 48px;
+	/* margin-bottom: 48px; */
 `;
 
 export const GardenRewardCard = styled(RewardCard)`
-	position: absolute;
+	/* position: absolute;
+	bottom: -37px; */
 	z-index: 1;
-	bottom: -37px;
+	position: relative;
 `;
 
 export const GardenBottomContainer = styled.div``;
@@ -74,7 +79,7 @@ export const Section1Title = styled(H3)`
 `;
 
 export const Section1Subtitle = styled(QuoteText)`
-	width: 802px;
+	/* width: 802px; */
 `;
 
 export const OpenGardenButton = styled(Button)`
@@ -89,11 +94,17 @@ export const Section2Title = styled(H1)`
 `;
 
 export const GovernanceDB = styled(DataBlock)`
-	width: 385px;
+	width: 100%;
 	min-height: 285px;
 	display: flex;
 	flex-flow: column nowrap;
 	align-items: flex-start;
+	@media ${device.tablet} {
+		width: calc(50% - 16px);
+	}
+	@media ${device.laptop} {
+		width: calc(33% - 16px);
+	}
 `;
 
 export const GovernanceLink = styled(GLink)`
@@ -134,7 +145,6 @@ export const VoteCard = styled.div`
 `;
 
 export const VoteCardDesc = styled(QuoteText)`
-	width: 754px;
 	color: ${brandColors.giv[200]};
 	margin-top: 24px;
 	margin-bottom: 8px;
@@ -144,4 +154,20 @@ export const VoteCardButton = styled(Button)`
 	display: block;
 	padding: 24px 73px;
 	margin-left: auto;
+`;
+
+export const GardenIconContainer = styled.div`
+	position: absolute;
+	top: -50px;
+	right: 0;
+	@media ${device.tablet} {
+	}
+	@media ${device.laptop} {
+		top: -50px;
+		right: -56px;
+	}
+	@media ${device.laptopL} {
+		top: 0;
+		right: -72px;
+	}
 `;

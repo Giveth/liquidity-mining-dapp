@@ -73,6 +73,7 @@ import { HarvestAllModal } from '../modals/HarvestAll';
 import { Zero } from '@ethersproject/constants';
 import { useSubgraph } from '@/context';
 import { ITokenAllocation } from '@/types/subgraph';
+import { TopFiller } from './commons';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -102,6 +103,7 @@ export const TabGIVstreamTop = () => {
 		<>
 			<GIVstreamTopContainer>
 				<GIVstreamTopInnerContainer>
+					<TopFiller />
 					<Row justifyContent='space-between'>
 						<Left>
 							<Row alignItems='baseline' gap='16px'>

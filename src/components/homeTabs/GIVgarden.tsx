@@ -20,6 +20,7 @@ import {
 	VoteCard,
 	VoteCardDesc,
 	VoteCardButton,
+	GardenIconContainer,
 } from './GIVgarden.sc';
 import { HarvestAllModal } from '../modals/HarvestAll';
 import config from '@/configuration';
@@ -30,6 +31,7 @@ import { Zero } from '@ethersproject/constants';
 import { useOnboard } from '@/context';
 import { ethers } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
+import { TopFiller, TopInnerContainer } from './commons';
 
 const poolStakingConfig = getGivStakingConfig(config.XDAI_CONFIG);
 
@@ -52,17 +54,20 @@ export const TabGardenTop = () => {
 	useEffect(() => {
 		setEarnedLiquidPart(tokenDistroHelper.getLiquidPart(earned));
 		setEarnedStream(tokenDistroHelper.getStreamPartTokenPerWeek(earned));
-	}, [earned]);
+	}, [earned, tokenDistroHelper]);
 
 	return (
 		<GardenTopContainer>
-			<Container>
+			<TopInnerContainer>
+				<TopFiller />
 				<Row justifyContent='space-between'>
 					<Left>
-						<Row alignItems='baseline' gap='16px'>
-							<Title>GIVgarden</Title>
-							<IconGIVGarden size={64} />
-						</Row>
+						<Title>
+							GIVgarden
+							<GardenIconContainer>
+								<IconGIVGarden size={64} />
+							</GardenIconContainer>
+						</Title>
 						<Subtitle size='medium'>
 							The GIVgarden is the decentralized governance
 							platform for the GIVeconomy.
@@ -83,7 +88,7 @@ export const TabGardenTop = () => {
 						/>
 					</Right>
 				</Row>
-			</Container>
+			</TopInnerContainer>
 			{showModal && (
 				<HarvestAllModal
 					title='GIVgarden Rewards'
@@ -124,7 +129,7 @@ export const TabGardenBottom = () => {
 				<Section2Title weight={500}>
 					Three Pillars of Governance
 				</Section2Title>
-				<GovernanceRaw justifyContent='space-between'>
+				<GovernanceRaw wrap={1} justifyContent='space-between'>
 					<GovernanceDB
 						title='Covenant'
 						button={

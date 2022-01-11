@@ -118,13 +118,15 @@ export const RewardCard: FC<IRewardCardProps> = ({
 								/>
 							</IconHelpWraper>
 						</RateInfo>
-						{actionLabel && actionCb && (
+						{actionLabel && actionCb ? (
 							<ActionButton
 								label={actionLabel}
 								onClick={actionCb}
 								buttonType='primary'
 								disabled={liquidAmount.isZero()}
 							/>
+						) : (
+							<PlaceHolderButton />
 						)}
 						{subButtonLabel && (
 							<StyledSubButton
@@ -149,10 +151,11 @@ export const RewardCard: FC<IRewardCardProps> = ({
 };
 
 const RewadCardContainer = styled.div`
+	position: relative;
 	width: 360px;
 	background-color: ${brandColors.giv[700]};
-	padding: 24px 24px 69px;
-	border-radius: 8px;
+	padding: 24px 24px;
+	border-radius: 8px 8px 0 0;
 	box-shadow: 0px 5px 16px rgba(0, 0, 0, 0.15);
 `;
 
@@ -201,10 +204,11 @@ const IconHelpWraper = styled.div`
 
 const StyledSubButton = styled(Caption)`
 	color: ${brandColors.giv[100]};
-	position: absolute;
-	left: 50%;
 	cursor: pointer;
-	margin-top: 8px;
+	margin: 8px 0;
 	text-align: center;
-	transform: translateX(-50%);
+`;
+
+const PlaceHolderButton = styled.div`
+	height: 40px;
 `;
