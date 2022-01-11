@@ -154,4 +154,14 @@ export const GardenIconContainer = styled.div`
 	position: absolute;
 	top: -50px;
 	right: 0;
+	@media ${device.tablet} {
+	}
+	@media ${device.laptop} {
+		top: -50px;
+		right: -56px;
+	}
+	@media ${device.laptopL} {
+		top: 0;
+		right: -72px;
+	}
 `;
