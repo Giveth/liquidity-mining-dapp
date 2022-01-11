@@ -19,7 +19,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 
 	useEffect(() => {
 		const windowResizeHandler = () => {
-			console.log(window.screen.width);
 			if (window.screen.width < 768) {
 				setShowMobileModal(true);
 				setViewPort(true);
