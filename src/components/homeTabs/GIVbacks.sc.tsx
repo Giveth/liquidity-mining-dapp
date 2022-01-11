@@ -37,9 +37,7 @@ export const GBTitle = styled(D1)`
 	margin-bottom: 24px;
 `;
 
-export const GBSubtitle = styled(QuoteText)`
-	margin-bottom: 89px;
-`;
+export const GBSubtitle = styled(QuoteText)``;
 
 export const GIVbackRewardCard = styled(RewardCard)``;
 
