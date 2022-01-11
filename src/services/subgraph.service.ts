@@ -1,15 +1,5 @@
 import config from '@/configuration';
-import { ethers } from 'ethers';
-import { Zero } from '@ethersproject/constants';
-import {
-	ITokenAllocation,
-	IUnipool,
-	IUniswapV3Pool,
-	IUniswapV3Position,
-	IUniswapV3Positions,
-} from '@/types/subgraph';
-
-const BN = ethers.BigNumber.from;
+import { ITokenAllocation } from '@/types/subgraph';
 
 export const fetchSubgraph = async (
 	query: string,

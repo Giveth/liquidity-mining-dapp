@@ -27,7 +27,7 @@ export const BalanceContext = createContext<ITokenDistroContext>({
 });
 
 export const TokenDistroProvider: FC = ({ children }) => {
-	const { address, network, provider } = useContext(OnboardContext);
+	const { network } = useContext(OnboardContext);
 
 	const { mainnetValues, xDaiValues } = useSubgraph();
 
