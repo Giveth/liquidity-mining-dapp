@@ -64,10 +64,10 @@ export const RewardCard: FC<IRewardCardProps> = ({
 	const { price } = usePrice();
 	useEffect(() => {
 		const usd = (+ethers.utils.formatEther(
-			price.times(liquidAmount.toString()).toFixed(),
+			price.times(liquidAmount.toString()).toFixed(0),
 		)).toFixed(2);
 		setUSDAmount(usd);
-	}, [liquidAmount, network]);
+	}, [liquidAmount, price]);
 
 	return (
 		<>
