@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 import { Zero } from '@/helpers/number';
 import { useSubgraph } from '@/context/subgraph.context';
 import config from '@/configuration';
+import { useLiquidityPositions } from '@/context/positions.context';
 
 export interface IPriceContext {
 	price: BigNumber;
@@ -16,7 +17,8 @@ const priceDefaultValue = {
 const PriceContext = createContext<IPriceContext>(priceDefaultValue);
 export const PriceProvider: FC = ({ children }) => {
 	const { network } = useContext(OnboardContext);
-	const { mainnetValues, xDaiValues } = useSubgraph();
+	const { xDaiValues } = useSubgraph();
+	const { pool } = useLiquidityPositions();
 
 	const [currentPrice, setCurrentPrice] = useState<BigNumber>(Zero);
 	const [mainnetPrice, setMainnetPrice] = useState<BigNumber>(Zero);
@@ -53,7 +55,23 @@ export const PriceProvider: FC = ({ children }) => {
 		}
 	}, [xDaiValues, ethPrice]);
 
-	useEffect(() => {}, [mainnetValues, ethPrice]);
+	useEffect(() => {
+		if (pool) {
+			const { token1, token0, token0Price, token1Price } = pool;
+			switch (config.MAINNET_CONFIG.TOKEN_ADDRESS.toLowerCase()) {
+				case token0.address.toLowerCase():
+					setMainnetPrice(ethPrice.times(token0Price.toFixed(18)));
+					break;
+
+				case token1.address.toLowerCase():
+					setMainnetPrice(ethPrice.times(token1Price.toFixed(18)));
+					break;
+
+				default:
+					console.error('Non of UniswapV3Pool tokens is GIV');
+			}
+		}
+	}, [pool, ethPrice]);
 
 	useEffect(() => {
 		fetch('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD')
@@ -63,7 +81,7 @@ export const PriceProvider: FC = ({ children }) => {
 			})
 			.catch(error => {
 				console.error(
-					'Error on getting eth price from crypto=compare:',
+					'Error on getting eth price from crypto-compare:',
 					error,
 				);
 			});
@@ -73,13 +91,11 @@ export const PriceProvider: FC = ({ children }) => {
 		switch (network) {
 			case config.XDAI_NETWORK_NUMBER:
 				setCurrentPrice(xDaiPrice);
-				console.log('xdai price:', xDaiPrice.toFixed());
 				break;
 
 			case config.MAINNET_NETWORK_NUMBER:
 			default:
 				setCurrentPrice(mainnetPrice);
-				console.log('mainnet price:', mainnetPrice.toFixed());
 				break;
 		}
 	}, [network, xDaiPrice, mainnetPrice]);

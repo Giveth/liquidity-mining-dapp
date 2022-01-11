@@ -28,6 +28,7 @@ const ERC721NftContext = createContext<{
 	currentIncentive: { key?: (string | number)[] | null };
 	loadingNftPositions: boolean;
 	apr: BigNumber;
+	pool: Pool | null;
 } | null>(null);
 
 interface IPositionsInfo {
@@ -53,6 +54,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 		LiquidityPosition[]
 	>([]);
 	const [apr, setApr] = useState<BigNumber>(Zero);
+	const [pool, setPool] = useState<Pool | null>(null);
 
 	const [loadingNftPositions, setLoadingNftPositions] = useState(false);
 
@@ -167,7 +169,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				const _token0: Token = givIsToken0 ? givToken : wethToken;
 				const _token1: Token = givIsToken0 ? wethToken : givToken;
 
-				let pool = new Pool(
+				const _pool = new Pool(
 					_token0,
 					_token1,
 					3000,
@@ -176,13 +178,15 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 					uniswapV3Pool.tick,
 				);
 
+				setPool(_pool);
+
 				const allUserPositions: LiquidityPosition[] = (
 					await Promise.all(
 						[...userStakedPositions, ...userNotStakedPositions].map(
 							positionInfo =>
 								transformToLiquidityPosition(
 									positionInfo,
-									pool,
+									_pool,
 								),
 						),
 					)
@@ -228,7 +232,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				setStakedPositions(stakedPositionsWithURI);
 				setUnstakedPositions(unstakedPositionsWithURI);
 
-				const ethPriceInGIV = pool.priceOf(pool.token1).toFixed(10);
+				const ethPriceInGIV = _pool.priceOf(_pool.token1).toFixed(10);
 				// console.log('ethPriceInGIV: ', ethPriceInGIV);
 
 				if (
@@ -241,7 +245,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 					const allLiquidityPositions = (await Promise.all(
 						allPositions.map(p =>
-							transformToLiquidityPosition(p, pool),
+							transformToLiquidityPosition(p, _pool),
 						),
 					)) as LiquidityPosition[];
 
@@ -251,8 +255,8 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 							if (!_position) return acc;
 
 							if (
-								_position.tickLower > pool.tickCurrent ||
-								_position.tickUpper < pool.tickCurrent
+								_position.tickLower > _pool.tickCurrent ||
+								_position.tickUpper < _pool.tickCurrent
 							) {
 								// Out of range
 								return acc;
@@ -347,6 +351,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				currentIncentive,
 				loadingNftPositions,
 				apr,
+				pool,
 			}}
 		>
 			{children}
