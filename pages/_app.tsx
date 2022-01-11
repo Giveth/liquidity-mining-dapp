@@ -11,34 +11,54 @@ import { TokenDistroProvider } from '@/context/tokenDistro.context';
 import { MobileModal } from '@/components/modals/Mobile';
 import { useEffect, useState } from 'react';
 import { SubgraphProvider } from '@/context/subgraph.context';
+import Head from 'next/head';
 
 function MyApp({ Component, pageProps }: AppProps) {
 	const [showMobileModal, setShowMobileModal] = useState(false);
+	const [viewPort, setViewPort] = useState(false);
 
 	useEffect(() => {
-		if (window.screen.width < 640) setShowMobileModal(true);
+		const windowResizeHandler = () => {
+			if (window.screen.width < 768) {
+				setShowMobileModal(true);
+				setViewPort(true);
+			} else {
+				setShowMobileModal(false);
+				setViewPort(false);
+			}
+		};
+		windowResizeHandler();
+		window.addEventListener('resize', windowResizeHandler);
+		return () => {
+			removeEventListener('resize', windowResizeHandler);
+		};
 	}, []);
 
 	return (
-		<OnboardProvider>
-			<SubgraphProvider>
-				<TokenDistroProvider>
-					<NftsProvider>
-						<FarmProvider>
-							<ThemeProvider>
-								<Component {...pageProps} />
-								{showMobileModal && (
-									<MobileModal
-										showModal={showMobileModal}
-										setShowModal={setShowMobileModal}
-									/>
-								)}
-							</ThemeProvider>
-						</FarmProvider>
-					</NftsProvider>
-				</TokenDistroProvider>
-			</SubgraphProvider>
-		</OnboardProvider>
+		<>
+			<Head>
+				{viewPort && <meta name='viewport' content='width=768' />}
+			</Head>
+			<OnboardProvider>
+				<SubgraphProvider>
+					<TokenDistroProvider>
+						<NftsProvider>
+							<FarmProvider>
+								<ThemeProvider>
+									<Component {...pageProps} />
+									{showMobileModal && (
+										<MobileModal
+											showModal={showMobileModal}
+											setShowModal={setShowMobileModal}
+										/>
+									)}
+								</ThemeProvider>
+							</FarmProvider>
+						</NftsProvider>
+					</TokenDistroProvider>
+				</SubgraphProvider>
+			</OnboardProvider>
+		</>
 	);
 }
 export default MyApp;

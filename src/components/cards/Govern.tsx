@@ -247,7 +247,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 										width='16'
 										alt='Star icon'
 									/>
-									{formatEthHelper(apr ? apr : Zero, 2)}%
+									{formatEthHelper(apr ? apr : Zero)}%
 								</PoolItemBold>
 							</Row>
 							<Row justifyContent='space-between'>
@@ -259,7 +259,7 @@ const GovernCard: FC<IClaimViewCardProps> = ({ index }) => {
 							<Row justifyContent='space-between'>
 								<PoolItem>Streaming</PoolItem>
 								<PoolItemBold>
-									{formatWeiHelper(earnEstimate, 2)} GIV/week
+									{formatWeiHelper(earnEstimate)} GIV/week
 								</PoolItemBold>
 							</Row>
 						</PoolItems>

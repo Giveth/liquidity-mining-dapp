@@ -10,31 +10,34 @@ import {
 	DataBlock,
 	brandColors,
 	ButtonLink,
+	D1,
 } from '@giveth/ui-design-system';
 import { TabContainer, TopContainer } from './commons';
+import { device } from '@/utils/constants';
 
 export const OverviewBottomContainer = styled.div`
-	background-image: url('/images/backgrounds/curves.svg');
-	background-size: contain;
+	background-image: url('/images/backgrounds/wave.svg');
 	background-position: center;
-	background-repeat: no-repeat;
+	background-repeat: repeat-x;
 `;
 
-export const OverviewTopContainer = styled(TopContainer)``;
+export const OverviewTopContainer = styled(TopContainer)`
+	height: 650px;
+`;
 
-export const OverviewTitle = styled(D3)`
-	font-size: 107px;
+export const OverviewTitle = styled(D1)`
 	padding-bottom: 36px;
 	max-width: 989px;
 `;
 
 export const PreTitle = styled(D3)`
+	padding-top: 77px;
+	display: block;
 	color: #a3b0f6;
 `;
 
 export const SubTitle = styled(QuoteText)`
-	max-width: 798px;
-	padding-bottom: 156px;
+	max-width: 907px;
 `;
 
 export const ClaimCardButton = styled(Button)`
@@ -48,7 +51,7 @@ export const TabTitle = styled(H1)`
 `;
 
 export const TabDesc = styled(QuoteText)`
-	width: 812px;
+	max-width: 812px;
 	margin-bottom: 50px;
 `;
 
@@ -60,7 +63,7 @@ export const Section2Title = styled(H1)`
 
 export const ClaimCard = styled.div`
 	background-color: #3c14c5;
-	padding: 105px 146px;
+	padding: 141px 16px 106px;
 	background-image: url('/images/backgrounds/giv-outline.svg');
 	border-radius: 8px;
 	min-height: 480px;
@@ -78,24 +81,46 @@ export const ClaimCard = styled.div`
 		bottom: -4px;
 		left: 0;
 	}
+	@media ${device.laptop} {
+		padding: 100px 50px 146px;
+	}
+	@media ${device.laptopL} {
+		padding: 100px 64px 146px;
+	}
+	@media ${device.desktop} {
+		padding: 100px 64px 146px;
+	}
 `;
 export const ClaimCardTitle = styled(H1)`
 	margin-bottom: 22px;
 `;
 
 export const EGDataBlock = styled(DataBlock)`
-	width: 355px;
+	width: 100%;
+	margin-bottom: 64px;
+	@media ${device.tablet} {
+		width: calc(50% - 16px);
+	}
+	@media ${device.laptop} {
+		width: calc(33% - 16px);
+	}
 `;
 
 export const ParticipateDataBlock = styled(DataBlock)`
-	min-height: 345px;
-	width: 286px;
+	width: 100%;
 	display: flex;
 	flex-flow: column nowrap;
 	align-items: flex-start;
+	margin-bottom: 32px;
 
 	div:nth-child(2) {
 		flex-grow: 1;
+	}
+	@media ${device.tablet} {
+		width: calc(50% - 16px);
+	}
+	@media ${device.laptop} {
+		width: calc(33% - 16px);
 	}
 `;
 

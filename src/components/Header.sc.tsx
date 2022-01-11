@@ -8,7 +8,9 @@ import {
 	Button,
 	GLink,
 	Subline,
+	ButtonLink,
 } from '@giveth/ui-design-system';
+import { device } from '@/utils/constants';
 
 export const StyledHeader = styled(Row)<IHeader>`
 	padding: 16px 32px;
@@ -111,6 +113,20 @@ export const HeaderLinks = styled(Row)`
 	border-radius: 48px;
 	padding: 6px;
 	gap: 8px;
+	display: none;
+	@media ${device.laptopL} {
+		display: flex;
+	}
+`;
+
+export const SmallHeaderLinks = styled(Row)`
+	align-self: center;
+	align-items: center;
+	display: flex;
+	padding: 0 16px;
+	@media ${device.laptopL} {
+		display: none;
+	}
 `;
 
 export const HeaderLink = styled(GLink)<IHeaderLinkProps>`
@@ -129,8 +145,26 @@ export const NotifButton = styled(HeaderButton)`
 	max-width: 48px;
 `;
 
-export const CreateProject = styled(Button)`
+export const CreateProject = styled(ButtonLink)`
 	white-space: nowrap;
+	display: none;
+	@media ${device.laptop} {
+		display: block;
+	}
+`;
+
+export const SmallCreateProject = styled(ButtonLink)`
+	white-space: nowrap;
+	padding: 0;
+	width: 48px;
+	height: 48px;
+	gap: 0;
+	span {
+		font-size: 32px !important;
+	}
+	@media ${device.laptop} {
+		display: none;
+	}
 `;
 
 export const BalanceTooltip = styled(Subline)`
