@@ -20,6 +20,7 @@ import {
 	VoteCard,
 	VoteCardDesc,
 	VoteCardButton,
+	GardenIconContainer,
 } from './GIVgarden.sc';
 import { HarvestAllModal } from '../modals/HarvestAll';
 import config from '@/configuration';
@@ -63,7 +64,9 @@ export const TabGardenTop = () => {
 					<Left>
 						<Title>
 							GIVgarden
-							<IconGIVGarden size={64} />
+							<GardenIconContainer>
+								<IconGIVGarden size={64} />
+							</GardenIconContainer>
 						</Title>
 						<Subtitle size='medium'>
 							The GIVgarden is the decentralized governance

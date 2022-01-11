@@ -54,8 +54,10 @@ export const Right = styled.div`
 `;
 
 export const Title = styled(D1)`
+	position: relative;
 	margin-top: 60px;
 	margin-bottom: 24px;
+	display: inline-block;
 `;
 
 export const Subtitle = styled(QuoteText)`
@@ -146,4 +148,10 @@ export const VoteCardButton = styled(Button)`
 	display: block;
 	padding: 24px 73px;
 	margin-left: auto;
+`;
+
+export const GardenIconContainer = styled.div`
+	position: absolute;
+	top: -50px;
+	right: 0;
 `;
