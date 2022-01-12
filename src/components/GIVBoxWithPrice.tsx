@@ -24,8 +24,7 @@ export const GIVBoxWithPrice: FC<IGIVBoxWithPriceProps> = ({
 				<GIVBoxWithPriceAmount>
 					{formatWeiHelper(amount)}
 				</GIVBoxWithPriceAmount>
-				{/* <GIVBoxWithPriceUSD>~${price}</GIVBoxWithPriceUSD> */}
-				<GIVBoxWithPriceUSD>reserved</GIVBoxWithPriceUSD>
+				<GIVBoxWithPriceUSD>~${price}</GIVBoxWithPriceUSD>
 			</GIVBoxWithPriceContainer>
 		</>
 	);
