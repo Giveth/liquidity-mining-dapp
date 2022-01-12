@@ -89,11 +89,6 @@ export interface IUniswapV3Position {
 	staker: string | null;
 	staked: boolean;
 }
-export interface IUniswapV3Positions {
-	userStaked: IUniswapV3Position[];
-	userNotStaked: IUniswapV3Position[];
-	all: IUniswapV3Position[];
-}
 
 export interface IUniswapV3Pool {
 	token0: string;
@@ -101,4 +96,11 @@ export interface IUniswapV3Pool {
 	sqrtPriceX96: ethers.BigNumber;
 	tick: number;
 	liquidity: ethers.BigNumber;
+}
+
+export interface IUniswapV2Pair {
+	token0: string;
+	token1: string;
+	reserve0: ethers.BigNumber;
+	reserve1: ethers.BigNumber;
 }

@@ -1,6 +1,5 @@
 import config from '@/configuration';
 import { formatWeiHelper, Zero } from '@/helpers/number';
-import { getGIVPrice } from '@/services/subgraph.service';
 import {
 	brandColors,
 	Caption,
@@ -30,6 +29,7 @@ import BigNumber from 'bignumber.js';
 import { IconEthereum } from './Icons/Eth';
 import { WhatisGIVstreamModal } from '@/components/modals/WhatisGIVstream';
 import { WrongNetworkInnerModal } from './modals/WrongNetwork';
+import { usePrice } from '@/context/price.context';
 
 interface IRewardCardProps {
 	title?: string;
@@ -61,14 +61,13 @@ export const RewardCard: FC<IRewardCardProps> = ({
 	const [usdAmount, setUSDAmount] = useState('0');
 	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
 		useState(false);
+	const { price } = usePrice();
 	useEffect(() => {
-		getGIVPrice(network).then(price => {
-			const usd = (
-				+ethers.utils.formatEther(liquidAmount) * price
-			).toFixed(2);
-			setUSDAmount(usd);
-		});
-	}, [liquidAmount, network]);
+		const usd = (+ethers.utils.formatEther(
+			price.times(liquidAmount.toString()).toFixed(0),
+		)).toFixed(2);
+		setUSDAmount(usd);
+	}, [liquidAmount, price]);
 
 	return (
 		<>
@@ -101,8 +100,7 @@ export const RewardCard: FC<IRewardCardProps> = ({
 							<Title>{formatWeiHelper(liquidAmount)}</Title>
 							<AmountUnit>GIV</AmountUnit>
 						</AmountInfo>
-						{/* <Converted>~${usdAmount}</Converted> */}
-						<Converted>reserved</Converted>
+						<Converted>~${usdAmount}</Converted>
 						<RateInfo alignItems='center' gap='8px'>
 							<IconGIVStream size={24} />
 							<P>{formatWeiHelper(stream)}</P>
@@ -180,10 +178,8 @@ const AmountUnit = styled(Lead)`
 
 const Converted = styled(P)`
 	color: ${brandColors.deep[200]};
-	opacity: 0;
 	margin-left: 40px;
 	margin-bottom: 22px;
-	user-select: none;
 `;
 
 const RateInfo = styled(Row)`

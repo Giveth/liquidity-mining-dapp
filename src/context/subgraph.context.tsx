@@ -14,6 +14,7 @@ import {
 	IBalances,
 	ITokenDistroInfo,
 	IUnipool,
+	IUniswapV2Pair,
 	IUniswapV3Pool,
 	IUniswapV3Position,
 	ZeroBalances,
@@ -34,6 +35,7 @@ export interface ISubgraphValue {
 	userNotStakedPositions: IUniswapV3Position[];
 	userStakedPositions: IUniswapV3Position[];
 	allPositions: IUniswapV3Position[];
+	uniswapV2EthGivPair?: IUniswapV2Pair;
 }
 
 export interface ISubgraphContext {

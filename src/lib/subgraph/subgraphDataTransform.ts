@@ -3,6 +3,7 @@ import {
 	IBalances,
 	ITokenDistroInfo,
 	IUnipool,
+	IUniswapV2Pair,
 	IUniswapV3Pool,
 	IUniswapV3Position,
 	ZeroBalances,
@@ -168,6 +169,21 @@ const transformUniswapPositions = (info: any): any => {
 	};
 };
 
+const transformUniswapV2Pair = (info: any): IUniswapV2Pair | undefined => {
+	if (!info) return undefined;
+	const token0 = info?.token0 || ethers.constants.AddressZero;
+	const token1 = info?.token1 || ethers.constants.AddressZero;
+
+	const reserve0 = BN(info?.reserve0 || 1);
+	const reserve1 = BN(info?.reserve1 || 1);
+
+	return {
+		token0,
+		token1,
+		reserve0,
+		reserve1,
+	};
+};
 export const transformSubgraphData = async (
 	data: any = {},
 ): Promise<ISubgraphValue> => {
@@ -186,5 +202,6 @@ export const transformSubgraphData = async (
 		),
 		uniswapV3Pool: transformUniswapV3Pool(data?.uniswapV3Pool),
 		...transformUniswapPositions(data),
+		uniswapV2EthGivPair: transformUniswapV2Pair(data?.uniswapV2EthGivPair),
 	};
 };

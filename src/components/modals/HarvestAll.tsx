@@ -11,7 +11,6 @@ import {
 	Lead,
 } from '@giveth/ui-design-system';
 import { OnboardContext } from '@/context/onboard.context';
-import { getGIVPrice } from '@/services/subgraph.service';
 import { PoolStakingConfig } from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
 import { formatWeiHelper } from '@/helpers/number';
@@ -48,6 +47,7 @@ import { claimReward, fetchAirDropClaimData } from '@/lib/claim';
 import config from '@/configuration';
 import { IconWithTooltip } from '../IconWithToolTip';
 import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
+import { usePrice } from '@/context/price.context';
 
 interface IHarvestAllModalProps extends IModal {
 	title: string;
@@ -91,9 +91,9 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		provider,
 	} = useContext(OnboardContext);
 	const { currentIncentive, stakedPositions } = useLiquidityPositions();
+	const { price } = usePrice();
 	const [txHash, setTxHash] = useState('');
 
-	const [price, setPrice] = useState(0);
 	const [givDrop, setGIVdrop] = useState(Zero);
 	const [givDropStream, setGIVdropStream] = useState<BigNumber.Value>(0);
 	const [rewardLiquidPart, setRewardLiquidPart] = useState(Zero);
@@ -125,12 +125,6 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 			setSum(_sum);
 		}
 	}, [rewardLiquidPart, balances.givbackLiquidPart, claimableNow]);
-
-	useEffect(() => {
-		getGIVPrice(network).then(price => {
-			setPrice(price);
-		});
-	}, [network]);
 
 	useEffect(() => {
 		if (
@@ -212,8 +206,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	};
 
 	const calcUSD = (amount: string) => {
-		const usd = (parseInt(amount.toString()) * price).toFixed(2);
-		return usd;
+		return price.times(amount).toFixed(2);
 	};
 
 	return (

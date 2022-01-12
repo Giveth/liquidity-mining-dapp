@@ -12,6 +12,7 @@ import { MobileModal } from '@/components/modals/Mobile';
 import { useEffect, useState } from 'react';
 import { SubgraphProvider } from '@/context/subgraph.context';
 import Head from 'next/head';
+import { PriceProvider } from '@/context/price.context';
 
 function MyApp({ Component, pageProps }: AppProps) {
 	const [showMobileModal, setShowMobileModal] = useState(false);
@@ -43,17 +44,21 @@ function MyApp({ Component, pageProps }: AppProps) {
 				<SubgraphProvider>
 					<TokenDistroProvider>
 						<NftsProvider>
-							<FarmProvider>
-								<ThemeProvider>
-									<Component {...pageProps} />
-									{showMobileModal && (
-										<MobileModal
-											showModal={showMobileModal}
-											setShowModal={setShowMobileModal}
-										/>
-									)}
-								</ThemeProvider>
-							</FarmProvider>
+							<PriceProvider>
+								<FarmProvider>
+									<ThemeProvider>
+										<Component {...pageProps} />
+										{showMobileModal && (
+											<MobileModal
+												showModal={showMobileModal}
+												setShowModal={
+													setShowMobileModal
+												}
+											/>
+										)}
+									</ThemeProvider>
+								</FarmProvider>
+							</PriceProvider>
 						</NftsProvider>
 					</TokenDistroProvider>
 				</SubgraphProvider>
