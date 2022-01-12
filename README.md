@@ -2,7 +2,22 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+First, set these envirnment variables in `env.local` file
+
+```
+NEXT_PUBLIC_ENV=
+NEXT_PUBLIC_XDAI_NODE_URL=
+NEXT_PUBLIC_NODE_URL=
+NEXT_PUBLIC_INFURA_API_KEY=
+```
+`NEXT_PUBLIC_ENV` value can be empty or `production`.
+
+`NEXT_PUBLIC_XDAI_NODE_URL` and `NEXT_PUBLIC_NODE_URL` are JRPC endpoints for xdai and mainnet (kovan in development env) networks.
+
+`NEXT_PUBLIC_INFURA_API_KEY` is the infura api key.
+
+
+Then, run the development server:
 
 ```bash
 npm run dev
