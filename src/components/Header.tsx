@@ -61,7 +61,11 @@ const Header: FC<IHeader> = () => {
 				ticking = false;
 				return;
 			}
-			setShowHeader(scrollY > lastScrollY ? false : true);
+			const show = scrollY > lastScrollY ? false : true;
+			setShowHeader(show);
+			if (!show) {
+				setShowRewardMenu(false);
+			}
 			lastScrollY = scrollY > 0 ? scrollY : 0;
 			ticking = false;
 		};

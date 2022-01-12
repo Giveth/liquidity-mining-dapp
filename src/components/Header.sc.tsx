@@ -185,7 +185,7 @@ export const CoverLine = styled.div`
 	background-color: ${brandColors.giv[900]};
 	position: absolute;
 	z-index: 1;
-	height: 2px;
+	height: 6px;
 	// width: 100%;
 	left: 0;
 	right: 0;
