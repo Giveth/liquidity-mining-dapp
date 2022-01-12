@@ -168,7 +168,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 									color={brandColors.mustard[500]}
 								/>
 								<DetailValue>
-									{apr && formatEthHelper(apr)}%
+									{apr && formatEthHelper(apr, 2)}%
 								</DetailValue>
 								<IconContainer
 									onClick={() => setShowAPRModal(true)}

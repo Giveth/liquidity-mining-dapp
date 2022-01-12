@@ -103,6 +103,16 @@ export class SubgraphQueryBuilder {
 		}`;
 	};
 
+	private static getPairInfoQuery = (address: string): string => {
+		return `pair(id: "${address.toLowerCase()}"){
+			token0
+			token1
+			reserve0
+			reserve1
+		}
+		`;
+	};
+
 	private static generateUnipoolInfoQueries = (
 		configs: SimplePoolStakingConfig[],
 	): string => {
@@ -149,6 +159,12 @@ export class SubgraphQueryBuilder {
 				getGivStakingConfig(config.XDAI_CONFIG),
 				...config.XDAI_CONFIG.pools,
 			])}
+			
+			uniswapV2EthGivPair: ${SubgraphQueryBuilder.getPairInfoQuery(
+				config.XDAI_CONFIG.pools.find(
+					c => c.type === StakingType.SUSHISWAP,
+				)?.POOL_ADDRESS || '',
+			)}
 		}
 		`;
 	};
