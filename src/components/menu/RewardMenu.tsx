@@ -30,6 +30,7 @@ import { useStakingNFT } from '@/hooks/useStakingNFT';
 import { StakingType } from '@/types/config';
 
 export const RewardMenu = () => {
+	const [isMounted, setIsMounted] = useState(false);
 	const [farmsLiquidPart, setFarmsLiquidPart] = useState(Zero);
 	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
 	const [givStreamLiquidPart, setGIVstreamLiquidPart] = useState(Zero);
@@ -99,9 +100,13 @@ export const RewardMenu = () => {
 		}
 	}, [balances, currentValues, network, rewardBalance, tokenDistroHelper]);
 
+	useEffect(() => {
+		setIsMounted(true);
+	}, []);
+
 	return (
 		<>
-			<RewardMenuContainer>
+			<RewardMenuContainer isMounted={isMounted}>
 				<Overline styleType='Small'>Network</Overline>
 				<NetworkRow>
 					<B>{provider?._network?.name}</B>
@@ -145,7 +150,7 @@ export const RewardMenu = () => {
 						<ArrowImage>
 							<Image
 								src='/images/rarrow1.svg'
-								height='42'
+								height='32'
 								width='16'
 								alt='Thunder image'
 							/>
@@ -166,7 +171,7 @@ export const RewardMenu = () => {
 						<ArrowImage>
 							<Image
 								src='/images/rarrow1.svg'
-								height='42'
+								height='32'
 								width='16'
 								alt='Thunder image'
 							/>
@@ -187,7 +192,7 @@ export const RewardMenu = () => {
 						<ArrowImage>
 							<Image
 								src='/images/rarrow1.svg'
-								height='42'
+								height='32'
 								width='16'
 								alt='Thunder image'
 							/>
@@ -217,7 +222,7 @@ export const SwithNetwork = styled(GLink)`
 
 export const FlowrateBox = styled.div`
 	background-color: ${brandColors.giv[500]};
-	margin: 16px -16px;
+	margin: 16px 0;
 	border-radius: 8px;
 	padding: 8px 16px;
 `;
@@ -239,6 +244,12 @@ export const FlowrateUnit = styled(P)`
 export const PartRow = styled(Row)`
 	justify-content: space-between;
 	margin: 16px 0;
+	border-radius: 8px;
+	padding: 4px 16px;
+	cursor: pointer;
+	&:hover {
+		background-color: ${brandColors.giv[800]};
+	}
 `;
 
 export const PartInfo = styled.div``;
