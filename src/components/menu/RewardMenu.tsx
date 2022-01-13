@@ -136,69 +136,69 @@ export const RewardMenu = () => {
 						</IconHelpWraper>
 					</FlowrateRow>
 				</FlowrateBox>
-				<PartRow>
-					<PartInfo>
-						<PartTitle>From Givstream</PartTitle>
-						<Row gap='4px'>
-							<PartAmount medium>
-								{formatWeiHelper(givStreamLiquidPart)}
-							</PartAmount>
-							<PartUnit>GIV</PartUnit>
-						</Row>
-					</PartInfo>
-					<Link href='/givstream' passHref>
-						<ArrowImage>
+				<Link href='/givstream' passHref>
+					<a>
+						<PartRow>
+							<PartInfo>
+								<PartTitle>From Givstream</PartTitle>
+								<Row gap='4px'>
+									<PartAmount medium>
+										{formatWeiHelper(givStreamLiquidPart)}
+									</PartAmount>
+									<PartUnit>GIV</PartUnit>
+								</Row>
+							</PartInfo>
 							<Image
 								src='/images/rarrow1.svg'
 								height='32'
 								width='16'
 								alt='Thunder image'
 							/>
-						</ArrowImage>
-					</Link>
-				</PartRow>
-				<PartRow>
-					<PartInfo>
-						<PartTitle>GIVFarm & Givgarden</PartTitle>
-						<Row gap='4px'>
-							<PartAmount medium>
-								{formatWeiHelper(farmsLiquidPart)}
-							</PartAmount>
-							<PartUnit>GIV</PartUnit>
-						</Row>
-					</PartInfo>
-					<Link href='/givfarm' passHref>
-						<ArrowImage>
+						</PartRow>
+					</a>
+				</Link>
+				<Link href='/givfarm' passHref>
+					<a>
+						<PartRow>
+							<PartInfo>
+								<PartTitle>GIVFarm & Givgarden</PartTitle>
+								<Row gap='4px'>
+									<PartAmount medium>
+										{formatWeiHelper(farmsLiquidPart)}
+									</PartAmount>
+									<PartUnit>GIV</PartUnit>
+								</Row>
+							</PartInfo>
 							<Image
 								src='/images/rarrow1.svg'
 								height='32'
 								width='16'
 								alt='Thunder image'
 							/>
-						</ArrowImage>
-					</Link>
-				</PartRow>
-				<PartRow>
-					<PartInfo>
-						<PartTitle>GIVBacks</PartTitle>
-						<Row gap='4px'>
-							<PartAmount medium>
-								{formatWeiHelper(givBackLiquidPart)}
-							</PartAmount>
-							<PartUnit>GIV</PartUnit>
-						</Row>
-					</PartInfo>
-					<Link href='/givbacks' passHref>
-						<ArrowImage>
+						</PartRow>
+					</a>
+				</Link>
+				<Link href='/givbacks' passHref>
+					<a>
+						<PartRow>
+							<PartInfo>
+								<PartTitle>GIVBacks</PartTitle>
+								<Row gap='4px'>
+									<PartAmount medium>
+										{formatWeiHelper(givBackLiquidPart)}
+									</PartAmount>
+									<PartUnit>GIV</PartUnit>
+								</Row>
+							</PartInfo>
 							<Image
 								src='/images/rarrow1.svg'
 								height='32'
 								width='16'
 								alt='Thunder image'
 							/>
-						</ArrowImage>
-					</Link>
-				</PartRow>
+						</PartRow>
+					</a>
+				</Link>
 			</RewardMenuContainer>
 			{showWhatIsGIVstreamModal && (
 				<WhatisGIVstreamModal
