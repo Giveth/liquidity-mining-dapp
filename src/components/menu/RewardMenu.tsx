@@ -32,7 +32,6 @@ import { StakingType } from '@/types/config';
 export const RewardMenu = () => {
 	const [isMounted, setIsMounted] = useState(false);
 	const [farmsLiquidPart, setFarmsLiquidPart] = useState(Zero);
-	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
 	const [givStreamLiquidPart, setGIVstreamLiquidPart] = useState(Zero);
 	const [flowRateNow, setFlowRateNow] = useState<BigNumber.Value>(0);
 	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
@@ -42,11 +41,7 @@ export const RewardMenu = () => {
 	const { rewardBalance } = useStakingNFT();
 	const { network, provider } = useContext(OnboardContext);
 	const { balances } = currentValues;
-	const { allocatedTokens, claimed, givback } = balances;
-
-	useEffect(() => {
-		setGivBackLiquidPart(tokenDistroHelper.getLiquidPart(givback));
-	}, [givback, tokenDistroHelper]);
+	const { allocatedTokens, claimed, givbackLiquidPart } = balances;
 
 	const switchNetworkHandler = () => {
 		if (network === config.XDAI_NETWORK_NUMBER) {
@@ -59,15 +54,15 @@ export const RewardMenu = () => {
 	useEffect(() => {
 		setGIVstreamLiquidPart(
 			tokenDistroHelper
-				.getLiquidPart(allocatedTokens.sub(givback))
+				.getLiquidPart(allocatedTokens.sub(givbackLiquidPart))
 				.sub(claimed),
 		);
 		setFlowRateNow(
 			tokenDistroHelper.getStreamPartTokenPerWeek(
-				allocatedTokens.sub(givback),
+				allocatedTokens.sub(givbackLiquidPart),
 			),
 		);
-	}, [allocatedTokens, claimed, givback, tokenDistroHelper]);
+	}, [allocatedTokens, claimed, givbackLiquidPart, tokenDistroHelper]);
 
 	useEffect(() => {
 		let pools;
@@ -185,7 +180,7 @@ export const RewardMenu = () => {
 								<PartTitle>GIVBacks</PartTitle>
 								<Row gap='4px'>
 									<PartAmount medium>
-										{formatWeiHelper(givBackLiquidPart)}
+										{formatWeiHelper(givbackLiquidPart)}
 									</PartAmount>
 									<PartUnit>GIV</PartUnit>
 								</Row>
