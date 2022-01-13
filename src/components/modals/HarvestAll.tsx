@@ -275,6 +275,8 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 												price={calcUSD(
 													formatWeiHelper(
 														rewardLiquidPart,
+														config.TOKEN_PRECISION,
+														false,
 													),
 												)}
 											/>
@@ -325,6 +327,8 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 												price={calcUSD(
 													formatWeiHelper(
 														balances.givbackLiquidPart,
+														config.TOKEN_PRECISION,
+														false,
 													),
 												)}
 											/>
@@ -371,7 +375,11 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 											<GIVBoxWithPrice
 												amount={givDrop}
 												price={calcUSD(
-													formatWeiHelper(givDrop),
+													formatWeiHelper(
+														givDrop,
+														config.TOKEN_PRECISION,
+														false,
+													),
 												)}
 											/>
 											<HelpRow alignItems='center'>
@@ -403,6 +411,8 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 												price={calcUSD(
 													formatWeiHelper(
 														claimableNow,
+														config.TOKEN_PRECISION,
+														false,
 													),
 												)}
 											/>
