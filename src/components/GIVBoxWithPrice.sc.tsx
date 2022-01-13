@@ -19,5 +19,5 @@ export const GIVBoxWithPriceAmount = styled(Title)`
 `;
 
 export const GIVBoxWithPriceUSD = styled(P)`
-	color: ${brandColors.deep[200]};
+	color: ${brandColors.deep[100]};
 `;
