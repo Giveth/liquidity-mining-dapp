@@ -30,8 +30,8 @@ import { useStakingNFT } from '@/hooks/useStakingNFT';
 import { StakingType } from '@/types/config';
 
 export const RewardMenu = () => {
+	const [isMounted, setIsMounted] = useState(false);
 	const [farmsLiquidPart, setFarmsLiquidPart] = useState(Zero);
-	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
 	const [givStreamLiquidPart, setGIVstreamLiquidPart] = useState(Zero);
 	const [flowRateNow, setFlowRateNow] = useState<BigNumber.Value>(0);
 	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
@@ -41,11 +41,7 @@ export const RewardMenu = () => {
 	const { rewardBalance } = useStakingNFT();
 	const { network, provider } = useContext(OnboardContext);
 	const { balances } = currentValues;
-	const { allocatedTokens, claimed, givback } = balances;
-
-	useEffect(() => {
-		setGivBackLiquidPart(tokenDistroHelper.getLiquidPart(givback));
-	}, [givback, tokenDistroHelper]);
+	const { allocatedTokens, claimed, givbackLiquidPart } = balances;
 
 	const switchNetworkHandler = () => {
 		if (network === config.XDAI_NETWORK_NUMBER) {
@@ -58,15 +54,15 @@ export const RewardMenu = () => {
 	useEffect(() => {
 		setGIVstreamLiquidPart(
 			tokenDistroHelper
-				.getLiquidPart(allocatedTokens.sub(givback))
+				.getLiquidPart(allocatedTokens.sub(givbackLiquidPart))
 				.sub(claimed),
 		);
 		setFlowRateNow(
 			tokenDistroHelper.getStreamPartTokenPerWeek(
-				allocatedTokens.sub(givback),
+				allocatedTokens.sub(givbackLiquidPart),
 			),
 		);
-	}, [allocatedTokens, claimed, givback, tokenDistroHelper]);
+	}, [allocatedTokens, claimed, givbackLiquidPart, tokenDistroHelper]);
 
 	useEffect(() => {
 		let pools;
@@ -99,9 +95,13 @@ export const RewardMenu = () => {
 		}
 	}, [balances, currentValues, network, rewardBalance, tokenDistroHelper]);
 
+	useEffect(() => {
+		setIsMounted(true);
+	}, []);
+
 	return (
 		<>
-			<RewardMenuContainer>
+			<RewardMenuContainer isMounted={isMounted}>
 				<Overline styleType='Small'>Network</Overline>
 				<NetworkRow>
 					<B>{provider?._network?.name}</B>
@@ -131,69 +131,69 @@ export const RewardMenu = () => {
 						</IconHelpWraper>
 					</FlowrateRow>
 				</FlowrateBox>
-				<PartRow>
-					<PartInfo>
-						<PartTitle>From Givstream</PartTitle>
-						<Row gap='4px'>
-							<PartAmount medium>
-								{formatWeiHelper(givStreamLiquidPart)}
-							</PartAmount>
-							<PartUnit>GIV</PartUnit>
-						</Row>
-					</PartInfo>
-					<Link href='/givstream' passHref>
-						<ArrowImage>
+				<Link href='/givstream' passHref>
+					<a>
+						<PartRow>
+							<PartInfo>
+								<PartTitle>From Givstream</PartTitle>
+								<Row gap='4px'>
+									<PartAmount medium>
+										{formatWeiHelper(givStreamLiquidPart)}
+									</PartAmount>
+									<PartUnit>GIV</PartUnit>
+								</Row>
+							</PartInfo>
 							<Image
 								src='/images/rarrow1.svg'
-								height='42'
+								height='32'
 								width='16'
 								alt='Thunder image'
 							/>
-						</ArrowImage>
-					</Link>
-				</PartRow>
-				<PartRow>
-					<PartInfo>
-						<PartTitle>GIVFarm & Givgarden</PartTitle>
-						<Row gap='4px'>
-							<PartAmount medium>
-								{formatWeiHelper(farmsLiquidPart)}
-							</PartAmount>
-							<PartUnit>GIV</PartUnit>
-						</Row>
-					</PartInfo>
-					<Link href='/givfarm' passHref>
-						<ArrowImage>
+						</PartRow>
+					</a>
+				</Link>
+				<Link href='/givfarm' passHref>
+					<a>
+						<PartRow>
+							<PartInfo>
+								<PartTitle>GIVFarm & Givgarden</PartTitle>
+								<Row gap='4px'>
+									<PartAmount medium>
+										{formatWeiHelper(farmsLiquidPart)}
+									</PartAmount>
+									<PartUnit>GIV</PartUnit>
+								</Row>
+							</PartInfo>
 							<Image
 								src='/images/rarrow1.svg'
-								height='42'
+								height='32'
 								width='16'
 								alt='Thunder image'
 							/>
-						</ArrowImage>
-					</Link>
-				</PartRow>
-				<PartRow>
-					<PartInfo>
-						<PartTitle>GIVBacks</PartTitle>
-						<Row gap='4px'>
-							<PartAmount medium>
-								{formatWeiHelper(givBackLiquidPart)}
-							</PartAmount>
-							<PartUnit>GIV</PartUnit>
-						</Row>
-					</PartInfo>
-					<Link href='/givbacks' passHref>
-						<ArrowImage>
+						</PartRow>
+					</a>
+				</Link>
+				<Link href='/givbacks' passHref>
+					<a>
+						<PartRow>
+							<PartInfo>
+								<PartTitle>GIVBacks</PartTitle>
+								<Row gap='4px'>
+									<PartAmount medium>
+										{formatWeiHelper(givbackLiquidPart)}
+									</PartAmount>
+									<PartUnit>GIV</PartUnit>
+								</Row>
+							</PartInfo>
 							<Image
 								src='/images/rarrow1.svg'
-								height='42'
+								height='32'
 								width='16'
 								alt='Thunder image'
 							/>
-						</ArrowImage>
-					</Link>
-				</PartRow>
+						</PartRow>
+					</a>
+				</Link>
 			</RewardMenuContainer>
 			{showWhatIsGIVstreamModal && (
 				<WhatisGIVstreamModal
@@ -217,7 +217,7 @@ export const SwithNetwork = styled(GLink)`
 
 export const FlowrateBox = styled.div`
 	background-color: ${brandColors.giv[500]};
-	margin: 16px -16px;
+	margin: 16px 0;
 	border-radius: 8px;
 	padding: 8px 16px;
 `;
@@ -239,6 +239,12 @@ export const FlowrateUnit = styled(P)`
 export const PartRow = styled(Row)`
 	justify-content: space-between;
 	margin: 16px 0;
+	border-radius: 8px;
+	padding: 4px 16px;
+	cursor: pointer;
+	&:hover {
+		background-color: ${brandColors.giv[800]};
+	}
 `;
 
 export const PartInfo = styled.div``;
