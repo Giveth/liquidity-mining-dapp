@@ -6,9 +6,9 @@ import {
 	useState,
 	useCallback,
 } from 'react';
-import { OnboardContext } from '@/context/onboard.context';
 import { ethers } from 'ethers';
 import config from '@/configuration';
+import { useWeb3React } from '@web3-react/core';
 
 export interface FarmContext {
 	totalEarned: ethers.BigNumber;
@@ -35,7 +35,7 @@ export const FarmProvider: FC = ({ children }) => {
 	const [mainnetTotalEarned, setMainnetTotalEarned] = useState(
 		ethers.constants.Zero,
 	);
-	const { network, address } = useContext(OnboardContext);
+	const { account, chainId } = useWeb3React();
 
 	const setInfo = useCallback(
 		(network: number, key: string, value: ethers.BigNumber) => {
@@ -75,23 +75,23 @@ export const FarmProvider: FC = ({ children }) => {
 		setxDaiTotalEarned(ethers.constants.Zero);
 		setMainnetInfos({});
 		setMainnetTotalEarned(ethers.constants.Zero);
-	}, [address]);
+	}, [account]);
 
 	useEffect(() => {
-		if (network === config.MAINNET_NETWORK_NUMBER) {
+		if (chainId === config.MAINNET_NETWORK_NUMBER) {
 			setxDaiInfos({});
 			setxDaiTotalEarned(ethers.constants.Zero);
-		} else if (network === config.XDAI_NETWORK_NUMBER) {
+		} else if (chainId === config.XDAI_NETWORK_NUMBER) {
 			setMainnetInfos({});
 			setMainnetTotalEarned(ethers.constants.Zero);
 		}
-	}, [network]);
+	}, [chainId]);
 
 	return (
 		<FarmContext.Provider
 			value={{
 				totalEarned:
-					network === config.MAINNET_NETWORK_NUMBER
+					chainId === config.MAINNET_NETWORK_NUMBER
 						? mainnetTotalEarned
 						: xDaiTotalEarned,
 				setInfo,
