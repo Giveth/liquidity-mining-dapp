@@ -10,7 +10,7 @@ import GovernCard from '../../cards/Govern';
 import InvestCard from '../../cards/Stake';
 import { Row } from '../../styled-components/Grid';
 import { GiveDropStateType, UserContext } from '@/context/user.context';
-import { OnboardContext } from '@/context/onboard.context';
+import { useWeb3React } from '@web3-react/core';
 
 const stepsTitle = ['Connect', 'Donate', 'Govern', 'Stake', 'Stream', 'Claim'];
 
@@ -113,7 +113,8 @@ export interface IClaimViewCardProps {
 
 const ClaimView = () => {
 	const { giveDropState, step, setStep } = useContext(UserContext);
-	const { network, isReady } = useContext(OnboardContext);
+	const { chainId } = useWeb3React();
+
 	return (
 		<>
 			{/* <SwitchNetwork
@@ -138,8 +139,7 @@ const ClaimView = () => {
 			{step < 6 ? (
 				<ClaimViewContainer
 					switchNetwork={
-						(isReady && network === config.XDAI_NETWORK_NUMBER) ||
-						network === 0
+						chainId === config.XDAI_NETWORK_NUMBER || chainId === 0
 					}
 				>
 					<Steps justifyContent='center' alignItems='center'>
