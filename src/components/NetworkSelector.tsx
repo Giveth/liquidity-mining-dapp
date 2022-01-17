@@ -1,6 +1,5 @@
 import { useContext, useState } from 'react';
 import styled from 'styled-components';
-import { OnboardContext } from '../context/onboard.context';
 import config from '../configuration';
 import { B, brandColors } from '@giveth/ui-design-system';
 import { Row } from './styled-components/Grid';
@@ -9,6 +8,7 @@ import { IconEthereum } from './Icons/Eth';
 import { BasicNetworkConfig } from '../types/config';
 import { ChangeNetworkModal } from './modals/ChangeNetwork';
 import { switchNetwork } from '@/lib/metamask';
+import { useWeb3React } from '@web3-react/core';
 
 interface NetworkSelectorProps {
 	disabled?: boolean;
@@ -47,18 +47,19 @@ const EthSelector = styled(Selector)`
 export const NetworkSelector = () => {
 	const [showChangeNetworkModal, setShowChangeNetworkModal] = useState(false);
 	const [targetNetwork, setTargetNetwork] = useState(1);
-	const { network: walletNetwork, provider } = useContext(OnboardContext);
 	const supportedNetworks = [
 		config.MAINNET_NETWORK_NUMBER,
 		config.XDAI_NETWORK_NUMBER,
 	];
+
+	const { chainId } = useWeb3React();
 
 	const handleChangeNetwork = async (
 		networkNumber: number,
 		network: BasicNetworkConfig,
 	) => {
 		setTargetNetwork(networkNumber);
-		if (walletNetwork !== networkNumber) {
+		if (chainId !== networkNumber) {
 			if (typeof (window as any).ethereum !== 'undefined') {
 				switchNetwork(networkNumber);
 			} else {
@@ -69,37 +70,41 @@ export const NetworkSelector = () => {
 
 	return (
 		<>
-			<NetworkSelectorContainer
-				disabled={!supportedNetworks.includes(walletNetwork)}
-			>
-				<XDaiSelecor
-					isSelected={walletNetwork === config.XDAI_NETWORK_NUMBER}
-					onClick={() => {
-						handleChangeNetwork(
-							config.XDAI_NETWORK_NUMBER,
-							config.XDAI_CONFIG,
-						);
-					}}
+			{chainId ? (
+				<NetworkSelectorContainer
+					disabled={!supportedNetworks.includes(chainId)}
 				>
-					<IconXDAI size={24} />
-					<B>xDai</B>
-				</XDaiSelecor>
-				<EthSelector
-					isSelected={
-						walletNetwork === config.MAINNET_NETWORK_NUMBER ||
-						!supportedNetworks.includes(walletNetwork)
-					}
-					onClick={() => {
-						handleChangeNetwork(
-							config.MAINNET_NETWORK_NUMBER,
-							config.MAINNET_CONFIG,
-						);
-					}}
-				>
-					<IconEthereum size={24} />
-					<B>Ethereum</B>
-				</EthSelector>
-			</NetworkSelectorContainer>
+					<XDaiSelecor
+						isSelected={chainId === config.XDAI_NETWORK_NUMBER}
+						onClick={() => {
+							handleChangeNetwork(
+								config.XDAI_NETWORK_NUMBER,
+								config.XDAI_CONFIG,
+							);
+						}}
+					>
+						<IconXDAI size={24} />
+						<B>xDai</B>
+					</XDaiSelecor>
+					<EthSelector
+						isSelected={
+							chainId === config.MAINNET_NETWORK_NUMBER ||
+							!supportedNetworks.includes(chainId)
+						}
+						onClick={() => {
+							handleChangeNetwork(
+								config.MAINNET_NETWORK_NUMBER,
+								config.MAINNET_CONFIG,
+							);
+						}}
+					>
+						<IconEthereum size={24} />
+						<B>Ethereum</B>
+					</EthSelector>
+				</NetworkSelectorContainer>
+			) : (
+				'' // TODO: show connect your wallet
+			)}
 			{showChangeNetworkModal && (
 				<ChangeNetworkModal
 					showModal={showChangeNetworkModal}
