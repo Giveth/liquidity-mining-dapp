@@ -28,7 +28,7 @@ import styled from 'styled-components';
 import { PoolStakingConfig } from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
 import V3StakingCard from '../cards/PositionCard';
-import { useLiquidityPositions, useOnboard, useSubgraph } from '@/context';
+import { useLiquidityPositions, useSubgraph } from '@/context';
 import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
 import { IconWithTooltip } from '../IconWithToolTip';
 import LoadingAnimation from '@/animations/loading.json';
@@ -43,6 +43,7 @@ import { useTokenDistro } from '@/context/tokenDistro.context';
 import { formatWeiHelper } from '@/helpers/number';
 import { getUniswapV3StakerContract } from '@/lib/contracts';
 import { Scrollbars } from 'react-custom-scrollbars';
+import { useWeb3React } from '@web3-react/core';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -79,7 +80,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 		currentValues: { balances },
 	} = useSubgraph();
 	const { tokenDistroHelper } = useTokenDistro();
-	const { network, provider, address } = useOnboard();
+	const { chainId, library, account } = useWeb3React();
 	const { unstakedPositions, stakedPositions, currentIncentive } =
 		useLiquidityPositions();
 	const positions = isUnstakingModal ? stakedPositions : unstakedPositions;
@@ -97,7 +98,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	);
 
 	const handleStakeUnstake = async (tokenId: number) => {
-		if (!provider) return;
+		if (!account || !library) return;
 
 		if (!isUnstakingModal) {
 			setStakeStatus(StakeState.CONFIRMING);
@@ -109,15 +110,15 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 		const tx = isUnstakingModal
 			? await exit(
 					tokenIdState,
-					address,
-					provider,
+					account,
+					library,
 					currentIncentive,
 					setStakeStatus,
 			  )
 			: await transfer(
 					tokenId,
-					address,
-					provider,
+					account,
+					library,
 					currentIncentive,
 					setStakeStatus,
 			  );
@@ -135,8 +136,8 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	};
 
 	const handleAction = async (tokenId: number) => {
-		const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
-		if (!provider || !uniswapV3StakerContract) return;
+		const uniswapV3StakerContract = getUniswapV3StakerContract(library);
+		if (!library || !uniswapV3StakerContract) return;
 
 		const _reward = await getReward(
 			tokenId,
@@ -289,31 +290,31 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 					</Scrollbars>
 				)}
 				<InnerModalStates>
-					{stakeStatus === StakeState.REJECT && (
+					{chainId && stakeStatus === StakeState.REJECT && (
 						<ErrorInnerModal
 							title='You rejected the transaction.'
-							walletNetwork={network}
+							walletNetwork={chainId}
 							txHash={txStatus?.hash}
 						/>
 					)}
-					{stakeStatus === StakeState.SUBMITTING && (
+					{chainId && stakeStatus === StakeState.SUBMITTING && (
 						<SubmittedInnerModal
 							title={title}
-							walletNetwork={network}
+							walletNetwork={chainId}
 							txHash={txStatus?.hash}
 						/>
 					)}
-					{stakeStatus === StakeState.CONFIRMED && (
+					{chainId && stakeStatus === StakeState.CONFIRMED && (
 						<ConfirmedInnerModal
 							title='Successful transaction.'
-							walletNetwork={network}
+							walletNetwork={chainId}
 							txHash={txStatus?.hash}
 						/>
 					)}
-					{stakeStatus === StakeState.ERROR && (
+					{chainId && stakeStatus === StakeState.ERROR && (
 						<ErrorInnerModal
 							title='Something went wrong!'
-							walletNetwork={network}
+							walletNetwork={chainId}
 							txHash={txStatus?.hash}
 						/>
 					)}
