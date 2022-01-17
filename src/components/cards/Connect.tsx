@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { Button } from '../styled-components/Button';
 import { Row } from '../styled-components/Grid';
 import { ArrowButton, Card } from './common';
-import { OnboardContext } from '../../context/onboard.context';
 import { UserContext, GiveDropStateType } from '../../context/user.context';
 import { IClaimViewCardProps } from '../views/claim/Claim.view';
 import { formatWeiHelper } from '@/helpers/number';
@@ -15,6 +14,8 @@ import {
 	Lead,
 	OulineLinkButton,
 } from '@giveth/ui-design-system';
+import { useWeb3React } from '@web3-react/core';
+import { InjectedConnector } from '@web3-react/injected-connector';
 interface IConnectCardContainerProps {
 	data: any;
 }
@@ -208,7 +209,7 @@ const WalletCheckButton = styled.button`
 `;
 
 export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
-	const { address, connect, isReady } = useContext(OnboardContext);
+	const { account, activate } = useWeb3React();
 	const {
 		totalAmount,
 		giveDropState,
@@ -305,8 +306,10 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 								<ConnectButton
 									secondary
 									onClick={async () => {
-										const res = await connect();
-										if (res) {
+										const res = await activate(
+											new InjectedConnector({}),
+										);
+										if (account) {
 											getClaimData();
 										}
 									}}
@@ -325,7 +328,7 @@ export const ConnectCard: FC<IClaimViewCardProps> = ({ index }) => {
 								<WalletDisplayerInputContainer>
 									<WalletDisplayerInput
 										disabled
-										value={address}
+										value={account || ''}
 										placeholder='Please connect your wallet'
 									/>
 									<WalletCheckButton onClick={getClaimData}>
