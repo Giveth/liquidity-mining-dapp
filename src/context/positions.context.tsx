@@ -15,7 +15,7 @@ import { Token } from '@uniswap/sdk-core';
 import { LiquidityPosition } from '@/types/nfts';
 import config from '@/configuration';
 import { StakingType, UniswapV3PoolStakingConfig } from '@/types/config';
-import { useOnboard, useSubgraph } from '.';
+import { useSubgraph } from '.';
 import { getUniswapV3TokenURI } from '@/services/subgraph.service';
 import { Zero } from '@/helpers/number';
 import BigNumber from 'bignumber.js';
@@ -38,7 +38,6 @@ interface IPositionsInfo {
 
 export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const network = config.MAINNET_NETWORK_NUMBER;
-	const { address: walletAddress, network: walletNetwork } = useOnboard();
 	const { mainnetValues } = useSubgraph();
 	const {
 		userStakedPositions,
