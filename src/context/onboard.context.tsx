@@ -93,9 +93,8 @@ export const OnboardProvider: FC<Props> = ({ children }) => {
 								config.XDAI_CONFIG.nodeUrl,
 						},
 					},
-					{
-						walletName: 'torus',
-					},
+					{ walletName: 'torus'},
+					{ walletName: 'tally'},
 				],
 			},
 			walletCheck: [
