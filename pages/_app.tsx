@@ -1,8 +1,7 @@
 import type { AppProps } from 'next/app';
 
 import '../styles/globals.css';
-
-import { OnboardProvider } from '@/context/onboard.context';
+import { Web3ReactProvider } from '@web3-react/core';
 import { ThemeProvider } from '@/context/theme.context';
 import { FarmProvider } from '@/context/farm.context';
 import { NftsProvider } from '@/context/positions.context';
@@ -13,6 +12,11 @@ import { useEffect, useState } from 'react';
 import { SubgraphProvider } from '@/context/subgraph.context';
 import Head from 'next/head';
 import { PriceProvider } from '@/context/price.context';
+import { ExternalProvider, Web3Provider } from '@ethersproject/providers';
+
+function getLibrary(provider: ExternalProvider) {
+	return new Web3Provider(provider);
+}
 
 function MyApp({ Component, pageProps }: AppProps) {
 	const [showMobileModal, setShowMobileModal] = useState(false);
@@ -40,7 +44,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 			<Head>
 				{viewPort && <meta name='viewport' content='width=768' />}
 			</Head>
-			<OnboardProvider>
+			<Web3ReactProvider getLibrary={getLibrary}>
 				<SubgraphProvider>
 					<TokenDistroProvider>
 						<NftsProvider>
@@ -62,7 +66,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 						</NftsProvider>
 					</TokenDistroProvider>
 				</SubgraphProvider>
-			</OnboardProvider>
+			</Web3ReactProvider>
 		</>
 	);
 }
