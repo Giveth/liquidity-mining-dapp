@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useState, useMemo } from 'react';
-
-import { useLiquidityPositions, useOnboard } from '@/context';
-import { LiquidityPosition } from '@/types/nfts';
+import { useLiquidityPositions } from '@/context';
 import { UniswapV3PoolStakingConfig } from '@/types/config';
 import { BigNumber } from '@ethersproject/bignumber';
 import config from '@/configuration';
 import { getUniswapV3StakerContract } from '@/lib/contracts';
 import { getReward } from '@/lib/stakingNFT';
+import { useWeb3React } from '@web3-react/core';
 
 export const useStakingNFT = () => {
-	const { address: walletAddress, network, provider } = useOnboard();
+	const { account, chainId, library } = useWeb3React();
 	const { stakedPositions } = useLiquidityPositions();
 
 	const [rewardBalance, setRewardBalance] = useState<BigNumber>(
@@ -27,7 +26,7 @@ export const useStakingNFT = () => {
 			!rewardToken ||
 			!poolAddress ||
 			!incentiveRefundeeAddress ||
-			!(network === config.MAINNET_NETWORK_NUMBER)
+			!(chainId === config.MAINNET_NETWORK_NUMBER)
 		)
 			return { key: null };
 
@@ -46,18 +45,18 @@ export const useStakingNFT = () => {
 		rewardToken,
 		poolAddress,
 		incentiveRefundeeAddress,
-		network,
+		chainId,
 		uniswapConfig,
 	]);
 
 	const checkForRewards = useCallback(() => {
-		const uniswapV3StakerContract = getUniswapV3StakerContract(provider);
+		const uniswapV3StakerContract = getUniswapV3StakerContract(library);
 
 		if (
-			!walletAddress ||
+			!account ||
 			!uniswapV3StakerContract ||
 			!currentIncentive.key ||
-			network !== config.MAINNET_NETWORK_NUMBER
+			chainId !== config.MAINNET_NETWORK_NUMBER
 		)
 			return;
 
@@ -81,19 +80,13 @@ export const useStakingNFT = () => {
 			} catch {}
 		};
 		load();
-	}, [
-		walletAddress,
-		network,
-		currentIncentive.key,
-		stakedPositions,
-		provider,
-	]);
+	}, [account, chainId, currentIncentive.key, stakedPositions, library]);
 
 	useEffect(() => {
 		if (
-			!walletAddress ||
+			!account ||
 			!currentIncentive.key ||
-			network !== config.MAINNET_NETWORK_NUMBER
+			chainId !== config.MAINNET_NETWORK_NUMBER
 		)
 			return;
 
@@ -108,8 +101,8 @@ export const useStakingNFT = () => {
 			clearInterval(interval);
 		};
 	}, [
-		walletAddress,
-		network,
+		account,
+		chainId,
 		checkForRewards,
 		currentIncentive.key,
 		stakedPositions,
