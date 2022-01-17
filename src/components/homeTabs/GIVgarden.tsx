@@ -28,15 +28,15 @@ import { useStakingPool } from '@/hooks/useStakingPool';
 import { getGivStakingConfig } from '@/helpers/networkProvider';
 import BigNumber from 'bignumber.js';
 import { Zero } from '@ethersproject/constants';
-import { useOnboard } from '@/context';
 import { ethers } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { TopFiller, TopInnerContainer } from './commons';
+import { useWeb3React } from '@web3-react/core';
 
 const poolStakingConfig = getGivStakingConfig(config.XDAI_CONFIG);
 
 export const TabGardenTop = () => {
-	const { network: walletNetwork } = useOnboard();
+	const { chainId } = useWeb3React();
 	const { tokenDistroHelper } = useTokenDistro();
 
 	const [showModal, setShowModal] = useState(false);
@@ -83,7 +83,7 @@ export const TabGardenTop = () => {
 							actionCb={() => {
 								setShowModal(true);
 							}}
-							network={walletNetwork}
+							network={chainId}
 							targetNetworks={[config.XDAI_NETWORK_NUMBER]}
 						/>
 					</Right>
