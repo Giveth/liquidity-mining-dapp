@@ -1,14 +1,15 @@
 import config from '@/configuration';
 import { P, brandColors } from '@giveth/ui-design-system';
 import styled from 'styled-components';
-import { FC, useContext, useState } from 'react';
+import { FC } from 'react';
 import { Button } from '@giveth/ui-design-system';
 import { switchNetwork } from '@/lib/metamask';
 
 import { chainName } from '@/utils/constants';
 import { Modal, IModal } from './Modal';
 
-import { OnboardContext } from '@/context/onboard.context';
+import { useWeb3React } from '@web3-react/core';
+import { InjectedConnector } from '@web3-react/injected-connector';
 interface IWrongNetworkInnerModal {
 	text?: string;
 	targetNetworks: number[];
@@ -18,13 +19,14 @@ export const WrongNetworkInnerModal: FC<IWrongNetworkInnerModal> = ({
 	text,
 	targetNetworks,
 }) => {
-	const { connect, address } = useContext(OnboardContext);
+	const { account, activate } = useWeb3React();
+
 	const checkWalletAndSwitchNetwork = async (network: number) => {
-		console.log(`address`, address);
-		if (!address) {
-			await connect();
+		console.log(`address`, account);
+		if (!account) {
+			await activate(new InjectedConnector({}));
 		}
-		if (address) {
+		if (account) {
 			await switchNetwork(network);
 		}
 	};
@@ -97,5 +99,4 @@ const WrongNetworkModalContainer = styled.div`
 const WrongNetworkModalTitle = styled.span`
 	font-family: 'Red Hat Text';
 	font-size: 24px;
-	font-bold;
 `;
