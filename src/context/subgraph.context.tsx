@@ -8,7 +8,6 @@ import {
 } from 'react';
 import { isAddress } from 'ethers/lib/utils';
 import { fetchSubgraph } from '@/services/subgraph.service';
-import { OnboardContext } from '@/context/onboard.context';
 import config from '@/configuration';
 import {
 	IBalances,
@@ -22,6 +21,7 @@ import {
 import { SubgraphQueryBuilder } from '@/lib/subgraph/subgraphQueryBuilder';
 import { transformSubgraphData } from '@/lib/subgraph/subgraphDataTransform';
 import { StakingType } from '@/types/config';
+import { useWeb3React } from '@web3-react/core';
 
 export interface ISubgraphValue {
 	balances: IBalances;
@@ -57,7 +57,7 @@ export const SubgraphContext = createContext<ISubgraphContext>({
 });
 
 export const SubgraphProvider: FC = ({ children }) => {
-	const { address, network } = useContext(OnboardContext);
+	const { account, chainId } = useWeb3React();
 
 	const [currentSubgraphValue, setCurrentSubgraphValue] =
 		useState<ISubgraphValue>(defaultSubgraphValue);
@@ -92,30 +92,30 @@ export const SubgraphProvider: FC = ({ children }) => {
 	}, []);
 
 	useEffect(() => {
-		if (network === config.XDAI_NETWORK_NUMBER) {
+		if (chainId === config.XDAI_NETWORK_NUMBER) {
 			setCurrentSubgraphValue(xDaiSubgraphValue);
 		} else {
 			setCurrentSubgraphValue(mainnetSubgraphValue);
 		}
-	}, [mainnetSubgraphValue, xDaiSubgraphValue, network]);
+	}, [mainnetSubgraphValue, xDaiSubgraphValue, chainId]);
 
 	useEffect(() => {
-		if (isAddress(address)) {
-			fetchMainnetInfo(address);
-			fetchXDaiInfo(address);
+		if (account && isAddress(account)) {
+			fetchMainnetInfo(account);
+			fetchXDaiInfo(account);
 
 			const interval = setInterval(() => {
-				if (network === config.XDAI_NETWORK_NUMBER) {
-					fetchXDaiInfo(address);
+				if (chainId === config.XDAI_NETWORK_NUMBER) {
+					fetchXDaiInfo(account);
 				} else {
-					fetchMainnetInfo(address);
+					fetchMainnetInfo(account);
 				}
 			}, config.SUBGRAPH_POLLING_INTERVAL);
 			return () => {
 				clearInterval(interval);
 			};
 		}
-	}, [address, fetchMainnetInfo, fetchXDaiInfo, network]);
+	}, [account, fetchMainnetInfo, fetchXDaiInfo, chainId]);
 
 	return (
 		<SubgraphContext.Provider
