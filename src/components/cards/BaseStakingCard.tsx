@@ -47,13 +47,13 @@ import { IconHoneyswap } from '../Icons/Honeyswap';
 import { IconBalancer } from '../Icons/Balancer';
 import { IconUniswap } from '../Icons/Uniswap';
 import { HarvestAllModal } from '../modals/HarvestAll';
-import { OnboardContext } from '@/context/onboard.context';
 import { useFarms } from '@/context/farm.context';
 import { constants } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import BigNumber from 'bignumber.js';
 import { WhatisGIVstreamModal } from '../modals/WhatisGIVstream';
 import { IconSushiswap } from '../Icons/Sushiswap';
+import { useWeb3React } from '@web3-react/core';
 
 export const getPoolIconWithName = (pool: string) => {
 	switch (pool) {
@@ -88,11 +88,11 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	const [showHarvestModal, setShowHarvestModal] = useState(false);
 	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
 		useState(false);
-	const { network: walletNetwork } = useContext(OnboardContext);
 	const [rewardLiquidPart, setRewardLiquidPart] = useState(constants.Zero);
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
 	const { tokenDistroHelper } = useTokenDistro();
 	const { setInfo } = useFarms();
+	const { chainId } = useWeb3React();
 
 	const { type, title, description, provideLiquidityLink, BUY_LINK, unit } =
 		poolStakingConfig;
@@ -107,8 +107,10 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	}, [earned, tokenDistroHelper]);
 
 	useEffect(() => {
-		setInfo(walletNetwork, type, earned);
-	}, [walletNetwork, earned, type]);
+		if (chainId) {
+			setInfo(chainId, type, earned);
+		}
+	}, [chainId, earned, type]);
 
 	return (
 		<>
@@ -117,11 +119,11 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 					{getPoolIconWithName(type)}
 					<StakingPoolExchange styleType='Small'>
 						{type === StakingType.GIV_LM &&
-							walletNetwork === config.XDAI_NETWORK_NUMBER &&
+							chainId === config.XDAI_NETWORK_NUMBER &&
 							`GIVgarden `}
 						{type}
 					</StakingPoolExchange>
-					{walletNetwork === config.XDAI_NETWORK_NUMBER &&
+					{chainId === config.XDAI_NETWORK_NUMBER &&
 						type === StakingType.GIV_LM && (
 							<IconWithTooltip
 								direction={'top'}
@@ -302,14 +304,14 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 						maxAmount={stakedLpAmount}
 					/>
 				))}
-			{showHarvestModal && (
+			{showHarvestModal && chainId && (
 				<HarvestAllModal
 					title='GIVfarm Rewards'
 					showModal={showHarvestModal}
 					setShowModal={setShowHarvestModal}
 					poolStakingConfig={poolStakingConfig}
 					claimable={earned}
-					network={walletNetwork}
+					network={chainId}
 				/>
 			)}
 			{showWhatIsGIVstreamModal && (
