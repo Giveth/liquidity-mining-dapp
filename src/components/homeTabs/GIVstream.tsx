@@ -61,7 +61,6 @@ import {
 } from './GIVstream.sc';
 import { IconWithTooltip } from '../IconWithToolTip';
 import { getHistory } from '@/services/subgraph.service';
-import { OnboardContext } from '@/context/onboard.context';
 import { formatWeiHelper } from '@/helpers/number';
 import config from '@/configuration';
 import { DurationToString } from '@/lib/helpers';
@@ -74,6 +73,7 @@ import { Zero } from '@ethersproject/constants';
 import { useSubgraph } from '@/context';
 import { ITokenAllocation } from '@/types/subgraph';
 import { TopFiller } from './commons';
+import { useWeb3React } from '@web3-react/core';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -84,7 +84,7 @@ export const TabGIVstreamTop = () => {
 		currentValues: { balances },
 	} = useSubgraph();
 	const { allocatedTokens, claimed, givback } = balances;
-	const { network: walletNetwork } = useContext(OnboardContext);
+	const { chainId } = useWeb3React();
 
 	useEffect(() => {
 		setRewardLiquidPart(
@@ -125,7 +125,7 @@ export const TabGIVstreamTop = () => {
 								actionCb={() => {
 									setShowModal(true);
 								}}
-								network={walletNetwork}
+								network={chainId}
 								targetNetworks={[
 									config.MAINNET_NETWORK_NUMBER,
 									config.XDAI_NETWORK_NUMBER,
@@ -135,12 +135,12 @@ export const TabGIVstreamTop = () => {
 					</Row>
 				</GIVstreamTopInnerContainer>
 			</GIVstreamTopContainer>
-			{showModal && (
+			{showModal && chainId && (
 				<HarvestAllModal
 					title='GIVstream Rewards'
 					showModal={showModal}
 					setShowModal={setShowModal}
-					network={walletNetwork}
+					network={chainId}
 				/>
 			)}
 		</>
@@ -148,7 +148,7 @@ export const TabGIVstreamTop = () => {
 };
 
 export const TabGIVstreamBottom = () => {
-	const { network: walletNetwork } = useContext(OnboardContext);
+	const { chainId } = useWeb3React();
 	const { tokenDistroHelper } = useTokenDistro();
 
 	const [percent, setPercent] = useState(0);
@@ -189,7 +189,7 @@ export const TabGIVstreamBottom = () => {
 					</H3>
 					<IconGIVStream size={64} />
 					<H1>
-						{supportedNetworks.includes(walletNetwork)
+						{chainId && supportedNetworks.includes(chainId)
 							? formatWeiHelper(streamAmount)
 							: '0'}
 					</H1>
@@ -222,29 +222,7 @@ export const TabGIVstreamBottom = () => {
 						GIV until December 23, 2026. Anyone can get or increase
 						their GIVstream by participating in the GIVeconomy.
 					</GsDataBlock>
-					<GsDataBlock
-						title='Expanding GIViverse'
-						// button={
-						// 	<GsButton
-						// 		label='INCREASE YOUR GIVSTREAM'
-						// 		buttonType='secondary'
-						// 		size='large'
-						// 		onClick={() => {
-						// 			if (increaseSecRef.current) {
-						// 				const elDistanceToTop =
-						// 					window.pageYOffset +
-						// 					increaseSecRef.current.getBoundingClientRect()
-						// 						.top;
-						// 				window.scrollTo({
-						// 					top: elDistanceToTop || 100,
-						// 					left: 0,
-						// 					behavior: 'smooth',
-						// 				});
-						// 			}
-						// 		}}
-						// 	/>
-						// }
-					>
+					<GsDataBlock title='Expanding GIViverse'>
 						The GIVeconomy begins humbly but as time passes, the
 						GIViverse expands and more GIV flows from GIVstream.
 						This way, as the GIVeconomy grows, so do the governance
@@ -411,7 +389,7 @@ const convetSourceTypeToIcon = (distributor: string) => {
 };
 
 export const GIVstreamHistory: FC = () => {
-	const { network, address } = useContext(OnboardContext);
+	const { chainId, account } = useWeb3React();
 	const [tokenAllocations, setTokenAllocations] = useState<
 		ITokenAllocation[]
 	>([]);
@@ -429,17 +407,19 @@ export const GIVstreamHistory: FC = () => {
 
 	useEffect(() => {
 		setPage(0);
-	}, [network, address]);
+	}, [chainId, account]);
 
 	useEffect(() => {
-		setLoading(true);
-		getHistory(network, address, page * count, count).then(
-			_tokenAllocations => {
-				setTokenAllocations(_tokenAllocations);
-				setLoading(false);
-			},
-		);
-	}, [network, address, page]);
+		if (chainId && account) {
+			setLoading(true);
+			getHistory(chainId, account, page * count, count).then(
+				_tokenAllocations => {
+					setTokenAllocations(_tokenAllocations);
+					setLoading(false);
+				},
+			);
+		}
+	}, [chainId, account, page]);
 
 	useEffect(() => {
 		const nop = Math.ceil(allocationCount / count);
@@ -507,15 +487,17 @@ export const GIVstreamHistory: FC = () => {
 									<GsHFrUnit as='span'>{` GIV/week`}</GsHFrUnit>
 								</B>
 								<P as='span'>{date}</P>
-								<TxSpan>
-									<TxHash
-										size='Big'
-										href={`${config.NETWORKS_CONFIG[network]?.blockExplorerUrls}/tx/${tokenAllocation.txHash}`}
-										target='_blank'
-									>
-										{tokenAllocation.txHash}
-									</TxHash>
-								</TxSpan>
+								{chainId && (
+									<TxSpan>
+										<TxHash
+											size='Big'
+											href={`${config.NETWORKS_CONFIG[chainId]?.blockExplorerUrls}/tx/${tokenAllocation.txHash}`}
+											target='_blank'
+										>
+											{tokenAllocation.txHash}
+										</TxHash>
+									</TxSpan>
+								)}
 							</Fragment>
 						);
 					})}
