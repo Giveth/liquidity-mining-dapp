@@ -1,10 +1,10 @@
 import { createContext, FC, useContext, useEffect, useState } from 'react';
-import { OnboardContext } from '@/context/onboard.context';
 import BigNumber from 'bignumber.js';
 import { Zero } from '@/helpers/number';
 import { useSubgraph } from '@/context/subgraph.context';
 import config from '@/configuration';
 import { useLiquidityPositions } from '@/context/positions.context';
+import { useWeb3React } from '@web3-react/core';
 
 export interface IPriceContext {
 	price: BigNumber;
@@ -16,7 +16,7 @@ const priceDefaultValue = {
 
 const PriceContext = createContext<IPriceContext>(priceDefaultValue);
 export const PriceProvider: FC = ({ children }) => {
-	const { network } = useContext(OnboardContext);
+	const { chainId } = useWeb3React();
 	const { xDaiValues } = useSubgraph();
 	const { pool } = useLiquidityPositions();
 
@@ -88,7 +88,7 @@ export const PriceProvider: FC = ({ children }) => {
 	}, []);
 
 	useEffect(() => {
-		switch (network) {
+		switch (chainId) {
 			case config.XDAI_NETWORK_NUMBER:
 				setCurrentPrice(xDaiPrice);
 				break;
@@ -98,7 +98,7 @@ export const PriceProvider: FC = ({ children }) => {
 				setCurrentPrice(mainnetPrice);
 				break;
 		}
-	}, [network, xDaiPrice, mainnetPrice]);
+	}, [chainId, xDaiPrice, mainnetPrice]);
 
 	useEffect(() => {});
 	return (
