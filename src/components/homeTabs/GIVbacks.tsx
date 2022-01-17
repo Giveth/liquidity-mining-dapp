@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Row } from '../styled-components/Grid';
 import {
 	Container,
@@ -36,12 +36,12 @@ import { Zero } from '@ethersproject/constants';
 import BigNumber from 'bignumber.js';
 import config from '@/configuration';
 import { HarvestAllModal } from '../modals/HarvestAll';
-import { OnboardContext } from '@/context/onboard.context';
 import { getNowUnixMS } from '@/helpers/time';
-import { useOnboard, useSubgraph } from '@/context';
+import { useSubgraph } from '@/context';
 import { formatDate } from '@/lib/helpers';
 import { GIVBackExplainModal } from '../modals/GIVBackExplain';
 import { TopFiller, TopInnerContainer } from './commons';
+import { useWeb3React } from '@web3-react/core';
 
 export const TabGIVbacksTop = () => {
 	const [showHarvestModal, setShowHarvestModal] = useState(false);
@@ -51,7 +51,7 @@ export const TabGIVbacksTop = () => {
 	const {
 		currentValues: { balances },
 	} = useSubgraph();
-	const { network: walletNetwork } = useOnboard();
+	const { chainId } = useWeb3React();
 
 	useEffect(() => {
 		setGivBackStream(
@@ -94,7 +94,7 @@ export const TabGIVbacksTop = () => {
 								subButtonCb={() => {
 									setShowGivBackExplain(true);
 								}}
-								network={walletNetwork}
+								network={chainId}
 								targetNetworks={[config.XDAI_NETWORK_NUMBER]}
 							/>
 						</Right>
@@ -124,7 +124,6 @@ export const TabGIVbacksBottom = () => {
 	const [roundStartime, setRoundStartime] = useState(new Date());
 	const [roundEndTime, setRoundEndTime] = useState(new Date());
 	const { tokenDistroHelper } = useTokenDistro();
-	const { network: walletNetwork } = useContext(OnboardContext);
 
 	useEffect(() => {
 		if (tokenDistroHelper) {
