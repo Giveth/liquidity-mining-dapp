@@ -7,11 +7,12 @@ import {
 	getLPStakingAPR,
 	getUserStakeInfo,
 } from '@/lib/stakingPool';
-import { useSubgraph, useOnboard } from '@/context';
+import { useSubgraph } from '@/context';
 import { PoolStakingConfig, StakingType } from '@/types/config';
 import { APR, UserStakeInfo } from '@/types/poolInfo';
 import { UnipoolHelper } from '@/lib/contractHelper/UnipoolHelper';
 import { Zero } from '@/helpers/number';
+import { useWeb3React } from '@web3-react/core';
 
 export const useStakingPool = (
 	poolStakingConfig: PoolStakingConfig,
@@ -22,7 +23,7 @@ export const useStakingPool = (
 	stakedAmount: ethers.BigNumber;
 	notStakedAmount: ethers.BigNumber;
 } => {
-	const { provider, network: walletNetwork } = useOnboard();
+	const { library, chainId } = useWeb3React();
 	const { currentValues } = useSubgraph();
 
 	const { balances } = currentValues;
@@ -42,10 +43,10 @@ export const useStakingPool = (
 
 	useEffect(() => {
 		const cb = () => {
-			const providerNetwork = provider?.network?.chainId;
+			const providerNetwork = library?.network?.chainId;
 			if (
-				provider &&
-				walletNetwork === network &&
+				library &&
+				chainId === network &&
 				// When switching to another network, the provider may still be connected to wrong one
 				(providerNetwork === undefined || providerNetwork === network)
 			) {
@@ -59,7 +60,7 @@ export const useStakingPool = (
 						: getLPStakingAPR(
 								poolStakingConfig,
 								network,
-								provider,
+								library,
 								currentValues[type],
 						  );
 				promise.then(setApr);
@@ -78,7 +79,7 @@ export const useStakingPool = (
 				stakePoolInfoPoll.current = null;
 			}
 		};
-	}, [provider, walletNetwork, unipoolIsDefined]);
+	}, [library, chainId, unipoolIsDefined]);
 
 	const isMounted = useRef(true);
 	useEffect(() => {
