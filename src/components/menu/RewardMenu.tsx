@@ -1,4 +1,3 @@
-import { OnboardContext } from '@/context/onboard.context';
 import {
 	Overline,
 	P,
@@ -28,6 +27,7 @@ import { getUserStakeInfo } from '@/lib/stakingPool';
 import { constants } from 'ethers';
 import { useStakingNFT } from '@/hooks/useStakingNFT';
 import { StakingType } from '@/types/config';
+import { useWeb3React } from '@web3-react/core';
 
 export const RewardMenu = () => {
 	const [isMounted, setIsMounted] = useState(false);
@@ -39,12 +39,12 @@ export const RewardMenu = () => {
 	const { tokenDistroHelper } = useTokenDistro();
 	const { currentValues } = useSubgraph();
 	const { rewardBalance } = useStakingNFT();
-	const { network, provider } = useContext(OnboardContext);
+	const { chainId, library } = useWeb3React();
 	const { balances } = currentValues;
 	const { allocatedTokens, claimed, givbackLiquidPart } = balances;
 
 	const switchNetworkHandler = () => {
-		if (network === config.XDAI_NETWORK_NUMBER) {
+		if (chainId === config.XDAI_NETWORK_NUMBER) {
 			switchNetwork(config.MAINNET_NETWORK_NUMBER);
 		} else {
 			switchNetwork(config.XDAI_NETWORK_NUMBER);
@@ -66,12 +66,12 @@ export const RewardMenu = () => {
 
 	useEffect(() => {
 		let pools;
-		if (network === config.XDAI_NETWORK_NUMBER) {
+		if (chainId === config.XDAI_NETWORK_NUMBER) {
 			pools = [
 				...config.XDAI_CONFIG.pools,
 				getGivStakingConfig(config.XDAI_CONFIG),
 			];
-		} else if (network === config.MAINNET_NETWORK_NUMBER) {
+		} else if (chainId === config.MAINNET_NETWORK_NUMBER) {
 			pools = [
 				...config.MAINNET_CONFIG.pools,
 				getGivStakingConfig(config.MAINNET_CONFIG),
@@ -93,7 +93,7 @@ export const RewardMenu = () => {
 			});
 			setFarmsLiquidPart(tokenDistroHelper.getLiquidPart(_farmRewards));
 		}
-	}, [balances, currentValues, network, rewardBalance, tokenDistroHelper]);
+	}, [balances, currentValues, chainId, rewardBalance, tokenDistroHelper]);
 
 	useEffect(() => {
 		setIsMounted(true);
@@ -104,7 +104,7 @@ export const RewardMenu = () => {
 			<RewardMenuContainer isMounted={isMounted}>
 				<Overline styleType='Small'>Network</Overline>
 				<NetworkRow>
-					<B>{provider?._network?.name}</B>
+					<B>{library?._network?.name}</B>
 					<SwithNetwork onClick={switchNetworkHandler}>
 						Switch network
 					</SwithNetwork>
