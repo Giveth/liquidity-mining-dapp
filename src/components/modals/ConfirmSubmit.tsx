@@ -17,8 +17,8 @@ import ErrorAnimation from '../../animations/error.json';
 import styled from 'styled-components';
 import { FC } from 'react';
 import { AddGIVTokenButton } from '../AddGIVTokenButton';
-import { useOnboard } from '@/context';
 import { Row } from '../styled-components/Grid';
+import { useWeb3React } from '@web3-react/core';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -63,7 +63,7 @@ export const SubmittedInnerModal: FC<IConfirmSubmitProps> = ({
 	walletNetwork,
 	txHash,
 }) => {
-	const { provider } = useOnboard();
+	const { library } = useWeb3React();
 	return (
 		<>
 			<Title>{title}</Title>
@@ -74,7 +74,7 @@ export const SubmittedInnerModal: FC<IConfirmSubmitProps> = ({
 			/>
 			<TxSubmit weight={700}>{txHash && 'Transaction pending'}</TxSubmit>
 			<AddTokenRow alignItems={'center'} justifyContent={'center'}>
-				<AddGIVTokenButton provider={provider} />
+				<AddGIVTokenButton provider={library} />
 			</AddTokenRow>
 			{txHash && (
 				<BlockExplorerLink
@@ -98,7 +98,7 @@ export const ConfirmedInnerModal: FC<IConfirmSubmitProps> = ({
 	walletNetwork,
 	txHash,
 }) => {
-	const { provider } = useOnboard();
+	const { library } = useWeb3React();
 
 	return (
 		<>
@@ -107,7 +107,7 @@ export const ConfirmedInnerModal: FC<IConfirmSubmitProps> = ({
 			<TxConfirm weight={700}>Transaction confirmed!</TxConfirm>
 			<Info>It may take a few minutes for the UI to update</Info>
 			<AddTokenRow alignItems={'center'} justifyContent={'center'}>
-				<AddGIVTokenButton provider={provider} />
+				<AddGIVTokenButton provider={library} />
 			</AddTokenRow>
 			<BlockExplorerLink
 				href={`${config.NETWORKS_CONFIG[walletNetwork]?.blockExplorerUrls}
