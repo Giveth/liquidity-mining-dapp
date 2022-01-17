@@ -10,7 +10,6 @@ import {
 	IconHelp,
 	Lead,
 } from '@giveth/ui-design-system';
-import { OnboardContext } from '@/context/onboard.context';
 import { PoolStakingConfig } from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
 import { formatWeiHelper } from '@/helpers/number';
@@ -48,6 +47,7 @@ import config from '@/configuration';
 import { IconWithTooltip } from '../IconWithToolTip';
 import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
 import { usePrice } from '@/context/price.context';
+import { useWeb3React } from '@web3-react/core';
 
 interface IHarvestAllModalProps extends IModal {
 	title: string;
@@ -85,11 +85,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		currentValues: { balances },
 	} = useSubgraph();
 	const { tokenDistroHelper } = useTokenDistro();
-	const {
-		network: walletNetwork,
-		address,
-		provider,
-	} = useContext(OnboardContext);
+	const { chainId, account, library } = useWeb3React();
 	const { currentIncentive, stakedPositions } = useLiquidityPositions();
 	const { price } = usePrice();
 	const [txHash, setTxHash] = useState('');
@@ -129,9 +125,10 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	useEffect(() => {
 		if (
 			network === config.XDAI_NETWORK_NUMBER &&
-			!balances.givDropClaimed
+			!balances.givDropClaimed &&
+			account
 		) {
-			fetchAirDropClaimData(address).then(claimData => {
+			fetchAirDropClaimData(account).then(claimData => {
 				if (claimData) {
 					const givDrop = ethers.BigNumber.from(claimData.amount);
 					setGIVdrop(givDrop.div(10));
@@ -141,10 +138,10 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 				}
 			});
 		}
-	}, [address, network, balances, tokenDistroHelper]);
+	}, [account, network, balances, tokenDistroHelper]);
 
 	const onHarvest = () => {
-		if (!provider) return;
+		if (!library || !account) return;
 		setState(HarvestStates.HARVESTING);
 		if (poolStakingConfig) {
 			if (
@@ -154,8 +151,8 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 			) {
 				//NFT Harvest
 				claimUnstakeStake(
-					address,
-					provider,
+					account,
+					library,
 					currentIncentive,
 					stakedPositions,
 				)
@@ -167,7 +164,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 					});
 			} else {
 				// LP Harvest
-				harvestTokens(poolStakingConfig.LM_ADDRESS, provider)
+				harvestTokens(poolStakingConfig.LM_ADDRESS, library)
 					.then(txResponse => {
 						if (txResponse) {
 							setState(HarvestStates.SUBMITTED);
@@ -186,7 +183,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		} else {
 			claimReward(
 				config.NETWORKS_CONFIG[network]?.TOKEN_DISTRO_ADDRESS,
-				provider,
+				library,
 			)
 				.then(txResponse => {
 					if (txResponse) {
