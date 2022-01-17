@@ -10,10 +10,10 @@ import {
 import { fetchAirDropClaimData, hasClaimedAirDrop } from '@/lib/claim';
 import { Zero } from '@ethersproject/constants';
 import { BigNumber } from 'ethers';
-import { useOnboard } from '.';
 import { Dispatch } from 'react';
 import config from '@/configuration';
 import { WrongNetworkModal } from '@/components/modals/WrongNetwork';
+import { useWeb3React } from '@web3-react/core';
 
 export enum GiveDropStateType {
 	notConnected,
@@ -60,22 +60,22 @@ export const UserProvider: FC<Props> = ({ children }) => {
 		GiveDropStateType.notConnected,
 	);
 
-	const { address, network, isReady } = useOnboard();
+	const { account, chainId, active } = useWeb3React();
 
 	useEffect(() => {
-		setShowModal(isReady && network !== config.XDAI_NETWORK_NUMBER);
-	}, [network, step, isReady]);
+		setShowModal(active && chainId !== config.XDAI_NETWORK_NUMBER);
+	}, [chainId, step, active]);
 
 	const getClaimData = async () => {
-		if (network !== config.XDAI_NETWORK_NUMBER) {
+		if (!account || chainId !== config.XDAI_NETWORK_NUMBER) {
 			return;
 		}
 		setTotalAmount(Zero);
 		setStep(0);
 		setIsLoading(true);
-		const claimData = await fetchAirDropClaimData(address);
+		const claimData = await fetchAirDropClaimData(account);
 		if (claimData) {
-			const _hasClaimed = await hasClaimedAirDrop(address);
+			const _hasClaimed = await hasClaimedAirDrop(account);
 			// const _hasClaimed = false;
 			console.log(`_hasClaimed`, _hasClaimed);
 			setTotalAmount(BigNumber.from(claimData.amount));
@@ -100,7 +100,7 @@ export const UserProvider: FC<Props> = ({ children }) => {
 
 	useEffect(() => {
 		resetWallet();
-	}, [address]);
+	}, [account]);
 
 	return (
 		<UserContext.Provider
