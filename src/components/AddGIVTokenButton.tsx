@@ -3,7 +3,7 @@ import { EWallets } from '@/lib/wallet/walletTypes';
 import { Web3Provider } from '@ethersproject/providers';
 import { brandColors, P } from '@giveth/ui-design-system';
 import Image from 'next/image';
-import { FC } from 'react';
+import { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Row } from './styled-components/Grid';
 
@@ -16,8 +16,14 @@ export const AddGIVTokenButton: FC<IAddGIVTokenButton> = ({
 	provider,
 	showText = true,
 }) => {
-	return window.localStorage.getItem('selectedWallet') ===
-		EWallets.METAMASK ? (
+	const [show, setShow] = useState(false);
+
+	useEffect(() => {
+		const selectedWallet = window.localStorage.getItem('selectedWallet');
+		setShow(selectedWallet === EWallets.METAMASK);
+	}, []);
+
+	return show ? (
 		<AddGivButton
 			onClick={() => {
 				if (provider) {
