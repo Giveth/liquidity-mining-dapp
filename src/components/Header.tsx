@@ -28,9 +28,9 @@ import {
 import Link from 'next/link';
 import { useSubgraph } from '@/context/subgraph.context';
 import { RewardMenu } from './menu/RewardMenu';
-import { IconMenu24 } from '@giveth/ui-design-system';
 import { useWeb3React } from '@web3-react/core';
-import { InjectedConnector } from '@web3-react/injected-connector';
+import WalletModal from '@/components/modals/WalletModal';
+import { walletsArray } from '@/lib/wallet/walletTypes';
 
 export interface IHeader {
 	theme?: ThemeType;
@@ -40,6 +40,7 @@ export interface IHeader {
 const Header: FC<IHeader> = () => {
 	const [showRewardMenu, setShowRewardMenu] = useState(false);
 	const [showHeader, setShowHeader] = useState(true);
+	const [showWalletModal, setShowWalletModal] = useState(false);
 	const { theme } = useContext(ThemeContext);
 	const {
 		currentValues: { balances },
@@ -50,6 +51,14 @@ const Header: FC<IHeader> = () => {
 		setShowRewardMenu(show);
 	};
 
+	useEffect(() => {
+		const selectedWalletName =
+			window.localStorage.getItem('selectedWallet');
+		const wallet = walletsArray.find(w => w.value === selectedWalletName);
+		if (wallet) {
+			activate(wallet.connector);
+		}
+	}, []);
 	useEffect(() => {
 		const threshold = 0;
 		let lastScrollY = window.pageYOffset;
@@ -174,7 +183,10 @@ const Header: FC<IHeader> = () => {
 							<WalletButton
 								outline
 								onClick={() => {
-									activate(new InjectedConnector({}));
+									window.localStorage.removeItem(
+										'selectedWallet',
+									);
+									setShowWalletModal(true);
 								}}
 							>
 								<HBContainer>
@@ -209,13 +221,19 @@ const Header: FC<IHeader> = () => {
 								buttonType='primary'
 								label='CONNECT WALLET'
 								onClick={() => {
-									activate(new InjectedConnector({}));
+									setShowWalletModal(true);
 								}}
 							/>
 						</div>
 					)}
 				</Row>
 			</StyledHeader>
+			{showWalletModal && (
+				<WalletModal
+					showModal={showWalletModal}
+					setShowModal={setShowWalletModal}
+				/>
+			)}
 		</>
 	);
 };
