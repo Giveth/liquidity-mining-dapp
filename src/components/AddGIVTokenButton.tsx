@@ -1,4 +1,5 @@
 import { addGIVToken } from '@/lib/metamask';
+import { EWallets } from '@/lib/wallet/walletTypes';
 import { Web3Provider } from '@ethersproject/providers';
 import { brandColors, P } from '@giveth/ui-design-system';
 import Image from 'next/image';
@@ -15,7 +16,8 @@ export const AddGIVTokenButton: FC<IAddGIVTokenButton> = ({
 	provider,
 	showText = true,
 }) => {
-	return (
+	return window.localStorage.getItem('selectedWallet') ===
+		EWallets.METAMASK ? (
 		<AddGivButton
 			onClick={() => {
 				if (provider) {
@@ -31,7 +33,7 @@ export const AddGIVTokenButton: FC<IAddGIVTokenButton> = ({
 			/>
 			{showText && <Desc>Add GIV to Metamask</Desc>}
 		</AddGivButton>
-	);
+	) : null;
 };
 
 const AddGivButton = styled(Row)`
