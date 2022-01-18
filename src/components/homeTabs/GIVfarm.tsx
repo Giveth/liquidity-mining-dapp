@@ -14,7 +14,6 @@ import {
 	PoolRow,
 } from './GIVfarm.sc';
 import { Container, IconGIVFarm } from '@giveth/ui-design-system';
-import { OnboardContext } from '@/context/onboard.context';
 import { NetworkSelector } from '@/components/NetworkSelector';
 import StakingPositionCard from '@/components/cards/StakingPositionCard';
 import { getGivStakingConfig } from '@/helpers/networkProvider';
@@ -23,6 +22,7 @@ import { constants } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { useFarms } from '@/context/farm.context';
 import { TopFiller, TopInnerContainer, ExtLink } from './commons';
+import { useWeb3React } from '@web3-react/core';
 
 const GIVfarmTabContainer = styled(Container)``;
 
@@ -31,7 +31,7 @@ export const TabGIVfarmTop = () => {
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
 	const { tokenDistroHelper } = useTokenDistro();
 	const { totalEarned } = useFarms();
-	const { network: walletNetwork } = useContext(OnboardContext);
+	const { chainId } = useWeb3React();
 
 	useEffect(() => {
 		setRewardLiquidPart(tokenDistroHelper.getLiquidPart(totalEarned));
@@ -60,7 +60,7 @@ export const TabGIVfarmTop = () => {
 							wrongNetworkText='GIVfarm is only available on Mainnet and xDAI.'
 							liquidAmount={rewardLiquidPart}
 							stream={rewardStream}
-							network={walletNetwork}
+							network={chainId}
 							targetNetworks={[
 								config.MAINNET_NETWORK_NUMBER,
 								config.XDAI_NETWORK_NUMBER,
@@ -74,7 +74,7 @@ export const TabGIVfarmTop = () => {
 };
 
 export const TabGIVfarmBottom = () => {
-	const { network: walletNetwork } = useContext(OnboardContext);
+	const { chainId } = useWeb3React();
 	const supportedNetworks = [
 		config.MAINNET_NETWORK_NUMBER,
 		config.XDAI_NETWORK_NUMBER,
@@ -93,7 +93,7 @@ export const TabGIVfarmBottom = () => {
 					Bridge your GIV
 				</ExtLink>
 			</Row>
-			{walletNetwork === config.XDAI_NETWORK_NUMBER && (
+			{chainId === config.XDAI_NETWORK_NUMBER && (
 				<PoolRow justifyContent='center' gap='24px' wrap={1}>
 					{config.XDAI_CONFIG.pools.map(
 						(poolStakingConfig, index) => {
@@ -114,13 +114,14 @@ export const TabGIVfarmBottom = () => {
 					/>
 				</PoolRow>
 			)}
-			{(walletNetwork === config.MAINNET_NETWORK_NUMBER ||
-				!supportedNetworks.includes(walletNetwork)) && (
+			{(!chainId ||
+				chainId === config.MAINNET_NETWORK_NUMBER ||
+				!supportedNetworks.includes(chainId)) && (
 				<PoolRow
 					justifyContent='center'
 					gap='24px'
 					wrap={1}
-					disabled={!supportedNetworks.includes(walletNetwork)}
+					disabled={!chainId || !supportedNetworks.includes(chainId)}
 				>
 					{config.MAINNET_CONFIG.pools.map(
 						(poolStakingConfig, index) => {

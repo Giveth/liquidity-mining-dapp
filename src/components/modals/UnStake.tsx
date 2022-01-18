@@ -9,7 +9,6 @@ import { StakingPoolImages } from '../StakingPoolImages';
 import { BigNumber } from 'ethers';
 import { AmountInput } from '../AmountInput';
 import { unwrapToken, withdrawTokens } from '../../lib/stakingPool';
-import { useOnboard } from '@/context/onboard.context';
 import LoadingAnimation from '@/animations/loading.json';
 import {
 	ConfirmedInnerModal,
@@ -17,6 +16,7 @@ import {
 	SubmittedInnerModal,
 } from './ConfirmSubmit';
 import { StakeState } from './V3Stake';
+import { useWeb3React } from '@web3-react/core';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -41,7 +41,7 @@ export const UnStakeModal: FC<IUnStakeModalProps> = ({
 	const [amount, setAmount] = useState('0');
 	const [label, setLabel] = useState('UNSTAKE');
 	const [stakeState, setStakeState] = useState(StakeState.UNKNOWN);
-	const { provider, network } = useOnboard();
+	const { library, chainId } = useWeb3React();
 
 	const { title, LM_ADDRESS, GARDEN_ADDRESS } = poolStakingConfig;
 
@@ -49,8 +49,8 @@ export const UnStakeModal: FC<IUnStakeModalProps> = ({
 		setLabel('PENDING UNSTAKE');
 
 		const tx = GARDEN_ADDRESS
-			? await unwrapToken(amount, GARDEN_ADDRESS, provider)
-			: await withdrawTokens(amount, LM_ADDRESS, provider);
+			? await unwrapToken(amount, GARDEN_ADDRESS, library)
+			: await withdrawTokens(amount, LM_ADDRESS, library);
 
 		if (!tx) {
 			setStakeState(StakeState.UNKNOWN);
@@ -120,31 +120,31 @@ export const UnStakeModal: FC<IUnStakeModalProps> = ({
 						</InnerModal>
 					</>
 				)}
-				{stakeState === StakeState.REJECT && (
+				{chainId && stakeState === StakeState.REJECT && (
 					<ErrorInnerModal
 						title='You rejected the transaction.'
-						walletNetwork={network}
+						walletNetwork={chainId}
 						txHash={txHash}
 					/>
 				)}
-				{stakeState === StakeState.SUBMITTING && (
+				{chainId && stakeState === StakeState.SUBMITTING && (
 					<SubmittedInnerModal
 						title={title}
-						walletNetwork={network}
+						walletNetwork={chainId}
 						txHash={txHash}
 					/>
 				)}
-				{stakeState === StakeState.CONFIRMED && (
+				{chainId && stakeState === StakeState.CONFIRMED && (
 					<ConfirmedInnerModal
 						title='Successful transaction.'
-						walletNetwork={network}
+						walletNetwork={chainId}
 						txHash={txHash}
 					/>
 				)}
-				{stakeState === StakeState.ERROR && (
+				{chainId && stakeState === StakeState.ERROR && (
 					<ErrorInnerModal
 						title='Something went wrong!'
-						walletNetwork={network}
+						walletNetwork={chainId}
 						txHash={txHash}
 					/>
 				)}
