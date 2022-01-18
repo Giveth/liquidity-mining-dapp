@@ -61,21 +61,16 @@ const WalletModal = ({
 					<WalletItem
 						onClick={() => handleSelect(i)}
 						key={i.value}
-						className={selectedWallet === i.value ? 'active' : ''}
+						selected={selectedWallet === i.value}
 					>
-						{selectedWallet === i.value && (
-							<Badge styleType={'Small'}>SELECTED</Badge>
-						)}
 						<Image
 							src={i.image}
 							alt={i.name}
 							height={64}
 							width={64}
 						/>
-						<H5>{i.name}</H5>
-						<Lead color={neutralColors.gray['600']}>
-							Connect with your {i.name}
-						</Lead>
+						<WalletName>{i.name}</WalletName>
+						<WalletDesc>Connect with your {i.name}</WalletDesc>
 					</WalletItem>
 				))}
 			</IconsContainer>
@@ -91,62 +86,42 @@ const CloseButton = styled.div`
 `;
 
 const IconsContainer = styled.div`
+	padding: 50px 20px;
 	display: grid;
-	grid-gap: 1px;
+	grid-gap: 4px;
 	justify-content: center;
 	align-items: center;
 	flex-wrap: wrap;
-	background-color: ${neutralColors.gray['600']};
-	max-height: 420px;
+	background-color: ${neutralColors.gray['100']};
+	grid-template-columns: 1fr 1fr;
 `;
 
-const WalletItem = styled.div`
-	background-color: white;
+interface IWalletItem {
+	selected: boolean;
+}
+
+const WalletItem = styled.div<IWalletItem>`
+	background: radial-gradient(
+		#fff,
+		${props => (props.selected ? brandColors.giv['100'] : 'white')}
+	);
 	flex-direction: column;
 	gap: 2px;
-	min-width: 355px;
-	min-height: 190px;
 	padding: 20px 40px;
+	border-radius: 10px;
 	cursor: pointer;
 
 	&:hover {
-		background: radial-gradient(#fff, ${neutralColors.gray['200']});
-	}
-
-	&.active {
-		border-color: ${brandColors.giv['500']};
+		background: radial-gradient(#fff, ${neutralColors.gray['500']});
 	}
 `;
 
-const Badge = styled(Overline)`
-	position: relative;
-	height: 0px;
-	top: 15px;
-	transform: rotate(-45deg);
-	left: -120px;
-	background: white;
-	font-weight: 700;
-	color: ${brandColors.giv['500']};
+const WalletName = styled(H5)`
+	color: ${neutralColors.gray['900']};
 `;
 
-const customStyles = {
-	content: {
-		top: '50%',
-		left: '50%',
-		right: 'auto',
-		bottom: 'auto',
-		marginRight: '-50%',
-		transform: 'translate(-50%, -50%)',
-		backgroundColor: 'white',
-		minWidth: '330px',
-		boxShadow: '0 5px 16px rgba(0, 0, 0, 0.15)',
-		color: brandColors.deep['900'],
-		padding: '0px',
-	},
-	overlay: {
-		backgroundColor: 'rgb(9 4 70 / 70%)',
-		zIndex: 1070,
-	},
-};
+const WalletDesc = styled(Lead)`
+	color: ${neutralColors.gray['600']};
+`;
 
 export default WalletModal;
