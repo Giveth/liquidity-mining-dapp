@@ -5,12 +5,13 @@ import { Row } from '../styled-components/Grid';
 import { Card, Header, PreviousArrowButton } from './common';
 import { IClaimViewCardProps } from '../views/claim/Claim.view';
 import useUser from '../../context/user.context';
-import { OnboardContext } from '../../context/onboard.context';
 import config from '../../configuration';
 import { GIVdropHarvestModal } from '../modals/GIVdropHarvestModal';
 import type { TransactionResponse } from '@ethersproject/providers';
 import { H2, Lead } from '@giveth/ui-design-system';
 import { AddGIVTokenButton } from '../AddGIVTokenButton';
+import { useWeb3React } from '@web3-react/core';
+import { InjectedConnector } from '@web3-react/injected-connector';
 
 interface IClaimCardContainer {
 	claimed: any;
@@ -61,21 +62,20 @@ const AddTokenRow = styled(Row)`
 
 const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const { totalAmount, step, goPreviousStep, goNextStep } = useUser();
-	const { isReady, connect, network, walletCheck, provider } =
-		useContext(OnboardContext);
+	const { active, activate, chainId, library } = useWeb3React();
 
 	const [txStatus, setTxStatus] = useState<TransactionResponse | undefined>();
 	const [showClaimModal, setShowClaimModal] = useState<boolean>(false);
 
 	const checkNetworkAndWallet = async () => {
-		if (!isReady) {
+		if (!active) {
 			console.log('Wallet is not connected');
-			await connect();
+			await activate(new InjectedConnector({}));
 			return false;
 		}
 
-		if (network !== config.XDAI_NETWORK_NUMBER) {
-			await walletCheck();
+		if (chainId !== config.XDAI_NETWORK_NUMBER) {
+			// await walletCheck();
 			return false;
 		}
 
@@ -122,7 +122,7 @@ const ClaimCard: FC<IClaimViewCardProps> = ({ index }) => {
 					</ClaimButton>
 				</Row>
 				<AddTokenRow alignItems={'center'} justifyContent={'center'}>
-					<AddGIVTokenButton provider={provider} />
+					<AddGIVTokenButton provider={library} />
 				</AddTokenRow>
 				{step === index && (
 					<>

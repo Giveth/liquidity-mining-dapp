@@ -17,10 +17,10 @@ import {
 	stakeTokens,
 	wrapToken,
 } from '../../lib/stakingPool';
-import { OnboardContext } from '../../context/onboard.context';
 import Lottie from 'react-lottie';
 import LoadingAnimation from '../../animations/loading.json';
 import { SubmittedInnerModal, ConfirmedInnerModal } from './ConfirmSubmit';
+import { useWeb3React } from '@web3-react/core';
 
 interface IStakeModalProps extends IModal {
 	poolStakingConfig: PoolStakingConfig;
@@ -57,7 +57,7 @@ export const StakeModal: FC<IStakeModalProps> = ({
 	const [amount, setAmount] = useState('0');
 	const [txHash, setTxHash] = useState('');
 	const [stakeState, setStakeState] = useState(StakeStates.UNKNOWN);
-	const { network: walletNetwork, provider } = useContext(OnboardContext);
+	const { chainId, library } = useWeb3React();
 
 	const { title, LM_ADDRESS, POOL_ADDRESS, GARDEN_ADDRESS } =
 		poolStakingConfig;
@@ -78,8 +78,8 @@ export const StakeModal: FC<IStakeModalProps> = ({
 
 	const onApprove = async () => {
 		if (amount === '0') return;
-		if (!provider) {
-			console.error('Provider is null');
+		if (!library) {
+			console.error('library is null');
 			return;
 		}
 		if (!GARDEN_ADDRESS) {
@@ -89,7 +89,7 @@ export const StakeModal: FC<IStakeModalProps> = ({
 
 		setStakeState(StakeStates.APPROVING);
 
-		const signer = provider.getSigner();
+		const signer = library.getSigner();
 
 		const userAddress = await signer.getAddress();
 
@@ -98,7 +98,7 @@ export const StakeModal: FC<IStakeModalProps> = ({
 			userAddress,
 			GARDEN_ADDRESS,
 			POOL_ADDRESS,
-			provider,
+			library,
 		);
 
 		if (isApproved) {
@@ -110,7 +110,7 @@ export const StakeModal: FC<IStakeModalProps> = ({
 
 	const onStake = () => {
 		setStakeState(StakeStates.STAKING);
-		stakeTokens(amount, POOL_ADDRESS, LM_ADDRESS, provider)
+		stakeTokens(amount, POOL_ADDRESS, LM_ADDRESS, library)
 			.then(txResponse => {
 				if (txResponse) {
 					setTxHash(txResponse.hash);
@@ -133,7 +133,7 @@ export const StakeModal: FC<IStakeModalProps> = ({
 			return;
 		}
 		setStakeState(StakeStates.WRAPPING);
-		wrapToken(amount, POOL_ADDRESS, GARDEN_ADDRESS, provider)
+		wrapToken(amount, POOL_ADDRESS, GARDEN_ADDRESS, library)
 			.then(txResponse => {
 				if (txResponse) {
 					setTxHash(txResponse.hash);
@@ -249,17 +249,17 @@ export const StakeModal: FC<IStakeModalProps> = ({
 							</InnerModal>
 						</>
 					)}
-				{stakeState === StakeStates.SUBMITTED && (
+				{chainId && stakeState === StakeStates.SUBMITTED && (
 					<SubmittedInnerModal
 						title={title}
-						walletNetwork={walletNetwork}
+						walletNetwork={chainId}
 						txHash={txHash}
 					/>
 				)}
-				{stakeState === StakeStates.CONFIRMED && (
+				{chainId && stakeState === StakeStates.CONFIRMED && (
 					<ConfirmedInnerModal
 						title={title}
-						walletNetwork={walletNetwork}
+						walletNetwork={chainId}
 						txHash={txHash}
 					/>
 				)}

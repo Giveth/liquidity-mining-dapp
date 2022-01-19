@@ -42,7 +42,6 @@ import type {
 	TransactionResponse,
 	TransactionReceipt,
 } from '@ethersproject/providers';
-import { OnboardContext } from '@/context/onboard.context';
 import {
 	showPendingClaim,
 	showConfirmedClaim,
@@ -51,6 +50,7 @@ import {
 import config from '@/configuration';
 import styled from 'styled-components';
 import { useSubgraph } from '@/context';
+import { useWeb3React } from '@web3-react/core';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -101,7 +101,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 		currentValues: { balances },
 	} = useSubgraph();
 
-	const { address, provider } = useContext(OnboardContext);
+	const { account, library } = useWeb3React();
 
 	useEffect(() => {
 		setClaimableNow(tokenDistroHelper.getUserClaimableNow(balances));
@@ -135,11 +135,12 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 	const onClaim = async () => {
 		const check = checkNetworkAndWallet();
 		if (!check) return;
-		if (!provider) return;
+		if (!library) return;
+		if (!account) return;
 
 		try {
 			setClaimState(ClaimState.WAITING);
-			const tx = await claimAirDrop(address, provider);
+			const tx = await claimAirDrop(account, library);
 			// This is for test;
 			// const tx: TransactionResponse = {
 			// 	hash: '0x8162815a31ba2ffc6a815ec76f79231fd7bc4a8c49f9e5ec7d923a6c069ef938',

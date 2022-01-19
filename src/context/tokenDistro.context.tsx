@@ -1,9 +1,9 @@
 import { createContext, FC, useContext, useEffect, useState } from 'react';
-import { OnboardContext } from '@/context/onboard.context';
 import config from '@/configuration';
 import { TokenDistroHelper } from '@/lib/contractHelper/TokenDistroHelper';
 import { Zero } from '@ethersproject/constants';
 import { useSubgraph } from '@/context/subgraph.context';
+import { useWeb3React } from '@web3-react/core';
 
 export interface ITokenDistroContext {
 	tokenDistroHelper: TokenDistroHelper;
@@ -27,7 +27,7 @@ export const BalanceContext = createContext<ITokenDistroContext>({
 });
 
 export const TokenDistroProvider: FC = ({ children }) => {
-	const { network } = useContext(OnboardContext);
+	const { chainId } = useWeb3React();
 
 	const { mainnetValues, xDaiValues } = useSubgraph();
 
@@ -54,7 +54,7 @@ export const TokenDistroProvider: FC = ({ children }) => {
 	}, [xDaiValues]);
 
 	useEffect(() => {
-		switch (network) {
+		switch (chainId) {
 			case config.MAINNET_NETWORK_NUMBER:
 				setCurrentTokenDistroInfo(mainnetTokenDistro);
 				break;
@@ -66,7 +66,7 @@ export const TokenDistroProvider: FC = ({ children }) => {
 			default:
 				setCurrentTokenDistroInfo(mainnetTokenDistro);
 		}
-	}, [mainnetTokenDistro, xDaiTokenDistro, network]);
+	}, [mainnetTokenDistro, xDaiTokenDistro, chainId]);
 
 	return (
 		<BalanceContext.Provider

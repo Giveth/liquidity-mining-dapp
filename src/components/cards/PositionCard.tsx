@@ -7,7 +7,6 @@ import {
 	neutralColors,
 	brandColors,
 	Button,
-	OulineButton,
 	Overline,
 	B,
 	IconGiveth,
@@ -17,15 +16,11 @@ import {
 	P,
 } from '@giveth/ui-design-system';
 
-import { transfer, exit } from '@/lib/stakingNFT';
 import { LiquidityPosition } from '@/types/nfts';
 import { Row } from '@/components/styled-components/Grid';
-import { useLiquidityPositions, useOnboard } from '@/context';
 import { IconWithTooltip } from '../IconWithToolTip';
 import LoadingAnimation from '@/animations/loading.json';
-import { StakeState } from '../modals/V3Stake';
 import { Pending } from '../modals/HarvestAll.sc';
-import { BigNumber } from 'ethers';
 
 const loadingAnimationOptions = {
 	loop: true,

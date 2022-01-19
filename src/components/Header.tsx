@@ -2,7 +2,6 @@ import Image from 'next/image';
 import { Row } from './styled-components/Grid';
 import { FC, useContext, useState, useEffect } from 'react';
 import { ThemeContext, ThemeType } from '@/context/theme.context';
-import { OnboardContext } from '@/context/onboard.context';
 import { formatWeiHelper } from '@/helpers/number';
 import { networksParams } from '@/helpers/blockchain';
 import {
@@ -29,7 +28,9 @@ import {
 import Link from 'next/link';
 import { useSubgraph } from '@/context/subgraph.context';
 import { RewardMenu } from './menu/RewardMenu';
-import { IconMenu24 } from '@giveth/ui-design-system';
+import { useWeb3React } from '@web3-react/core';
+import WalletModal from '@/components/modals/WalletModal';
+import { walletsArray } from '@/lib/wallet/walletTypes';
 
 export interface IHeader {
 	theme?: ThemeType;
@@ -39,15 +40,26 @@ export interface IHeader {
 const Header: FC<IHeader> = () => {
 	const [showRewardMenu, setShowRewardMenu] = useState(false);
 	const [showHeader, setShowHeader] = useState(true);
+	const [showWalletModal, setShowWalletModal] = useState(false);
 	const { theme } = useContext(ThemeContext);
 	const {
 		currentValues: { balances },
 	} = useSubgraph();
-	const { network, connect, address, provider } = useContext(OnboardContext);
+	const { chainId, active, activate, deactivate, account, library } =
+		useWeb3React();
 
 	const handleHoverClickBalance = (show: boolean) => {
 		setShowRewardMenu(show);
 	};
+
+	useEffect(() => {
+		const selectedWalletName =
+			window.localStorage.getItem('selectedWallet');
+		const wallet = walletsArray.find(w => w.value === selectedWalletName);
+		if (wallet) {
+			activate(wallet.connector);
+		}
+	}, []);
 
 	useEffect(() => {
 		const threshold = 0;
@@ -78,7 +90,6 @@ const Header: FC<IHeader> = () => {
 		};
 
 		window.addEventListener('scroll', onScroll);
-		console.log(showHeader);
 
 		return () => window.removeEventListener('scroll', onScroll);
 	}, [showHeader]);
@@ -143,7 +154,7 @@ const Header: FC<IHeader> = () => {
 							/>
 						}
 					/>
-					{address ? (
+					{active && account && chainId ? (
 						<>
 							<RewardMenuAndButtonContainer
 								onClick={() => handleHoverClickBalance(true)}
@@ -170,7 +181,16 @@ const Header: FC<IHeader> = () => {
 								</BalanceButton>
 								{showRewardMenu && <RewardMenu />}
 							</RewardMenuAndButtonContainer>
-							<WalletButton outline onClick={connect}>
+							<WalletButton
+								outline
+								onClick={() => {
+									window.localStorage.removeItem(
+										'selectedWallet',
+									);
+									deactivate();
+									setShowWalletModal(true);
+								}}
+							>
 								<HBContainer>
 									<HBPic
 										src={'/images/placeholders/profile.png'}
@@ -179,19 +199,19 @@ const Header: FC<IHeader> = () => {
 										height={'24px'}
 									/>
 									<WBInfo>
-										<span>{`${address.substring(
+										<span>{`${account.substring(
 											0,
 											6,
-										)}...${address.substring(
-											address.length - 5,
-											address.length,
+										)}...${account.substring(
+											account.length - 5,
+											account.length,
 										)}`}</span>
 										<WBNetwork>
 											Connected to{' '}
-											{networksParams[network]
-												? networksParams[network]
+											{networksParams[chainId]
+												? networksParams[chainId]
 														.nativeCurrency.symbol
-												: provider?._network?.name}
+												: library?._network?.name}
 										</WBNetwork>
 									</WBInfo>
 								</HBContainer>
@@ -202,12 +222,20 @@ const Header: FC<IHeader> = () => {
 							<ConnectButton
 								buttonType='primary'
 								label='CONNECT WALLET'
-								onClick={connect}
+								onClick={() => {
+									setShowWalletModal(true);
+								}}
 							/>
 						</div>
 					)}
 				</Row>
 			</StyledHeader>
+			{showWalletModal && (
+				<WalletModal
+					showModal={showWalletModal}
+					setShowModal={setShowWalletModal}
+				/>
+			)}
 		</>
 	);
 };

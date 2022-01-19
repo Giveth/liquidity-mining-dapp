@@ -11,19 +11,11 @@ import {
 	IconHelp,
 	Button,
 } from '@giveth/ui-design-system';
-import React, {
-	FC,
-	MouseEventHandler,
-	useEffect,
-	useContext,
-	useState,
-} from 'react';
-import { useOnboard } from '@/context';
+import React, { FC, MouseEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { IconGIV } from './Icons/GIV';
 import { IconXDAI } from './Icons/XDAI';
 import { Row } from './styled-components/Grid';
-import { OnboardContext } from '@/context/onboard.context';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { IconEthereum } from './Icons/Eth';
@@ -39,7 +31,7 @@ interface IRewardCardProps {
 	actionCb?: MouseEventHandler<HTMLButtonElement>;
 	subButtonLabel?: string;
 	subButtonCb?: Function;
-	network: number;
+	network?: number;
 	className?: string;
 	wrongNetworkText: string;
 	targetNetworks: number[];
@@ -63,6 +55,8 @@ export const RewardCard: FC<IRewardCardProps> = ({
 		useState(false);
 	const { price } = usePrice();
 	useEffect(() => {
+		if (price.isNaN()) return;
+
 		const usd = (+ethers.utils.formatEther(
 			price.times(liquidAmount.toString()).toFixed(0),
 		)).toFixed(2);
@@ -72,7 +66,7 @@ export const RewardCard: FC<IRewardCardProps> = ({
 	return (
 		<>
 			<RewadCardContainer className={className}>
-				{!targetNetworks.includes(network) ? (
+				{!network || !targetNetworks.includes(network) ? (
 					<WrongNetworkInnerModal
 						targetNetworks={targetNetworks}
 						text={wrongNetworkText}

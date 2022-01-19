@@ -134,7 +134,7 @@ export const TabOverviewBottom = () => {
 						label='CLAIM YOUR GIV'
 						buttonType='primary'
 						onClick={goToClaim}
-					></ClaimCardButton>
+					/>
 				</ClaimCard>
 			</Container>
 		</OverviewBottomContainer>
