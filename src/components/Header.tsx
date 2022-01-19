@@ -90,7 +90,6 @@ const Header: FC<IHeader> = () => {
 		};
 
 		window.addEventListener('scroll', onScroll);
-		console.log(showHeader);
 
 		return () => window.removeEventListener('scroll', onScroll);
 	}, [showHeader]);
