@@ -15,9 +15,9 @@ const defaultTokenDistroHelper = new TokenDistroHelper({
 	initialAmount: Zero,
 	lockedAmount: Zero,
 	totalTokens: Zero,
-	startTime: new Date(),
-	cliffTime: new Date(),
-	endTime: new Date(),
+	startTime: new Date(1640272200000),
+	cliffTime: new Date(1640272200000),
+	endTime: new Date(1797952200000),
 });
 
 export const BalanceContext = createContext<ITokenDistroContext>({
