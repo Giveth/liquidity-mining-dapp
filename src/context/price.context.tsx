@@ -77,6 +77,7 @@ export const PriceProvider: FC = ({ children }) => {
 		fetch('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD')
 			.then(async res => {
 				const date = await res.json();
+				console.log('Eth price from cryptocompare', date);
 				setEthPrice(new BigNumber(date.USD));
 			})
 			.catch(error => {
@@ -88,6 +89,9 @@ export const PriceProvider: FC = ({ children }) => {
 	}, []);
 
 	useEffect(() => {
+		console.log('chainId', chainId);
+		console.log('xDaiPrice', xDaiPrice);
+		console.log('mainnetPrice', mainnetPrice);
 		switch (chainId) {
 			case config.XDAI_NETWORK_NUMBER:
 				setCurrentPrice(xDaiPrice);
