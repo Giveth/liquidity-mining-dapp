@@ -13,7 +13,11 @@ import {
 	GIVfarmRewardCard,
 	PoolRow,
 } from './GIVfarm.sc';
-import { Container, IconGIVFarm } from '@giveth/ui-design-system';
+import {
+	Container,
+	IconGIVFarm,
+	IconExternalLink,
+} from '@giveth/ui-design-system';
 import { NetworkSelector } from '@/components/NetworkSelector';
 import StakingPositionCard from '@/components/cards/StakingPositionCard';
 import { getGivStakingConfig } from '@/helpers/networkProvider';
@@ -21,7 +25,7 @@ import { BigNumber } from 'bignumber.js';
 import { constants } from 'ethers';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { useFarms } from '@/context/farm.context';
-import { TopFiller, TopInnerContainer, ExtLink } from './commons';
+import { TopFiller, TopInnerContainer, ExtLink, ExtLinkRow } from './commons';
 import { useWeb3React } from '@web3-react/core';
 
 const GIVfarmTabContainer = styled(Container)``;
@@ -84,14 +88,32 @@ export const TabGIVfarmBottom = () => {
 		<GIVfarmTabContainer>
 			<Row alignItems='center' gap='24px'>
 				<NetworkSelector />
-				<ExtLink
-					size='Big'
-					target='_blank'
-					rel='noreferrer'
-					href='https://omni.xdaichain.com/bridge'
-				>
-					Bridge your GIV
-				</ExtLink>
+				<ExtLinkRow alignItems='center'>
+					<ExtLink
+						size='Big'
+						target='_blank'
+						rel='noreferrer'
+						href='https://omni.xdaichain.com/bridge'
+					>
+						Bridge your GIV
+					</ExtLink>
+					<IconExternalLink />
+				</ExtLinkRow>
+				<ExtLinkRow alignItems='center'>
+					<ExtLink
+						size='Big'
+						target='_blank'
+						rel='noreferrer'
+						href={
+							chainId === config.XDAI_NETWORK_NUMBER
+								? config.XDAI_CONFIG.GIV.BUY_LINK
+								: config.MAINNET_CONFIG.GIV.BUY_LINK
+						}
+					>
+						Buy GIV token
+					</ExtLink>
+					<IconExternalLink />
+				</ExtLinkRow>
 			</Row>
 			{chainId === config.XDAI_NETWORK_NUMBER && (
 				<PoolRow justifyContent='center' gap='24px' wrap={1}>
