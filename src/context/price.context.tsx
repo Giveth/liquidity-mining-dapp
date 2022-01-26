@@ -56,6 +56,7 @@ export const PriceProvider: FC = ({ children }) => {
 	}, [xDaiValues, ethPrice]);
 
 	useEffect(() => {
+		console.log('ethPrice', ethPrice.toString());
 		if (pool) {
 			const { token1, token0, token0Price, token1Price } = pool;
 			switch (config.MAINNET_CONFIG.TOKEN_ADDRESS.toLowerCase()) {
