@@ -51,6 +51,7 @@ import config from '@/configuration';
 import styled from 'styled-components';
 import { useSubgraph } from '@/context';
 import { useWeb3React } from '@web3-react/core';
+import { usePrice } from '@/context/price.context';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -84,7 +85,6 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 	checkNetworkAndWallet,
 	onSuccess,
 }) => {
-	const [price, setPrice] = useState(0);
 	const [givBackLiquidPart, setGivBackLiquidPart] = useState(Zero);
 	const [txResp, setTxResp] = useState<TransactionResponse | undefined>();
 	const [givBackStream, setGivBackStream] = useState<BigNumber.Value>(0);
@@ -100,6 +100,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 	const {
 		currentValues: { balances },
 	} = useSubgraph();
+	const { price } = usePrice();
 
 	const { account, library } = useWeb3React();
 
@@ -128,8 +129,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 	}, [givdropAmount, tokenDistroHelper, claimableNow, givBackLiquidPart]);
 
 	const calcUSD = (amount: string) => {
-		const usd = (parseInt(amount.toString()) * price).toFixed(2);
-		return usd;
+		return price.isNaN() ? '0' : price.times(amount).toFixed(2);
 	};
 
 	const onClaim = async () => {
