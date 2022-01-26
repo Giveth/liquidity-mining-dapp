@@ -240,6 +240,8 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 											price={calcUSD(
 												formatWeiHelper(
 													givdropAmount.div(10),
+													config.TOKEN_PRECISION,
+													false,
 												),
 											)}
 										/>
@@ -267,6 +269,8 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 											price={calcUSD(
 												formatWeiHelper(
 													givBackLiquidPart,
+													config.TOKEN_PRECISION,
+													false,
 												),
 											)}
 										/>
@@ -312,6 +316,8 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 											price={calcUSD(
 												formatWeiHelper(
 													givDropAccStream,
+													config.TOKEN_PRECISION,
+													false,
 												),
 											)}
 										/>
