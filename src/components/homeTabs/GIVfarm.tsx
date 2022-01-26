@@ -12,11 +12,14 @@ import {
 	Title,
 	GIVfarmRewardCard,
 	PoolRow,
+	ContractRow,
 } from './GIVfarm.sc';
 import {
 	Container,
 	IconGIVFarm,
 	IconExternalLink,
+	GLink,
+	IconCopy,
 } from '@giveth/ui-design-system';
 import { NetworkSelector } from '@/components/NetworkSelector';
 import StakingPositionCard from '@/components/cards/StakingPositionCard';
@@ -114,6 +117,19 @@ export const TabGIVfarmBottom = () => {
 					</ExtLink>
 					<IconExternalLink />
 				</ExtLinkRow>
+				<ContractRow>
+					<GLink>{`Contract (${
+						chainId === config.XDAI_NETWORK_NUMBER
+							? config.XDAI_CONFIG.chainName
+							: config.MAINNET_CONFIG.chainName
+					}):`}</GLink>
+					<GLink>
+						{chainId === config.XDAI_NETWORK_NUMBER
+							? config.XDAI_CONFIG.TOKEN_ADDRESS
+							: config.MAINNET_CONFIG.TOKEN_ADDRESS}
+					</GLink>
+					<IconCopy />
+				</ContractRow>
 			</Row>
 			{chainId === config.XDAI_NETWORK_NUMBER && (
 				<PoolRow justifyContent='center' gap='24px' wrap={1}>
