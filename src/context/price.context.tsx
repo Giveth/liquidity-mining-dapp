@@ -90,8 +90,8 @@ export const PriceProvider: FC = ({ children }) => {
 
 	useEffect(() => {
 		console.log('chainId', chainId);
-		console.log('xDaiPrice', xDaiPrice);
-		console.log('mainnetPrice', mainnetPrice);
+		console.log('xDaiPrice', xDaiPrice.toString());
+		console.log('mainnetPrice', mainnetPrice.toString());
 		switch (chainId) {
 			case config.XDAI_NETWORK_NUMBER:
 				setCurrentPrice(xDaiPrice);
