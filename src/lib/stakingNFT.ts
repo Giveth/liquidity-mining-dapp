@@ -7,9 +7,9 @@ import {
 	getNftManagerPositionsContract,
 	getUniswapV3StakerContract,
 } from './contracts';
-import { StakeState } from '@/components/modals/V3Stake';
 import config from '@/configuration';
 import { getGasPreference } from '@/lib/helpers';
+import { StakeState } from '@/lib/staking';
 
 const abiEncoder = utils.defaultAbiCoder;
 
