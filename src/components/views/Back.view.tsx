@@ -8,8 +8,8 @@ function GIVbackView() {
 	return (
 		<>
 			<Header />
-			<TabGIVbacksTop />
 			<Tabs />
+			<TabGIVbacksTop />
 			<TabGIVbacksBottom />
 			<Footer />
 		</>

@@ -8,8 +8,8 @@ function GIVfarmView() {
 	return (
 		<>
 			<Header />
-			<TabGIVfarmTop />
 			<Tabs />
+			<TabGIVfarmTop />
 			<TabGIVfarmBottom />
 			<Footer />
 		</>
