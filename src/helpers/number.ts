@@ -44,3 +44,10 @@ export const formatWeiHelper = (
 
 export const gwei2wei = (gweiAmount: string): string =>
 	ethers.utils.parseUnits(gweiAmount, 'gwei').toString();
+
+export const shortenAddress = (address: string) => {
+	return `${address.substring(0, 6)}...${address.substring(
+		address.length - 5,
+		address.length,
+	)}`;
+};
