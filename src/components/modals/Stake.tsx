@@ -121,7 +121,9 @@ export const StakeModal: FC<IStakeModalProps> = ({
 				setStakeState(StakeState.STAKE);
 			}
 		} catch (err) {
-			setStakeState(StakeState.ERROR);
+			setStakeState(
+				err?.code === 4001 ? StakeState.STAKE : StakeState.ERROR,
+			);
 		}
 	};
 
@@ -151,7 +153,9 @@ export const StakeModal: FC<IStakeModalProps> = ({
 				setStakeState(StakeState.WRAP);
 			}
 		} catch (err) {
-			setStakeState(StakeState.ERROR);
+			setStakeState(
+				err?.code === 4001 ? StakeState.WRAP : StakeState.ERROR,
+			);
 		}
 	};
 

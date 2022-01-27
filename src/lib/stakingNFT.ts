@@ -151,12 +151,10 @@ export const claimUnstakeStake = async (
 		.concat(stakeMulticall)
 		.concat(claimRewardCalldata);
 
-	const tx = await uniswapV3StakerContract.multicall(
+	return await uniswapV3StakerContract.multicall(
 		multicallData,
 		getGasPreference(config.NETWORKS_CONFIG[provider.network.chainId]),
 	);
-
-	return tx;
 };
 
 export const claim = async (
