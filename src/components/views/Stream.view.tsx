@@ -8,8 +8,8 @@ function GIVstreamView() {
 	return (
 		<>
 			<Header />
-			<TabGIVstreamTop />
 			<Tabs />
+			<TabGIVstreamTop />
 			<TabGIVstreamBottom />
 			<Footer />
 		</>
