@@ -13,6 +13,7 @@ import {
 	GIVfarmRewardCard,
 	PoolRow,
 	ContractRow,
+	CopyWrapper,
 } from './GIVfarm.sc';
 import {
 	Container,
@@ -30,6 +31,7 @@ import { useTokenDistro } from '@/context/tokenDistro.context';
 import { useFarms } from '@/context/farm.context';
 import { TopFiller, TopInnerContainer, ExtLink, ExtLinkRow } from './commons';
 import { useWeb3React } from '@web3-react/core';
+import { shortenAddress } from '@/helpers/number';
 
 const GIVfarmTabContainer = styled(Container)``;
 
@@ -124,11 +126,23 @@ export const TabGIVfarmBottom = () => {
 							: config.MAINNET_CONFIG.chainName
 					}):`}</GLink>
 					<GLink>
-						{chainId === config.XDAI_NETWORK_NUMBER
-							? config.XDAI_CONFIG.TOKEN_ADDRESS
-							: config.MAINNET_CONFIG.TOKEN_ADDRESS}
+						{shortenAddress(
+							chainId === config.XDAI_NETWORK_NUMBER
+								? config.XDAI_CONFIG.TOKEN_ADDRESS
+								: config.MAINNET_CONFIG.TOKEN_ADDRESS,
+						)}
 					</GLink>
-					<IconCopy />
+					<CopyWrapper
+						onClick={() => {
+							navigator.clipboard.writeText(
+								chainId === config.XDAI_NETWORK_NUMBER
+									? config.XDAI_CONFIG.TOKEN_ADDRESS
+									: config.MAINNET_CONFIG.TOKEN_ADDRESS,
+							);
+						}}
+					>
+						<IconCopy />
+					</CopyWrapper>
 				</ContractRow>
 			</Row>
 			{chainId === config.XDAI_NETWORK_NUMBER && (
