@@ -67,7 +67,7 @@ export const Footer = () => {
 							<a href='https://giveth.io/partnerships'>
 								<LinkItem>Partnerships</LinkItem>
 							</a>
-							<a href='https://docs.giveth.io/jobs/'>
+							<a href='https://giveth.recruitee.com/'>
 								<LinkItem>We’re Hiring!</LinkItem>
 							</a>
 						</LinkColumn>
