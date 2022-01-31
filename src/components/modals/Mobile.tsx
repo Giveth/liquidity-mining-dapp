@@ -1,15 +1,7 @@
 import { FC } from 'react';
 import { Modal, IModal } from './Modal';
 import styled from 'styled-components';
-import {
-	H6,
-	GLink,
-	IconCalculator,
-	neutralColors,
-	brandColors,
-	SublineBold,
-	Subline,
-} from '@giveth/ui-design-system';
+import { GLink, neutralColors, brandColors, P } from '@giveth/ui-design-system';
 import { Row } from '../styled-components/Grid';
 
 interface IMobileModalProps extends IModal {}
@@ -24,13 +16,14 @@ export const MobileModal: FC<IMobileModalProps> = ({
 				<ModalContainer>
 					<Row gap='8px' alignItems='center' />
 					<DescContainer>
-						Please switch to desktop to enjoy the GIVeconomy DApp or
-						&nbsp;
+						The GIVeconomy DApp is optimized for desktop. Switch to
+						desktop for the best experience or close this box to
+						explore anyway.
 						<GLink
 							href='https://docs.giveth.io/giveconomy/'
 							target='_blank'
 						>
-							read about the GIVeconomy here.
+							Read about the GIVeconomy here.
 						</GLink>
 					</DescContainer>
 				</ModalContainer>
@@ -46,7 +39,7 @@ const ModalContainer = styled.div`
 	text-align: center;
 `;
 
-const DescContainer = styled.div`
+const DescContainer = styled(P)`
 	color: ${neutralColors.gray[100]};
 	background-color: ${brandColors.giv[700]};
 	border: 1px solid ${brandColors.mustard[800]};
@@ -54,6 +47,8 @@ const DescContainer = styled.div`
 	padding: 18px;
 	margin: 32px auto;
 	& > a {
+		display: block;
+		margin-top: 8px;
 		color: yellow;
 	}
 `;
