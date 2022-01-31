@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { Row } from './styled-components/Grid';
 import { FC, useContext, useState, useEffect } from 'react';
 import { ThemeContext, ThemeType } from '@/context/theme.context';
-import { formatWeiHelper } from '@/helpers/number';
+import { formatWeiHelper, shortenAddress } from '@/helpers/number';
 import { networksParams } from '@/helpers/blockchain';
 import {
 	ConnectButton,
@@ -199,13 +199,7 @@ const Header: FC<IHeader> = () => {
 										height={'24px'}
 									/>
 									<WBInfo>
-										<span>{`${account.substring(
-											0,
-											6,
-										)}...${account.substring(
-											account.length - 5,
-											account.length,
-										)}`}</span>
+										<span>{shortenAddress(account)}</span>
 										<WBNetwork>
 											Connected to{' '}
 											{networksParams[chainId]

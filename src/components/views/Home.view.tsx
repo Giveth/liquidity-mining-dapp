@@ -8,8 +8,8 @@ function HomeView() {
 	return (
 		<>
 			<Header />
-			<TabOverviewTop />
 			<Tabs />
+			<TabOverviewTop />
 			<TabOverviewBottom />
 			<Footer />
 		</>

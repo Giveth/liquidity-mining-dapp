@@ -8,8 +8,8 @@ function GIVgardenView() {
 	return (
 		<>
 			<Header />
-			<TabGardenTop />
 			<Tabs />
+			<TabGardenTop />
 			<TabGardenBottom />
 			<Footer />
 		</>

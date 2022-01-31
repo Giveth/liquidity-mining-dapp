@@ -15,8 +15,8 @@ import {
 	ErrorInnerModal,
 	SubmittedInnerModal,
 } from './ConfirmSubmit';
-import { StakeState } from './V3Stake';
 import { useWeb3React } from '@web3-react/core';
+import { StakeState } from '@/lib/staking';
 
 const loadingAnimationOptions = {
 	loop: true,
@@ -40,7 +40,9 @@ export const UnStakeModal: FC<IUnStakeModalProps> = ({
 	const [txHash, setTxHash] = useState('');
 	const [amount, setAmount] = useState('0');
 	const [label, setLabel] = useState('UNSTAKE');
-	const [stakeState, setStakeState] = useState(StakeState.UNKNOWN);
+	const [stakeState, setStakeState] = useState<StakeState>(
+		StakeState.UNKNOWN,
+	);
 	const { library, chainId } = useWeb3React();
 
 	const { title, LM_ADDRESS, GARDEN_ADDRESS } = poolStakingConfig;
