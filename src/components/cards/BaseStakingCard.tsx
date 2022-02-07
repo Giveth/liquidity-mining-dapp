@@ -27,6 +27,8 @@ import {
 	IconContainer,
 	IconHelpWraper,
 	GIVgardenTooltip,
+	IconGift,
+	GiftTooltip,
 } from './BaseStakingCard.sc';
 import styled from 'styled-components';
 import {
@@ -54,6 +56,7 @@ import BigNumber from 'bignumber.js';
 import { WhatisGIVstreamModal } from '../modals/WhatisGIVstream';
 import { IconSushiswap } from '../Icons/Sushiswap';
 import { useWeb3React } from '@web3-react/core';
+import Image from 'next/image';
 
 export const getPoolIconWithName = (pool: string) => {
 	switch (pool) {
@@ -169,9 +172,27 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 									size={24}
 									color={brandColors.mustard[500]}
 								/>
-								<DetailValue>
-									{apr && formatEthHelper(apr, 2)}%
-								</DetailValue>
+								{isV3Staking ? (
+									<IconWithTooltip
+										direction={'top'}
+										icon={
+											<IconGift
+												src='/images/heart-ribbon.svg'
+												alt='gift'
+											/>
+										}
+									>
+										<GiftTooltip>
+											We are experiencing some technical
+											issues with the APR calculation. We
+											appeciate your patience.
+										</GiftTooltip>
+									</IconWithTooltip>
+								) : (
+									<DetailValue>
+										{apr && formatEthHelper(apr, 2)}%
+									</DetailValue>
+								)}
 								<IconContainer
 									onClick={() => setShowAPRModal(true)}
 								>
