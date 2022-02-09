@@ -17,8 +17,8 @@ export const UniV3APRModal: FC<IUniV3APRModal> = ({
 		<Modal showModal={showModal} setShowModal={setShowModal}>
 			<APRModalContainer>
 				<P>
-					Concentrate your liquidity for higher the APRs. The narrower
-					your price range, the higher your rewards.
+					Concentrate your liquidity for higher APRs. The narrower
+					your price range, the more GIV you get.
 				</P>
 				<OKButton
 					onClick={() => {
