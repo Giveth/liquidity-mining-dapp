@@ -54,6 +54,7 @@ import { WhatisGIVstreamModal } from '../modals/WhatisGIVstream';
 import { IconSushiswap } from '../Icons/Sushiswap';
 import { useWeb3React } from '@web3-react/core';
 import { UniV3APRModal } from '../modals/UNIv3APR';
+import { useLiquidityPositions } from '@/context';
 
 export const getPoolIconWithName = (pool: string) => {
 	switch (pool) {
@@ -101,6 +102,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	const isV3Staking = type === StakingType.UNISWAP;
 
 	const { apr, earned, stakedLpAmount, userNotStakedAmount } = stakeInfo;
+	const { minimumApr } = useLiquidityPositions();
 
 	useEffect(() => {
 		setRewardLiquidPart(tokenDistroHelper.getLiquidPart(earned));
@@ -171,21 +173,28 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 									color={brandColors.mustard[500]}
 								/>
 								{isV3Staking ? (
-									<IconWithTooltip
-										direction={'top'}
-										icon={
-											<IconGift
-												src='/images/heart-ribbon.svg'
-												alt='gift'
-											/>
-										}
-									>
-										<GiftTooltip>
-											We are experiencing some technical
-											issues with the APR calculation. We
-											appeciate your patience.
-										</GiftTooltip>
-									</IconWithTooltip>
+									<>
+										<IconWithTooltip
+											direction={'top'}
+											icon={
+												<IconGift
+													src='/images/heart-ribbon.svg'
+													alt='gift'
+												/>
+											}
+										>
+											<GiftTooltip>
+												We are experiencing some
+												technical issues with the APR
+												calculation. We appeciate your
+												patience.
+											</GiftTooltip>
+										</IconWithTooltip>
+										<DetailValue>
+											Min {formatEthHelper(minimumApr, 2)}
+											%
+										</DetailValue>
+									</>
 								) : (
 									<DetailValue>
 										{apr && formatEthHelper(apr, 2)}%
