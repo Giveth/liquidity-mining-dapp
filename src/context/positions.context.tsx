@@ -14,12 +14,16 @@ import { Token } from '@uniswap/sdk-core';
 
 import { LiquidityPosition } from '@/types/nfts';
 import config from '@/configuration';
-import { UniswapV3PoolStakingConfig } from '@/types/config';
+import { StakingType, UniswapV3PoolStakingConfig } from '@/types/config';
 import { useSubgraph } from '.';
 import { getUniswapV3TokenURI } from '@/services/subgraph.service';
 import { Zero } from '@/helpers/number';
 import BigNumber from 'bignumber.js';
-import { IUniswapV3Pool, IUniswapV3Position } from '@/types/subgraph';
+import {
+	IInfinitePositionReward,
+	IUniswapV3Pool,
+	IUniswapV3Position,
+} from '@/types/subgraph';
 import { ethers } from 'ethers';
 import { getReward } from '@/lib/stakingNFT';
 import { getUniswapV3StakerContract } from '@/lib/contracts';
@@ -48,7 +52,7 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const {
 		userStakedPositions,
 		userNotStakedPositions,
-		// allPositions,
+		allPositions,
 		infinitePosition,
 		infinitePositionReward,
 		uniswapV3Pool,
@@ -68,6 +72,9 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 	const poolLastLiquidity = useRef(ethers.constants.Zero);
 	const poolLastTick = useRef(0);
+	const lastChainId = useRef(chainId);
+	const lastLibrary = useRef(library);
+
 	const mainnetConfig = config.MAINNET_CONFIG;
 
 	const uniswapConfig = mainnetConfig.pools[0] as UniswapV3PoolStakingConfig;
@@ -145,6 +152,195 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 		[poolAddress],
 	);
 
+	const calculateMinApr = useCallback(
+		async (
+			infinitePosition: IUniswapV3Position | undefined,
+			infinitePositionReward: IInfinitePositionReward | undefined,
+			_pool: Pool,
+			givIsToken0: boolean,
+		) => {
+			if (
+				infinitePosition &&
+				infinitePositionReward &&
+				chainId === config.MAINNET_NETWORK_NUMBER &&
+				library
+			) {
+				const infiniteLiquidityPosition = transformToLiquidityPosition(
+					infinitePosition,
+					_pool,
+				);
+				if (infiniteLiquidityPosition?._position) {
+					const { _position } = infiniteLiquidityPosition;
+
+					let infinitePositionLiquidityInGiv;
+					if (givIsToken0) {
+						// GIV is token0
+
+						// GIV Token
+						// let _givToken = _position.pool.token0;
+
+						// amount of giv in LP
+						const givAmount = _position.amount0;
+
+						// amount of eth in LP
+						const wethAmount = _position.amount1;
+
+						// calc value of ETH in terms of GIV
+						const givValueEth =
+							_position.pool.token1Price.quote(wethAmount);
+
+						infinitePositionLiquidityInGiv =
+							ethers.utils.parseEther(
+								givAmount.add(givValueEth).toFixed(),
+							);
+					} else {
+						// WETH is token0
+
+						// amount of giv in LP
+						const wethAmount = _position.amount0;
+
+						// amount of eth in LP
+						const givAmount = _position.amount1;
+
+						// calc value of ETH in terms of GIV
+						const givValueEth =
+							_position.pool.token0Price.quote(wethAmount);
+
+						infinitePositionLiquidityInGiv =
+							ethers.utils.parseEther(
+								givAmount.add(givValueEth).toFixed(),
+							);
+					}
+					const uniswapV3StakerContract =
+						getUniswapV3StakerContract(library);
+
+					if (uniswapV3StakerContract) {
+						const [currentReward, block]: [
+							ethers.BigNumber,
+							ethers.providers.Block,
+						] = await Promise.all([
+							getReward(
+								infinitePosition.tokenId,
+								uniswapV3StakerContract,
+								currentIncentive.key,
+							),
+							library.getBlock(),
+						]);
+						const { lastRewardAmount, lastUpdateTimeStamp } =
+							infinitePositionReward;
+						if (currentReward.gt(lastRewardAmount)) {
+							const deltaReward =
+								currentReward.sub(lastRewardAmount);
+							const deltaTime =
+								block.timestamp - lastUpdateTimeStamp;
+
+							const currentApr = new BigNumber(
+								deltaReward.toString(),
+							)
+								.div(infinitePositionLiquidityInGiv.toString())
+								.times(31_536_000) // One year
+								.div(deltaTime)
+								.times(100);
+							setMinimumApr(currentApr);
+						}
+					}
+				}
+			}
+		},
+		[chainId, currentIncentive.key, library, transformToLiquidityPosition],
+	);
+
+	const calculateAverageApr = useCallback(
+		async (
+			allPositions: IUniswapV3Position[],
+			_pool: Pool,
+			givIsToken0: boolean,
+		) => {
+			const ethPriceInGIV = _pool.priceOf(_pool.token1).toFixed(10);
+			// console.log('ethPriceInGIV: ', ethPriceInGIV);
+
+			const allLiquidityPositions = (await Promise.all(
+				allPositions.map(p => transformToLiquidityPosition(p, _pool)),
+			)) as LiquidityPosition[];
+
+			const totalETHValue = allLiquidityPositions
+				.flat()
+				.reduce((acc, { _position }) => {
+					if (!_position) return acc;
+
+					if (
+						_position.tickLower > _pool.tickCurrent ||
+						_position.tickUpper < _pool.tickCurrent
+					) {
+						// Out of range
+						return acc;
+					}
+
+					// In range
+
+					if (givIsToken0) {
+						// GIV is token0
+
+						// GIV Token
+						// let _givToken = _position.pool.token0;
+
+						// amount of giv in LP
+						let givAmount = _position.amount0;
+
+						// amount of eth in LP
+						let wethAmount = _position.amount1;
+
+						// calc value of GIV in terms of ETH
+						const ethValueGIV =
+							_position.pool.token0Price.quote(givAmount);
+
+						// add values of all tokens in ETH
+						return acc?.add(ethValueGIV).add(wethAmount);
+					} else {
+						// WETH is token0
+
+						// amount of giv in LP
+						let wethAmount = _position.amount0;
+
+						// amount of eth in LP
+						let givAmount = _position.amount1;
+
+						// calc value of GIV in terms of ETH
+						const ethValueGIV =
+							_position.pool.token1Price.quote(givAmount);
+
+						// add values of all tokens in ETH
+						return acc?.add(ethValueGIV).add(wethAmount);
+					}
+				}, allLiquidityPositions[0]._position?.amount1.multiply('0'));
+
+			if (totalETHValue) {
+				const totalLiquidityEth = totalETHValue.toFixed(18);
+				// console.log('totalLiquidityEth:', totalLiquidityEth);
+
+				const uniswapV3PoolStakingConfig =
+					config.MAINNET_CONFIG.pools.find(
+						p => p.type === StakingType.UNISWAP,
+					) as UniswapV3PoolStakingConfig;
+				const {
+					INCENTIVE_REWARD_AMOUNT,
+					INCENTIVE_START_TIME,
+					INCENTIVE_END_TIME,
+				} = uniswapV3PoolStakingConfig;
+
+				const currentApr = new BigNumber(INCENTIVE_REWARD_AMOUNT)
+					.div(ethPriceInGIV)
+					.div(totalLiquidityEth)
+					.times(31_536_000) // One year
+					.div(INCENTIVE_END_TIME - INCENTIVE_START_TIME)
+					.times(100);
+
+				// Average APR
+				setApr(currentApr);
+			}
+		},
+		[transformToLiquidityPosition],
+	);
 	useEffect(() => {
 		const loadPositions = async () => {
 			try {
@@ -240,186 +436,28 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				setStakedPositions(stakedPositionsWithURI);
 				setUnstakedPositions(unstakedPositionsWithURI);
 
-				const ethPriceInGIV = _pool.priceOf(_pool.token1).toFixed(10);
-				// console.log('ethPriceInGIV: ', ethPriceInGIV);
-
-				if (
-					infinitePosition &&
-					infinitePositionReward &&
-					chainId === config.MAINNET_NETWORK_NUMBER &&
-					library
-				) {
-					const infiniteLiquidityPosition =
-						transformToLiquidityPosition(infinitePosition, _pool);
-					if (infiniteLiquidityPosition?._position) {
-						const { _position } = infiniteLiquidityPosition;
-
-						let infinitePositionLiquidityInGiv;
-						if (givIsToken0) {
-							// GIV is token0
-
-							// GIV Token
-							// let _givToken = _position.pool.token0;
-
-							// amount of giv in LP
-							const givAmount = _position.amount0;
-
-							// amount of eth in LP
-							const wethAmount = _position.amount1;
-
-							// calc value of ETH in terms of GIV
-							const givValueEth =
-								_position.pool.token1Price.quote(wethAmount);
-
-							infinitePositionLiquidityInGiv =
-								ethers.utils.parseEther(
-									givAmount.add(givValueEth).toFixed(),
-								);
-						} else {
-							// WETH is token0
-
-							// amount of giv in LP
-							const wethAmount = _position.amount0;
-
-							// amount of eth in LP
-							const givAmount = _position.amount1;
-
-							// calc value of ETH in terms of GIV
-							const givValueEth =
-								_position.pool.token0Price.quote(wethAmount);
-
-							infinitePositionLiquidityInGiv =
-								ethers.utils.parseEther(
-									givAmount.add(givValueEth).toFixed(),
-								);
-						}
-						const uniswapV3StakerContract =
-							getUniswapV3StakerContract(library);
-
-						if (uniswapV3StakerContract) {
-							const [currentReward, block]: [
-								ethers.BigNumber,
-								ethers.providers.Block,
-							] = await Promise.all([
-								getReward(
-									infinitePosition.tokenId,
-									uniswapV3StakerContract,
-									currentIncentive.key,
-								),
-								library.getBlock(),
-							]);
-							const { lastRewardAmount, lastUpdateTimeStamp } =
-								infinitePositionReward;
-							if (currentReward.gt(lastRewardAmount)) {
-								const deltaReward =
-									currentReward.sub(lastRewardAmount);
-								const deltaTime =
-									block.timestamp - lastUpdateTimeStamp;
-
-								const currentApr = new BigNumber(
-									deltaReward.toString(),
-								)
-									.div(
-										infinitePositionLiquidityInGiv.toString(),
-									)
-									.times(31_536_000) // One year
-									.div(deltaTime)
-									.times(100);
-								setMinimumApr(currentApr);
-							}
-						}
-					}
-				}
 				if (
 					!poolLastLiquidity.current.eq(uniswapV3Pool.liquidity) ||
-					poolLastTick.current !== uniswapV3Pool.tick
+					poolLastTick.current !== uniswapV3Pool.tick ||
+					lastChainId.current !== chainId ||
+					lastLibrary.current !== library
 				) {
 					console.log('uniswap pool liquidity is new');
+
 					poolLastLiquidity.current = uniswapV3Pool.liquidity;
 					poolLastTick.current = uniswapV3Pool.tick;
+					lastChainId.current = chainId;
+					lastLibrary.current = library;
 
-					// const allLiquidityPositions = (await Promise.all(
-					// 	allPositions.map(p =>
-					// 		transformToLiquidityPosition(p, _pool),
-					// 	),
-					// )) as LiquidityPosition[];
-					//
-					// const totalETHValue = allLiquidityPositions
-					// 	.flat()
-					// 	.reduce((acc, { _position }) => {
-					// 		if (!_position) return acc;
-					//
-					// 		if (
-					// 			_position.tickLower > _pool.tickCurrent ||
-					// 			_position.tickUpper < _pool.tickCurrent
-					// 		) {
-					// 			// Out of range
-					// 			return acc;
-					// 		}
-					//
-					// 		// In range
-					//
-					// 		if (givIsToken0) {
-					// 			// GIV is token0
-					//
-					// 			// GIV Token
-					// 			// let _givToken = _position.pool.token0;
-					//
-					// 			// amount of giv in LP
-					// 			let givAmount = _position.amount0;
-					//
-					// 			// amount of eth in LP
-					// 			let wethAmount = _position.amount1;
-					//
-					// 			// calc value of GIV in terms of ETH
-					// 			const ethValueGIV =
-					// 				_position.pool.token0Price.quote(givAmount);
-					//
-					// 			// add values of all tokens in ETH
-					// 			return acc?.add(ethValueGIV).add(wethAmount);
-					// 		} else {
-					// 			// WETH is token0
-					//
-					// 			// amount of giv in LP
-					// 			let wethAmount = _position.amount0;
-					//
-					// 			// amount of eth in LP
-					// 			let givAmount = _position.amount1;
-					//
-					// 			// calc value of GIV in terms of ETH
-					// 			const ethValueGIV =
-					// 				_position.pool.token1Price.quote(givAmount);
-					//
-					// 			// add values of all tokens in ETH
-					// 			return acc?.add(ethValueGIV).add(wethAmount);
-					// 		}
-					// 	}, allLiquidityPositions[0]._position?.amount1.multiply('0'));
-					//
-					// if (totalETHValue) {
-					// 	const totalLiquidityEth = totalETHValue.toFixed(18);
-					// 	// console.log('totalLiquidityEth:', totalLiquidityEth);
-					//
-					// 	const uniswapV3PoolStakingConfig =
-					// 		config.MAINNET_CONFIG.pools.find(
-					// 			p => p.type === StakingType.UNISWAP,
-					// 		) as UniswapV3PoolStakingConfig;
-					// 	const {
-					// 		INCENTIVE_REWARD_AMOUNT,
-					// 		INCENTIVE_START_TIME,
-					// 		INCENTIVE_END_TIME,
-					// 	} = uniswapV3PoolStakingConfig;
-					//
-					// 	const currentApr = new BigNumber(
-					// 		INCENTIVE_REWARD_AMOUNT,
-					// 	)
-					// 		.div(ethPriceInGIV)
-					// 		.div(totalLiquidityEth)
-					// 		.times(31_536_000) // One year
-					// 		.div(INCENTIVE_END_TIME - INCENTIVE_START_TIME)
-					// 		.times(100);
-					//
-					// 	setApr(currentApr);
-					// }
+					await Promise.all([
+						calculateMinApr(
+							infinitePosition,
+							infinitePositionReward,
+							_pool,
+							givIsToken0,
+						),
+						calculateAverageApr(allPositions, _pool, givIsToken0),
+					]);
 				}
 
 				setLoadingNftPositions(false);
@@ -432,8 +470,12 @@ export const NftsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	}, [
 		userNotStakedPositions,
 		userStakedPositions,
-		// allPositions,
+		allPositions,
 		uniswapV3Pool,
+		calculateAverageApr,
+		calculateMinApr,
+		library,
+		chainId,
 	]);
 
 	//initial load of positions

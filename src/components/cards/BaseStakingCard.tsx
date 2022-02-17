@@ -173,28 +173,25 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 									color={brandColors.mustard[500]}
 								/>
 								{isV3Staking ? (
-									<>
-										<IconWithTooltip
-											direction={'top'}
-											icon={
-												<IconGift
-													src='/images/heart-ribbon.svg'
-													alt='gift'
-												/>
-											}
-										>
-											<GiftTooltip>
-												We are experiencing some
-												technical issues with the APR
-												calculation. We appeciate your
-												patience.
-											</GiftTooltip>
-										</IconWithTooltip>
-										<DetailValue>
-											Min {formatEthHelper(minimumApr, 2)}
-											%
-										</DetailValue>
-									</>
+									<IconWithTooltip
+										direction={'top'}
+										icon={
+											<IconGift
+												src='/images/heart-ribbon.svg'
+												alt='gift'
+											/>
+										}
+									>
+										<GiftTooltip>
+											Provide a narrow range of liquidity
+											to maximize your rate of reward. The
+											average APR is{' '}
+											{formatEthHelper(apr, 2)}%, and the
+											minimum APR for full range liquidity
+											is {formatEthHelper(minimumApr, 2)}
+											%.
+										</GiftTooltip>
+									</IconWithTooltip>
 								) : (
 									<DetailValue>
 										{apr && formatEthHelper(apr, 2)}%

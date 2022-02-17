@@ -95,18 +95,17 @@ export class SubgraphQueryBuilder {
 			staked
 			staker
 		}
+		allPositions: uniswapPositions(first: 1000, where: {closed:false}){
+			tokenId
+			token0
+			token1
+			liquidity
+			tickLower
+			tickUpper
+			staked
+			staker
+		}
 		`;
-
-		// }
-		// allPositions: uniswapPositions(first: 1000, where: {closed:false}){
-		// 	tokenId
-		// 	token0
-		// 	token1
-		// 	liquidity
-		// 	tickLower
-		// 	tickUpper
-		// 	staked
-		// 	staker
 
 		if (uniswapConfig?.infinitePositionId) {
 			return (
