@@ -54,6 +54,7 @@ import { WhatisGIVstreamModal } from '../modals/WhatisGIVstream';
 import { IconSushiswap } from '../Icons/Sushiswap';
 import { useWeb3React } from '@web3-react/core';
 import { UniV3APRModal } from '../modals/UNIv3APR';
+import { useLiquidityPositions } from '@/context';
 
 export const getPoolIconWithName = (pool: string) => {
 	switch (pool) {
@@ -101,6 +102,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	const isV3Staking = type === StakingType.UNISWAP;
 
 	const { apr, earned, stakedLpAmount, userNotStakedAmount } = stakeInfo;
+	const { minimumApr } = useLiquidityPositions();
 
 	useEffect(() => {
 		setRewardLiquidPart(tokenDistroHelper.getLiquidPart(earned));
@@ -181,9 +183,13 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 										}
 									>
 										<GiftTooltip>
-											We are experiencing some technical
-											issues with the APR calculation. We
-											appeciate your patience.
+											Provide a narrow range of liquidity
+											to maximize your rate of reward. The
+											average APR is{' '}
+											{formatEthHelper(apr, 2)}%, and the
+											minimum APR for full range liquidity
+											is {formatEthHelper(minimumApr, 2)}
+											%.
 										</GiftTooltip>
 									</IconWithTooltip>
 								) : (
