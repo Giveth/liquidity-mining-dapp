@@ -1,4 +1,6 @@
 import {
+	BasicNetworkConfig,
+	RegenStream,
 	SimplePoolStakingConfig,
 	StakingType,
 	UniswapV3PoolStakingConfig,
@@ -51,6 +53,28 @@ export class SubgraphQueryBuilder {
 		  totalTokens
 		}
 		`;
+	};
+
+	private static generateTokenDistroInfoQueries = (
+		networkConfig: BasicNetworkConfig,
+	): string => {
+		const mainTokenDistroQuery = `
+		tokenDistroInfo: ${SubgraphQueryBuilder.getTokenDistroInfoQuery(
+			networkConfig.TOKEN_DISTRO_ADDRESS,
+		)}
+		`;
+
+		const regenFarmsTokenDistroQueries = networkConfig.regenStreams
+			.map((regenStream: RegenStream) => {
+				return `
+			${regenStream.type}: ${SubgraphQueryBuilder.getTokenDistroInfoQuery(
+					regenStream.tokenDistroAddress,
+				)}
+			`;
+			})
+			.join();
+
+		return mainTokenDistroQuery + regenFarmsTokenDistroQueries;
 	};
 
 	private static getUnipoolInfoQuery = (address: string): string => {
@@ -163,9 +187,7 @@ export class SubgraphQueryBuilder {
 		return `
 		{
 			balances: ${SubgraphQueryBuilder.getBalanceQuery(address)}
-			tokenDistroInfo: ${SubgraphQueryBuilder.getTokenDistroInfoQuery(
-				config.MAINNET_CONFIG.TOKEN_DISTRO_ADDRESS,
-			)}
+			${SubgraphQueryBuilder.generateTokenDistroInfoQueries(config.MAINNET_CONFIG)}
 			${SubgraphQueryBuilder.generateUnipoolInfoQueries([
 				getGivStakingConfig(config.MAINNET_CONFIG),
 				...config.MAINNET_CONFIG.pools.filter(
@@ -184,10 +206,7 @@ export class SubgraphQueryBuilder {
 		return `
 		{
 			balances: ${SubgraphQueryBuilder.getBalanceQuery(address)}
-			tokenDistroInfo: ${SubgraphQueryBuilder.getTokenDistroInfoQuery(
-				config.XDAI_CONFIG.TOKEN_DISTRO_ADDRESS,
-			)}
-			
+			${SubgraphQueryBuilder.generateTokenDistroInfoQueries(config.XDAI_CONFIG)}
 			${SubgraphQueryBuilder.generateUnipoolInfoQueries([
 				getGivStakingConfig(config.XDAI_CONFIG),
 				...config.XDAI_CONFIG.pools,

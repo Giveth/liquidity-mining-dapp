@@ -12,6 +12,10 @@ export enum StakingType {
 	GIV_LM = 'Staking',
 }
 
+export enum StreamType {
+	FOX = 'FOX_STREAM',
+}
+
 export type PoolStakingConfig =
 	| SimplePoolStakingConfig
 	| BalancerPoolStakingConfig
@@ -47,6 +51,12 @@ export interface GasPreference {
 	maxFeePerGas?: string;
 	maxPriorityFeePerGas?: string;
 }
+export interface RegenStream {
+	tokenDistroAddress: string;
+	type: StreamType;
+	title: string;
+	tokenSymbol: string;
+}
 
 export interface BasicNetworkConfig {
 	TOKEN_ADDRESS: string;
@@ -62,7 +72,7 @@ export interface BasicNetworkConfig {
 	};
 	rpcUrls: string[];
 	blockExplorerUrls?: string[];
-	iconUrls?: string[]; // Currently ignored.
+	iconUrls?: string[]; // Currently, ignored.
 	blockExplorerName: string[];
 	subgraphAddress: string;
 	gasPreference: GasPreference;
@@ -71,6 +81,8 @@ export interface BasicNetworkConfig {
 		| BalancerPoolStakingConfig
 		| UniswapV3PoolStakingConfig
 	>;
+
+	regenStreams: RegenStream[];
 }
 
 interface MainnetNetworkConfig extends BasicNetworkConfig {

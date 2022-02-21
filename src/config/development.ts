@@ -1,4 +1,4 @@
-import { EnvConfig, StakingType } from '@/types/config';
+import { EnvConfig, StakingType, StreamType } from '@/types/config';
 import { gwei2wei } from '@/helpers/number';
 
 const INFURA_API_KEY = process.env.NEXT_PUBLIC_INFURA_API_KEY;
@@ -79,6 +79,7 @@ const config: EnvConfig = {
 				unit: 'LP',
 			},
 		],
+		regenStreams: [],
 	},
 
 	XDAI_CONFIG: {
@@ -99,7 +100,7 @@ const config: EnvConfig = {
 		blockExplorerName: ['Blockscout'],
 		blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
 		subgraphAddress:
-			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-xdai-deployment-seven',
+			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-xdai-develop',
 
 		TOKEN_ADDRESS: '0x83a8eea6427985C523a0c4d9d3E62C051B6580d3',
 		MERKLE_ADDRESS: '0xc87403C70c9FBfb594d98d3B5E695BBE4C694188',
@@ -134,6 +135,16 @@ const config: EnvConfig = {
 				provideLiquidityLink:
 					'https://app.sushi.com/add/0x83a8eea6427985C523a0c4d9d3E62C051B6580d3/0x736a98655049433f79dCcF5e54b887E8890b63D1',
 				unit: 'LP',
+			},
+		],
+
+		regenStreams: [
+			{
+				tokenDistroAddress:
+					'0xCA29ec6F4218E230294993E0d77d5ece5a6573D8',
+				type: StreamType.FOX,
+				title: 'FOX',
+				tokenSymbol: 'FOX',
 			},
 		],
 	},
