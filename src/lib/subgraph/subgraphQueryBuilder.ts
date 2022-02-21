@@ -40,8 +40,8 @@ export class SubgraphQueryBuilder {
 		}`;
 	};
 
-	private static getTokenDistroInfoQuery = (): string => {
-		return `tokenDistroContractInfos(first:10){
+	private static getTokenDistroInfoQuery = (address: string): string => {
+		return `tokenDistroContractInfo(id: "${address.toLowerCase()}"){
 		  id
 		  initialAmount
 		  duration
@@ -163,7 +163,9 @@ export class SubgraphQueryBuilder {
 		return `
 		{
 			balances: ${SubgraphQueryBuilder.getBalanceQuery(address)}
-			tokenDistroInfos: ${SubgraphQueryBuilder.getTokenDistroInfoQuery()}
+			tokenDistroInfo: ${SubgraphQueryBuilder.getTokenDistroInfoQuery(
+				config.MAINNET_CONFIG.TOKEN_DISTRO_ADDRESS,
+			)}
 			${SubgraphQueryBuilder.generateUnipoolInfoQueries([
 				getGivStakingConfig(config.MAINNET_CONFIG),
 				...config.MAINNET_CONFIG.pools.filter(
@@ -182,7 +184,9 @@ export class SubgraphQueryBuilder {
 		return `
 		{
 			balances: ${SubgraphQueryBuilder.getBalanceQuery(address)}
-			tokenDistroInfos: ${SubgraphQueryBuilder.getTokenDistroInfoQuery()}
+			tokenDistroInfo: ${SubgraphQueryBuilder.getTokenDistroInfoQuery(
+				config.XDAI_CONFIG.TOKEN_DISTRO_ADDRESS,
+			)}
 			
 			${SubgraphQueryBuilder.generateUnipoolInfoQueries([
 				getGivStakingConfig(config.XDAI_CONFIG),

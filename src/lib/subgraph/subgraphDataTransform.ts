@@ -74,7 +74,7 @@ const transformBalanceInfo = (info: any): IBalances => {
 	};
 };
 
-const transformTokenDistroInfos = (info: any): ITokenDistroInfo => {
+const transformtokenDistroInfo = (info: any): ITokenDistroInfo => {
 	const _startTime = info.startTime;
 	const _cliffTime = info.cliffTime;
 	const _duration = info.duration;
@@ -214,7 +214,7 @@ export const transformSubgraphData = async (
 ): Promise<ISubgraphValue> => {
 	return {
 		balances: transformBalanceInfo(data?.balances),
-		tokenDistroInfo: transformTokenDistroInfos(data?.tokenDistroInfos[0]),
+		tokenDistroInfo: transformtokenDistroInfo(data?.tokenDistroInfo),
 		[StakingType.GIV_LM]: transformUnipoolInfo(data[StakingType.GIV_LM]),
 		[StakingType.BALANCER]: transformUnipoolInfo(
 			data[StakingType.BALANCER],
