@@ -77,6 +77,7 @@ import { ITokenAllocation } from '@/types/subgraph';
 import { TopFiller } from './commons';
 import { useWeb3React } from '@web3-react/core';
 import { IconGIV } from '../Icons/GIV';
+import { RegenStream } from '@/components/RegenStream';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -169,6 +170,12 @@ export const TabGIVstreamBottom = () => {
 		config.XDAI_NETWORK_NUMBER,
 	];
 
+	const networkConfig =
+		chainId === config.XDAI_NETWORK_NUMBER
+			? config.XDAI_CONFIG
+			: config.MAINNET_CONFIG;
+	const { regenStreams } = networkConfig;
+
 	useEffect(() => {
 		setStreamAmount(
 			tokenDistroHelper.getStreamPartTokenPerWeek(
@@ -208,13 +215,24 @@ export const TabGIVstreamBottom = () => {
 					</IconWithTooltip>
 				</FlowRateRow>
 				<GIVstreamProgress percentage={percent} remainTime={remain} />
-				{Object.keys(regenTokenDistroHelpers).length > 0 && (
-					<GsMultiverseDataBlock title='Multiverse'>
-						When you harvest farming rewards from the Giveth
-						Multiverse, a portion of the rewards is added to a
-						Multiverse Stream. Each stream flows continuously until
-						its respective end date. Learn more.
-					</GsMultiverseDataBlock>
+				{regenStreams.length > 0 && (
+					<>
+						<GsMultiverseDataBlock title='Multiverse'>
+							When you harvest farming rewards from the Giveth
+							Multiverse, a portion of the rewards is added to a
+							Multiverse Stream. Each stream flows continuously
+							until its respective end date. Learn more.
+						</GsMultiverseDataBlock>
+
+						{regenStreams.map(streamConfig => {
+							return (
+								<RegenStream
+									key={streamConfig.type}
+									streamConfig={streamConfig}
+								/>
+							);
+						})}
+					</>
 				)}
 				<Row wrap={1} justifyContent='space-between'>
 					<GsDataBlock

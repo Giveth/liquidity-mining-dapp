@@ -51,7 +51,7 @@ export interface GasPreference {
 	maxFeePerGas?: string;
 	maxPriorityFeePerGas?: string;
 }
-export interface RegenStream {
+export interface RegenStreamConfig {
 	tokenDistroAddress: string;
 	type: StreamType;
 	title: string;
@@ -82,7 +82,7 @@ export interface BasicNetworkConfig {
 		| UniswapV3PoolStakingConfig
 	>;
 
-	regenStreams: RegenStream[];
+	regenStreams: RegenStreamConfig[];
 }
 
 interface MainnetNetworkConfig extends BasicNetworkConfig {

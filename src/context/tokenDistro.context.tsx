@@ -73,8 +73,6 @@ export const TokenDistroProvider: FC = ({ children }) => {
 		let newRegenTokenDistroHelpers: IRegenTokenDistroHelpers = {};
 		config.XDAI_CONFIG.regenStreams.forEach(({ type }) => {
 			const tokenDistroInfo = xDaiValues[type];
-			console.log('type:', type);
-			console.log('tokenDistroInfo:', xDaiValues);
 			if (tokenDistroInfo) {
 				newRegenTokenDistroHelpers[type] = new TokenDistroHelper(
 					tokenDistroInfo,

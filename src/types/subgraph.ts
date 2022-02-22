@@ -25,6 +25,13 @@ export interface IBalances {
 	givStaked: ethers.BigNumber;
 	allocationCount: number;
 	givDropClaimed: boolean;
+
+	foxAllocatedTokens: ethers.BigNumber;
+	foxClaimed: ethers.BigNumber;
+	rewardPerTokenPaidFoxHnyLm: ethers.BigNumber;
+	rewardsFoxHnyLm: ethers.BigNumber;
+	foxHnyLp: ethers.BigNumber;
+	foxHnyLpStaked: ethers.BigNumber;
 }
 export const ZeroBalances: IBalances = {
 	balance: constants.Zero,
@@ -51,6 +58,13 @@ export const ZeroBalances: IBalances = {
 	givStaked: constants.Zero,
 	allocationCount: 0,
 	givDropClaimed: false,
+
+	foxAllocatedTokens: constants.Zero,
+	foxClaimed: constants.Zero,
+	rewardPerTokenPaidFoxHnyLm: constants.Zero,
+	rewardsFoxHnyLm: constants.Zero,
+	foxHnyLp: constants.Zero,
+	foxHnyLpStaked: constants.Zero,
 };
 
 export interface ITokenAllocation {

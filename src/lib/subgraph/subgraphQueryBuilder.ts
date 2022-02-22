@@ -1,6 +1,6 @@
 import {
 	BasicNetworkConfig,
-	RegenStream,
+	RegenStreamConfig,
 	SimplePoolStakingConfig,
 	StakingType,
 	UniswapV3PoolStakingConfig,
@@ -39,6 +39,13 @@ export class SubgraphQueryBuilder {
 			givStaked
 			allocationCount
 			givDropClaimed
+			
+			foxAllocatedTokens
+			foxClaimed
+			rewardPerTokenPaidFoxHnyLm
+			rewardsFoxHnyLm
+			foxHnyLp
+			foxHnyLpStaked
 		}`;
 	};
 
@@ -65,7 +72,7 @@ export class SubgraphQueryBuilder {
 		`;
 
 		const regenFarmsTokenDistroQueries = networkConfig.regenStreams
-			.map((regenStream: RegenStream) => {
+			.map((regenStream: RegenStreamConfig) => {
 				return `
 			${regenStream.type}: ${SubgraphQueryBuilder.getTokenDistroInfoQuery(
 					regenStream.tokenDistroAddress,

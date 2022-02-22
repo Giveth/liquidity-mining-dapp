@@ -46,6 +46,13 @@ const transformBalanceInfo = (info: any): IBalances => {
 	const allocationCount = Number(info.allocationCount || 0);
 	const givDropClaimed = Boolean(info.givDropClaimed);
 
+	const foxAllocatedTokens = BN(info.foxAllocatedTokens || 0);
+	const foxClaimed = BN(info.foxClaimed || 0);
+	const rewardPerTokenPaidFoxHnyLm = BN(info.rewardPerTokenPaidFoxHnyLm || 0);
+	const rewardsFoxHnyLm = BN(info.rewardsFoxHnyLm || 0);
+	const foxHnyLp = BN(info.foxHnyLp || 0);
+	const foxHnyLpStaked = BN(info.foxHnyLpStaked || 0);
+
 	return {
 		balance,
 		allocatedTokens,
@@ -71,6 +78,13 @@ const transformBalanceInfo = (info: any): IBalances => {
 		givStaked,
 		allocationCount,
 		givDropClaimed,
+
+		foxAllocatedTokens,
+		foxClaimed,
+		rewardPerTokenPaidFoxHnyLm,
+		rewardsFoxHnyLm,
+		foxHnyLp,
+		foxHnyLpStaked,
 	};
 };
 
