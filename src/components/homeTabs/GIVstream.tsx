@@ -12,6 +12,7 @@ import {
 	B,
 	brandColors,
 	Container,
+	DataBlock,
 	H1,
 	H3,
 	H6,
@@ -37,6 +38,7 @@ import {
 	GsButton,
 	GsDataBlock,
 	GsHFrUnit,
+	GsMultiverseDataBlock,
 	GsPTitle,
 	GsPTitleRow,
 	GsPTooltip,
@@ -150,7 +152,7 @@ export const TabGIVstreamTop = () => {
 
 export const TabGIVstreamBottom = () => {
 	const { chainId } = useWeb3React();
-	const { tokenDistroHelper } = useTokenDistro();
+	const { tokenDistroHelper, regenTokenDistroHelpers } = useTokenDistro();
 
 	const [percent, setPercent] = useState(0);
 	const [remain, setRemain] = useState('');
@@ -206,6 +208,14 @@ export const TabGIVstreamBottom = () => {
 					</IconWithTooltip>
 				</FlowRateRow>
 				<GIVstreamProgress percentage={percent} remainTime={remain} />
+				{Object.keys(regenTokenDistroHelpers).length > 0 && (
+					<GsMultiverseDataBlock title='Multiverse'>
+						When you harvest farming rewards from the Giveth
+						Multiverse, a portion of the rewards is added to a
+						Multiverse Stream. Each stream flows continuously until
+						its respective end date. Learn more.
+					</GsMultiverseDataBlock>
+				)}
 				<Row wrap={1} justifyContent='space-between'>
 					<GsDataBlock
 						title='GIVstream'

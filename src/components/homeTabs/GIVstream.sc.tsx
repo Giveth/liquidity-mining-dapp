@@ -63,6 +63,10 @@ export const GsDataBlock = styled(DataBlock)`
 	width: 459px;
 `;
 
+export const GsMultiverseDataBlock = styled(DataBlock)`
+	width: 688px;
+`;
+
 export const GsButton = styled(ButtonLink)`
 	padding: 24px 34px;
 `;

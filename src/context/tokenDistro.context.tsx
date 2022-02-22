@@ -4,11 +4,14 @@ import { TokenDistroHelper } from '@/lib/contractHelper/TokenDistroHelper';
 import { Zero } from '@ethersproject/constants';
 import { useSubgraph } from '@/context/subgraph.context';
 import { useWeb3React } from '@web3-react/core';
+import { StreamType } from '@/types/config';
 
+export interface IRegenTokenDistroHelpers {
+	[key: string]: TokenDistroHelper;
+}
 export interface ITokenDistroContext {
 	tokenDistroHelper: TokenDistroHelper;
-	mainnetTokenDistro: TokenDistroHelper;
-	xDaiTokenDistro: TokenDistroHelper;
+	regenTokenDistroHelpers: IRegenTokenDistroHelpers;
 }
 
 const defaultTokenDistroHelper = new TokenDistroHelper({
@@ -22,8 +25,7 @@ const defaultTokenDistroHelper = new TokenDistroHelper({
 
 export const BalanceContext = createContext<ITokenDistroContext>({
 	tokenDistroHelper: defaultTokenDistroHelper,
-	mainnetTokenDistro: defaultTokenDistroHelper,
-	xDaiTokenDistro: defaultTokenDistroHelper,
+	regenTokenDistroHelpers: {},
 });
 
 export const TokenDistroProvider: FC = ({ children }) => {
@@ -39,11 +41,28 @@ export const TokenDistroProvider: FC = ({ children }) => {
 		defaultTokenDistroHelper,
 	);
 
+	const [currentRegenTokenDistroHelpers, setCurrentRegenTokenDistroHelpers] =
+		useState<IRegenTokenDistroHelpers>({});
+	const [mainnetRegenTokenHelpers, setMainnetRegenTokenHelpers] =
+		useState<IRegenTokenDistroHelpers>({});
+	const [xDaiRegenTokenDistroHelpers, setXDaiRegenTokenDistroHelpers] =
+		useState<IRegenTokenDistroHelpers>({});
+
 	useEffect(() => {
 		if (mainnetValues?.tokenDistroInfo)
 			setMainnetTokenDistro(
 				new TokenDistroHelper(mainnetValues.tokenDistroInfo),
 			);
+		let newRegenTokenDistroHelpers: IRegenTokenDistroHelpers = {};
+		config.MAINNET_CONFIG.regenStreams.forEach(({ type }) => {
+			const tokenDistroInfo = mainnetValues[type];
+			if (tokenDistroInfo) {
+				newRegenTokenDistroHelpers[type] = new TokenDistroHelper(
+					tokenDistroInfo,
+				);
+			}
+		});
+		setMainnetRegenTokenHelpers(newRegenTokenDistroHelpers);
 	}, [mainnetValues]);
 
 	useEffect(() => {
@@ -51,29 +70,45 @@ export const TokenDistroProvider: FC = ({ children }) => {
 			setXDaiTokenDistro(
 				new TokenDistroHelper(xDaiValues.tokenDistroInfo),
 			);
+		let newRegenTokenDistroHelpers: IRegenTokenDistroHelpers = {};
+		config.XDAI_CONFIG.regenStreams.forEach(({ type }) => {
+			const tokenDistroInfo = xDaiValues[type];
+			console.log('type:', type);
+			console.log('tokenDistroInfo:', xDaiValues);
+			if (tokenDistroInfo) {
+				newRegenTokenDistroHelpers[type] = new TokenDistroHelper(
+					tokenDistroInfo,
+				);
+			}
+		});
+		setXDaiRegenTokenDistroHelpers(newRegenTokenDistroHelpers);
 	}, [xDaiValues]);
 
 	useEffect(() => {
 		switch (chainId) {
-			case config.MAINNET_NETWORK_NUMBER:
-				setCurrentTokenDistroInfo(mainnetTokenDistro);
-				break;
-
 			case config.XDAI_NETWORK_NUMBER:
 				setCurrentTokenDistroInfo(xDaiTokenDistro);
+				setCurrentRegenTokenDistroHelpers(xDaiRegenTokenDistroHelpers);
 				break;
 
+			case config.MAINNET_NETWORK_NUMBER:
 			default:
 				setCurrentTokenDistroInfo(mainnetTokenDistro);
+				setCurrentRegenTokenDistroHelpers(mainnetRegenTokenHelpers);
 		}
-	}, [mainnetTokenDistro, xDaiTokenDistro, chainId]);
+	}, [
+		mainnetTokenDistro,
+		xDaiTokenDistro,
+		chainId,
+		xDaiRegenTokenDistroHelpers,
+		mainnetRegenTokenHelpers,
+	]);
 
 	return (
 		<BalanceContext.Provider
 			value={{
 				tokenDistroHelper: currentTokenDistroInfo,
-				mainnetTokenDistro,
-				xDaiTokenDistro,
+				regenTokenDistroHelpers: currentRegenTokenDistroHelpers,
 			}}
 		>
 			{children}

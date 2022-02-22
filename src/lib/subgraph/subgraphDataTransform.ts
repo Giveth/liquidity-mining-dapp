@@ -10,7 +10,7 @@ import {
 	ZeroBalances,
 } from '@/types/subgraph';
 import { ethers } from 'ethers';
-import { StakingType } from '@/types/config';
+import { StakingType, StreamType } from '@/types/config';
 
 const BN = ethers.BigNumber.from;
 
@@ -74,7 +74,9 @@ const transformBalanceInfo = (info: any): IBalances => {
 	};
 };
 
-const transformtokenDistroInfo = (info: any): ITokenDistroInfo => {
+const transformTokenDistroInfo = (info: any): ITokenDistroInfo | undefined => {
+	if (!info) return undefined;
+
 	const _startTime = info.startTime;
 	const _cliffTime = info.cliffTime;
 	const _duration = info.duration;
@@ -209,12 +211,12 @@ const transformUniswapV2Pair = (info: any): IUniswapV2Pair | undefined => {
 		reserve1,
 	};
 };
-export const transformSubgraphData = async (
-	data: any = {},
-): Promise<ISubgraphValue> => {
+export const transformSubgraphData = (data: any = {}): ISubgraphValue => {
 	return {
 		balances: transformBalanceInfo(data?.balances),
-		tokenDistroInfo: transformtokenDistroInfo(data?.tokenDistroInfo),
+		tokenDistroInfo: transformTokenDistroInfo(data?.tokenDistroInfo),
+		[StreamType.FOX]: transformTokenDistroInfo(data[StreamType.FOX]),
+
 		[StakingType.GIV_LM]: transformUnipoolInfo(data[StakingType.GIV_LM]),
 		[StakingType.BALANCER]: transformUnipoolInfo(
 			data[StakingType.BALANCER],
