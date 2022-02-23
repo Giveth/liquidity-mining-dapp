@@ -78,6 +78,7 @@ const config: EnvConfig = {
 			},
 		],
 		regenStreams: [],
+		regenFarms: [],
 	},
 
 	XDAI_CONFIG: {
@@ -139,6 +140,7 @@ const config: EnvConfig = {
 			'https://api.thegraph.com/subgraphs/name/1hive/honeyswap-v2',
 
 		regenStreams: [],
+		regenFarms: [],
 	},
 };
 

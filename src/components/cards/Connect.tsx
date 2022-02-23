@@ -7,13 +7,7 @@ import { ArrowButton, Card } from './common';
 import { UserContext, GiveDropStateType } from '../../context/user.context';
 import { IClaimViewCardProps } from '../views/claim/Claim.view';
 import { formatWeiHelper } from '@/helpers/number';
-import {
-	ButtonLink,
-	GLink,
-	H2,
-	Lead,
-	OulineLinkButton,
-} from '@giveth/ui-design-system';
+import { ButtonLink, GLink, H2, Lead } from '@giveth/ui-design-system';
 import { useWeb3React } from '@web3-react/core';
 import WalletModal from '@/components/modals/WalletModal';
 interface IConnectCardContainerProps {
@@ -144,10 +138,6 @@ const ClaimedSubtitleA = styled.div`
 
 const AddGivButton = styled.div`
 	cursor: pointer;
-`;
-
-const SocialButton = styled(OulineLinkButton)`
-	width: 265px;
 `;
 
 const ExploreButton = styled(ButtonLink)`

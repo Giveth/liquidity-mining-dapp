@@ -85,7 +85,12 @@ export const RewardMenu = () => {
 				if (unipoolInfo) {
 					const unipoolHelper = new UnipoolHelper(unipoolInfo);
 					_farmRewards = _farmRewards.add(
-						getUserStakeInfo(type, balances, unipoolHelper).earned,
+						getUserStakeInfo(
+							type,
+							undefined,
+							balances,
+							unipoolHelper,
+						).earned,
 					);
 				} else if (type === StakingType.UNISWAP) {
 					_farmRewards = _farmRewards.add(rewardBalance);
