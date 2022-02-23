@@ -47,6 +47,10 @@ export interface BalancerPoolStakingConfig extends SimplePoolStakingConfig {
 	POOL_ID: string;
 }
 
+export interface RegenPoolStakingConfig extends SimplePoolStakingConfig {
+	streamType: StreamType;
+}
+
 export interface GasPreference {
 	maxFeePerGas?: string;
 	maxPriorityFeePerGas?: string;
@@ -87,6 +91,7 @@ export interface BasicNetworkConfig {
 	uniswapV2Subgraph?: string;
 
 	regenStreams: RegenStreamConfig[];
+	regenFarms: RegenPoolStakingConfig[];
 }
 
 interface MainnetNetworkConfig extends BasicNetworkConfig {

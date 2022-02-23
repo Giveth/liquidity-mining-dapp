@@ -40,7 +40,7 @@ interface RegenStreamProps {
 export const getStreamIconWithType = (type: StreamType) => {
 	switch (type) {
 		case StreamType.FOX:
-			return <IconFox />;
+			return <IconFox size={40} />;
 		default:
 			break;
 	}
