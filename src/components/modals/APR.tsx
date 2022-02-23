@@ -30,7 +30,7 @@ export const APRModal: FC<IAPRModalProps> = ({
 }) => {
 	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
 		useState(false);
-	const { tokenDistroHelper } = useTokenDistro();
+	const { givTokenDistroHelper } = useTokenDistro();
 
 	return (
 		<>
@@ -69,11 +69,12 @@ export const APRModal: FC<IAPRModalProps> = ({
 						<DescTitle>Current Distribution:</DescTitle>
 						<Desc>
 							Claimable immediately:{' '}
-							{tokenDistroHelper.GlobalReleasePercentage}%
+							{givTokenDistroHelper.GlobalReleasePercentage}%
 						</Desc>
 						<Desc>
 							Increasing your GIVstream:{' '}
-							{100 - tokenDistroHelper.GlobalReleasePercentage}%
+							{100 - givTokenDistroHelper.GlobalReleasePercentage}
+							%
 						</Desc>
 						<Whatis>
 							<a

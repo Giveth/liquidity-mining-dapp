@@ -78,12 +78,14 @@ import { TopFiller } from './commons';
 import { useWeb3React } from '@web3-react/core';
 import { IconGIV } from '../Icons/GIV';
 import { RegenStream } from '@/components/RegenStream';
+import { usePrice } from '@/context/price.context';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
 	const [rewardLiquidPart, setRewardLiquidPart] = useState(constants.Zero);
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
-	const { tokenDistroHelper } = useTokenDistro();
+	const { givTokenDistroHelper } = useTokenDistro();
+	const { price } = usePrice();
 	const {
 		currentValues: { balances },
 	} = useSubgraph();
@@ -92,16 +94,16 @@ export const TabGIVstreamTop = () => {
 
 	useEffect(() => {
 		setRewardLiquidPart(
-			tokenDistroHelper
+			givTokenDistroHelper
 				.getLiquidPart(allocatedTokens.sub(givback))
 				.sub(claimed),
 		);
 		setRewardStream(
-			tokenDistroHelper.getStreamPartTokenPerWeek(
+			givTokenDistroHelper.getStreamPartTokenPerWeek(
 				allocatedTokens.sub(givback),
 			),
 		);
-	}, [allocatedTokens, claimed, givback, tokenDistroHelper]);
+	}, [allocatedTokens, claimed, givback, givTokenDistroHelper]);
 
 	return (
 		<>
@@ -153,7 +155,7 @@ export const TabGIVstreamTop = () => {
 
 export const TabGIVstreamBottom = () => {
 	const { chainId } = useWeb3React();
-	const { tokenDistroHelper, regenTokenDistroHelpers } = useTokenDistro();
+	const { givTokenDistroHelper, regenTokenDistroHelpers } = useTokenDistro();
 
 	const [percent, setPercent] = useState(0);
 	const [remain, setRemain] = useState('');
@@ -178,17 +180,17 @@ export const TabGIVstreamBottom = () => {
 
 	useEffect(() => {
 		setStreamAmount(
-			tokenDistroHelper.getStreamPartTokenPerWeek(
+			givTokenDistroHelper.getStreamPartTokenPerWeek(
 				balances.allocatedTokens.sub(balances.givback),
 			),
 		);
-	}, [balances.allocatedTokens, balances.givback, tokenDistroHelper]);
+	}, [balances.allocatedTokens, balances.givback, givTokenDistroHelper]);
 
 	useEffect(() => {
-		setPercent(tokenDistroHelper.percent);
-		const _remain = DurationToString(tokenDistroHelper.remain);
+		setPercent(givTokenDistroHelper.percent);
+		const _remain = DurationToString(givTokenDistroHelper.remain);
 		setRemain(_remain);
-	}, [tokenDistroHelper]);
+	}, [givTokenDistroHelper]);
 	return (
 		<GIVbacksBottomContainer>
 			<Container>
@@ -439,7 +441,7 @@ export const GIVstreamHistory: FC = () => {
 	} = useSubgraph();
 	const { allocationCount } = balances;
 
-	const { tokenDistroHelper } = useTokenDistro();
+	const { givTokenDistroHelper } = useTokenDistro();
 
 	useEffect(() => {
 		setPage(0);
@@ -514,7 +516,7 @@ export const GIVstreamHistory: FC = () => {
 								<B as='span'>
 									+
 									{formatWeiHelper(
-										tokenDistroHelper.getStreamPartTokenPerWeek(
+										givTokenDistroHelper.getStreamPartTokenPerWeek(
 											ethers.BigNumber.from(
 												tokenAllocation.amount,
 											),

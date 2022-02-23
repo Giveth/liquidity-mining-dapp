@@ -76,6 +76,7 @@ export interface ITokenAllocation {
 }
 
 export interface ITokenDistroInfo {
+	contractAddress: string;
 	initialAmount: ethers.BigNumber;
 	lockedAmount: ethers.BigNumber;
 	totalTokens: ethers.BigNumber;

@@ -69,7 +69,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 	const {
 		currentValues: { balances },
 	} = useSubgraph();
-	const { tokenDistroHelper } = useTokenDistro();
+	const { givTokenDistroHelper } = useTokenDistro();
 	const { chainId, library, account } = useWeb3React();
 	const { unstakedPositions, stakedPositions, currentIncentive } =
 		useLiquidityPositions();
@@ -135,14 +135,16 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 			currentIncentive.key,
 		);
 
-		const liquidReward = tokenDistroHelper.getLiquidPart(_reward);
+		const liquidReward = givTokenDistroHelper.getLiquidPart(_reward);
 		const streamPerWeek =
-			tokenDistroHelper.getStreamPartTokenPerWeek(_reward);
+			givTokenDistroHelper.getStreamPartTokenPerWeek(_reward);
 		setTokenId(tokenId);
 		setReward(liquidReward);
 		setStream(BigNumber.from(streamPerWeek.toFixed(0)));
-		setClaimableNow(tokenDistroHelper.getUserClaimableNow(balances));
-		setGivBackLiquidPart(tokenDistroHelper.getLiquidPart(balances.givback));
+		setClaimableNow(givTokenDistroHelper.getUserClaimableNow(balances));
+		setGivBackLiquidPart(
+			givTokenDistroHelper.getLiquidPart(balances.givback),
+		);
 		setStakeStatus(StakeState.UNSTAKING);
 	};
 

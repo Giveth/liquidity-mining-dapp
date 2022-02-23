@@ -108,20 +108,20 @@ export const StreamCard: FC<IClaimViewCardProps> = ({ index }) => {
 	const [streamValue, setStreamValue] = useState<string>('0');
 	const [remain, setRemain] = useState('');
 
-	const { tokenDistroHelper } = useTokenDistro();
+	const { givTokenDistroHelper } = useTokenDistro();
 
 	useEffect(() => {
 		setStreamValue(
 			formatWeiHelper(
-				tokenDistroHelper.getStreamPartTokenPerWeek(totalAmount),
+				givTokenDistroHelper.getStreamPartTokenPerWeek(totalAmount),
 			),
 		);
-	}, [totalAmount, tokenDistroHelper]);
+	}, [totalAmount, givTokenDistroHelper]);
 
 	useEffect(() => {
-		const _remain = DurationToString(tokenDistroHelper.remain);
+		const _remain = DurationToString(givTokenDistroHelper.remain);
 		setRemain(_remain);
-	}, [tokenDistroHelper]);
+	}, [givTokenDistroHelper]);
 
 	return (
 		<StreamCardContainer activeIndex={step} index={index}>

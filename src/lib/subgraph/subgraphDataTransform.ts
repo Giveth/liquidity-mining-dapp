@@ -105,6 +105,7 @@ const transformTokenDistroInfo = (info: any): ITokenDistroInfo | undefined => {
 	const totalTokens = BN(info.totalTokens);
 
 	return {
+		contractAddress: info.id,
 		initialAmount,
 		lockedAmount,
 		totalTokens,

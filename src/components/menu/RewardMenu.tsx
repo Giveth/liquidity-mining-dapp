@@ -36,7 +36,7 @@ export const RewardMenu = () => {
 	const [flowRateNow, setFlowRateNow] = useState<BigNumber.Value>(0);
 	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
 		useState(false);
-	const { tokenDistroHelper } = useTokenDistro();
+	const { givTokenDistroHelper } = useTokenDistro();
 	const { currentValues } = useSubgraph();
 	const { rewardBalance } = useStakingNFT();
 	const { chainId, library } = useWeb3React();
@@ -53,16 +53,16 @@ export const RewardMenu = () => {
 
 	useEffect(() => {
 		setGIVstreamLiquidPart(
-			tokenDistroHelper
+			givTokenDistroHelper
 				.getLiquidPart(allocatedTokens.sub(givbackLiquidPart))
 				.sub(claimed),
 		);
 		setFlowRateNow(
-			tokenDistroHelper.getStreamPartTokenPerWeek(
+			givTokenDistroHelper.getStreamPartTokenPerWeek(
 				allocatedTokens.sub(givbackLiquidPart),
 			),
 		);
-	}, [allocatedTokens, claimed, givbackLiquidPart, tokenDistroHelper]);
+	}, [allocatedTokens, claimed, givbackLiquidPart, givTokenDistroHelper]);
 
 	useEffect(() => {
 		let pools;
@@ -91,9 +91,11 @@ export const RewardMenu = () => {
 					_farmRewards = _farmRewards.add(rewardBalance);
 				}
 			});
-			setFarmsLiquidPart(tokenDistroHelper.getLiquidPart(_farmRewards));
+			setFarmsLiquidPart(
+				givTokenDistroHelper.getLiquidPart(_farmRewards),
+			);
 		}
-	}, [balances, currentValues, chainId, rewardBalance, tokenDistroHelper]);
+	}, [balances, currentValues, chainId, rewardBalance, givTokenDistroHelper]);
 
 	useEffect(() => {
 		setIsMounted(true);

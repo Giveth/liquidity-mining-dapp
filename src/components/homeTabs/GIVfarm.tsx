@@ -38,16 +38,16 @@ const GIVfarmTabContainer = styled(Container)``;
 export const TabGIVfarmTop = () => {
 	const [rewardLiquidPart, setRewardLiquidPart] = useState(constants.Zero);
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
-	const { tokenDistroHelper } = useTokenDistro();
+	const { givTokenDistroHelper } = useTokenDistro();
 	const { totalEarned } = useFarms();
 	const { chainId } = useWeb3React();
 
 	useEffect(() => {
-		setRewardLiquidPart(tokenDistroHelper.getLiquidPart(totalEarned));
+		setRewardLiquidPart(givTokenDistroHelper.getLiquidPart(totalEarned));
 		setRewardStream(
-			tokenDistroHelper.getStreamPartTokenPerWeek(totalEarned),
+			givTokenDistroHelper.getStreamPartTokenPerWeek(totalEarned),
 		);
-	}, [totalEarned, tokenDistroHelper]);
+	}, [totalEarned, givTokenDistroHelper]);
 
 	return (
 		<GIVfarmTopContainer>

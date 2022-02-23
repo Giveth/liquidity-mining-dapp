@@ -10,7 +10,7 @@
     "lint:fix": "eslint . --ext .ts --ext .tsx --fix"
   },
   "dependencies": {
-    "@giveth/ui-design-system": "^1.6.0",
+    "@giveth/ui-design-system": "^1.6.1",
     "@toruslabs/torus-embed": "^1.20.2",
     "@uniswap/v3-sdk": "^3.6.2-optimism-regenesis",
     "@web3-react/core": "^6.1.9",

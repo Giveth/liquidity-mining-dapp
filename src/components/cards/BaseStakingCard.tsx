@@ -92,7 +92,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 		useState(false);
 	const [rewardLiquidPart, setRewardLiquidPart] = useState(constants.Zero);
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
-	const { tokenDistroHelper } = useTokenDistro();
+	const { givTokenDistroHelper } = useTokenDistro();
 	const { setInfo } = useFarms();
 	const { chainId } = useWeb3React();
 
@@ -105,9 +105,9 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	const { minimumApr } = useLiquidityPositions();
 
 	useEffect(() => {
-		setRewardLiquidPart(tokenDistroHelper.getLiquidPart(earned));
-		setRewardStream(tokenDistroHelper.getStreamPartTokenPerWeek(earned));
-	}, [earned, tokenDistroHelper]);
+		setRewardLiquidPart(givTokenDistroHelper.getLiquidPart(earned));
+		setRewardStream(givTokenDistroHelper.getStreamPartTokenPerWeek(earned));
+	}, [earned, givTokenDistroHelper]);
 
 	useEffect(() => {
 		if (chainId) {
