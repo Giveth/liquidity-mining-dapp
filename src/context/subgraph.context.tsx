@@ -6,7 +6,6 @@ import {
 	useEffect,
 	useState,
 } from 'react';
-import { isAddress } from 'ethers/lib/utils';
 import { fetchSubgraph } from '@/services/subgraph.service';
 import config from '@/configuration';
 import {
@@ -21,7 +20,7 @@ import {
 } from '@/types/subgraph';
 import { SubgraphQueryBuilder } from '@/lib/subgraph/subgraphQueryBuilder';
 import { transformSubgraphData } from '@/lib/subgraph/subgraphDataTransform';
-import { StakingType, StreamType } from '@/types/config';
+import { RegenFarmType, StakingType, StreamType } from '@/types/config';
 import { useWeb3React } from '@web3-react/core';
 
 export interface ISubgraphValue {
@@ -40,6 +39,8 @@ export interface ISubgraphValue {
 	infinitePositionReward?: IInfinitePositionReward;
 	infinitePosition?: IUniswapV3Position;
 	[StreamType.FOX]?: ITokenDistroInfo;
+
+	[RegenFarmType.FOX_HNY]?: IUnipool;
 }
 
 export interface ISubgraphContext {

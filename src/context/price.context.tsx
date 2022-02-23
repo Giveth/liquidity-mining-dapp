@@ -14,12 +14,12 @@ import { useLiquidityPositions } from '@/context/positions.context';
 import { useWeb3React } from '@web3-react/core';
 
 export interface IPriceContext {
-	price: BigNumber;
+	givPrice: BigNumber;
 	getTokenPrice: (address: string, network: number) => BigNumber;
 }
 
 const priceDefaultValue: IPriceContext = {
-	price: Zero,
+	givPrice: Zero,
 	getTokenPrice: () => Zero,
 };
 
@@ -153,27 +153,27 @@ export const PriceProvider: FC = ({ children }) => {
 
 		const { MAINNET_CONFIG, XDAI_CONFIG } = config;
 		if (MAINNET_CONFIG.uniswapV2Subgraph) {
-			MAINNET_CONFIG.regenStreams.forEach(regenConfig => {
+			MAINNET_CONFIG.regenStreams.forEach(streamConfig => {
 				fetchUniswapSubgraphTokenPrice(
 					MAINNET_CONFIG.uniswapV2Subgraph,
-					regenConfig.tokenAddress,
+					streamConfig.tokenAddress,
 				).then(price =>
 					setMainnetThirdPartTokensPrice({
 						...mainnetThirdPartyTokensPrice,
-						[regenConfig.tokenAddress.toLowerCase()]: price,
+						[streamConfig.tokenAddress.toLowerCase()]: price,
 					}),
 				);
 			});
 		}
 		if (XDAI_CONFIG.uniswapV2Subgraph) {
-			XDAI_CONFIG.regenStreams.forEach(regenConfig => {
+			XDAI_CONFIG.regenStreams.forEach(streamConfig => {
 				fetchUniswapSubgraphTokenPrice(
 					XDAI_CONFIG.uniswapV2Subgraph,
-					regenConfig.tokenAddress,
+					streamConfig.tokenAddress,
 				).then(price => {
 					setXDaiThirdPartTokensPrice({
 						...xDaiThirdPartyTokensPrice,
-						[regenConfig.tokenAddress.toLowerCase()]: price,
+						[streamConfig.tokenAddress.toLowerCase()]: price,
 					});
 				});
 			});
@@ -197,7 +197,7 @@ export const PriceProvider: FC = ({ children }) => {
 	return (
 		<PriceContext.Provider
 			value={{
-				price: currentPrice,
+				givPrice: currentPrice,
 				getTokenPrice,
 			}}
 		>

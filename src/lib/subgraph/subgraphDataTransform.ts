@@ -10,7 +10,7 @@ import {
 	ZeroBalances,
 } from '@/types/subgraph';
 import { ethers } from 'ethers';
-import { StakingType, StreamType } from '@/types/config';
+import { RegenFarmType, StakingType, StreamType } from '@/types/config';
 
 const BN = ethers.BigNumber.from;
 
@@ -242,6 +242,10 @@ export const transformSubgraphData = (data: any = {}): ISubgraphValue => {
 		[StakingType.SUSHISWAP]: transformUnipoolInfo(
 			data[StakingType.SUSHISWAP],
 		),
+		[RegenFarmType.FOX_HNY]: transformUnipoolInfo(
+			data[RegenFarmType.FOX_HNY],
+		),
+
 		uniswapV3Pool: transformUniswapV3Pool(data?.uniswapV3Pool),
 		...transformUniswapPositions(data),
 		uniswapV2EthGivPair: transformUniswapV2Pair(data?.uniswapV2EthGivPair),

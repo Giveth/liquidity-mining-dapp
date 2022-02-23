@@ -85,7 +85,7 @@ export const TabGIVstreamTop = () => {
 	const [rewardLiquidPart, setRewardLiquidPart] = useState(constants.Zero);
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
 	const { givTokenDistroHelper } = useTokenDistro();
-	const { price } = usePrice();
+	const { givPrice } = usePrice();
 	const {
 		currentValues: { balances },
 	} = useSubgraph();

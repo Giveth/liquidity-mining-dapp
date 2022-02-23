@@ -1,5 +1,6 @@
 import {
 	BasicNetworkConfig,
+	RegenPoolStakingConfig,
 	RegenStreamConfig,
 	SimplePoolStakingConfig,
 	StakingType,
@@ -174,15 +175,15 @@ export class SubgraphQueryBuilder {
 	};
 
 	private static generateUnipoolInfoQueries = (
-		configs: SimplePoolStakingConfig[],
+		configs: Array<SimplePoolStakingConfig | RegenPoolStakingConfig>,
 	): string => {
 		return configs
-			.map(
-				c =>
-					`${c.type}: ${SubgraphQueryBuilder.getUnipoolInfoQuery(
-						c.LM_ADDRESS,
-					)}`,
-			)
+			.map((c: SimplePoolStakingConfig | RegenPoolStakingConfig) => {
+				const { regenFarmType, type } = c as RegenPoolStakingConfig;
+				return `${
+					regenFarmType || type
+				}: ${SubgraphQueryBuilder.getUnipoolInfoQuery(c.LM_ADDRESS)}`;
+			})
 			.join();
 	};
 
@@ -200,6 +201,7 @@ export class SubgraphQueryBuilder {
 				...config.MAINNET_CONFIG.pools.filter(
 					c => c.type !== StakingType.UNISWAP,
 				),
+				...config.XDAI_CONFIG.regenFarms,
 			])}
 			uniswapV3Pool: ${SubgraphQueryBuilder.getUniswapV3PoolQuery(
 				uniswapConfig.UNISWAP_V3_LP_POOL,
@@ -217,6 +219,7 @@ export class SubgraphQueryBuilder {
 			${SubgraphQueryBuilder.generateUnipoolInfoQueries([
 				getGivStakingConfig(config.XDAI_CONFIG),
 				...config.XDAI_CONFIG.pools,
+				...config.XDAI_CONFIG.regenFarms,
 			])}
 			
 			uniswapV2EthGivPair: ${SubgraphQueryBuilder.getPairInfoQuery(

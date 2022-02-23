@@ -7,8 +7,8 @@ export const IconFox: FC<ICurrencyIconProps> = ({ size = 16 }) => {
 		<Image
 			src={`/images/currencies/fox/${size}.svg`}
 			alt='balancer'
-			width={64}
-			height={64}
+			width={size}
+			height={size}
 			loading='lazy'
 		/>
 	);

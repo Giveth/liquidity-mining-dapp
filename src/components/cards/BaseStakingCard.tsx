@@ -1,9 +1,13 @@
 import config from '../../configuration';
-import { PoolStakingConfig, StakingType } from '../../types/config';
-import React, { FC, useEffect, useState, ReactNode } from 'react';
+import {
+	PoolStakingConfig,
+	RegenPoolStakingConfig,
+	StakingType,
+} from '@/types/config';
+import React, { FC, useEffect, useState, ReactNode, useMemo } from 'react';
 import { Row } from '../styled-components/Grid';
 import { IconWithTooltip } from '../IconWithToolTip';
-import { formatEthHelper, formatWeiHelper, Zero } from '../../helpers/number';
+import { formatEthHelper, formatWeiHelper } from '@/helpers/number';
 import {
 	StakingPoolContainer,
 	StakingPoolExchangeRow,
@@ -73,7 +77,7 @@ export const getPoolIconWithName = (pool: string) => {
 	}
 };
 interface IBaseStakingCardProps {
-	poolStakingConfig: PoolStakingConfig;
+	poolStakingConfig: PoolStakingConfig | RegenPoolStakingConfig;
 	stakeInfo: any;
 	notif?: ReactNode;
 }
@@ -92,9 +96,13 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 		useState(false);
 	const [rewardLiquidPart, setRewardLiquidPart] = useState(constants.Zero);
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
-	const { givTokenDistroHelper } = useTokenDistro();
+	const { getTokenDistroHelper } = useTokenDistro();
 	const { setInfo } = useFarms();
 	const { chainId } = useWeb3React();
+	const { regenStreamType } = poolStakingConfig as RegenPoolStakingConfig;
+	const tokenDistroHelper = useMemo(() => {
+		return getTokenDistroHelper(regenStreamType);
+	}, [getTokenDistroHelper, poolStakingConfig]);
 
 	const { type, title, description, provideLiquidityLink, BUY_LINK, unit } =
 		poolStakingConfig;
@@ -104,10 +112,23 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	const { apr, earned, stakedLpAmount, userNotStakedAmount } = stakeInfo;
 	const { minimumApr } = useLiquidityPositions();
 
+	const regenStreamConfig = useMemo(() => {
+		if (!regenStreamType) return undefined;
+		const networkConfig =
+			chainId === config.XDAI_NETWORK_NUMBER
+				? config.XDAI_CONFIG
+				: config.MAINNET_CONFIG;
+		return networkConfig.regenStreams.find(s => s.type === regenStreamType);
+	}, [chainId, regenStreamType]);
+
 	useEffect(() => {
-		setRewardLiquidPart(givTokenDistroHelper.getLiquidPart(earned));
-		setRewardStream(givTokenDistroHelper.getStreamPartTokenPerWeek(earned));
-	}, [earned, givTokenDistroHelper]);
+		if (tokenDistroHelper) {
+			setRewardLiquidPart(tokenDistroHelper.getLiquidPart(earned));
+			setRewardStream(
+				tokenDistroHelper.getStreamPartTokenPerWeek(earned),
+			);
+		}
+	}, [earned, tokenDistroHelper]);
 
 	useEffect(() => {
 		if (chainId) {
@@ -348,6 +369,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 					poolStakingConfig={poolStakingConfig}
 					claimable={earned}
 					network={chainId}
+					regenStreamConfig={regenStreamConfig}
 				/>
 			)}
 			{showWhatIsGIVstreamModal && (

@@ -12,6 +12,10 @@ export enum StakingType {
 	GIV_LM = 'Staking',
 }
 
+export enum RegenFarmType {
+	FOX_HNY = 'FOX_HNY_FARM',
+}
+
 export enum StreamType {
 	FOX = 'FOX_STREAM',
 }
@@ -19,7 +23,8 @@ export enum StreamType {
 export type PoolStakingConfig =
 	| SimplePoolStakingConfig
 	| BalancerPoolStakingConfig
-	| UniswapV3PoolStakingConfig;
+	| UniswapV3PoolStakingConfig
+	| RegenPoolStakingConfig;
 
 export interface SimplePoolStakingConfig extends BasicStakingConfig {
 	POOL_ADDRESS: string;
@@ -48,7 +53,8 @@ export interface BalancerPoolStakingConfig extends SimplePoolStakingConfig {
 }
 
 export interface RegenPoolStakingConfig extends SimplePoolStakingConfig {
-	streamType: StreamType;
+	regenStreamType: StreamType;
+	regenFarmType: RegenFarmType;
 }
 
 export interface GasPreference {

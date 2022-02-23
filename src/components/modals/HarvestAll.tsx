@@ -10,7 +10,11 @@ import {
 	IconHelp,
 	Lead,
 } from '@giveth/ui-design-system';
-import { PoolStakingConfig, StreamType } from '@/types/config';
+import {
+	PoolStakingConfig,
+	StreamType,
+	RegenStreamConfig,
+} from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
 import { formatWeiHelper } from '@/helpers/number';
 import { useSubgraph } from '@/context/subgraph.context';
@@ -57,9 +61,7 @@ interface IHarvestAllModalProps extends IModal {
 	poolStakingConfig?: PoolStakingConfig;
 	claimable?: ethers.BigNumber;
 	network: number;
-	tokenSymbol?: string;
-	streamType?: StreamType;
-	tokenPrice?: BigNumber;
+	regenStreamConfig?: RegenStreamConfig;
 }
 
 const loadingAnimationOptions = {
@@ -86,18 +88,17 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	poolStakingConfig,
 	claimable,
 	network,
-	tokenSymbol = 'GIV',
-	streamType,
-	tokenPrice,
+	regenStreamConfig,
 }) => {
 	const [state, setState] = useState<HarvestStates>(HarvestStates.HARVEST);
+	const tokenSymbol = regenStreamConfig?.tokenSymbol || 'GIV';
 	const {
 		currentValues: { balances },
 	} = useSubgraph();
 	const { getTokenDistroHelper } = useTokenDistro();
+	const { givPrice, getTokenPrice } = usePrice();
 	const { account, library } = useWeb3React();
 	const { currentIncentive, stakedPositions } = useLiquidityPositions();
-	const { price: givPrice } = usePrice();
 	const [txHash, setTxHash] = useState('');
 
 	const [givDrop, setGIVdrop] = useState(Zero);
@@ -109,15 +110,20 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	const [sum, setSum] = useState(Zero);
 
 	const tokenDistroHelper = useMemo(
-		() => getTokenDistroHelper(streamType),
-		[getTokenDistroHelper, streamType],
+		() => getTokenDistroHelper(regenStreamConfig?.type),
+		[getTokenDistroHelper, regenStreamConfig],
 	);
 	const givback = useMemo<ethers.BigNumber>(() => {
-		return streamType ? Zero : balances.givback;
-	}, [streamType, balances.givback]);
+		return regenStreamConfig ? Zero : balances.givback;
+	}, [regenStreamConfig, balances.givback]);
 	const givbackLiquidPart = useMemo<ethers.BigNumber>(() => {
-		return streamType ? Zero : balances.givbackLiquidPart;
-	}, [streamType, balances.givbackLiquidPart]);
+		return regenStreamConfig ? Zero : balances.givbackLiquidPart;
+	}, [regenStreamConfig, balances.givbackLiquidPart]);
+	const tokenPrice = useMemo(() => {
+		return regenStreamConfig
+			? getTokenPrice(regenStreamConfig.tokenAddress, network)
+			: givPrice;
+	}, [getTokenPrice, givPrice, network, regenStreamConfig]);
 
 	useEffect(() => {
 		if (claimable) {
@@ -144,7 +150,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 
 	useEffect(() => {
 		if (
-			!streamType &&
+			!regenStreamConfig &&
 			network === config.XDAI_NETWORK_NUMBER &&
 			!balances.givDropClaimed &&
 			account
@@ -164,7 +170,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 		network,
 		balances?.givDropClaimed,
 		tokenDistroHelper,
-		streamType,
+		regenStreamConfig,
 	]);
 
 	const onHarvest = async () => {

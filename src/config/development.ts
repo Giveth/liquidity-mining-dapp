@@ -1,4 +1,9 @@
-import { EnvConfig, StakingType, StreamType } from '@/types/config';
+import {
+	EnvConfig,
+	RegenFarmType,
+	StakingType,
+	StreamType,
+} from '@/types/config';
 import { gwei2wei } from '@/helpers/number';
 
 const INFURA_API_KEY = process.env.NEXT_PUBLIC_INFURA_API_KEY;
@@ -162,7 +167,8 @@ const config: EnvConfig = {
 				provideLiquidityLink:
 					'https://app.honeyswap.org/#/add/0x18cE354571ba71bC7b3d633b254954C5A9cfC195/0x69F79C9eA174d4659B18c7993c7EFbBbB58cF068',
 				unit: 'LP',
-				streamType: StreamType.FOX,
+				regenStreamType: StreamType.FOX,
+				regenFarmType: RegenFarmType.FOX_HNY,
 			},
 		],
 	},

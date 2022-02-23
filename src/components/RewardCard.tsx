@@ -57,7 +57,7 @@ export const RewardCard: FC<IRewardCardProps> = ({
 	const [usdAmount, setUSDAmount] = useState('0');
 	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
 		useState(false);
-	const { price: givPrice } = usePrice();
+	const { givPrice: givPrice } = usePrice();
 	useEffect(() => {
 		const price = tokenPrice || givPrice;
 		if (!price || price.isNaN()) return;

@@ -100,7 +100,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 	const {
 		currentValues: { balances },
 	} = useSubgraph();
-	const { price } = usePrice();
+	const { givPrice } = usePrice();
 
 	const { account, library } = useWeb3React();
 
@@ -131,7 +131,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 	}, [givdropAmount, givTokenDistroHelper, claimableNow, givBackLiquidPart]);
 
 	const calcUSD = (amount: string) => {
-		return price.isNaN() ? '0' : price.times(amount).toFixed(2);
+		return givPrice.isNaN() ? '0' : givPrice.times(amount).toFixed(2);
 	};
 
 	const onClaim = async () => {

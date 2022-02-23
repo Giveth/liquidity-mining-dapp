@@ -150,8 +150,7 @@ export const RegenStream: FC<RegenStreamProps> = ({
 						showModal={showModal}
 						setShowModal={setShowModal}
 						network={network}
-						streamType={streamConfig.type}
-						tokenPrice={tokenPrice}
+						regenStreamConfig={streamConfig}
 					/>
 				)}
 			</Right>
