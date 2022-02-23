@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { DurationToString } from '@/lib/helpers';
 import {
@@ -23,10 +23,13 @@ import { IconWithTooltip } from '@/components/IconWithToolTip';
 import { RegenStreamConfig, StakingType, StreamType } from '@/types/config';
 import { useSubgraph } from '@/context';
 import { ethers } from 'ethers';
-import { formatWeiHelper } from '@/helpers/number';
+import { formatWeiHelper, Zero } from '@/helpers/number';
 import { IconFox } from '@/components/Icons/Fox';
+import { usePrice } from '@/context/price.context';
+import BigNumber from 'bignumber.js';
 
 interface RegenStreamProps {
+	network: number;
 	streamConfig: RegenStreamConfig;
 }
 export const getStreamIconWithType = (type: StreamType) => {
@@ -38,12 +41,21 @@ export const getStreamIconWithType = (type: StreamType) => {
 	}
 };
 
-export const RegenStream: FC<RegenStreamProps> = ({ streamConfig }) => {
+export const RegenStream: FC<RegenStreamProps> = ({
+	network,
+	streamConfig,
+}) => {
 	const { regenTokenDistroHelpers } = useTokenDistro();
+	const { getTokenPrice } = usePrice();
+	const [tokenPrice, setTokenPrice] = useState<BigNumber>(Zero);
 	const {
 		currentValues: { balances },
 	} = useSubgraph();
 	const tokenDistroHelper = regenTokenDistroHelpers[streamConfig.type];
+
+	useEffect(() => {
+		setTokenPrice(getTokenPrice(streamConfig.tokenAddress, network));
+	}, [getTokenPrice, network, streamConfig]);
 
 	const lockedAmount = useMemo(() => {
 		switch (streamConfig.type) {
@@ -69,7 +81,7 @@ export const RegenStream: FC<RegenStreamProps> = ({ streamConfig }) => {
 				<GsPTitle alignItems='center' gap='8px'>
 					{getStreamIconWithType(streamConfig.type)}
 					<H5>{streamConfig.title} Flowrate</H5>
-					<IconGIVStream size={24} />
+					<IconGIVStream size={32} />
 					<H4>{formatWeiHelper(flowrate)}</H4>
 					<H6>{streamConfig.tokenSymbol}/week</H6>
 					<IconWithTooltip

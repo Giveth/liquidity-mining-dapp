@@ -138,6 +138,9 @@ const config: EnvConfig = {
 			},
 		],
 
+		uniswapV2Subgraph:
+			'https://api.thegraph.com/subgraphs/name/1hive/honeyswap-v2',
+
 		regenStreams: [
 			{
 				tokenDistroAddress:
@@ -145,6 +148,7 @@ const config: EnvConfig = {
 				type: StreamType.FOX,
 				title: 'FOX',
 				tokenSymbol: 'FOX',
+				tokenAddress: '0x21a42669643f45Bc0e086b8Fc2ed70c23D67509d',
 			},
 		],
 	},

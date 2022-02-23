@@ -56,6 +56,8 @@ export interface RegenStreamConfig {
 	type: StreamType;
 	title: string;
 	tokenSymbol: string;
+	// For price purpose
+	tokenAddress: string;
 }
 
 export interface BasicNetworkConfig {
@@ -81,6 +83,8 @@ export interface BasicNetworkConfig {
 		| BalancerPoolStakingConfig
 		| UniswapV3PoolStakingConfig
 	>;
+
+	uniswapV2Subgraph?: string;
 
 	regenStreams: RegenStreamConfig[];
 }

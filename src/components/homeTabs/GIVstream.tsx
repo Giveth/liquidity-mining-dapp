@@ -229,6 +229,13 @@ export const TabGIVstreamBottom = () => {
 								<RegenStream
 									key={streamConfig.type}
 									streamConfig={streamConfig}
+									network={
+										supportedNetworks.includes(
+											chainId as number,
+										)
+											? (chainId as number)
+											: config.MAINNET_NETWORK_NUMBER
+									}
 								/>
 							);
 						})}

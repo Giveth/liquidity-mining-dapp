@@ -1,4 +1,11 @@
-import { createContext, FC, useContext, useEffect, useState } from 'react';
+import {
+	createContext,
+	FC,
+	useCallback,
+	useContext,
+	useEffect,
+	useState,
+} from 'react';
 import BigNumber from 'bignumber.js';
 import { Zero } from '@/helpers/number';
 import { useSubgraph } from '@/context/subgraph.context';
@@ -8,10 +15,39 @@ import { useWeb3React } from '@web3-react/core';
 
 export interface IPriceContext {
 	price: BigNumber;
+	getTokenPrice: (address: string, network: number) => BigNumber;
 }
 
-const priceDefaultValue = {
+const priceDefaultValue: IPriceContext = {
 	price: Zero,
+	getTokenPrice: () => Zero,
+};
+
+const fetchUniswapSubgraphTokenPrice = async (
+	subgraphUrl: string | undefined,
+	tokenAddress: string,
+): Promise<BigNumber> => {
+	if (!subgraphUrl || !tokenAddress) return Zero;
+
+	try {
+		const query = `
+		{
+			token(id:"${tokenAddress.toLowerCase()}") {
+				derivedETH
+			}
+		}
+		`;
+		const body = { query };
+		const res = await fetch(subgraphUrl, {
+			method: 'POST',
+			body: JSON.stringify(body),
+		});
+		const { data } = await res.json();
+		return new BigNumber(data?.token?.derivedETH || 0);
+	} catch (e) {
+		console.error('Error fetching token price:', tokenAddress, e);
+		return Zero;
+	}
 };
 
 const PriceContext = createContext<IPriceContext>(priceDefaultValue);
@@ -24,6 +60,32 @@ export const PriceProvider: FC = ({ children }) => {
 	const [mainnetPrice, setMainnetPrice] = useState<BigNumber>(Zero);
 	const [xDaiPrice, setXDaiPrice] = useState<BigNumber>(Zero);
 	const [ethPrice, setEthPrice] = useState<BigNumber>(Zero);
+	const [mainnetThirdPartyTokensPrice, setMainnetThirdPartTokensPrice] =
+		useState<{ [tokenAddress: string]: BigNumber }>({});
+	const [xDaiThirdPartyTokensPrice, setXDaiThirdPartTokensPrice] = useState<{
+		[tokenAddress: string]: BigNumber;
+	}>({});
+
+	const getTokenPrice = useCallback(
+		(tokenAddress: string, network: number): BigNumber => {
+			switch (network) {
+				case config.MAINNET_NETWORK_NUMBER:
+					return (
+						mainnetThirdPartyTokensPrice[
+							tokenAddress.toLowerCase()
+						] || Zero
+					);
+
+				case config.XDAI_NETWORK_NUMBER:
+					return (
+						xDaiThirdPartyTokensPrice[tokenAddress.toLowerCase()] ||
+						Zero
+					);
+			}
+			return Zero;
+		},
+		[mainnetThirdPartyTokensPrice, xDaiThirdPartyTokensPrice],
+	);
 
 	useEffect(() => {
 		const { uniswapV2EthGivPair } = xDaiValues;
@@ -88,6 +150,34 @@ export const PriceProvider: FC = ({ children }) => {
 					error,
 				);
 			});
+
+		const { MAINNET_CONFIG, XDAI_CONFIG } = config;
+		if (MAINNET_CONFIG.uniswapV2Subgraph) {
+			MAINNET_CONFIG.regenStreams.forEach(regenConfig => {
+				fetchUniswapSubgraphTokenPrice(
+					MAINNET_CONFIG.uniswapV2Subgraph,
+					regenConfig.tokenAddress,
+				).then(price =>
+					setMainnetThirdPartTokensPrice({
+						...mainnetThirdPartyTokensPrice,
+						[regenConfig.tokenAddress.toLowerCase()]: price,
+					}),
+				);
+			});
+		}
+		if (XDAI_CONFIG.uniswapV2Subgraph) {
+			XDAI_CONFIG.regenStreams.forEach(regenConfig => {
+				fetchUniswapSubgraphTokenPrice(
+					XDAI_CONFIG.uniswapV2Subgraph,
+					regenConfig.tokenAddress,
+				).then(price => {
+					setXDaiThirdPartTokensPrice({
+						...xDaiThirdPartyTokensPrice,
+						[regenConfig.tokenAddress.toLowerCase()]: price,
+					});
+				});
+			});
+		}
 	}, []);
 
 	useEffect(() => {
@@ -108,6 +198,7 @@ export const PriceProvider: FC = ({ children }) => {
 		<PriceContext.Provider
 			value={{
 				price: currentPrice,
+				getTokenPrice,
 			}}
 		>
 			{children}
