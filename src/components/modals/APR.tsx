@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { Modal, IModal } from './Modal';
 import styled from 'styled-components';
 import Link from 'next/link';
@@ -13,24 +13,33 @@ import {
 } from '@giveth/ui-design-system';
 import { BigNumber } from 'ethers';
 import { Row } from '../styled-components/Grid';
-import { PoolStakingConfig } from '@/types/config';
+import { PoolStakingConfig, RegenStreamConfig } from '@/types/config';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import Image from 'next/image';
 import { WhatisGIVstreamModal } from './WhatisGIVstream';
 interface IAPRModalProps extends IModal {
 	poolStakingConfig: PoolStakingConfig;
 	maxAmount: BigNumber;
+	regenStreamConfig?: RegenStreamConfig;
 }
 
 export const APRModal: FC<IAPRModalProps> = ({
 	showModal,
 	setShowModal,
-	poolStakingConfig,
-	maxAmount,
+	regenStreamConfig,
 }) => {
 	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
 		useState(false);
-	const { givTokenDistroHelper } = useTokenDistro();
+	const { getTokenDistroHelper } = useTokenDistro();
+	const {
+		title = 'GIVstream',
+		tokenSymbol = 'GIV',
+		type,
+	} = regenStreamConfig || {};
+	const tokenDistroHelper = useMemo(
+		() => getTokenDistroHelper(type),
+		[getTokenDistroHelper, type],
+	);
 
 	return (
 		<>
@@ -56,11 +65,11 @@ export const APRModal: FC<IAPRModalProps> = ({
 							<SublineBold>IMPORTANT</SublineBold>
 						</AlertRow>
 						<Desc>
-							A percentage of the GIV you earn from staking is
-							claimable immediately, and the remaining percent
-							goes into increasing your GIVstream flowrate. Over
-							time, a greater percentage of your total earnings
-							will be claimable immediately following the
+							A percentage of the {tokenSymbol} you earn from
+							staking is claimable immediately, and the remaining
+							percent goes into increasing your {title} flowrate.
+							Over time, a greater percentage of your total
+							earnings will be claimable immediately following the
 							continued expansion of the{' '}
 							<Link href='/givstream#flowRate' passHref>
 								<GIViverseLink>GIViverse</GIViverseLink>
@@ -69,12 +78,11 @@ export const APRModal: FC<IAPRModalProps> = ({
 						<DescTitle>Current Distribution:</DescTitle>
 						<Desc>
 							Claimable immediately:{' '}
-							{givTokenDistroHelper.GlobalReleasePercentage}%
+							{tokenDistroHelper.GlobalReleasePercentage}%
 						</Desc>
 						<Desc>
 							Increasing your GIVstream:{' '}
-							{100 - givTokenDistroHelper.GlobalReleasePercentage}
-							%
+							{100 - tokenDistroHelper.GlobalReleasePercentage}%
 						</Desc>
 						<Whatis>
 							<a

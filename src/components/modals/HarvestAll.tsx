@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { IModal, Modal } from './Modal';
 import Lottie from 'react-lottie';
 import LoadingAnimation from '../../animations/loading.json';
@@ -10,11 +10,7 @@ import {
 	IconHelp,
 	Lead,
 } from '@giveth/ui-design-system';
-import {
-	PoolStakingConfig,
-	StreamType,
-	RegenStreamConfig,
-} from '@/types/config';
+import { PoolStakingConfig, RegenStreamConfig } from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
 import { formatWeiHelper } from '@/helpers/number';
 import { useSubgraph } from '@/context/subgraph.context';
@@ -52,7 +48,7 @@ import BigNumber from 'bignumber.js';
 import { claimReward, fetchAirDropClaimData } from '@/lib/claim';
 import config from '@/configuration';
 import { IconWithTooltip } from '../IconWithToolTip';
-import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
+import { AmountBoxWithPrice } from '../AmountBoxWithPrice';
 import { usePrice } from '@/context/price.context';
 import { useWeb3React } from '@web3-react/core';
 
@@ -310,7 +306,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 									)}
 									{claimable && claimable.gt(0) && (
 										<>
-											<GIVBoxWithPrice
+											<AmountBoxWithPrice
 												amount={rewardLiquidPart}
 												price={calcUSD(
 													formatWeiHelper(
@@ -319,6 +315,9 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 														false,
 													),
 												)}
+												tokenSymbol={
+													regenStreamConfig?.tokenSymbol
+												}
 											/>
 											<HelpRow alignItems='center'>
 												<Caption>
@@ -360,7 +359,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 											<HelpRow alignItems='center'>
 												<B>Claimable from GIVbacks</B>
 											</HelpRow>
-											<GIVBoxWithPrice
+											<AmountBoxWithPrice
 												amount={givbackLiquidPart}
 												price={calcUSD(
 													formatWeiHelper(
@@ -369,6 +368,9 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 														false,
 													),
 												)}
+												tokenSymbol={
+													regenStreamConfig?.tokenSymbol
+												}
 											/>
 											<HelpRow alignItems='center'>
 												<Caption>
@@ -410,7 +412,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 											<HelpRow alignItems='center'>
 												<B>Claimable from GIVdrop</B>
 											</HelpRow>
-											<GIVBoxWithPrice
+											<AmountBoxWithPrice
 												amount={givDrop}
 												price={calcUSD(
 													formatWeiHelper(
@@ -419,6 +421,9 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 														false,
 													),
 												)}
+												tokenSymbol={
+													regenStreamConfig?.tokenSymbol
+												}
 											/>
 											<HelpRow alignItems='center'>
 												<Caption>
@@ -442,7 +447,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 											<HelpRow alignItems='center'>
 												<B>Claimable from GIVstream</B>
 											</HelpRow>
-											<GIVBoxWithPrice
+											<AmountBoxWithPrice
 												amount={claimableNow.sub(
 													givbackLiquidPart,
 												)}
@@ -453,6 +458,9 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 														false,
 													),
 												)}
+												tokenSymbol={
+													regenStreamConfig?.tokenSymbol
+												}
 											/>
 										</>
 									)}

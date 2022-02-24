@@ -136,6 +136,8 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 		}
 	}, [chainId, earned, type]);
 
+	const tokenSymbol = regenStreamConfig?.tokenSymbol || 'GIV';
+
 	return (
 		<>
 			<StakingPoolContainer>
@@ -228,7 +230,9 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 						<Detail justifyContent='space-between'>
 							<DetailLabel>Claimable</DetailLabel>
 							<DetailValue>
-								{`${formatWeiHelper(rewardLiquidPart)} GIV`}
+								{`${formatWeiHelper(
+									rewardLiquidPart,
+								)} ${tokenSymbol}`}
 							</DetailValue>
 						</Detail>
 						<Detail justifyContent='space-between'>
@@ -246,7 +250,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 								<DetailValue>
 									{formatWeiHelper(rewardStream)}
 								</DetailValue>
-								<DetailUnit>GIV/week</DetailUnit>
+								<DetailUnit>{tokenSymbol}/week</DetailUnit>
 							</Row>
 						</Detail>
 					</Details>
@@ -321,6 +325,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 					setShowModal={setShowAPRModal}
 					poolStakingConfig={poolStakingConfig}
 					maxAmount={userNotStakedAmount}
+					regenStreamConfig={regenStreamConfig}
 				/>
 			)}
 			{showUniV3APRModal && (

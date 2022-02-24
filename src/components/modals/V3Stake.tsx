@@ -29,7 +29,7 @@ import { PoolStakingConfig } from '@/types/config';
 import { StakingPoolImages } from '../StakingPoolImages';
 import V3StakingCard from '../cards/PositionCard';
 import { useLiquidityPositions, useSubgraph } from '@/context';
-import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
+import { AmountBoxWithPrice } from '../AmountBoxWithPrice';
 import { IconWithTooltip } from '../IconWithToolTip';
 import LoadingAnimation from '@/animations/loading.json';
 import { exit, getReward, transfer } from '@/lib/stakingNFT';
@@ -217,7 +217,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 									</TooltipContent>
 								</IconWithTooltip>
 							</HelpRow>
-							<GIVBoxWithPrice amount={reward} />
+							<AmountBoxWithPrice amount={reward} />
 							<HelpRow alignItems='center'>
 								<Caption>
 									Added to your GIVstream flowrate
@@ -245,7 +245,7 @@ export const V3StakeModal: FC<IV3StakeModalProps> = ({
 							<HelpRow alignItems='center'>
 								<B>Claimable from GIVstream</B>
 							</HelpRow>
-							<GIVBoxWithPrice
+							<AmountBoxWithPrice
 								amount={claimableNow.sub(givBackLiquidPart)}
 							/>
 							<HarvestButtonContainer>

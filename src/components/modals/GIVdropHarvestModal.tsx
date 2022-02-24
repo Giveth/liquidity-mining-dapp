@@ -31,7 +31,7 @@ import {
 } from '@giveth/ui-design-system';
 import { IconWithTooltip } from '../IconWithToolTip';
 import { ethers, constants } from 'ethers';
-import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
+import { AmountBoxWithPrice } from '../AmountBoxWithPrice';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { Zero } from '@ethersproject/constants';
 import BigNumber from 'bignumber.js';
@@ -237,7 +237,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 										{/* <HelpRow alignItems='center'>
 									<B>Claimable from GIVdrop</B>
 								</HelpRow> */}
-										<GIVBoxWithPrice
+										<AmountBoxWithPrice
 											amount={givdropAmount.div(10)}
 											price={calcUSD(
 												formatWeiHelper(
@@ -266,7 +266,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 										<HelpRow alignItems='center'>
 											<B>Claimable from GIVbacks</B>
 										</HelpRow>
-										<GIVBoxWithPrice
+										<AmountBoxWithPrice
 											amount={givBackLiquidPart}
 											price={calcUSD(
 												formatWeiHelper(
@@ -313,7 +313,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 										<HelpRow alignItems='center'>
 											<B>Claimable from GIVstream</B>
 										</HelpRow>
-										<GIVBoxWithPrice
+										<AmountBoxWithPrice
 											amount={givDropAccStream}
 											price={calcUSD(
 												formatWeiHelper(
