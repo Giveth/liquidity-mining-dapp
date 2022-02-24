@@ -64,8 +64,7 @@ export interface GasPreference {
 export interface RegenStreamConfig {
 	tokenDistroAddress: string;
 	type: StreamType;
-	title: string;
-	tokenSymbol: string;
+	rewardTokenSymbol: string;
 	// For price purpose
 	tokenAddress: string;
 }

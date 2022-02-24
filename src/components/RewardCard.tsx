@@ -35,7 +35,7 @@ interface IRewardCardProps {
 	className?: string;
 	wrongNetworkText: string;
 	targetNetworks: number[];
-	tokenSymbol?: string;
+	rewardTokenSymbol?: string;
 	tokenPrice?: BigNumber;
 }
 
@@ -51,7 +51,7 @@ export const RewardCard: FC<IRewardCardProps> = ({
 	className,
 	wrongNetworkText,
 	targetNetworks,
-	tokenSymbol = 'GIV',
+	rewardTokenSymbol = 'GIV',
 	tokenPrice,
 }) => {
 	const [usdAmount, setUSDAmount] = useState('0');
@@ -97,13 +97,13 @@ export const RewardCard: FC<IRewardCardProps> = ({
 						<AmountInfo alignItems='center' gap='8px'>
 							<IconGIV size={32} />
 							<Title>{formatWeiHelper(liquidAmount)}</Title>
-							<AmountUnit>{tokenSymbol}</AmountUnit>
+							<AmountUnit>{rewardTokenSymbol}</AmountUnit>
 						</AmountInfo>
 						<Converted>~${usdAmount}</Converted>
 						<RateInfo alignItems='center' gap='8px'>
 							<IconGIVStream size={24} />
 							<P>{formatWeiHelper(stream)}</P>
-							<RateUnit>{tokenSymbol}/week</RateUnit>
+							<RateUnit>{rewardTokenSymbol}/week</RateUnit>
 							<IconHelpWraper
 								onClick={() => {
 									setShowWhatIsGIVstreamModal(true);

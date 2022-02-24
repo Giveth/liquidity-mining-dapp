@@ -103,17 +103,20 @@ export const RegenStream: FC<RegenStreamProps> = ({
 					<GsPTitleRow justifyContent='space-between'>
 						<GsPTitle alignItems='center' gap='8px'>
 							{getStreamIconWithType(streamConfig.type)}
-							<H5>{streamConfig.title} Flowrate</H5>
+							<H5>
+								{streamConfig.rewardTokenSymbol}stream Flowrate
+							</H5>
 							<IconGIVStream size={32} />
 							<H4>{formatWeiHelper(rewardStream)}</H4>
-							<H6>{streamConfig.tokenSymbol}/week</H6>
+							<H6>{streamConfig.rewardTokenSymbol}/week</H6>
 							<IconWithTooltip
 								icon={<IconHelp size={16} />}
 								direction={'right'}
 							>
 								<GsPTooltip>
-									Time left for the {streamConfig.title}
-									to reach full power!
+									Time left for the{' '}
+									{streamConfig.rewardTokenSymbol}
+									stream to reach full power!
 								</GsPTooltip>
 							</IconWithTooltip>
 						</GsPTitle>
@@ -141,12 +144,14 @@ export const RegenStream: FC<RegenStreamProps> = ({
 						config.MAINNET_NETWORK_NUMBER,
 						config.XDAI_NETWORK_NUMBER,
 					]}
-					tokenSymbol={streamConfig.tokenSymbol}
+					rewardTokenSymbol={streamConfig.rewardTokenSymbol}
 					tokenPrice={tokenPrice}
 				/>
 				{showModal && (
 					<HarvestAllModal
-						title={streamConfig.title + ' Rewards'}
+						title={
+							streamConfig.rewardTokenSymbol + 'stream Rewards'
+						}
 						showModal={showModal}
 						setShowModal={setShowModal}
 						network={network}

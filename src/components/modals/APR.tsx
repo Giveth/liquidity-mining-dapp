@@ -31,11 +31,7 @@ export const APRModal: FC<IAPRModalProps> = ({
 	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
 		useState(false);
 	const { getTokenDistroHelper } = useTokenDistro();
-	const {
-		title = 'GIVstream',
-		tokenSymbol = 'GIV',
-		type,
-	} = regenStreamConfig || {};
+	const { rewardTokenSymbol = 'GIV', type } = regenStreamConfig || {};
 	const tokenDistroHelper = useMemo(
 		() => getTokenDistroHelper(type),
 		[getTokenDistroHelper, type],
@@ -65,12 +61,13 @@ export const APRModal: FC<IAPRModalProps> = ({
 							<SublineBold>IMPORTANT</SublineBold>
 						</AlertRow>
 						<Desc>
-							A percentage of the {tokenSymbol} you earn from
-							staking is claimable immediately, and the remaining
-							percent goes into increasing your {title} flowrate.
-							Over time, a greater percentage of your total
-							earnings will be claimable immediately following the
-							continued expansion of the{' '}
+							A percentage of the {rewardTokenSymbol} you earn
+							from staking is claimable immediately, and the
+							remaining percent goes into increasing your{' '}
+							{rewardTokenSymbol}
+							stream flowrate. Over time, a greater percentage of
+							your total earnings will be claimable immediately
+							following the continued expansion of the{' '}
 							<Link href='/givstream#flowRate' passHref>
 								<GIViverseLink>GIViverse</GIViverseLink>
 							</Link>

@@ -136,7 +136,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 		}
 	}, [chainId, earned, type]);
 
-	const tokenSymbol = regenStreamConfig?.tokenSymbol || 'GIV';
+	const rewardTokenSymbol = regenStreamConfig?.rewardTokenSymbol || 'GIV';
 
 	return (
 		<>
@@ -232,7 +232,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 							<DetailValue>
 								{`${formatWeiHelper(
 									rewardLiquidPart,
-								)} ${tokenSymbol}`}
+								)} ${rewardTokenSymbol}`}
 							</DetailValue>
 						</Detail>
 						<Detail justifyContent='space-between'>
@@ -250,7 +250,9 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 								<DetailValue>
 									{formatWeiHelper(rewardStream)}
 								</DetailValue>
-								<DetailUnit>{tokenSymbol}/week</DetailUnit>
+								<DetailUnit>
+									{rewardTokenSymbol}/week
+								</DetailUnit>
 							</Row>
 						</Detail>
 					</Details>

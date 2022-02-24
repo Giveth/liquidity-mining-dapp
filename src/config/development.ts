@@ -152,8 +152,8 @@ const config: EnvConfig = {
 				tokenDistroAddress:
 					'0xCA29ec6F4218E230294993E0d77d5ece5a6573D8',
 				type: StreamType.FOX,
-				title: 'FOXStream',
-				tokenSymbol: 'FOX',
+				// title: 'FOXStream',
+				rewardTokenSymbol: 'FOX',
 				tokenAddress: '0x21a42669643f45Bc0e086b8Fc2ed70c23D67509d',
 			},
 		],

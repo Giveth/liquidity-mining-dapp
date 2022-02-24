@@ -87,7 +87,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	regenStreamConfig,
 }) => {
 	const [state, setState] = useState<HarvestStates>(HarvestStates.HARVEST);
-	const tokenSymbol = regenStreamConfig?.tokenSymbol || 'GIV';
+	const tokenSymbol = regenStreamConfig?.rewardTokenSymbol || 'GIV';
 	const {
 		currentValues: { balances },
 	} = useSubgraph();
@@ -316,7 +316,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 													),
 												)}
 												tokenSymbol={
-													regenStreamConfig?.tokenSymbol
+													regenStreamConfig?.rewardTokenSymbol
 												}
 											/>
 											<HelpRow alignItems='center'>
@@ -369,7 +369,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 													),
 												)}
 												tokenSymbol={
-													regenStreamConfig?.tokenSymbol
+													regenStreamConfig?.rewardTokenSymbol
 												}
 											/>
 											<HelpRow alignItems='center'>
@@ -422,7 +422,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 													),
 												)}
 												tokenSymbol={
-													regenStreamConfig?.tokenSymbol
+													regenStreamConfig?.rewardTokenSymbol
 												}
 											/>
 											<HelpRow alignItems='center'>
@@ -459,7 +459,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 													),
 												)}
 												tokenSymbol={
-													regenStreamConfig?.tokenSymbol
+													regenStreamConfig?.rewardTokenSymbol
 												}
 											/>
 										</>
