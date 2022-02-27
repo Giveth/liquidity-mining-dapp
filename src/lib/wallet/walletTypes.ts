@@ -17,7 +17,11 @@ export const injectedConnector = new InjectedConnector({
 	supportedChainIds: [1, 3, 4, 5, 42, 100],
 });
 export const walletconnectConnector = new WalletConnectConnector({
-	rpc: { 1: 'https://main-light.eth.linkpool.io' },
+	rpc: {
+		1: 'https://main-light.eth.linkpool.io',
+		100: 'https://rpc.xdaichain.com',
+		42: 'https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+	},
 	qrcode: true,
 });
 // export const portisConnector = new PortisConnector({
