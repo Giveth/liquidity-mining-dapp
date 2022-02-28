@@ -18,10 +18,14 @@ export const injectedConnector = new InjectedConnector({
 });
 export const walletconnectConnector = new WalletConnectConnector({
 	rpc: {
-		1: 'https://main-light.eth.linkpool.io',
-		100: 'https://rpc.xdaichain.com',
-		42: 'https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+		[config.XDAI_NETWORK_NUMBER]: config.XDAI_CONFIG.nodeUrl,
+		[config.MAINNET_NETWORK_NUMBER]: config.MAINNET_CONFIG.nodeUrl,
 	},
+	supportedChainIds: [
+		config.XDAI_NETWORK_NUMBER,
+		config.MAINNET_NETWORK_NUMBER,
+	],
+	chainId: config.XDAI_NETWORK_NUMBER,
 	qrcode: true,
 });
 // export const portisConnector = new PortisConnector({
