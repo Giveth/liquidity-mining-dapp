@@ -29,10 +29,10 @@ import {
 	FlowRateRow,
 	FlowRateTooltip,
 	FlowRateUnit,
-	GIVbacksBottomContainer,
+	GIVstreamTopContainer,
 	GIVstreamProgressContainer,
 	GIVstreamRewardCard,
-	GIVstreamTopContainer,
+	GIVstreamBottomContainer,
 	GIVstreamTopInnerContainer,
 	Grid,
 	GsButton,
@@ -192,7 +192,7 @@ export const TabGIVstreamBottom = () => {
 		setRemain(_remain);
 	}, [givTokenDistroHelper]);
 	return (
-		<GIVbacksBottomContainer>
+		<GIVstreamBottomContainer>
 			<Container>
 				<NetworkSelector />
 				<FlowRateRow alignItems='baseline' gap='8px'>
@@ -339,7 +339,7 @@ export const TabGIVstreamBottom = () => {
 					</Row>
 				</Container>
 			</IncreaseSection>
-		</GIVbacksBottomContainer>
+		</GIVstreamBottomContainer>
 	);
 };
 

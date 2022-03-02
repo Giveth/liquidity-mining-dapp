@@ -19,7 +19,7 @@ import {
 	Caption,
 	ButtonLink,
 } from '@giveth/ui-design-system';
-import { TopContainer, TopInnerContainer } from './commons';
+import { BottomContainer, TopContainer, TopInnerContainer } from './commons';
 import { RewardCard } from '../RewardCard';
 import { Row } from '../styled-components/Grid';
 import { DataBox } from '../DataBox';
@@ -57,7 +57,7 @@ export const GSSubtitle = styled(QuoteText)``;
 
 export const GIVstreamRewardCard = styled(RewardCard)``;
 
-export const GIVbacksBottomContainer = styled.div``;
+export const GIVstreamBottomContainer = styled(BottomContainer)``;
 
 export const GsDataBlock = styled(DataBlock)`
 	width: 459px;
