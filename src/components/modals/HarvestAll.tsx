@@ -117,7 +117,7 @@ export const HarvestAllModal: FC<IHarvestAllModalProps> = ({
 	}, [regenStreamConfig, balances.givbackLiquidPart]);
 	const tokenPrice = useMemo(() => {
 		return regenStreamConfig
-			? getTokenPrice(regenStreamConfig.tokenAddress, network)
+			? getTokenPrice(regenStreamConfig.tokenAddressOnUniswapV2, network)
 			: givPrice;
 	}, [getTokenPrice, givPrice, network, regenStreamConfig]);
 

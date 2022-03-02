@@ -68,7 +68,9 @@ export const RegenStream: FC<RegenStreamProps> = ({
 	const tokenDistroHelper = regenTokenDistroHelpers[streamConfig.type];
 
 	useEffect(() => {
-		setTokenPrice(getTokenPrice(streamConfig.tokenAddress, network));
+		setTokenPrice(
+			getTokenPrice(streamConfig.tokenAddressOnUniswapV2, network),
+		);
 	}, [getTokenPrice, network, streamConfig]);
 
 	useEffect(() => {

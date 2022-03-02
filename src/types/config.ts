@@ -69,9 +69,10 @@ export interface GasPreference {
 export interface RegenStreamConfig {
 	tokenDistroAddress: string;
 	type: StreamType;
+	rewardTokenAddress: string;
 	rewardTokenSymbol: string;
 	// For price purpose
-	tokenAddress: string;
+	tokenAddressOnUniswapV2: string;
 }
 
 export interface BasicNetworkConfig {
