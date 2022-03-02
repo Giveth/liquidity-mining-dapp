@@ -14,6 +14,7 @@ import {
 	BalancerPoolStakingConfig,
 	PoolStakingConfig,
 	RegenFarmType,
+	RegenPoolStakingConfig,
 	SimplePoolStakingConfig,
 	StakingType,
 } from '@/types/config';
@@ -154,13 +155,22 @@ const getBalancerPoolStakingAPR = async (
 	return apr;
 };
 const getSimplePoolStakingAPR = async (
-	simplePoolStakingConfig: SimplePoolStakingConfig,
+	poolStakingConfig: SimplePoolStakingConfig | RegenPoolStakingConfig,
 	network: number,
 	provider: JsonRpcProvider,
 	unipool: IUnipool | undefined,
 ): Promise<APR> => {
-	const { LM_ADDRESS, POOL_ADDRESS } = simplePoolStakingConfig;
-	const tokenAddress = config.NETWORKS_CONFIG[network].TOKEN_ADDRESS;
+	const { LM_ADDRESS, POOL_ADDRESS } = poolStakingConfig;
+	const givTokenAddress = config.NETWORKS_CONFIG[network].TOKEN_ADDRESS;
+	const { regenStreamType } = poolStakingConfig as RegenPoolStakingConfig;
+	const streamConfig =
+		regenStreamType &&
+		config.NETWORKS_CONFIG[network].regenStreams.find(
+			s => s.type === regenStreamType,
+		);
+	const tokenAddress = streamConfig
+		? streamConfig.rewardTokenAddress
+		: givTokenAddress;
 	const lmContract = new Contract(LM_ADDRESS, LM_ABI, provider);
 
 	let reserves;

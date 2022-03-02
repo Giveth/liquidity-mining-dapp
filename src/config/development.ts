@@ -153,8 +153,11 @@ const config: EnvConfig = {
 					'0xCA29ec6F4218E230294993E0d77d5ece5a6573D8',
 				type: StreamType.FOX,
 				// title: 'FOXStream',
+				rewardTokenAddress:
+					'0x18cE354571ba71bC7b3d633b254954C5A9cfC195',
 				rewardTokenSymbol: 'FOX',
-				tokenAddress: '0x21a42669643f45Bc0e086b8Fc2ed70c23D67509d',
+				tokenAddressOnUniswapV2:
+					'0x21a42669643f45Bc0e086b8Fc2ed70c23D67509d',
 			},
 		],
 		regenFarms: [
