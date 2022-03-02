@@ -1,0 +1,77 @@
+import { RegenPoolStakingConfig } from '@/types/config';
+import {
+	brandColors,
+	Button,
+	ButtonLink,
+	Caption,
+	H6,
+	IconArrowLeft,
+	IconExternalLink,
+	neutralColors,
+} from '@giveth/ui-design-system';
+import { Dispatch, FC, SetStateAction } from 'react';
+import styled from 'styled-components';
+import { getCurIconWithName } from '../StakingPoolImages';
+import { Row } from '../styled-components/Grid';
+import { StakeCardState } from './BaseStakingCard';
+
+interface IStakingCardIntro {
+	poolStakingConfig: RegenPoolStakingConfig;
+	setState: Dispatch<SetStateAction<StakeCardState>>;
+}
+
+const StakingCardIntro: FC<IStakingCardIntro> = ({
+	poolStakingConfig,
+	setState,
+}) => {
+	return (
+		<StakingCardIntroContainer>
+			<HeaderRow>
+				<Back onClick={() => setState(StakeCardState.NORMAL)}>
+					<IconArrowLeft size={32} />
+				</Back>
+				{getCurIconWithName(poolStakingConfig.title.split(' / ')[0])}
+				<H6 weight={700}>{poolStakingConfig.intro?.title}</H6>
+			</HeaderRow>
+			<Description>{poolStakingConfig.intro?.description}</Description>
+			<LearnMoreButton
+				label='learn more'
+				// onClick={() => {
+				// 	window.open(poolStakingConfig.intro?.link);
+				// }}
+				href={poolStakingConfig.intro?.link}
+				linkType='texty'
+				icon={
+					<IconExternalLink size={16} color={brandColors.deep[100]} />
+				}
+			/>
+		</StakingCardIntroContainer>
+	);
+};
+
+const StakingCardIntroContainer = styled.div``;
+
+const HeaderRow = styled(Row)`
+	padding: 22px 19px;
+	align-items: center;
+	gap: 8px;
+	color: ${neutralColors.gray[100]};
+	margin-bottom: 8px;
+`;
+
+const Back = styled.div`
+	margin-right: 10px;
+	cursor: pointer;
+`;
+
+const Description = styled(Caption)`
+	padding: 32px;
+	margin-bottom: 138px;
+`;
+
+const LearnMoreButton = styled(ButtonLink)`
+	width: 90%;
+	margin: auto;
+`;
+
+export default StakingCardIntro;
