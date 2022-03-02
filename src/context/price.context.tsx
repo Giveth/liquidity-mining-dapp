@@ -156,11 +156,12 @@ export const PriceProvider: FC = ({ children }) => {
 			MAINNET_CONFIG.regenStreams.forEach(streamConfig => {
 				fetchUniswapSubgraphTokenPrice(
 					MAINNET_CONFIG.uniswapV2Subgraph,
-					streamConfig.tokenAddress,
+					streamConfig.tokenAddressOnUniswapV2,
 				).then(price =>
 					setMainnetThirdPartTokensPrice({
 						...mainnetThirdPartyTokensPrice,
-						[streamConfig.tokenAddress.toLowerCase()]: price,
+						[streamConfig.tokenAddressOnUniswapV2.toLowerCase()]:
+							price,
 					}),
 				);
 			});
@@ -169,11 +170,12 @@ export const PriceProvider: FC = ({ children }) => {
 			XDAI_CONFIG.regenStreams.forEach(streamConfig => {
 				fetchUniswapSubgraphTokenPrice(
 					XDAI_CONFIG.uniswapV2Subgraph,
-					streamConfig.tokenAddress,
+					streamConfig.tokenAddressOnUniswapV2,
 				).then(price => {
 					setXDaiThirdPartTokensPrice({
 						...xDaiThirdPartyTokensPrice,
-						[streamConfig.tokenAddress.toLowerCase()]: price,
+						[streamConfig.tokenAddressOnUniswapV2.toLowerCase()]:
+							price,
 					});
 				});
 			});
