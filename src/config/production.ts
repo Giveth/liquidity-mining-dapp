@@ -37,7 +37,7 @@ const config: EnvConfig = {
 				'https://app.uniswap.org/#/swap?outputCurrency=0x900db999074d9277c5da2a43f252d74366230da0',
 		},
 
-		nodeUrl: 'https://kovan.infura.io/v3/' + INFURA_API_KEY,
+		nodeUrl: 'https://mainnet.infura.io/v3/' + INFURA_API_KEY,
 
 		pools: [
 			{
