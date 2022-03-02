@@ -1,7 +1,7 @@
 import { RegenPoolStakingConfig } from '@/types/config';
 import React, { FC } from 'react';
 import { H3 } from '@giveth/ui-design-system';
-import { Subtitle } from '@/components/GIVfrens.sc';
+import { GIVfrensLink, Subtitle } from '@/components/GIVfrens.sc';
 import { PoolRow } from '@/components/homeTabs/GIVfarm.sc';
 import { useWeb3React } from '@web3-react/core';
 import config from '@/configuration';
@@ -20,9 +20,16 @@ export const GIVfrens: FC<IGIVfrensProps> = ({ regenFarms, network }) => {
 		<>
 			<H3 weight={700}>GIVfrens</H3>
 
-			<Subtitle size='small'>
+			<Subtitle>
 				Explore a multiverse of projects changing the world and earn
-				rewards for staking liquidity. Learn more.
+				rewards for staking liquidity.&nbsp;
+				<GIVfrensLink
+					size='Big'
+					href='https://medium.com/giveth/farm-to-table-yields-with-decentralized-philanthropy-a5d71d28ef0d'
+				>
+					Learn more
+				</GIVfrensLink>
+				.
 			</Subtitle>
 			<PoolRow
 				justifyContent='center'

@@ -1,6 +1,12 @@
-import { QuoteText } from '@giveth/ui-design-system';
+import { brandColors, GLink, Lead, QuoteText } from '@giveth/ui-design-system';
 import styled from 'styled-components';
 
-export const Subtitle = styled(QuoteText)`
-	margin-bottom: 89px;
+export const Subtitle = styled(Lead)`
+	margin-bottom: 24px;
+	width: 40%;
+`;
+
+export const GIVfrensLink = styled(GLink)`
+	color: ${brandColors.cyan[500]};
+	font-size: 20px;
 `;
