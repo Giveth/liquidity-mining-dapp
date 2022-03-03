@@ -61,6 +61,8 @@ import { useWeb3React } from '@web3-react/core';
 import { UniV3APRModal } from '../modals/UNIv3APR';
 import { useLiquidityPositions } from '@/context';
 import StakingCardIntro from './StakingCardIntro';
+import { getNowUnixMS } from '@/helpers/time';
+import FarmCountDown from '../FarmCountDown';
 
 export enum StakeCardState {
 	NORMAL,
@@ -95,6 +97,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	notif,
 }) => {
 	const [state, setState] = useState(StakeCardState.NORMAL);
+	const [started, setStarted] = useState(true);
 	const [showAPRModal, setShowAPRModal] = useState(false);
 	const [showUniV3APRModal, setShowUniV3APRModal] = useState(false);
 	const [showStakeModal, setShowStakeModal] = useState(false);
@@ -145,6 +148,14 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	}, [chainId, earned, type]);
 
 	const rewardTokenSymbol = regenStreamConfig?.rewardTokenSymbol || 'GIV';
+	const { regenFarmStartTime, regenFarmIntro } =
+		poolStakingConfig as RegenPoolStakingConfig;
+
+	useEffect(() => {
+		setStarted(
+			regenFarmStartTime ? getNowUnixMS() > regenFarmStartTime : true,
+		);
+	}, [regenFarmStartTime]);
 
 	return (
 		<>
@@ -179,8 +190,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 								)}
 							<div style={{ flex: 1 }}></div>
 							{notif && notif}
-							{(poolStakingConfig as RegenPoolStakingConfig)
-								.intro && (
+							{regenFarmIntro && (
 								<IntroIcon
 									onClick={() =>
 										setState(StakeCardState.INTRO)
@@ -202,92 +212,97 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 							</div>
 						</SPTitle>
 						<StakePoolInfoContainer>
-							<Details>
-								<FirstDetail justifyContent='space-between'>
-									<DetailLabel>APR</DetailLabel>
-									{/* <Row gap='8px' alignItems='center'>
-								<IconContainer
-									onClick={() => setShowAPRModal(true)}
-								>
-									<IconCalculator size={16} />
-								</IconContainer>
-							</Row> */}
-									<Row gap='8px' alignItems='center'>
-										<IconSpark
-											size={24}
-											color={brandColors.mustard[500]}
-										/>
-										{isV3Staking ? (
-											<IconWithTooltip
-												direction={'top'}
-												icon={
-													<IconGift
-														src='/images/heart-ribbon.svg'
-														alt='gift'
-													/>
+							{started ? (
+								<Details>
+									<FirstDetail justifyContent='space-between'>
+										<DetailLabel>APR</DetailLabel>
+										<Row gap='8px' alignItems='center'>
+											<IconSpark
+												size={24}
+												color={brandColors.mustard[500]}
+											/>
+											{isV3Staking ? (
+												<IconWithTooltip
+													direction={'top'}
+													icon={
+														<IconGift
+															src='/images/heart-ribbon.svg'
+															alt='gift'
+														/>
+													}
+												>
+													<GiftTooltip>
+														Provide a narrow range
+														of liquidity to maximize
+														your rate of reward. The
+														average APR is{' '}
+														{formatEthHelper(
+															apr,
+															2,
+														)}
+														%, and the minimum APR
+														for full range liquidity
+														is{' '}
+														{formatEthHelper(
+															minimumApr,
+															2,
+														)}
+														%.
+													</GiftTooltip>
+												</IconWithTooltip>
+											) : (
+												<DetailValue>
+													{apr &&
+														formatEthHelper(apr, 2)}
+													%
+												</DetailValue>
+											)}
+											<IconContainer
+												onClick={() =>
+													setShowAPRModal(true)
 												}
 											>
-												<GiftTooltip>
-													Provide a narrow range of
-													liquidity to maximize your
-													rate of reward. The average
-													APR is{' '}
-													{formatEthHelper(apr, 2)}%,
-													and the minimum APR for full
-													range liquidity is{' '}
-													{formatEthHelper(
-														minimumApr,
-														2,
-													)}
-													%.
-												</GiftTooltip>
-											</IconWithTooltip>
-										) : (
-											<DetailValue>
-												{apr && formatEthHelper(apr, 2)}
-												%
-											</DetailValue>
-										)}
-										<IconContainer
-											onClick={() =>
-												setShowAPRModal(true)
-											}
-										>
-											<IconHelp size={16} />
-										</IconContainer>
-									</Row>
-								</FirstDetail>
-								<Detail justifyContent='space-between'>
-									<DetailLabel>Claimable</DetailLabel>
-									<DetailValue>
-										{`${formatWeiHelper(
-											rewardLiquidPart,
-										)} ${rewardTokenSymbol}`}
-									</DetailValue>
-								</Detail>
-								<Detail justifyContent='space-between'>
-									<Row gap='8px' alignItems='center'>
-										<DetailLabel>Streaming</DetailLabel>
-										<IconHelpWraper
-											onClick={() => {
-												setShowWhatIsGIVstreamModal(
-													true,
-												);
-											}}
-										>
-											<IconHelp size={16} />
-										</IconHelpWraper>
-									</Row>
-									<Row gap='4px' alignItems='center'>
+												<IconHelp size={16} />
+											</IconContainer>
+										</Row>
+									</FirstDetail>
+									<Detail justifyContent='space-between'>
+										<DetailLabel>Claimable</DetailLabel>
 										<DetailValue>
-											{formatWeiHelper(rewardStream)}
+											{`${formatWeiHelper(
+												rewardLiquidPart,
+											)} ${rewardTokenSymbol}`}
 										</DetailValue>
-										<DetailUnit>
-											{rewardTokenSymbol}/week
-										</DetailUnit>
-									</Row>
-								</Detail>
-							</Details>
+									</Detail>
+									<Detail justifyContent='space-between'>
+										<Row gap='8px' alignItems='center'>
+											<DetailLabel>Streaming</DetailLabel>
+											<IconHelpWraper
+												onClick={() => {
+													setShowWhatIsGIVstreamModal(
+														true,
+													);
+												}}
+											>
+												<IconHelp size={16} />
+											</IconHelpWraper>
+										</Row>
+										<Row gap='4px' alignItems='center'>
+											<DetailValue>
+												{formatWeiHelper(rewardStream)}
+											</DetailValue>
+											<DetailUnit>
+												{rewardTokenSymbol}/week
+											</DetailUnit>
+										</Row>
+									</Detail>
+								</Details>
+							) : (
+								<FarmCountDown
+									startTime={regenFarmStartTime || 0}
+									setStarted={setStarted}
+								/>
+							)}
 							<ClaimButton
 								disabled={earned.isZero()}
 								onClick={() => setShowHarvestModal(true)}

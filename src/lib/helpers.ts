@@ -10,10 +10,10 @@ export const DurationToYMDh = (ms: number) => {
 	let m = duration.getUTCMonth() - baseTime.getUTCMonth();
 	let d = duration.getUTCDate() - baseTime.getUTCDate();
 	let h = duration.getUTCHours() - baseTime.getUTCHours();
-	// let min = duration.getUTCMinutes() - baseTime.getUTCMinutes();
-	// let sec = duration.getUTCSeconds() - baseTime.getUTCSeconds();
+	let min = duration.getUTCMinutes() - baseTime.getUTCMinutes();
+	let sec = duration.getUTCSeconds() - baseTime.getUTCSeconds();
 
-	return { y, m, d, h };
+	return { y, m, d, h, min, sec };
 };
 
 export const DurationToString = (ms: number, length: number = 3) => {

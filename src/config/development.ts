@@ -172,12 +172,13 @@ const config: EnvConfig = {
 				unit: 'LP',
 				regenStreamType: StreamType.FOX,
 				regenFarmType: RegenFarmType.FOX_HNY,
-				intro: {
+				regenFarmIntro: {
 					title: 'FOX title',
 					description:
 						'FOX, its cutting-edge multi-chain protocol, makes it easy for anyone to move value and exchange cryptocurrencies across blockchains quickly and securely at a low cost. The ElkNet framework also lets developers imagine and build novel cross-chain applications.',
 					link: 'https://somewhere.con/doc/',
 				},
+				regenFarmStartTime: 1646306818206,
 			},
 		],
 	},

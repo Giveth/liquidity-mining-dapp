@@ -24,22 +24,20 @@ const StakingCardIntro: FC<IStakingCardIntro> = ({
 	poolStakingConfig,
 	setState,
 }) => {
+	const { title, regenFarmIntro } = poolStakingConfig;
 	return (
 		<StakingCardIntroContainer>
 			<HeaderRow>
 				<Back onClick={() => setState(StakeCardState.NORMAL)}>
 					<IconArrowLeft size={32} />
 				</Back>
-				{getCurIconWithName(poolStakingConfig.title.split(' / ')[0])}
-				<H6 weight={700}>{poolStakingConfig.intro?.title}</H6>
+				{getCurIconWithName(title.split(' / ')[0])}
+				<H6 weight={700}>{regenFarmIntro?.title}</H6>
 			</HeaderRow>
-			<Description>{poolStakingConfig.intro?.description}</Description>
+			<Description>{regenFarmIntro?.description}</Description>
 			<LearnMoreButton
 				label='learn more'
-				// onClick={() => {
-				// 	window.open(poolStakingConfig.intro?.link);
-				// }}
-				href={poolStakingConfig.intro?.link}
+				href={regenFarmIntro?.link}
 				linkType='texty'
 				icon={
 					<IconExternalLink size={16} color={brandColors.deep[100]} />

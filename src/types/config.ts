@@ -55,11 +55,12 @@ export interface BalancerPoolStakingConfig extends SimplePoolStakingConfig {
 export interface RegenPoolStakingConfig extends SimplePoolStakingConfig {
 	regenStreamType: StreamType;
 	regenFarmType: RegenFarmType;
-	intro?: {
+	regenFarmIntro?: {
 		title: string;
 		description: string;
 		link: string;
 	};
+	regenFarmStartTime?: number;
 }
 
 export interface GasPreference {
