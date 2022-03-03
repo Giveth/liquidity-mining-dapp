@@ -17,7 +17,15 @@ export const injectedConnector = new InjectedConnector({
 	supportedChainIds: [1, 3, 4, 5, 42, 100],
 });
 export const walletconnectConnector = new WalletConnectConnector({
-	rpc: { 1: 'https://main-light.eth.linkpool.io' },
+	rpc: {
+		[config.XDAI_NETWORK_NUMBER]: config.XDAI_CONFIG.nodeUrl,
+		[config.MAINNET_NETWORK_NUMBER]: config.MAINNET_CONFIG.nodeUrl,
+	},
+	supportedChainIds: [
+		config.XDAI_NETWORK_NUMBER,
+		config.MAINNET_NETWORK_NUMBER,
+	],
+	chainId: config.XDAI_NETWORK_NUMBER,
 	qrcode: true,
 });
 // export const portisConnector = new PortisConnector({
