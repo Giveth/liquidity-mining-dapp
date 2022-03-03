@@ -232,15 +232,27 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 													}
 												>
 													<GiftTooltip>
-														Provide a narrow range of liquidity
-														to maximize your rate of reward. The
-														max APR for totally in range
-														liquidity is{' '}
-														{formatEthHelper(maxApr, 2)}%, the
-														average APR is{' '}
-														{formatEthHelper(apr, 2)}%, and the
-														minimum APR for full range liquidity
-														is {formatEthHelper(minimumApr, 2)}
+														Provide a narrow range
+														of liquidity to maximize
+														your rate of reward. The
+														max APR for totally in
+														range liquidity is{' '}
+														{formatEthHelper(
+															maxApr,
+															2,
+														)}
+														%, the average APR is{' '}
+														{formatEthHelper(
+															apr,
+															2,
+														)}
+														%, and the minimum APR
+														for full range liquidity
+														is{' '}
+														{formatEthHelper(
+															minimumApr,
+															2,
+														)}
 														%.
 													</GiftTooltip>
 												</IconWithTooltip>
