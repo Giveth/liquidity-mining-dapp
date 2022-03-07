@@ -1,19 +1,14 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { DurationToString } from '@/lib/helpers';
 import {
 	Bar,
-	GIVstreamProgressContainer,
-	GIVstreamRewardCard,
-	GsPTitle,
-	GsPTitleRow,
 	GsPTooltip,
-	Left,
 	PercentageRow,
-	Right,
 } from '@/components/homeTabs/GIVstream.sc';
 import {
 	B,
+	brandColors,
 	H4,
 	H5,
 	H6,
@@ -25,22 +20,27 @@ import { IconWithTooltip } from '@/components/IconWithToolTip';
 import { RegenStreamConfig, StreamType } from '@/types/config';
 import { useSubgraph } from '@/context';
 import { constants, ethers } from 'ethers';
-import { formatWeiHelper, Zero } from '@/helpers/number';
+import { formatWeiHelper } from '@/helpers/number';
 import { IconFox } from '@/components/Icons/Fox';
-import { usePrice } from '@/context/price.context';
 import BigNumber from 'bignumber.js';
 import { Row } from '@/components/styled-components/Grid';
-import config from '@/configuration';
-import { HarvestAllModal } from '@/components/modals/HarvestAll';
+import styled from 'styled-components';
+import { RegenRewardCard } from './RegenRewardCard';
 
+export enum RegenStreamSize {
+	SMALL,
+	BIG,
+}
 interface RegenStreamProps {
 	network: number;
 	streamConfig: RegenStreamConfig;
+	size?: RegenStreamSize;
 }
-export const getStreamIconWithType = (type: StreamType) => {
+
+export const getStreamIconWithType = (type: StreamType, size?: number) => {
 	switch (type) {
 		case StreamType.FOX:
-			return <IconFox size={40} />;
+			return <IconFox size={size} />;
 		default:
 			break;
 	}
@@ -49,11 +49,9 @@ export const getStreamIconWithType = (type: StreamType) => {
 export const RegenStream: FC<RegenStreamProps> = ({
 	network,
 	streamConfig,
+	size = RegenStreamSize.BIG,
 }) => {
 	const { regenTokenDistroHelpers } = useTokenDistro();
-	const { getTokenPrice } = usePrice();
-	const [tokenPrice, setTokenPrice] = useState<BigNumber>(Zero);
-	const [showModal, setShowModal] = useState(false);
 	const [rewardLiquidPart, setRewardLiquidPart] = useState(constants.Zero);
 	const [rewardStream, setRewardStream] = useState<BigNumber.Value>(0);
 	const [lockedAmount, setLockedAmount] = useState<ethers.BigNumber>(
@@ -66,12 +64,6 @@ export const RegenStream: FC<RegenStreamProps> = ({
 		currentValues: { balances },
 	} = useSubgraph();
 	const tokenDistroHelper = regenTokenDistroHelpers[streamConfig.type];
-
-	useEffect(() => {
-		setTokenPrice(
-			getTokenPrice(streamConfig.tokenAddressOnUniswapV2, network),
-		);
-	}, [getTokenPrice, network, streamConfig]);
 
 	useEffect(() => {
 		switch (streamConfig.type) {
@@ -98,69 +90,89 @@ export const RegenStream: FC<RegenStreamProps> = ({
 	const percentage = tokenDistroHelper?.percent || 0;
 	const remainTime = DurationToString(tokenDistroHelper?.remain || 0);
 
+	const icon = getStreamIconWithType(streamConfig.type, 40);
+
 	return (
-		<Row justifyContent='space-between'>
-			<Left>
-				<GIVstreamProgressContainer>
-					<GsPTitleRow justifyContent='space-between'>
-						<GsPTitle alignItems='center' gap='8px'>
-							{getStreamIconWithType(streamConfig.type)}
-							<H5>
-								{streamConfig.rewardTokenSymbol}stream Flowrate
-							</H5>
-							<IconGIVStream size={32} />
-							<H4>{formatWeiHelper(rewardStream)}</H4>
-							<H6>{streamConfig.rewardTokenSymbol}/week</H6>
+		<>
+			<RegenStreamContainer size={size}>
+				<Info>
+					<RegenStreamTitleRow>
+						{icon}
+						<H5>{streamConfig.rewardTokenSymbol} Flowrate</H5>
+						<IconGIVStream size={32} />
+						<StreamRate>{formatWeiHelper(rewardStream)}</StreamRate>
+						<StreamRateUnit>
+							{streamConfig.rewardTokenSymbol}/week
+						</StreamRateUnit>
+						<IconWithTooltip
+							icon={<IconHelp size={16} />}
+							direction={'right'}
+						>
+							<GsPTooltip>
+								Time left for the{' '}
+								{streamConfig.rewardTokenSymbol}
+								stream to reach full power!
+							</GsPTooltip>
+						</IconWithTooltip>
+					</RegenStreamTitleRow>
+					<RegenStreamInfoRow>
+						<Row alignItems='flex-end' gap='6px'>
+							<H6>
+								{streamConfig.rewardTokenSymbol}stream prgress
+							</H6>
+
 							<IconWithTooltip
 								icon={<IconHelp size={16} />}
 								direction={'right'}
 							>
 								<GsPTooltip>
-									Time left for the{' '}
+									Time left for the{'	 '}
 									{streamConfig.rewardTokenSymbol}
 									stream to reach full power!
 								</GsPTooltip>
 							</IconWithTooltip>
-						</GsPTitle>
+						</Row>
 						<P>{`Time remaining: ` + remainTime}</P>
-					</GsPTitleRow>
+					</RegenStreamInfoRow>
 					<Bar percentage={percentage} />
 					<PercentageRow justifyContent='space-between'>
 						<B>{percentage?.toFixed(2)}%</B>
 						<B>100%</B>
 					</PercentageRow>
-				</GIVstreamProgressContainer>
-			</Left>
-			<Right>
-				<GIVstreamRewardCard
-					wrongNetworkText='Stream is only available on Mainnet and xDAI.'
-					title={''}
-					liquidAmount={rewardLiquidPart}
-					stream={rewardStream}
-					actionLabel='HARVEST'
-					actionCb={() => {
-						setShowModal(true);
-					}}
+				</Info>
+				<RegenRewardCard
 					network={network}
-					targetNetworks={[
-						config.MAINNET_NETWORK_NUMBER,
-						config.XDAI_NETWORK_NUMBER,
-					]}
-					rewardTokenSymbol={streamConfig.rewardTokenSymbol}
-					tokenPrice={tokenPrice}
+					streamConfig={streamConfig}
+					liquidAmount={rewardLiquidPart}
 				/>
-				{showModal && (
-					<HarvestAllModal
-						title={
-							streamConfig.rewardTokenSymbol + 'stream Rewards'
-						}
-						showModal={showModal}
-						setShowModal={setShowModal}
-						network={network}
-						regenStreamConfig={streamConfig}
-					/>
-				)}
-			</Right>
-		</Row>
+			</RegenStreamContainer>
+		</>
 	);
 };
+
+const RegenStreamContainer = styled(Row)<{ size: RegenStreamSize }>`
+	gap: 24px;
+`;
+
+const RegenStreamTitleRow = styled(Row)`
+	gap: 8px;
+	align-items: flex-end;
+	margin-bottom: 26px;
+`;
+
+const StreamRate = styled(H4)`
+	line-height: 2.4rem;
+`;
+
+const StreamRateUnit = styled(H6)`
+	color: ${brandColors.giv[200]};
+`;
+
+const RegenStreamInfoRow = styled(Row)`
+	justify-content: space-between;
+	margin-bottom: 24px;
+`;
+
+const Info = styled.div`
+	flex: 1;
+`;
