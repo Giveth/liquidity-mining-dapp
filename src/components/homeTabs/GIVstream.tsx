@@ -77,8 +77,9 @@ import { ITokenAllocation } from '@/types/subgraph';
 import { TopFiller } from './commons';
 import { useWeb3React } from '@web3-react/core';
 import { IconGIV } from '../Icons/GIV';
-import { RegenStream } from '@/components/RegenStream';
 import { usePrice } from '@/context/price.context';
+import { supportedNetworks } from '@/utils/constants';
+import RegenStreamBlock from '../RegenStreamBlock';
 
 export const TabGIVstreamTop = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -167,16 +168,6 @@ export const TabGIVstreamBottom = () => {
 		currentValues: { balances },
 	} = useSubgraph();
 	const increaseSecRef = useRef<HTMLDivElement>(null);
-	const supportedNetworks = [
-		config.MAINNET_NETWORK_NUMBER,
-		config.XDAI_NETWORK_NUMBER,
-	];
-
-	const networkConfig =
-		chainId === config.XDAI_NETWORK_NUMBER
-			? config.XDAI_CONFIG
-			: config.MAINNET_CONFIG;
-	const { regenStreams } = networkConfig;
 
 	useEffect(() => {
 		setStreamAmount(
@@ -217,32 +208,21 @@ export const TabGIVstreamBottom = () => {
 					</IconWithTooltip>
 				</FlowRateRow>
 				<GIVstreamProgress percentage={percent} remainTime={remain} />
-				{regenStreams.length > 0 && (
-					<>
-						<GsMultiverseDataBlock title='Multiverse'>
-							When you harvest farming rewards from the Giveth
-							Multiverse, a portion of the rewards is added to a
-							Multiverse Stream. Each stream flows continuously
-							until its respective end date. Learn more.
-						</GsMultiverseDataBlock>
-
-						{regenStreams.map(streamConfig => {
-							return (
-								<RegenStream
-									key={streamConfig.type}
-									streamConfig={streamConfig}
-									network={
-										supportedNetworks.includes(
-											chainId as number,
-										)
-											? (chainId as number)
-											: config.MAINNET_NETWORK_NUMBER
-									}
-								/>
-							);
-						})}
-					</>
-				)}
+				<RegenStreamBlock />
+				<HistoryTitleRow>
+					<HistoryTitle>History</HistoryTitle>
+					<IconWithTooltip
+						icon={<IconHelp size={16} />}
+						direction={'top'}
+					>
+						<HistoryTooltip>
+							Every time you claim GIV rewards from GIVbacks, the
+							GIVgarden, or the GIVfarm, your GIVstream flowrate
+							increases. Below is a summary.
+						</HistoryTooltip>
+					</IconWithTooltip>
+				</HistoryTitleRow>
+				<GIVstreamHistory />
 				<Row wrap={1} justifyContent='space-between'>
 					<GsDataBlock
 						title='GIVstream'
@@ -267,20 +247,6 @@ export const TabGIVstreamBottom = () => {
 						rights of our community.
 					</GsDataBlock>
 				</Row>
-				<HistoryTitleRow>
-					<HistoryTitle>History</HistoryTitle>
-					<IconWithTooltip
-						icon={<IconHelp size={16} />}
-						direction={'top'}
-					>
-						<HistoryTooltip>
-							Every time you claim GIV rewards from GIVbacks, the
-							GIVgarden, or the GIVfarm, your GIVstream flowrate
-							increases. Below is a summary.
-						</HistoryTooltip>
-					</IconWithTooltip>
-				</HistoryTitleRow>
-				<GIVstreamHistory />
 			</Container>
 			<IncreaseSection ref={increaseSecRef}>
 				<Container>
