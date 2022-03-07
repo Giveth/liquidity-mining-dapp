@@ -88,10 +88,12 @@ const Desc = styled(Lead)`
 `;
 
 const RegenStreamsContainer = styled(Row)`
+	flex-wrap: wrap;
+	gap: 64px 128px;
 	margin-bottom: 64px;
 `;
 const RegenStreamContainer = styled.div`
-	width: calc(50% - 12px);
+	width: calc(50% - 64px);
 `;
 const RegenStreamWithRewardCardContainer = styled.div`
 	flex: 1;

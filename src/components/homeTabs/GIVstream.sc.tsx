@@ -133,6 +133,7 @@ export const PercentageRow = styled(Row)`
 `;
 
 export const IncreaseSection = styled.div`
+	margin-top: 54px;
 	padding: 60px 0 32px;
 	background-image: url('/images/backgrounds/GIVGIVGIV.png');
 `;
