@@ -1,3 +1,5 @@
+import config from '@/configuration';
+
 export const networksParams: Record<number, any> = {
 	1: {
 		chainId: '0x1',
@@ -91,3 +93,8 @@ export const device = {
 	desktop: `(min-width: ${size.desktop})`,
 	desktopL: `(min-width: ${size.desktop})`,
 };
+
+export const supportedNetworks = [
+	config.MAINNET_NETWORK_NUMBER,
+	config.XDAI_NETWORK_NUMBER,
+];

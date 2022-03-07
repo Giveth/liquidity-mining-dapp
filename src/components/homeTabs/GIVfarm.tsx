@@ -34,6 +34,7 @@ import { TopFiller, TopInnerContainer, ExtLink, ExtLinkRow } from './commons';
 import { useWeb3React } from '@web3-react/core';
 import { shortenAddress } from '@/helpers/number';
 import { GIVfrens } from '@/components/GIVfrens';
+import { supportedNetworks } from '@/utils/constants';
 
 const GIVfarmTabContainer = styled(Container)``;
 
@@ -86,10 +87,6 @@ export const TabGIVfarmTop = () => {
 
 export const TabGIVfarmBottom = () => {
 	const { chainId } = useWeb3React();
-	const supportedNetworks = [
-		config.MAINNET_NETWORK_NUMBER,
-		config.XDAI_NETWORK_NUMBER,
-	];
 
 	return (
 		<GIVfarmBottomContainer>
