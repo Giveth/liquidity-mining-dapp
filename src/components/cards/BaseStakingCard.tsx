@@ -121,7 +121,7 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 	const isV3Staking = type === StakingType.UNISWAP;
 
 	const { apr, earned, stakedLpAmount, userNotStakedAmount } = stakeInfo;
-	const { minimumApr } = useLiquidityPositions();
+	const { minimumApr, maxApr } = useLiquidityPositions();
 
 	const regenStreamConfig = useMemo(() => {
 		if (!regenStreamType) return undefined;
@@ -235,7 +235,13 @@ const BaseStakingCard: FC<IBaseStakingCardProps> = ({
 														Provide a narrow range
 														of liquidity to maximize
 														your rate of reward. The
-														average APR is{' '}
+														max APR for totally in
+														range liquidity is{' '}
+														{formatEthHelper(
+															maxApr,
+															2,
+														)}
+														%, the average APR is{' '}
 														{formatEthHelper(
 															apr,
 															2,
