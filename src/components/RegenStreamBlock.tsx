@@ -5,7 +5,7 @@ import { useWeb3React } from '@web3-react/core';
 import styled from 'styled-components';
 import { GIVfrensLink } from './GIVfrens.sc';
 import { RegenStream } from './RegenStream';
-import { GsMultiverseDataBlock } from './homeTabs/GIVstream.sc';
+import { Row } from './styled-components/Grid';
 
 const RegenStreamBlock = () => {
 	const { chainId } = useWeb3React();
@@ -31,20 +31,45 @@ const RegenStreamBlock = () => {
 				</GIVfrensLink>
 				.
 			</Desc>
-
-			{regenStreams.map(streamConfig => {
-				return (
-					<RegenStream
-						key={streamConfig.type}
-						streamConfig={streamConfig}
-						network={
-							supportedNetworks.includes(chainId as number)
-								? (chainId as number)
-								: config.MAINNET_NETWORK_NUMBER
-						}
-					/>
-				);
-			})}
+			<RegenStreamsContainer>
+				{regenStreams.map(streamConfig => {
+					return (
+						<RegenStreamContainer key={streamConfig.type}>
+							<RegenStream
+								streamConfig={streamConfig}
+								network={
+									supportedNetworks.includes(
+										chainId as number,
+									)
+										? (chainId as number)
+										: config.MAINNET_NETWORK_NUMBER
+								}
+							/>
+						</RegenStreamContainer>
+					);
+				})}
+			</RegenStreamsContainer>
+			<RegenStreamsContainer>
+				{regenStreams.map(streamConfig => {
+					return (
+						<RegenStreamWithRewardCardContainer
+							key={streamConfig.type}
+						>
+							<RegenStream
+								streamConfig={streamConfig}
+								network={
+									supportedNetworks.includes(
+										chainId as number,
+									)
+										? (chainId as number)
+										: config.MAINNET_NETWORK_NUMBER
+								}
+								showRewardCard
+							/>
+						</RegenStreamWithRewardCardContainer>
+					);
+				})}
+			</RegenStreamsContainer>
 		</RegenStreamBlockContainer>
 	) : null;
 };
@@ -58,8 +83,18 @@ const Title = styled(H3)`
 `;
 
 const Desc = styled(Lead)`
-	width: 60%;
+	width: 70%;
 	margin-bottom: 48px;
+`;
+
+const RegenStreamsContainer = styled(Row)`
+	margin-bottom: 64px;
+`;
+const RegenStreamContainer = styled.div`
+	width: calc(50% - 12px);
+`;
+const RegenStreamWithRewardCardContainer = styled.div`
+	flex: 1;
 `;
 
 export default RegenStreamBlock;

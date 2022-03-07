@@ -27,14 +27,10 @@ import { Row } from '@/components/styled-components/Grid';
 import styled from 'styled-components';
 import { RegenRewardCard } from './RegenRewardCard';
 
-export enum RegenStreamSize {
-	SMALL,
-	BIG,
-}
 interface RegenStreamProps {
 	network: number;
 	streamConfig: RegenStreamConfig;
-	size?: RegenStreamSize;
+	showRewardCard?: boolean;
 }
 
 export const getStreamIconWithType = (type: StreamType, size?: number) => {
@@ -49,7 +45,7 @@ export const getStreamIconWithType = (type: StreamType, size?: number) => {
 export const RegenStream: FC<RegenStreamProps> = ({
 	network,
 	streamConfig,
-	size = RegenStreamSize.BIG,
+	showRewardCard = false,
 }) => {
 	const { regenTokenDistroHelpers } = useTokenDistro();
 	const [rewardLiquidPart, setRewardLiquidPart] = useState(constants.Zero);
@@ -94,7 +90,7 @@ export const RegenStream: FC<RegenStreamProps> = ({
 
 	return (
 		<>
-			<RegenStreamContainer size={size}>
+			<RegenStreamContainer>
 				<Info>
 					<RegenStreamTitleRow>
 						{icon}
@@ -140,17 +136,19 @@ export const RegenStream: FC<RegenStreamProps> = ({
 						<B>100%</B>
 					</PercentageRow>
 				</Info>
-				<RegenRewardCard
-					network={network}
-					streamConfig={streamConfig}
-					liquidAmount={rewardLiquidPart}
-				/>
+				{showRewardCard && (
+					<RegenRewardCard
+						network={network}
+						streamConfig={streamConfig}
+						liquidAmount={rewardLiquidPart}
+					/>
+				)}
 			</RegenStreamContainer>
 		</>
 	);
 };
 
-const RegenStreamContainer = styled(Row)<{ size: RegenStreamSize }>`
+const RegenStreamContainer = styled(Row)`
 	gap: 24px;
 `;
 
