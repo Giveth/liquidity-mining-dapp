@@ -173,10 +173,10 @@ const config: EnvConfig = {
 				regenStreamType: StreamType.FOX,
 				regenFarmType: RegenFarmType.FOX_HNY,
 				regenFarmIntro: {
-					title: 'FOX title',
+					title: 'FOX',
 					description:
-						'FOX, its cutting-edge multi-chain protocol, makes it easy for anyone to move value and exchange cryptocurrencies across blockchains quickly and securely at a low cost. The ElkNet framework also lets developers imagine and build novel cross-chain applications.',
-					link: 'https://somewhere.con/doc/',
+						'ShapeShift is the free and open-source one-stop-shop for cross-chain DeFi. Buy, sell, send, receive, trade, and earn yield on your crypto across a growing number of protocols and chains with no added fees ever. FOX is the governance token of the ShapeShift DAO.',
+					link: 'https://shapeshift.com/',
 				},
 				regenFarmStartTime: 1646306818206,
 			},
