@@ -18,11 +18,11 @@ const RegenStreamBlock = () => {
 
 	return regenStreams.length > 0 ? (
 		<RegenStreamBlockContainer>
-			<Title weight={700}>RegenStream</Title>
+			<Title weight={700}>RegenStreams</Title>
 			<Desc>
-				When you harvest farming rewards from the Giveth Multiverse, a
-				portion of the rewards is added to a Multiverse Stream. Each
-				stream flows continuously until its respective end date.{' '}
+				When you harvest farming rewards from the RegenFarms, a portion
+				of the rewards is added to a RegenStream. Each stream flows
+				continuously until its respective end date.{' '}
 				<GIVfrensLink
 					size='Big'
 					href='https://medium.com/giveth/farm-to-table-yields-with-decentralized-philanthropy-a5d71d28ef0d'
