@@ -18,7 +18,7 @@ export const GIVfrens: FC<IGIVfrensProps> = ({ regenFarms, network }) => {
 	if (regenFarms.length === 0) return null;
 	return (
 		<>
-			<H3 weight={700}>GIVfrens</H3>
+			<H3 weight={700}>RegenFarms</H3>
 
 			<Subtitle>
 				Explore a multiverse of projects changing the world and earn

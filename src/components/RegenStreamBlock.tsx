@@ -18,7 +18,7 @@ const RegenStreamBlock = () => {
 
 	return regenStreams.length > 0 ? (
 		<RegenStreamBlockContainer>
-			<Title weight={700}>Regen stream</Title>
+			<Title weight={700}>RegenStream</Title>
 			<Desc>
 				When you harvest farming rewards from the Giveth Multiverse, a
 				portion of the rewards is added to a Multiverse Stream. Each

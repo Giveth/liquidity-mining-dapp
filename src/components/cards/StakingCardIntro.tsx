@@ -36,7 +36,7 @@ const StakingCardIntro: FC<IStakingCardIntro> = ({
 			</HeaderRow>
 			<Description>{regenFarmIntro?.description}</Description>
 			<LearnMoreButton
-				label='learn more'
+				label='LEARN MORE'
 				href={regenFarmIntro?.link}
 				linkType='texty'
 				icon={
