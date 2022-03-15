@@ -12,10 +12,19 @@ export enum StakingType {
 	GIV_LM = 'Staking',
 }
 
+export enum RegenFarmType {
+	FOX_HNY = 'FOX_HNY_FARM',
+}
+
+export enum StreamType {
+	FOX = 'FOX_STREAM',
+}
+
 export type PoolStakingConfig =
 	| SimplePoolStakingConfig
 	| BalancerPoolStakingConfig
-	| UniswapV3PoolStakingConfig;
+	| UniswapV3PoolStakingConfig
+	| RegenPoolStakingConfig;
 
 export interface SimplePoolStakingConfig extends BasicStakingConfig {
 	POOL_ADDRESS: string;
@@ -43,9 +52,28 @@ export interface BalancerPoolStakingConfig extends SimplePoolStakingConfig {
 	POOL_ID: string;
 }
 
+export interface RegenPoolStakingConfig extends SimplePoolStakingConfig {
+	regenStreamType: StreamType;
+	regenFarmType: RegenFarmType;
+	regenFarmIntro?: {
+		title: string;
+		description: string;
+		link: string;
+	};
+	regenFarmStartTime?: number;
+}
+
 export interface GasPreference {
 	maxFeePerGas?: string;
 	maxPriorityFeePerGas?: string;
+}
+export interface RegenStreamConfig {
+	tokenDistroAddress: string;
+	type: StreamType;
+	rewardTokenAddress: string;
+	rewardTokenSymbol: string;
+	// For price purpose
+	tokenAddressOnUniswapV2: string;
 }
 
 export interface BasicNetworkConfig {
@@ -62,7 +90,7 @@ export interface BasicNetworkConfig {
 	};
 	rpcUrls: string[];
 	blockExplorerUrls?: string[];
-	iconUrls?: string[]; // Currently ignored.
+	iconUrls?: string[]; // Currently, ignored.
 	blockExplorerName: string[];
 	subgraphAddress: string;
 	gasPreference: GasPreference;
@@ -71,6 +99,11 @@ export interface BasicNetworkConfig {
 		| BalancerPoolStakingConfig
 		| UniswapV3PoolStakingConfig
 	>;
+
+	uniswapV2Subgraph?: string;
+
+	regenStreams: RegenStreamConfig[];
+	regenFarms: RegenPoolStakingConfig[];
 }
 
 interface MainnetNetworkConfig extends BasicNetworkConfig {

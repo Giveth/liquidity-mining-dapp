@@ -108,7 +108,7 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 		constants.Zero,
 	);
 	const [earnEstimate, setEarnEstimate] = useState<BigNumber>(Zero);
-	const { tokenDistroHelper } = useTokenDistro();
+	const { givTokenDistroHelper } = useTokenDistro();
 
 	useEffect(() => {
 		if (totalAmount) {
@@ -126,14 +126,14 @@ export const DonateCard: FC<IClaimViewCardProps> = ({ index }) => {
 			donationWithGivBacks.toFixed(0),
 		).mul(constants.WeiPerEther);
 		setPotentialClaim(
-			tokenDistroHelper.getLiquidPart(convertedStackedWithApr),
+			givTokenDistroHelper.getLiquidPart(convertedStackedWithApr),
 		);
 		setEarnEstimate(
-			tokenDistroHelper.getStreamPartTokenPerWeek(
+			givTokenDistroHelper.getStreamPartTokenPerWeek(
 				convertedStackedWithApr,
 			),
 		);
-	}, [donation, tokenDistroHelper]);
+	}, [donation, givTokenDistroHelper]);
 
 	return (
 		<DonateCardContainer activeIndex={step} index={index}>

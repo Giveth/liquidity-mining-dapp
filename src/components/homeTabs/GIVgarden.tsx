@@ -37,7 +37,7 @@ const poolStakingConfig = getGivStakingConfig(config.XDAI_CONFIG);
 
 export const TabGardenTop = () => {
 	const { chainId } = useWeb3React();
-	const { tokenDistroHelper } = useTokenDistro();
+	const { givTokenDistroHelper } = useTokenDistro();
 
 	const [showModal, setShowModal] = useState(false);
 	const [earnedLiquidPart, setEarnedLiquidPart] =
@@ -52,9 +52,9 @@ export const TabGardenTop = () => {
 	);
 
 	useEffect(() => {
-		setEarnedLiquidPart(tokenDistroHelper.getLiquidPart(earned));
-		setEarnedStream(tokenDistroHelper.getStreamPartTokenPerWeek(earned));
-	}, [earned, tokenDistroHelper]);
+		setEarnedLiquidPart(givTokenDistroHelper.getLiquidPart(earned));
+		setEarnedStream(givTokenDistroHelper.getStreamPartTokenPerWeek(earned));
+	}, [earned, givTokenDistroHelper]);
 
 	return (
 		<GardenTopContainer>

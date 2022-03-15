@@ -160,17 +160,17 @@ const BlowingContainer = styled.div`
 
 export const CongratulationsCard = () => {
 	const [streamValue, setStreamValue] = useState<string>('0');
-	const { tokenDistroHelper } = useTokenDistro();
+	const { givTokenDistroHelper } = useTokenDistro();
 	const { totalAmount, resetWallet } = useUser();
 	const { library } = useWeb3React();
 
 	useEffect(() => {
 		setStreamValue(
 			formatWeiHelper(
-				tokenDistroHelper.getStreamPartTokenPerWeek(totalAmount),
+				givTokenDistroHelper.getStreamPartTokenPerWeek(totalAmount),
 			),
 		);
-	}, [totalAmount, tokenDistroHelper]);
+	}, [totalAmount, givTokenDistroHelper]);
 	return (
 		<CongratulationsView>
 			<CongratulationsContainer>

@@ -31,7 +31,7 @@ import {
 } from '@giveth/ui-design-system';
 import { IconWithTooltip } from '../IconWithToolTip';
 import { ethers, constants } from 'ethers';
-import { GIVBoxWithPrice } from '../GIVBoxWithPrice';
+import { AmountBoxWithPrice } from '../AmountBoxWithPrice';
 import { useTokenDistro } from '@/context/tokenDistro.context';
 import { Zero } from '@ethersproject/constants';
 import BigNumber from 'bignumber.js';
@@ -96,28 +96,30 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 	const [claimState, setClaimState] = useState<ClaimState>(
 		ClaimState.UNKNOWN,
 	);
-	const { tokenDistroHelper } = useTokenDistro();
+	const { givTokenDistroHelper } = useTokenDistro();
 	const {
 		currentValues: { balances },
 	} = useSubgraph();
-	const { price } = usePrice();
+	const { givPrice } = usePrice();
 
 	const { account, library } = useWeb3React();
 
 	useEffect(() => {
-		setClaimableNow(tokenDistroHelper.getUserClaimableNow(balances));
-		setGivBackLiquidPart(tokenDistroHelper.getLiquidPart(balances.givback));
-		setGivBackStream(
-			tokenDistroHelper.getStreamPartTokenPerWeek(balances.givback),
+		setClaimableNow(givTokenDistroHelper.getUserClaimableNow(balances));
+		setGivBackLiquidPart(
+			givTokenDistroHelper.getLiquidPart(balances.givback),
 		);
-	}, [balances, tokenDistroHelper]);
+		setGivBackStream(
+			givTokenDistroHelper.getStreamPartTokenPerWeek(balances.givback),
+		);
+	}, [balances, givTokenDistroHelper]);
 
 	useEffect(() => {
 		setGivDropStream(
-			tokenDistroHelper.getStreamPartTokenPerWeek(givdropAmount),
+			givTokenDistroHelper.getStreamPartTokenPerWeek(givdropAmount),
 		);
 		const amount = new BigNumber(givdropAmount.mul(9).div(10).toString());
-		const percent = new BigNumber(tokenDistroHelper.percent / 100);
+		const percent = new BigNumber(givTokenDistroHelper.percent / 100);
 		const givDropAcc = amount
 			.times(percent)
 			.toFixed(0, BigNumber.ROUND_DOWN);
@@ -126,10 +128,10 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 			_givDropAcc = _givDropAcc.add(claimableNow).sub(givBackLiquidPart);
 		}
 		setGivDropAccStream(_givDropAcc);
-	}, [givdropAmount, tokenDistroHelper, claimableNow, givBackLiquidPart]);
+	}, [givdropAmount, givTokenDistroHelper, claimableNow, givBackLiquidPart]);
 
 	const calcUSD = (amount: string) => {
-		return price.isNaN() ? '0' : price.times(amount).toFixed(2);
+		return givPrice.isNaN() ? '0' : givPrice.times(amount).toFixed(2);
 	};
 
 	const onClaim = async () => {
@@ -235,7 +237,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 										{/* <HelpRow alignItems='center'>
 									<B>Claimable from GIVdrop</B>
 								</HelpRow> */}
-										<GIVBoxWithPrice
+										<AmountBoxWithPrice
 											amount={givdropAmount.div(10)}
 											price={calcUSD(
 												formatWeiHelper(
@@ -264,7 +266,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 										<HelpRow alignItems='center'>
 											<B>Claimable from GIVbacks</B>
 										</HelpRow>
-										<GIVBoxWithPrice
+										<AmountBoxWithPrice
 											amount={givBackLiquidPart}
 											price={calcUSD(
 												formatWeiHelper(
@@ -311,7 +313,7 @@ export const GIVdropHarvestModal: FC<IGIVdropHarvestModal> = ({
 										<HelpRow alignItems='center'>
 											<B>Claimable from GIVstream</B>
 										</HelpRow>
-										<GIVBoxWithPrice
+										<AmountBoxWithPrice
 											amount={givDropAccStream}
 											price={calcUSD(
 												formatWeiHelper(

@@ -35,6 +35,8 @@ interface IRewardCardProps {
 	className?: string;
 	wrongNetworkText: string;
 	targetNetworks: number[];
+	rewardTokenSymbol?: string;
+	tokenPrice?: BigNumber;
 }
 
 export const RewardCard: FC<IRewardCardProps> = ({
@@ -49,19 +51,22 @@ export const RewardCard: FC<IRewardCardProps> = ({
 	className,
 	wrongNetworkText,
 	targetNetworks,
+	rewardTokenSymbol = 'GIV',
+	tokenPrice,
 }) => {
 	const [usdAmount, setUSDAmount] = useState('0');
 	const [showWhatIsGIVstreamModal, setShowWhatIsGIVstreamModal] =
 		useState(false);
-	const { price } = usePrice();
+	const { givPrice: givPrice } = usePrice();
 	useEffect(() => {
-		if (price.isNaN()) return;
+		const price = tokenPrice || givPrice;
+		if (!price || price.isNaN()) return;
 
 		const usd = (+ethers.utils.formatEther(
 			price.times(liquidAmount.toString()).toFixed(0),
 		)).toFixed(2);
 		setUSDAmount(usd);
-	}, [liquidAmount, price]);
+	}, [liquidAmount, givPrice, tokenPrice]);
 
 	return (
 		<>
@@ -92,13 +97,13 @@ export const RewardCard: FC<IRewardCardProps> = ({
 						<AmountInfo alignItems='center' gap='8px'>
 							<IconGIV size={32} />
 							<Title>{formatWeiHelper(liquidAmount)}</Title>
-							<AmountUnit>GIV</AmountUnit>
+							<AmountUnit>{rewardTokenSymbol}</AmountUnit>
 						</AmountInfo>
 						<Converted>~${usdAmount}</Converted>
 						<RateInfo alignItems='center' gap='8px'>
 							<IconGIVStream size={24} />
 							<P>{formatWeiHelper(stream)}</P>
-							<RateUnit>GIV/week</RateUnit>
+							<RateUnit>{rewardTokenSymbol}/week</RateUnit>
 							<IconHelpWraper
 								onClick={() => {
 									setShowWhatIsGIVstreamModal(true);
