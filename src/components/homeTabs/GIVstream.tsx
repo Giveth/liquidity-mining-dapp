@@ -366,6 +366,7 @@ const convetSourceTypeToIcon = (distributor: string) => {
 		case 'givlm':
 		case 'giveth':
 		case 'givhnypool':
+		case 'uniswappool':
 			return (
 				<Row gap='16px'>
 					<IconGIVFarm size={24} color={brandColors.mustard[500]} />
