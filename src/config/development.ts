@@ -33,7 +33,7 @@ const config: EnvConfig = {
 		blockExplorerName: ['Etherscan'],
 		blockExplorerUrls: ['https://kovan.etherscan.io'],
 		subgraphAddress:
-			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-kovan-develop/graphql',
+			'https://api.thegraph.com/subgraphs/name/mohammadranjbarz/giv-economy-kovan-develop',
 
 		TOKEN_ADDRESS: '0x29434A25abd94AE882aA883eea81585Aaa5b078D',
 		WETH_TOKEN_ADDRESS: '0xd0a1e359811322d97991e03f863a0c30c2cf029c',
