@@ -1,3 +1,6 @@
+**Note:** This repo is archived and the latest updates has been moved to https://github.com/Giveth/giveth-dapps-v2
+***
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
